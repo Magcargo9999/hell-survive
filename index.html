@@ -68,9 +68,9 @@
   #hint { min-height: 20px; color: #ff9a6a; font-size: 14px; }
   .card.syn { border-color: #ffe28a; box-shadow: 0 0 16px rgba(255, 194, 71, 0.5), 0 4px 0 #7a2a0a; }
   .card { position: relative; }
-  .card .newb { position: absolute; top: -11px; right: -9px; z-index: 3; background: #ffe14a; color: #3a0a00; font-weight: 900; font-size: 14px; letter-spacing: 0.06em; padding: 3px 10px; border-radius: 999px;
+  .card .newb { position: absolute; top: -11px; left: -9px; z-index: 3; background: #ffe14a; color: #3a0a00; font-weight: 900; font-size: 14px; letter-spacing: 0.06em; padding: 3px 10px; border-radius: 999px;
     box-shadow: 0 0 0 2px #3a0a00, 0 0 14px rgba(255, 225, 74, 0.95); animation: newPulse 0.9s ease-in-out infinite alternate; }
-  @keyframes newPulse { from { transform: scale(1) rotate(6deg); } to { transform: scale(1.14) rotate(6deg); } }
+  @keyframes newPulse { from { transform: scale(1) rotate(-6deg); } to { transform: scale(1.14) rotate(-6deg); } }
   .card.finc { border-color: #7ad0ff; animation: finGlow 1.4s ease-in-out infinite alternate; }
   .card.finc strong { color: #a8e4ff; text-shadow: 0 0 8px rgba(90, 180, 255, 0.8); }
   .card.finc::after { content: ''; position: absolute; inset: -12px; pointer-events: none; z-index: 2; animation: finSpark 1.1s steps(2) infinite;
