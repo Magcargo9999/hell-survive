@@ -407,10 +407,10 @@ const SNAIL_ROUTES = {
 };
 /* v5.00: 특수 스킬은 게이지 대신 쿨타임(초). 스킬 가치(한 번 쓸 때 얼마나 강한가)에 따라 다르게 */
 // 가치 측정(봇 시뮬: 스킬 한 번이 평타 몇 초어치 피해인가 + 무적·회복 같은 부가 가치)으로 3단계로 나눴다
-//  높음 → 길게: 용암 대분출 18 · 천안 난무 15 · 광란 14 · 사슬 휘두르기 13 · 혈왕의 진 13
+//  높음 → 길게: 용암 대분출 18 · 천안 난무 15 · 광란 14 · 사슬 휘두르기 12 · 혈왕의 진 13
 //  중간      : 신성한 피의 비 12 · 피의 갈취 11 · 삼두 연쇄 물기 10 · 신성화살 12 · 물의 주술 16 (회복량을 줄이고 자주 쓰게)
 //  낮음 → 짧게: 폭발 화살 6 · 큰 화살/후방 도약 7 · 울부짖음 8 · 독 자국 폭파 8 · 천공 강하 8 · 화염 브레스 9
-const SKILL_CD = { lavaburst: 18, rush: 15, rage: 14, whip: 13, bsigil: 13, bloodrain: 12, drain: 11, cerb: 10, holyshot: 12, tide: 16, bombshot: 6, bigarrow: 7, backdash: 7, howl: 8, blast: 8, dive: 8, breath: 9, laser: 10, zone: 10, meteor: 10 };
+const SKILL_CD = { lavaburst: 18, rush: 15, rage: 14, whip: 12, bsigil: 13, bloodrain: 12, drain: 11, cerb: 10, holyshot: 12, tide: 16, bombshot: 6, bigarrow: 7, backdash: 7, howl: 8, blast: 8, dive: 8, breath: 9, laser: 10, zone: 10, meteor: 10 };
 const skillCd = () => ((window.__SKCD && window.__SKCD[P.skill]) || SKILL_CD[P.skill] || 14);
 const SKILL_UNIQUE = { wolf: 'howl', snail: 'blast', archer: 'bigarrow', chimera: 'dive', lizard: 'rage', twins: 'whip' };
 const uniqueSkill = () => (P.char === 'chimera' && P.route === 'dream') ? 'rush' : (P.char === 'chimera' && P.route === 'flame') ? 'breath' : (P.char === 'snail' && P.route === 'lava') ? 'lavaburst' : (P.char === 'wolf' && P.route === 'twin') ? 'cerb' : (P.char === 'wolf' && P.route === 'crimson') ? (P.fin === 'holy' ? 'bloodrain' : P.fin === 'fallen' ? 'bsigil' : 'drain') : SKILL_UNIQUE[P.char];
@@ -2592,7 +2592,7 @@ function thornBlast() {   // 가시 비늘: 맞으면 주변 적에게 반격
   for (const e of enemies) { if (e.hp <= 0) continue; const dx = e.x - P.x, dy = e.y - P.y, d = Math.hypot(dx, dy) || 1; if (d < R + e.r) hurtEnemy(e, dm, dx / d, dy / d, 260); }
 }
 function smashBlow(px, py) {   // 대검 내려찍기: 4번째 공격마다 땅을 내려찍는다
-  const n = P.up.smash | 0, R = (118 + 14 * n) * (P.syn.quake ? 1.3 : 1), dm = P.dmg * (0.6 + 0.25 * n) * berserkMul();
+  const n = P.up.smash | 0, R = (118 + 14 * n) * (P.syn.quake ? 1.3 : 1), dm = P.dmg * (0.65 + 0.27 * n) * berserkMul();
   addRing(px, py, 10, R, 0.35, theme().rgb, 9); addRing(px, py, 6, R * 0.6, 0.28, '255,255,255', 5);
   burst(px, py - 6, 14, [theme().c1, theme().c2, '#c9b79a'], 260, 0.6); shake = Math.max(shake, 8);
   for (const e of enemies) { if (e.hp <= 0) continue; const dx = e.x - px, dy = e.y - py, d = Math.hypot(dx, dy) || 1; if (d < R + e.r) { hurtEnemy(e, dm, dx / d, dy / d, 420 * P.knock + 120); if (P.syn.quake) e.slowT = Math.max(e.slowT || 0, 1.5); } }
@@ -2600,7 +2600,7 @@ function smashBlow(px, py) {   // 대검 내려찍기: 4번째 공격마다 땅�
 /* ---------- 사슬 악마: 손에 쥔 사슬 끝 창날 (줄이 팽팽해지면 끌려오고, 방향을 틀면 휘둘린다) ---------- */
 // 1진화부터 반대쪽으로 두 번째 사슬(푸른 사슬)이 함께 돈다. 스킬 [사슬 휘두르기] 중에는 시트의 사슬 동작으로 바뀐다
 const TW = { L: [92, 104, 118], rB: [18, 22, 26], cm: [0.36, 0.42, 0.5] };
-const twLen = () => TW.L[P.form] * Math.min(1.8, Math.max(0.8, P.rng / 100)) * (1 + 0.1 * (P.up.whirl | 0));
+const twLen = () => TW.L[P.form] * Math.min(1.8, Math.max(0.8, P.rng / 100)) * (1 + (0.1 + 0.12 * (P.twSt || 0)) * (P.up.whirl | 0));   // v5.02: 원심력 — 멈춰 있으면 사슬이 더 길어진다 (레벨당 +10% → 멈추면 +22%)
 const twTips = () => {   // 두 번째 창날은 몸 반대편 (피해 50%) · 폭군의 사슬 해방 중에는 직각 방향으로 2가닥 더 (총 4가닥)
   const T = P.tw; if (P.form < 1) return [[T.x, T.y, 1, 'twB', 'twC']];
   const L = [[T.x, T.y, 1, 'twB', 'twC'], [2 * P.x - T.x, 2 * P.y - T.y, 0.5, 'twB2', 'twC2']];
@@ -2758,7 +2758,7 @@ function startTide() {   // 물의 주술: 즉시 자힐 + 주변 밀쳐내기
 function claw(hi = 0, n = 1) {
   const hm = FD().hm || 1, off = n > 1 && hi > 0 ? (hi % 2 ? 0.45 : -0.45) : 0;   // 다중 타격: 타당 피해 배율 / 호 방향을 조금씩 달리한다
   const flm = P.char === 'chimera' && P.route === 'flame', drm = P.char === 'chimera' && P.route === 'dream', hset = drm ? new Set() : null;
-  const R = P.rng * (flm ? 1 + 0.12 * (P.up.flameB || 0) : 1), cx = P.x + P.ax * R * 0.5, cy = P.y - 18 + P.ay * R * 0.5;
+  const R = P.rng * (flm ? 1 + 0.13 * (P.up.flameB || 0) : 1), cx = P.x + P.ax * R * 0.5, cy = P.y - 18 + P.ay * R * 0.5;
   let hits = 0; const bz = berserkMul();
   for (const e of enemies) {
     if (e.hp <= 0) continue;
@@ -2768,7 +2768,7 @@ function claw(hi = 0, n = 1) {
       hits++; if (flm) igniteE(e); if (drm) hset.add(e);
     }
   }
-  if (flm) cfx.push({ k: 'fslash', x: P.x + P.ax * R * 0.5, y: P.y - 22 + P.ay * R * 0.5, a: Math.atan2(P.ay, P.ax), t: 0, life: 0.26, f: P.form, sz: R / 100 * (1 + 0.1 * (P.up.flameB || 0)) });
+  if (flm) cfx.push({ k: 'fslash', x: P.x + P.ax * R * 0.5, y: P.y - 22 + P.ay * R * 0.5, a: Math.atan2(P.ay, P.ax), t: 0, life: 0.26, f: P.form, sz: R / 100 * (1 + 0.11 * (P.up.flameB || 0)) });
   if (drm) {
     dreamTent(hset);
     cfx.push({ k: 'dslash', x: P.x + P.ax * R * 0.5, y: P.y - 22 + P.ay * R * 0.5, a: Math.atan2(P.ay, P.ax), t: 0, life: 0.26, f: P.form, sz: R / 100 });
@@ -2798,7 +2798,7 @@ const UPGRADES = [
     alt: { lava: ['용암 강화', '용암 피해 +18%'], snail: ['맹독 강화', '독 피해 +18%'], archer: ['화살 강화', '화살 피해 +18%'], lizard: ['대검 단련', '공격력 +18%'], twins: ['악마의 분노', '공격력 +18%'], ghost: ['진한 저승 기운', '구슬 피해 +18%'] } },
   { id: 'speed',  name: '날렵한 발톱',   txt: () => '공속 +12%',        apply: p => { p.aspd += 0.12; },
     alt: { snail: ['빠른 분비', '공속 +12%'], archer: ['속사', '공속 +12%'], lizard: ['가벼운 휘두르기', '공속 +12%'], twins: ['빠른 손놀림', '타격 간격 -11%'], ghost: ['빠른 손짓', '공속 +12%'] } },
-  { id: 'move',   name: '질주',          txt: () => '이속 +7%',         apply: p => { p.spd *= 1.07; },
+  { id: 'move',   name: '질주',          txt: () => '이속 +7.5%',       apply: p => { p.spd *= 1.075; },
     alt: { snail: ['미끄러운 점액', '이속 +7%'], archer: ['바람의 걸음', '이속 +7%'] } },
   { id: 'heart',  name: '지옥의 심장',   txt: () => '최대 체력 +16',    apply: p => { p.max += 16; p.hp = Math.min(p.max, p.hp + 24); },
     alt: { snail: ['단단한 껍질', '최대 체력 +16'], archer: ['엘프의 끈기', '최대 체력 +16'] } },
@@ -2806,10 +2806,10 @@ const UPGRADES = [
   { id: 'range',  name: '넓은 발톱',     txt: () => '범위 +12%',        apply: p => { p.rng *= 1.12; },
     alt: { lava: ['넓은 용암 웅덩이', '폭발 범위 +12%'], snail: ['넓은 독 웅덩이', '폭발 범위 +12%'], archer: ['먼 곳 조준', '사거리 +12%'], lizard: ['넓은 휘두르기', '범위 +12%'], twins: ['긴 사슬', '사슬 길이 +12%'], ghost: ['멀리 뿌리기', '사거리 +12%'] } },
   { id: 'orb',    name: '지옥불 구슬',   txt: () => '불꽃 구슬 +1 (공격력의 55%)', apply: p => { p.orbsN++; } },
-  { id: 'shard',  name: '뼈 투사체',     txt: () => '뼈 투사체 +1발 (공격력의 75%)', apply: p => { p.shardN++; },
-    alt: { lava: ['용암 파편', '용암 파편 +1발 (공격력의 75%)'], snail: ['독가시', '독가시 +1발 (공격력의 75%)'], archer: ['추적 화살', '추적 화살 +1발 (공격력의 60%)'] } },
+  { id: 'shard',  name: '뼈 투사체',     txt: () => '뼈 투사체 +1발 (공격력의 81%)', apply: p => { p.shardN++; },
+    alt: { lava: ['용암 파편', '용암 파편 +1발 (공격력의 81%)'], snail: ['독가시', '독가시 +1발 (공격력의 81%)'], archer: ['추적 화살', '추적 화살 +1발 (공격력의 65%)'] } },
   { id: 'knock',  name: '밀치기',        txt: () => '넉백 +25%p (기본 70%)', apply: p => { p.knock += 0.25; } },
-  { id: 'crit',   name: '급소 노리기',   txt: () => '치명타 +6%',       apply: p => { p.crit += 0.06; } },
+  { id: 'crit',   name: '급소 노리기',   txt: () => '치명타 +6.5%',     apply: p => { p.crit += 0.065; } },
   { id: 'guard',  name: '수호의 방어막', txt: n => `피격 1회 무효 · ${GD(n)}초마다 재충전`, apply: p => { if (!p.up.guard) p.guardT = 0; } },
   { id: 'armor',  name: '단단한 피부',   txt: () => '받는 피해 -7%',    apply: p => { p.armor *= 0.93; } },
   { id: 'exp',    name: '배움의 눈',     txt: () => '경험치 +10%',      apply: p => { p.expMul += 0.1; } },
@@ -2821,34 +2821,34 @@ const UPGRADES = [
 const UNIQUE = {
   wolf:  [{ id: 'thirst', name: '피의 갈증', max: 5, txt: () => '처치 시 체력 +0.5', apply: p => { p.killHeal += 0.5; } }],   // 혈랑 진화의 조건
   snail: [{ id: 'sticky', name: '끈적한 독', txt: () => '독 자국 +20% 넓고 오래', lavaAlt: ['끈적한 용암', '용암 흔적 +20% 넓고 오래'], apply: p => { p.trailBonus += 0.2; } },
-          { id: 'spread', name: '번지는 독', txt: () => '자국 크기 +15% · 독 피해 +8%', lavaAlt: ['번지는 용암', '흔적 크기 +15% · 피해 +8%'], apply: p => { p.trailR = (p.trailR || 0) + 0.15; p.trailD = (p.trailD || 0) + 0.08; } },
-          { id: 'magma', name: '끓는 용암', route: 'lava', txt: () => '폭발 +10% · 웅덩이 +15%', apply: p => { p.magma = (p.magma || 0) + 1; } }],
+          { id: 'spread', name: '번지는 독', txt: () => '자국 크기 +16% · 독 피해 +9%', lavaAlt: ['번지는 용암', '흔적 크기 +16% · 피해 +9%'], apply: p => { p.trailR = (p.trailR || 0) + 0.16; p.trailD = (p.trailD || 0) + 0.09; } },
+          { id: 'magma', name: '끓는 용암', route: 'lava', txt: () => '폭발 +13% · 웅덩이 +22%', apply: p => { p.magma = (p.magma || 0) + 1; } }],
   chimera: [
-    { id: 'airA', name: '날 선 바람',   form: 1, route: 'wind', txt: () => '에어슬래시 피해 +20%', apply: () => {} },
+    { id: 'airA', name: '날 선 바람',   form: 1, route: 'wind', txt: () => '에어슬래시 피해 +22%', apply: () => {} },
     { id: 'airB', name: '멀리 나는 바람', form: 1, route: 'wind', txt: () => '에어슬래시 사거리 +15% · 크기 +10%', apply: () => {} },
     { id: 'airC', name: '쌍날 바람',   form: 1, route: 'wind', max: 3, w: 0.8, txt: () => '에어슬래시 +1갈래 (추가분 70%)', apply: () => {} },
     { id: 'flameA', name: '불씨 강화', form: 1, route: 'flame', max: 3, txt: () => '화상 피해 +30% · 화상 시간 +0.5초', apply: () => {} },
-    { id: 'flameB', name: '넓은 불길', form: 1, route: 'flame', max: 3, txt: () => '화염 발톱 범위 +12% · 불길 크기 +10%', apply: () => {} },
+    { id: 'flameB', name: '넓은 불길', form: 1, route: 'flame', max: 3, txt: () => '화염 발톱 범위 +13% · 불길 크기 +11%', apply: () => {} },
     { id: 'breathUp', name: '끓는 숨결', form: 2, route: 'flame', needSkill: 'breath', max: 3, txt: () => '화염 브레스 길이 +10% · 피해 +15%', apply: () => {} },
     { id: 'dreamA', name: '늘어난 촉수', form: 1, route: 'dream', max: 3, txt: () => '발톱을 휘두를 때 촉수 공격 +1회', apply: () => {} },
     { id: 'dreamB', name: '뜬 눈', form: 1, route: 'dream', max: 3, txt: () => '촉수 사거리 +15% · 촉수 피해 +20%', apply: () => {} },
     { id: 'rushUp', name: '끝없는 난무', form: 2, route: 'dream', needSkill: 'rush', max: 3, txt: () => '천안 난무 돌진 +2회 · 피해 +8%', apply: () => {} },
-    { id: 'diveUp', name: '더 높은 하늘', form: 2, needSkill: 'dive', max: 3, txt: () => '천공 강하 범위 +12% · 피해 +10%', apply: () => {} },
+    { id: 'diveUp', name: '더 높은 하늘', form: 2, needSkill: 'dive', max: 3, txt: () => '천공 강하 범위 +13% · 피해 +11%', apply: () => {} },
   ],
   lizard: [
     { id: 'scale', name: '가시 비늘', max: 3, txt: n => `맞으면 주변 적에게 반격 피해 (공격력의 ${50 + 15 * n}%) + 밀쳐냄`, apply: () => {} },
-    { id: 'smash', name: '대검 내려찍기', form: 1, max: 3, txt: n => `4번째 공격마다 땅을 내려찍어 범위 피해 (공격력의 ${60 + 25 * n}%)`, apply: () => {} },
+    { id: 'smash', name: '대검 내려찍기', form: 1, max: 3, txt: n => `4번째 공격마다 땅을 내려찍어 범위 피해 (공격력의 ${65 + 27 * n}%)`, apply: () => {} },
     { id: 'bloodlust', name: '피에 굶주린 광기', form: 2, fin: 'rage', max: 3, txt: () => '체력이 낮을수록 늘어나는 광폭 피해 +20%p', apply: () => {} },
     { id: 'rageUp', name: '끝없는 광란', form: 2, fin: 'rage', needSkill: 'rage', max: 3, txt: () => '광란 지속 +1초 · 광란 중 공속 +8%', apply: () => {} },
     { id: 'tideUp', name: '깊은 물결', form: 2, fin: 'water', needSkill: 'tide', max: 3, txt: () => '물의 주술 회복량 +5%p', apply: () => {} },
   ],
   ghost: [
-    { id: 'gmore', name: '구슬 늘리기', max: 3, txt: () => '한 번에 뿌리는 구슬 +1개', apply: () => {} },
-    { id: 'gwide', name: '넓게 흩뿌리기', max: 2, txt: () => '구슬 사거리 +15% · 퍼지는 폭 +20%', apply: () => {} },
+    { id: 'gmore', name: '구슬 늘리기', max: 3, txt: () => '한 번에 뿌리는 구슬 +1개 · 구슬 피해 +5%', apply: () => {} },
+    { id: 'gwide', name: '넓게 흩뿌리기', max: 2, txt: () => '구슬 사거리 +16% · 퍼지는 폭 +22%', apply: () => {} },
   ],
   twins: [
     { id: 'heavy',   name: '무거운 창날', max: 3, txt: () => '창날 타격 피해 +20% · 크기 +12% · 넉백 +30%', apply: () => {} },
-    { id: 'whirl',   name: '원심력',     max: 3, txt: () => '사슬 길이 +10% · 멈춰 있을 때 도는 속도 +25%', apply: () => {} },
+    { id: 'whirl',   name: '원심력',     max: 3, txt: () => '사슬 길이 +10% (멈춰 있으면 +22%) · 멈춰 있을 때 도는 속도 +25%', apply: () => {} },
     { id: 'chainUp', name: '달군 사슬',   form: 1, max: 3, txt: () => '사슬 피해 +40% · 사슬 두께 +3', apply: () => {} },
     { id: 'whipUp',  name: '폭군의 사슬', form: 1, needSkill: 'whip', max: 3, txt: () => '사슬 휘두르기 피해 +20% · 범위 +10%', apply: () => {} },
   ],
@@ -3522,15 +3522,15 @@ function pushArrow(ox, oy, a, o) {
   const sp = o.sp || 720;
   shards.push(Object.assign({ x: ox, y: oy, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp, life: 0.8, pierce: 1, hit: new Set(), arrow: true, sz: 1, kb: 200, ox, oy }, o));
 }
-const ghostRange = () => 400 * Math.min(1.8, Math.max(1, P.rng / 100)) * (1 + 0.15 * (P.up.gwide | 0));
+const ghostRange = () => 400 * Math.min(1.8, Math.max(1, P.rng / 100)) * (1 + 0.16 * (P.up.gwide | 0));
 function ghostSpray() {   // 연보라 구슬 다발: 앞쪽 부채꼴로 약한 구슬 여러 개 (가까이 있을수록 많이 맞는다)
   const R = ghostRange(), t = nearestEnemy(R + 60), D = FD(), ox = P.x + P.face * 30 * D.ws, oy = P.y - 40 * D.ws;
   const tx = t ? t.x : P.x + P.face * 200, ty = t ? t.y - t.r : oy;
   if (Math.abs(tx - P.x) > 6) P.face = tx > P.x ? 1 : -1;
-  const base = Math.atan2(ty - oy, tx - ox), n = P.gOrbs + (P.up.gmore | 0), spread = 0.09 * (1 + 0.2 * (P.up.gwide | 0));
+  const base = Math.atan2(ty - oy, tx - ox), n = P.gOrbs + (P.up.gmore | 0), spread = 0.09 * (1 + 0.22 * (P.up.gwide | 0));
   for (let i = 0; i < n; i++) {
     const a = base + (i - (n - 1) / 2) * spread + (rand() - 0.5) * 0.04, sp = 500 + rand() * 80;
-    shards.push({ x: ox, y: oy, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp, life: R / sp, pierce: 1, hit: new Set(), dmg: P.dmg * 0.8, gorb: true, sz: 0.9, kb: 70, ph: rand() * 6 });
+    shards.push({ x: ox, y: oy, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp, life: R / sp, pierce: 1, hit: new Set(), dmg: P.dmg * 0.8 * (1 + 0.05 * (P.up.gmore | 0)), gorb: true, sz: 0.9, kb: 70, ph: rand() * 6 });
   }
   sfx('shoot');
 }
@@ -3771,7 +3771,7 @@ function snailSpit() {
 }
 const rngK = () => Math.min(1.8, Math.max(1, P.rng / 100));   // 범위 카드 1장당 반경 +20% (최대 ×1.8)
 function landLava(g) {
-  const f = FD(), mg = 1 + 0.12 * (P.magma || 0), R = (g.R || (f.lr * rngK())) * mg, dm = g.dm || f.ldm;
+  const f = FD(), mg = 1 + 0.13 * (P.magma || 0), R = (g.R || (f.lr * rngK())) * mg, dm = g.dm || f.ldm;
   for (const e of enemies) {
     if (e.hp <= 0) continue;
     if (Math.hypot(e.x - g.x1, e.y - g.y1) < R + e.r) {
@@ -3783,7 +3783,7 @@ function landLava(g) {
   sprFx.push({ k: (g.big || P.form >= 3) ? 'hit3' : 'hit2', x: g.x1, y: g.y1, w: R * (g.big ? 2.3 : 1.9), t: 0, life: g.big ? 0.6 : 0.4 });
   burst(g.x1, g.y1 - 6, g.big ? 26 : 14, ['#ff6a1c', '#ffb030', '#ffe28a'], 240, 0.6);
   let pn = 0; for (const z of zones) if (z.type === 'lavapool') pn++;
-  if (!g.mini && pn < 8) { const pl = (g.big ? 5 : f.pl) * (1 + 0.2 * (P.magma || 0)); zones.push({ type: 'lavapool', x: g.x1, y: g.y1, r: R * (g.big ? 0.8 : 0.6), life: pl, max: pl, tick: 0, dm: g.big ? 0.4 : 0.3, sp: rand() }); }
+  if (!g.mini && pn < 8) { const pl = (g.big ? 5 : f.pl) * (1 + 0.22 * (P.magma || 0)); zones.push({ type: 'lavapool', x: g.x1, y: g.y1, r: R * (g.big ? 0.8 : 0.6), life: pl, max: pl, tick: 0, dm: g.big ? 0.4 : 0.3, sp: rand() }); }
   shake = Math.max(shake, g.big ? 9 : 2);
 }
 let corpseBusy = false;
@@ -4655,6 +4655,7 @@ function update(dt) {
     if (Math.abs(ix) > 0.1 && P.atkTimer < 0 && !breathQ) P.face = ix > 0 ? 1 : -1;
   }
   P.moving = moving && !dashQ; if (!moving) { P.vx = 0; P.vy = 0; }
+  P.twSt = clamp((P.twSt || 0) + (P.moving ? -3 : 2.5) * dt, 0, 1);   // 원심력: 멈춰 있는 정도 (부드럽게)
   if (P.char === 'twins') updateTwins(dt);
   updateBsig(dt);
   P.still = moving ? 0 : P.still + dt;
@@ -4714,7 +4715,7 @@ function update(dt) {
       const t = nearestEnemy(520, used); if (!t) break;
       used.push(t);
       const dx = t.x - P.x, dy = t.y - t.r - (P.y - 22), d = Math.hypot(dx, dy) || 1;
-      shards.push(Object.assign({ x: P.x, y: P.y - 22, vx: dx / d * 460, vy: dy / d * 460, life: 1.3, pierce: 2, hit: new Set() }, P.char === 'archer' ? { dmg: P.dmg * 0.6, arrow: true, auto: true, sz: 0.8, ox: P.x, oy: P.y - 22 } : { dmg: P.dmg * 0.75 }));   // 보조 투사체: 공격력 비례 (궁수 60% · 나머지 75%)
+      shards.push(Object.assign({ x: P.x, y: P.y - 22, vx: dx / d * 460, vy: dy / d * 460, life: 1.3, pierce: 2, hit: new Set() }, P.char === 'archer' ? { dmg: P.dmg * 0.65, arrow: true, auto: true, sz: 0.8, ox: P.x, oy: P.y - 22 } : { dmg: P.dmg * 0.81 }));   // 보조 투사체 (v5.02: 75 -> 81%): 공격력 비례 (궁수 60% · 나머지 75%)
     }
     if (used.length) P.shardCd = 1.2;
   }
@@ -4932,7 +4933,7 @@ function airSlash() {
   for (let i = 0; i < n; i++) {
     const off = (i - (n - 1) / 2) * spread, a = base + off, side = Math.abs(off) > 0.01;
     airs.push({ x: P.x + Math.cos(a) * 34, y: P.y - 26 + Math.sin(a) * 34, a, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp, life: 0.72 * rng, t: 0, r: 26 * sz, sz,
-      dmg: P.dmg * (f >= 2 ? 0.38 : 0.3) * (1 + 0.2 * (up.airA || 0)) * (1 + 0.3 * gale) * (side ? 0.7 : 1), hit: new Set(), f });
+      dmg: P.dmg * (f >= 2 ? 0.38 : 0.3) * (1 + 0.22 * (up.airA || 0)) * (1 + 0.3 * gale) * (side ? 0.7 : 1), hit: new Set(), f });
   }
   sfx('shoot');
 }
@@ -4954,7 +4955,7 @@ function updateAirs(dt) {
 }
 const sp0 = s => Math.hypot(s.vx, s.vy) || 1;
 function startDive() {
-  diveQ = { t: 0, ph: 'rise', h: 0, x0: P.x, y0: P.y, tx: P.x, ty: P.y, R: 200 * (1 + 0.12 * (P.up.diveUp || 0)) };
+  diveQ = { t: 0, ph: 'rise', h: 0, x0: P.x, y0: P.y, tx: P.x, ty: P.y, R: 200 * (1 + 0.13 * (P.up.diveUp || 0)) };
   P.atkTimer = -1; P.anim = 'idle'; P.inv = Math.max(P.inv, 0.3);
   addRing(P.x, P.y, 10, 130, 0.45, routeRGB(), 8); burst(P.x, P.y - 10, 14, ['#e0403a', '#ffb0a0', '#ffffff'], 200, 0.5);
 }
@@ -4984,7 +4985,7 @@ function stepDive(dt) {
     P.x = q.x0 + (q.tx - q.x0) * p; P.y = q.y0 + (q.ty - q.y0) * p; q.h = 400 * (1 - p * p);
     if (q.t >= 0.2) {
       P.x = q.tx; P.y = q.ty; q.ph = 'land'; q.t = 0; q.h = 0; P.inv = Math.max(P.inv, 1.8);   // 적진 한가운데에 내려앉아도 빠져나올 시간을 준다
-      const R = q.R, dm = P.dmg * (3.8 + 0.4 * (P.up.diveUp || 0));
+      const R = q.R, dm = P.dmg * (3.8 + 0.44 * (P.up.diveUp || 0));
       for (const e of enemies) {
         if (e.hp <= 0) continue;
         const dx = e.x - q.tx, dy = e.y - q.ty, d = Math.hypot(dx, dy) || 1;
