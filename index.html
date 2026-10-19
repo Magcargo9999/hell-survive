@@ -2474,7 +2474,7 @@ function healP(v) {   // 흡혈·처치 회복: 초당 회복 한도가 있고, 
 let critAdd = 0, blazeBusy = false;
 function hurtEnemy(e, dmg, kx, ky, kn, quiet) {
   if (e.hp <= 0 || e.invul) return;
-  if (e.kind === 'mini') { if (quiet) dmg *= 0.5; const cap = e.max * 0.06; if (dmg > cap) dmg = cap + (dmg - cap) * 0.35; }   // 미니 보스: 한 방 폭딜은 깎는다
+  if (e.kind === 'mini' && quiet) dmg *= 0.5;   // 미니 보스: 장판 같은 지속 피해는 약하게 (v5.01: 한 방 피해 상한은 없앴다)
   if (e.kind === 'uniq') { if (quiet) dmg *= 0.6; const cap = e.max * 0.07; if (dmg > cap) dmg = cap + (dmg - cap) * 0.4; }   // 유니크: 미니 보스보다 약하지만 한 방 폭딜은 깎는다
   if (e.kind === 'boss' && quiet) dmg *= 0.12;   // 장판 같은 지속 피해는 보스에게 약하게
    // v5.00: 마왕의 '한 방 피해 상한'은 없앴다 (대신 마왕 체력을 올렸다)
