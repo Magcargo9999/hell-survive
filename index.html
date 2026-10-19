@@ -386,7 +386,7 @@ const ITEMS = {
   chest:  { name: '보물 상자', c: '#ffc247', w: 0 },
   relic:  { name: '저주받은 성유물', c: '#b46cff', w: 0 },
 };
-const itemW = k => (k === 'heal' && P && P.char === 'wolf') ? 0 : ITEMS[k].w;   // 늑대는 회복 포션이 나오지 않는다 (대신 처치 피흡)
+const itemW = k => ITEMS[k].w;   // v5.00: 늑대도 회복 포션이 다시 나온다
 // 이공벌레 스프라이트
 const BOOM_R = 115;     // 이공벌레 폭발 반경
 const BUGDEF = { cw: 107, ch: 64, ws: 1.35, anim: { walk: { row: 1, n: 7, fps: 8 }, attack: { row: 2, n: 5, fps: 4 } } };
@@ -405,13 +405,20 @@ const SNAIL_ROUTES = {
   lava: { name: '용암', title: '용암 (熔巖)', desc: '용암탄 폭발 + 용암 웅덩이 · 공격력 +15% · 체력 +30 · 공속 -9%', later: 'Lv.20 : 철갑 용암 (스킬 용암 대분출) · Lv.25 : 거대 용암', avail: true },
   route3: { name: '루트 3', title: '진화 루트 3', desc: '준비 중입니다.', later: '', avail: false },
 };
+/* v5.00: 특수 스킬은 게이지 대신 쿨타임(초). 스킬 가치(한 번 쓸 때 얼마나 강한가)에 따라 다르게 */
+// 가치 측정(봇 시뮬: 스킬 한 번이 평타 몇 초어치 피해인가 + 무적·회복 같은 부가 가치)으로 3단계로 나눴다
+//  높음 → 길게: 용암 대분출 18 · 천안 난무 15 · 광란 14 · 사슬 휘두르기 13 · 혈왕의 진 13
+//  중간      : 신성한 피의 비 12 · 피의 갈취 11 · 삼두 연쇄 물기 10 · 신성화살 12 · 물의 주술 16 (회복량을 줄이고 자주 쓰게)
+//  낮음 → 짧게: 폭발 화살 6 · 큰 화살/후방 도약 7 · 울부짖음 8 · 독 자국 폭파 8 · 천공 강하 8 · 화염 브레스 9
+const SKILL_CD = { lavaburst: 18, rush: 15, rage: 14, whip: 13, bsigil: 13, bloodrain: 12, drain: 11, cerb: 10, holyshot: 12, tide: 16, bombshot: 6, bigarrow: 7, backdash: 7, howl: 8, blast: 8, dive: 8, breath: 9, laser: 10, zone: 10, meteor: 10 };
+const skillCd = () => ((window.__SKCD && window.__SKCD[P.skill]) || SKILL_CD[P.skill] || 14);
 const SKILL_UNIQUE = { wolf: 'howl', snail: 'blast', archer: 'bigarrow', chimera: 'dive', lizard: 'rage', twins: 'whip' };
 const uniqueSkill = () => (P.char === 'chimera' && P.route === 'dream') ? 'rush' : (P.char === 'chimera' && P.route === 'flame') ? 'breath' : (P.char === 'snail' && P.route === 'lava') ? 'lavaburst' : (P.char === 'wolf' && P.route === 'twin') ? 'cerb' : (P.char === 'wolf' && P.route === 'crimson') ? (P.fin === 'holy' ? 'bloodrain' : P.fin === 'fallen' ? 'bsigil' : 'drain') : SKILL_UNIQUE[P.char];
 const uniqueSkills = () => P.char === 'lizard' ? [P.fin === 'water' ? 'tide' : 'rage'] : P.char === 'archer' ? (P.route === 'elf' && P.fin ? [P.fin === 'holy' ? 'holyshot' : 'bombshot'] : ['bigarrow', 'backdash']) : [uniqueSkill()];
 const skillName = k => (k === 'blast' && P.char === 'snail' && P.form === 2) ? '맹독 대폭파' : (k === 'bigarrow' && P.route === 'skel') ? '해골 대궁의 일격' : SKILLS[k].name;
 const SKILLS = {
   cerb:   { name: '삼두 연쇄 물기', desc: '[삼두 전용] 세 머리가 가까운 적을 차례로 물어뜯습니다. 한 번마다 범위 피해와 강한 넉백, 둔화.', sub: '3연속 · 서로 다른 적 · 범위 피해' },
-  drain:  { name: '피의 갈취', desc: '[혈랑 전용] 사방의 적에게서 피를 짜내 큰 피해를 주고, 맞힌 적 수만큼 체력을 회복합니다.', sub: '반경 400 · 적 1마리당 체력 +3% (최대 30%)' },
+  drain:  { name: '피의 갈취', desc: '[혈랑 전용] 사방의 적에게서 피를 짜내 큰 피해를 주고, 맞힌 적 수만큼 체력을 회복합니다.', sub: '반경 400 · 적 1마리당 체력 +2% (최대 15%)' },
   bloodrain: { name: '신성한 피의 비', desc: '[성혈랑 전용] 3초 동안 성스러운 핏빛 기둥이 적들 위로 연달아 내리꽂히며, 명중할 때마다 체력을 조금 회복합니다.', sub: '기둥 16개 · 범위 피해 · 명중 시 회복' },
   howl:   { name: '지옥의 울부짖음', desc: '[늑대 전용] 사방의 적을 크게 밀쳐내고 피해를 주며 느리게 만듭니다.', sub: '반경 420 · 강한 넉백 · 둔화' },
   lavaburst: { name: '용암 대분출', desc: '[용암 달팽이 전용] 남겨둔 용암 흔적이 한꺼번에 터지고, 하늘에서 거대 용암탄 1발과 작은 용암탄 4발이 쏟아집니다.', sub: '흔적 폭발 · 거대 용암탄(범위 215) · 용암 웅덩이' },
@@ -421,10 +428,10 @@ const SKILLS = {
   blast:  { name: '독 자국 폭파',   desc: '[달팽이 전용] 남겨둔 독 자국이 한꺼번에 폭발합니다.', sub: '자국이 많을수록 강력 · 넓은 폭발 범위 · 자국 소멸' },
   bigarrow: { name: '혼신의 큰 화살', desc: '[궁수 전용] 기를 모아(0.5초) 거대한 화살을 쏩니다. 일직선의 모든 적을 꿰뚫고 크게 밀어냅니다. (해골 궁수는 더 크고 강력)', sub: '충전 0.5초 · 무한 관통 · 큰 피해 · 충전 중 이동 느려짐' },
   backdash: { name: '후방 도약 사격', desc: '[궁수 전용] 적에게서 멀어지는 방향으로 무적 도약 후, 부채꼴 화살 9발을 쏘고 주변 적을 밀쳐냅니다.', sub: '무적 도약 · 9발 부채꼴 · 착지 충격파' },
-  bombshot: { name: '폭발 화살', desc: '[진화한 지옥엘프 전용] 적·탄환·경고 장판이 없는 빈 공간을 자동으로 찾아 무적 백스텝을 하며 폭발 화살을 쏩니다. 게이지가 30% 빨리 찹니다. 맞은 자리가 크게 폭발하고, 잠시 뒤 두 번 더 여진이 터집니다.', sub: '무적 백스텝 · 폭발 범위 피해 · 여진 2회' },
-  holyshot: { name: '신성화살', desc: '[성화된 지옥엘프 전용] 스페이스를 누른 채 빛을 모으고 떼면 발사합니다 (방향키로 조준). 오래 모을수록 화살이 커지고 훨씬 강해지지만, 모으는 동안은 움직일 수 없습니다. 풀차지로 명중하면 게이지가 절반 돌아옵니다.', sub: '최대 2.6초 차징 · 무한 관통 · 최대 14배 · 풀차지 명중 시 게이지 +50%' },
+  bombshot: { name: '폭발 화살', desc: '[진화한 지옥엘프 전용] 적·탄환·경고 장판이 없는 빈 공간을 자동으로 찾아 무적 백스텝을 하며 적이 가장 많이 모인 곳으로 폭발 화살을 쏩니다. 쿨타임이 짧습니다. 맞은 자리가 크게 폭발하고, 잠시 뒤 두 번 더 여진이 터집니다.', sub: '무적 백스텝 · 폭발 범위 피해 · 여진 2회' },
+  holyshot: { name: '신성화살', desc: '[성화된 지옥엘프 전용] 스페이스를 누른 채 빛을 모으고 떼면 발사합니다 (방향키로 조준). 오래 모을수록 화살이 커지고 훨씬 강해지지만, 모으는 동안은 움직일 수 없습니다. 풀차지로 명중하면 남은 쿨타임이 절반 줄어듭니다.', sub: '최대 1.8초 차징 · 무한 관통 · 최대 16배 · 풀차지 명중 시 쿨타임 -50%' },
   rage:   { name: '광란', desc: '[버서커 리자드 전용] 이성을 잃고 5초 동안 공격 속도가 3배로 치솟습니다 (이속 +12%). 체력이 낮을수록 광폭 피해가 크게 붙어, 위기일수록 더 위험해집니다.', sub: '5초 · 공속 ×3 · 이속 +12% · 붉은 광기' },
-  tide:   { name: '물의 주술', desc: '[물의 도마뱀 전사 전용] 누르면 물의 주술로 체력을 즉시 회복합니다. 시전하는 짧은 순간 무적이고, 주변 적을 물결로 밀어내며 둔화시킵니다.', sub: '체력 35% 즉시 회복 · 0.9초 무적 · 주변 밀쳐냄 + 둔화' },
+  tide:   { name: '물의 주술', desc: '[물의 도마뱀 전사 전용] 누르면 물의 주술로 체력을 즉시 회복합니다. 시전하는 짧은 순간 무적이고, 주변 적을 물결로 밀어내며 둔화시킵니다.', sub: '체력 22% 즉시 회복 · 0.9초 무적 · 주변 밀쳐냄 + 둔화' },
   whip:   { name: '사슬 휘두르기', desc: '[사슬 악마 전용] 사슬을 앞으로 길게 내던져 일직선의 적을 꿰뚫은 뒤, 몸 주위로 크게 휘둘러 4번 베고 마지막에 사슬 폭발을 일으킵니다. 최종 진화(사슬의 폭군)에서는 쓰고 나서 10초 동안 사슬이 4가닥으로 늘어납니다. 쓰는 동안 무적이에요. 쓰기 직전 사슬이 빨리 돌고 있을수록 강하고, 최종 진화(사슬의 폭군)에서 범위와 폭발이 커집니다.', sub: '일직선 관통 → 회전 4연타 → 사슬 폭발 · 시전 중 무적' },
   bsigil: { name: '혈왕의 진', desc: '[타락한 혈랑 전용] 발밑에 6초 동안 핏빛 진을 펼칩니다. 진 안의 적은 0.5초마다 피해를 입고 진 가운데로 끌려가며, 내가 진 안에 서 있으면 공속이 크게 오르고 진 안에서 적을 쓰러뜨릴 때마다 체력이 회복됩니다.', sub: '6초 · 반경 175 · 진 안 공속 +43% · 끌어당김 · 처치 회복' },
   laser:  { name: '지옥 광선',   desc: '앞쪽으로 긴 광선을 쏘아 훑어버립니다.',          sub: '지속 1.5초 · 관통 · 틱 피해' },
@@ -762,7 +769,7 @@ function miniActName(a) {   // 공격 동작: 준비 → 타격 → 마무리 (�
 }
 const miniHit = d => { const h0 = P.hp; hurtPlayer(d * (1 + 0.08 * P.tier)); if (P.hp < h0) P.miniHits++; };   // 실제로 피해를 입었을 때만 '맞았다'로 센다
 function miniTele(e, o) { e.tele.push(Object.assign({ t: 0, dur: 1, done: false }, o)); }
-function inRectT(px, py, t, pad) { const c = Math.cos(t.ang), s = Math.sin(t.ang), dx = px - t.x, dy = py - t.y, lx = dx * c + dy * s, ly = -dx * s + dy * c; return lx > -pad && lx < t.len + pad && Math.abs(ly) < t.w / 2 + pad; }
+function inRectT(px, py, t, pad) { if (px === P.x && py === P.y) pad += PR(); const c = Math.cos(t.ang), s = Math.sin(t.ang), dx = px - t.x, dy = py - t.y, lx = dx * c + dy * s, ly = -dx * s + dy * c; return lx > -pad && lx < t.len + pad && Math.abs(ly) < t.w / 2 + pad; }
 function spawnMini() {
   if (P.bossK === 'skel') { spawnSkMini(); return; }   // 스켈레톤 마왕 판: 해골 전사 둘
   P.miniDone = true;
@@ -789,7 +796,7 @@ function miniAtk(e, k, second) {
     e.at = { k, t: 0, wind, tot: wind + 0.4 };
     miniTele(e, { k: 'circle', x: e.x, y: e.y, r: 140, dur: wind, stick: true, fire: () => {
       sfx('hit'); shake = Math.max(shake, 6); addRing(e.x, e.y - 10, 20, 150, 0.3, '255,90,60', 8); burst(e.x, e.y - 20, 10, ['#ff5a3a', '#ffb05a'], 240, 0.5);
-      if (Math.hypot(P.x - e.x, P.y - e.y) < 150) miniHit(28); } });
+      if (Math.hypot(P.x - e.x, P.y - e.y) < 150 + PR()) miniHit(28); } });
   } else {   // 내려찍기: 뛰어올라 빨간 원 안에 내려찍는다 (가끔씩만)
     const wind = 0.6 * m; e.atkN = 0; e.slamAt = 4 + ((rand() * 3) | 0);
     e.at = { k: 'slam', ph: 'wind', t: 0, d: wind };
@@ -802,7 +809,7 @@ function miniLand(e) {
   addRing(e.x, e.y, 10, 140, 0.45, '255,60,50', 14); addRing(e.x, e.y, 6, 200, 0.6, '255,150,60', 8);
   burst(e.x, e.y - 8, 30, ['#2a1c1c', '#5a3a3a', '#ff5a3a', '#ffb05a'], 360, 0.8); shake = Math.max(shake, 14); sfx('boom');
   mfx.push({ x: e.x, y: e.y, t: 0, life: 0.45 });
-  if (Math.hypot(P.x - e.x, P.y - e.y) < 145) miniHit(40);
+  if (Math.hypot(P.x - e.x, P.y - e.y) < 145 + PR()) miniHit(40);
 }
 function updateMini(e, dt) {
   if (e.bk === 'eye') { updateEyeMini(e, dt); return; }
@@ -982,8 +989,8 @@ function drawPet(p, x, y) {
   else ctx.fillText(p.down ? `쓰러짐 ${Math.ceil(p.downT)}` : '♥', x, ty);
 }
 /* ---------- 원숭이 마왕 (근접 전투형 보스) ---------- */
-const BOSS_HP = 18000;
-const bossHit = d => hurtPlayer(d * (boss && !boss.bk ? 0.92 : 0.8) * (1 + 0.08 * P.tier));   // 원숭이 마왕은 조금 더 아프다   // 보스 공격은 일반 몹보다 강하다 (Lv.25 입장은 빡빡하게, Lv.30은 여유있게)
+const BOSS_HP = 20000;   // v5.00: 한 방 피해 상한을 없앤 만큼 18000 -> 20000
+const bossHit = d => hurtPlayer(d * 1.08 * (boss && !boss.bk ? 0.92 : 0.8) * (1 + 0.08 * P.tier));   // v5.00: 마왕 공격력 +8%   // 원숭이 마왕은 조금 더 아프다   // 보스 공격은 일반 몹보다 강하다 (Lv.25 입장은 빡빡하게, Lv.30은 여유있게)
 const BSP = { cw: 272, ch: 234, rows: { idle: [0, 4], walk: [1, 2], attack: [2, 3], hit: [3, 2], jump: [4, 1], roar: [5, 1] } };
 function spawnBoss() {
   boss = { kind: 'boss', x: 657, y: 760, kx: 0, ky: 0, sp: 0, spec: null, sc: 1, r: 58, hp: BOSS_HP * (1 + 0.3 * P.tier), max: BOSS_HP * (1 + 0.3 * P.tier), dmg: 0, exp: 0, elite: false, flash: 0, t: 0, orbCd: 0, slowT: 0,
@@ -994,9 +1001,35 @@ function spawnBoss() {
   enemies.push(boss);
   if (P.pet) { const q = P.pet; q.hp = q.max; q.down = false; q.act = null; q.inv = 0; q.intro = 0; q.cd1 = 1.2; q.cd2 = 4; q.cd3 = 7; }   // 마왕전: 동료 체력이 가득 찬 채로 시작
 }
-const bossPlayerHit = (x, y, r) => Math.hypot(P.x - x, P.y - y) < r + 10;
+const bossPlayerHit = (x, y, r) => Math.hypot(P.x - x, P.y - y) < r + 10 + PR();
+const PR = () => [0, 5, 9, 10][P.form | 0] || 0;   // v5.00: 진화해서 몸집이 커지면 피격 범위도 커진다 (0단계 기준 +0 · 1진화 +5 · 최종 +9)
 const bossAoE = (x, y, r, d) => { petAoE(x, y, r, d); if (bossPlayerHit(x, y, r)) bossHit(d); };   // 플레이어와 동료 모두에게 피해
 function bossTele(o) { boss.tele.push(Object.assign({ t: 0, dur: 1, done: false }, o)); }
+/* v5.00: 난이도 단계마다 마왕에게 '추가 패턴'이 무작위로 하나씩 붙는다 (1단계 1개 ... 5단계 5개). 원래 패턴 사이사이에 따로 쓴다 */
+const TIER_EX = ['rain', 'cross', 'ring', 'grid', 'nova'];
+const TIER_EX_NAME = { rain: '낙석', cross: '십자 균열', ring: '고리 충격파', grid: '세 줄 균열', nova: '마력 폭발' };
+function tierExInit(e) { const a = TIER_EX.slice().sort(() => rand() - 0.5); e.ex = a.slice(0, Math.min(a.length, P.tier | 0)); e.exT = 7; }
+function tierEx(e, dt) {
+  if (!e.ex || !e.ex.length || state !== 'play' || trans || e.invul || e.shield || e.hp <= 0 || e.st === 'intro' || e.st === 'roar' || e.st === 'grow') return;
+  if ((e.exT -= dt) > 0) return;
+  e.exT = 10 - 0.6 * P.tier + rand() * 2;
+  const k = e.ex[(rand() * e.ex.length) | 0], T = o => e.tele.push(Object.assign({ t: 0, dur: 1, done: false }, o));
+  const boom = (t, d) => { bossAoE(t.x, t.y, t.r, d); addRing(t.x, t.y, 8, t.r, 0.35, '255,90,60', 7); burst(t.x, t.y - 6, 10, ['#3a2a2a', '#ff5a3a', '#ffb05a'], 220, 0.6); shake = Math.max(shake, 6); };
+  const line = d => t => { const c = Math.cos(t.ang), sn = Math.sin(t.ang); addRing(t.x + c * t.len / 2, t.y + sn * t.len / 2, 8, 70, 0.3, '255,110,50', 6); sfx('hit'); shake = Math.max(shake, 5); if (inRectT(P.x, P.y, t, 10)) bossHit(d); };
+  floatNum(e.x, e.y - 150, TIER_EX_NAME[k] + '!', '#ffb08a');
+  if (k === 'rain') {   // 낙석: 플레이어 주변에 차례로 떨어진다 (견제)
+    for (let i = 0; i < 5; i++) { let x = P.x, y = P.y; if (i) for (let n = 0; n < 10; n++) { const a = rand() * 6.283, dd = 90 + rand() * 170; x = P.x + Math.cos(a) * dd; y = P.y + Math.sin(a) * dd; if (inPoly(x, y)) break; } T({ k: 'circle', x, y, r: 86, t: -i * 0.18, dur: 0.95, fire: t => boom(t, 20) }); }
+  } else if (k === 'cross') {   // 십자 균열: 플레이어 자리에서 엇갈리는 두 줄 (일반)
+    const a = rand() * 3.1416; for (const q of [a, a + 1.5708]) T({ k: 'rect', x: P.x - Math.cos(q) * 380, y: P.y - Math.sin(q) * 380, ang: q, len: 760, w: 84, dur: 1.0, fire: line(22) });
+  } else if (k === 'ring') {   // 고리 충격파: 한가운데나 바깥으로 피한다 (일반)
+    T({ k: 'donut', x: P.x, y: P.y, r: 70, r2: 210, dur: 1.0, fire: t => { addRing(t.x, t.y, 70, 210, 0.35, '255,110,50', 9); shake = Math.max(shake, 7); petDonut(t.x, t.y, 70, 210, 22); const d = Math.hypot(P.x - t.x, P.y - t.y); if (d > 70 - 10 - PR() && d < 210 + 10 + PR()) bossHit(22); } });
+  } else if (k === 'grid') {   // 세 줄 균열: 나란한 세 줄 사이 틈으로 피한다 (견제)
+    const a = rand() * 3.1416, c = Math.cos(a), sn = Math.sin(a);
+    for (let i = -1; i <= 1; i++) { const ox = P.x - sn * i * 170, oy = P.y + c * i * 170; T({ k: 'rect', x: ox - c * 450, y: oy - sn * 450, ang: a, len: 900, w: 90, dur: 0.95, fire: line(20) }); }
+  } else {   // 마력 폭발: 마왕 주변이 크게 터진다 (일반) — 근접 캐릭터는 잠깐 물러난다
+    T({ k: 'circle', x: e.x, y: e.y, r: 230, dur: 1.1, stick: true, fire: t => boom(t, 26) });
+  }
+}
 function bossMove(e, nx, ny) { if (inPoly(nx, ny)) { e.x = nx; e.y = ny; return true; } if (inPoly(nx, e.y)) { e.x = nx; return true; } if (inPoly(e.x, ny)) { e.y = ny; return true; } return false; }
 function bossChase(e) { e.st = 'chase'; e.stT = ((e.rage ? 0.22 : 0.5) + rand() * 0.3) / bossTempo(); e.invul = false; }
 function bossRecover(e, t) { e.st = 'recover'; e.stT = t * 0.52 / bossTempo(); e.invul = false; }
@@ -1059,11 +1092,13 @@ function bossLand(e) {
   if (e.rage || P.tier >= 5) {   // 분노 상태(5단계는 항상): 충격파가 한 번 더 퍼진다
     bossTele({ k: 'donut', x: e.x, y: e.y, r: 140, r2: 300, dur: 0.7, fire: t => {
       addRing(t.x, t.y, 125, 285, 0.35, '255,110,50', 10); shake = Math.max(shake, 8);
-      const d = Math.hypot(P.x - t.x, P.y - t.y); petDonut(t.x, t.y, 140, 300, 32); if (d > 140 - 10 && d < 300 + 10) bossHit(32); } });
+      const d = Math.hypot(P.x - t.x, P.y - t.y); petDonut(t.x, t.y, 140, 300, 32); if (d > 140 - 10 - PR() && d < 300 + 10 + PR()) bossHit(32); } });
     e.stT = 1.1;
   }
 }
 function updateBoss(e, dt) {
+  if (e.ex === undefined) tierExInit(e);
+  tierEx(e, dt);
   if (e.bk === 'eye') { updateEyeBoss(e, dt); return; }
   if (e.bk === 'fw') { updateFwBoss(e, dt); return; }
   if (e.bk === 'skel') { updateSkBoss(e, dt); return; }
@@ -1131,7 +1166,7 @@ function updateBoss(e, dt) {
       if (e.ghost.length < 8 && Math.floor(e.t * 40) % 2 === 0) e.ghost.push({ x: e.x, y: e.y, t: 0, f: e.face });
       const ok = bossMove(e, nx, ny);
       if (!e.dashHit) {   // 몸통 근처에 있으면 맞는다
-        if (Math.hypot(P.x - e.x, P.y - e.y) < 84) { e.dashHit = true; bossHit(42); }
+        if (Math.hypot(P.x - e.x, P.y - e.y) < 84 + PR()) { e.dashHit = true; bossHit(42); }
       }
       if (!ok || e.stT <= 0) {
         if (!ok) { shake = Math.max(shake, 12); addRing(e.x, e.y, 8, 120, 0.4, '255,80,60', 9); burst(e.x, e.y - 8, 16, ['#3a2a2a', '#ff5a3a'], 260, 0.6); }
@@ -1156,7 +1191,7 @@ function updateBoss(e, dt) {
 // 시트(fwb): 줄마다 칸 하나에 몸 기준점 cx·fy. 원본은 오른쪽을 본다. 거대화한 모습은 fwfx 의 giant 조각
 const FWB = {"cw": 299, "ch": 182, "cx": 151, "fy": 178, "rows": {"idle": {"row": 0, "n": 5}, "walk": {"row": 1, "n": 5}, "attack": {"row": 2, "n": 5}, "frenzy": {"row": 3, "n": 5}, "drain": {"row": 4, "n": 4}, "grow": {"row": 5, "n": 3}, "hit": {"row": 6, "n": 2}, "death": {"row": 7, "n": 4}}};
 const FWFX = {"giant": [0, 0, 378, 185], "spike": [382, 0, 99, 108], "sigil": [485, 0, 97, 122], "psigil": [586, 0, 314, 67], "giantAnchor": [195, 185]};
-const FW_HP = 21000, FW_S = 1.7, FW_GS = 1.45;   // 체력 · 보통 크기 배율 · 거대화 배율
+const FW_HP = 23500, FW_S = 1.7, FW_GS = 1.45;   // 체력 · 보통 크기 배율 · 거대화 배율
 const BMAP = { s: 1.25, w: 1568, h: 1568, cx: 784, cy: 731, rx: 545, ry: 432, start: [784, 1085] };   // 전용 맵 (원본 1254px를 1.25배)
 const inBlood = (x, y) => ((x - BMAP.cx) / BMAP.rx) ** 2 + ((y - BMAP.cy) / BMAP.ry) ** 2 < 1;
 let fwd = null, fwFx = [];   // 쓰러지는 모습 · 가시/진 이펙트
@@ -1183,7 +1218,7 @@ function spawnFw() {
 const fwM = e => (e.rage ? 0.8 : 1) * (1 - 0.05 * P.tier) / bossTempo();
 const fwDm = d => d * 0.8 * (1 + 0.04 * P.tier);   // 피해 배율 (시뮬 기준 원숭이 마왕보다 확실히 어렵게, 그래도 깰 수 있게)
 function fwTele(e, o) { e.tele.push(Object.assign({ t: 0, dur: 1, done: false }, o)); }
-function inFanT(t, pad) { const dx = P.x - t.x, dy = P.y - t.y, d = Math.hypot(dx, dy); return d < t.len + pad && Math.abs(angDiff(Math.atan2(dy, dx), t.ang)) < t.half + Math.atan2(pad, Math.max(d, 30)); }
+function inFanT(t, pad) { pad += PR(); const dx = P.x - t.x, dy = P.y - t.y, d = Math.hypot(dx, dy); return d < t.len + pad && Math.abs(angDiff(Math.atan2(dy, dx), t.ang)) < t.half + Math.atan2(pad, Math.max(d, 30)); }
 function fwSpike(x, y, sc, k) { if (fwFx.length < 80) fwFx.push({ k: k || 'spike', x, y, t: 0, life: 0.55, sc: sc || 1 }); }
 function fwPool(x, y, r, life) { let n = 0; for (const z of zones) if (z.type === 'bpool') n++; if (n < 60) zones.push({ type: 'bpool', x, y, r, life, max: life, dm: 9 * (1 + 0.1 * P.tier) }); }
 function fwPick(e, d) {
@@ -1232,7 +1267,7 @@ function fwStart(e, k) {
     e.st = 'drain'; e.an = 'drain'; e.fr = 0;
     const R = [[0, 170], [170, 340], [340, 520]].concat(e.rage ? [[520, 720]] : []), gap = 0.55 * m;
     R.forEach(([r1, r2], i) => fwTele(e, { k: r1 ? 'donut' : 'circle', x: e.x, y: e.y, r: r1 || r2, r2, t: -i * gap, dur: 0.95 * m, fire: t => {
-      const dd = Math.hypot(P.x - t.x, P.y - t.y), hit = t.k === 'circle' ? dd < t.r + 10 : dd > t.r - 10 && dd < t.r2 + 10;
+      const dd = Math.hypot(P.x - t.x, P.y - t.y), hit = t.k === 'circle' ? dd < t.r + 10 + PR() : dd > t.r - 10 - PR() && dd < t.r2 + 10 + PR();
       for (let q = 0; q < 6; q++) { const a = rand() * 6.283, rr = (t.k === 'circle' ? 0 : t.r) + rand() * ((t.r2 || t.r) - (t.k === 'circle' ? 0 : t.r)); fwSpike(t.x + Math.cos(a) * rr, t.y + Math.sin(a) * rr * 0.9, 0.8); }
       addRing(t.x, t.y, t.r * 0.9, (t.r2 || t.r) + 10, 0.35, '255,30,50', 8); shake = Math.max(shake, 6); sfx('boom');
       if (hit) { bossHit(fwDm(28)); if (boss) { boss.hp = Math.min(boss.max, boss.hp + boss.max * 0.015); floatNum(boss.x, boss.y - 160, '흡혈!', '#ff4a6a'); } } } }));
@@ -1245,7 +1280,7 @@ function fwStart(e, k) {
     const n = (e.rage ? 9 : 6) + (P.tier >= 2 ? 2 : 0);
     for (let i = 0; i < n; i++) fwTele(e, { k: 'circle', x: P.x, y: P.y, r: 108, t: -i * 0.3 / tp, dur: 0.95 / tp, lead: true, fire: t => {
       fwSpike(t.x, t.y, 1.2); addRing(t.x, t.y, 8, t.r, 0.3, '255,40,60', 7); shake = Math.max(shake, 5); sfx('boom');
-      if (Math.hypot(P.x - t.x, P.y - t.y) < t.r + 10) bossHit(fwDm(30)); } });
+      if (Math.hypot(P.x - t.x, P.y - t.y) < t.r + 10 + PR()) bossHit(fwDm(30)); } });
     e.stT = (n - 1) * 0.3 / tp + 0.95 / tp + 0.2;
   } else if (k === 'grow') {
     e.st = 'grow'; e.stT = 1.7; e.invul = true; e.an = 'grow'; e.fr = 0; e.tele = [];
@@ -1255,8 +1290,8 @@ function fwStart(e, k) {
     e.st = 'stomp'; const n = e.rage ? 4 : 3, gap = 0.75 * m;
     for (let i = 0; i < n; i++) fwTele(e, { k: 'circle', x: P.x, y: P.y, r: 200, t: -i * gap, dur: 1.0 * m, follow: 0.55 * m, fire: t => {
       fwSpike(t.x, t.y, 1.6, 'sigil'); addRing(t.x, t.y, 10, t.r, 0.4, '255,40,60', 12); shake = Math.max(shake, 14); sfx('boom');
-      if (Math.hypot(P.x - t.x, P.y - t.y) < t.r + 10) bossHit(fwDm(46));
-      fwTele(boss, { k: 'donut', x: t.x, y: t.y, r: 200, r2: 360, dur: 0.45, fire: q => { addRing(q.x, q.y, 200, 360, 0.3, '255,90,60', 8); const dd = Math.hypot(P.x - q.x, P.y - q.y); if (dd > 190 && dd < 370) bossHit(fwDm(26)); } }); } });
+      if (Math.hypot(P.x - t.x, P.y - t.y) < t.r + 10 + PR()) bossHit(fwDm(46));
+      fwTele(boss, { k: 'donut', x: t.x, y: t.y, r: 200, r2: 360, dur: 0.45, fire: q => { addRing(q.x, q.y, 200, 360, 0.3, '255,90,60', 8); const dd = Math.hypot(P.x - q.x, P.y - q.y); if (dd > 190 - PR() && dd < 370 + PR()) bossHit(fwDm(26)); } }); } });
     e.stT = (n - 1) * gap + 1.0 * m + 0.6; e.an = 'grow'; e.fr = 2;
   } else if (k === 'gsweep') {   // 거대화: 맵 절반을 쓸어버리는 앞발 휘두르기 (두 번)
     e.st = 'gsweep'; e.n = 0; e.stT = 0;
@@ -1307,7 +1342,7 @@ function updateFwBoss(e, dt) {
     case 'frenzy': if (e.stT <= 0) {
       if (e.n >= (e.rage ? 3 : 2)) {   // 마무리: 몸 주위로 가시 폭발
         e.st = 'frenzyEnd'; e.stT = 0.6 * m + 0.25; e.an = 'frenzy'; e.fr = 4;
-        fwTele(e, { k: 'circle', x: e.x, y: e.y, r: 165, dur: 0.6 * m, stick: true, fire: t => { for (let q = 0; q < 8; q++) { const a = q * 0.785; fwSpike(t.x + Math.cos(a) * 110, t.y + Math.sin(a) * 90, 0.9); } addRing(t.x, t.y, 10, 165, 0.35, '255,40,60', 10); shake = Math.max(shake, 10); sfx('boom'); if (Math.hypot(P.x - t.x, P.y - t.y) < 175) bossHit(fwDm(36)); } });
+        fwTele(e, { k: 'circle', x: e.x, y: e.y, r: 165, dur: 0.6 * m, stick: true, fire: t => { for (let q = 0; q < 8; q++) { const a = q * 0.785; fwSpike(t.x + Math.cos(a) * 110, t.y + Math.sin(a) * 90, 0.9); } addRing(t.x, t.y, 10, 165, 0.35, '255,40,60', 10); shake = Math.max(shake, 10); sfx('boom'); if (Math.hypot(P.x - t.x, P.y - t.y) < 175 + PR()) bossHit(fwDm(36)); } });
       } else fwSlash(e);
     } break;
     case 'frenzyEnd': for (const t of e.tele) if (t.stick) { t.x = e.x; t.y = e.y; } if (e.stT <= 0) fwRecover(e, 1.0); break;
@@ -1316,7 +1351,7 @@ function updateFwBoss(e, dt) {
       const s = 1650 * (1 + (tp - 1) * 0.3) * dt, ok = bossMove(e, e.x + e.dv.ax * s, e.y + e.dv.ay * s); e.left -= s; e.an = 'walk'; e.fr = 4;
       if (e.ghost.length < 10) e.ghost.push({ x: e.x, y: e.y, t: 0, f: e.face, an: 'walk', fr: 4 });
       e.poolAcc += s; if (e.poolAcc > 80) { e.poolAcc = 0; fwPool(e.x, e.y, 44, 2.0); }
-      if (!e.dashHit && Math.hypot(P.x - e.x, P.y - e.y) < e.r + 22) { e.dashHit = true; bossHit(fwDm(34)); }
+      if (!e.dashHit && Math.hypot(P.x - e.x, P.y - e.y) < e.r + 22 + PR()) { e.dashHit = true; bossHit(fwDm(34)); }
       if (!ok || e.left <= 0) {
         e.n++; shake = Math.max(shake, 8); addRing(e.x, e.y, 8, 110, 0.3, '255,40,60', 8); burst(e.x, e.y - 8, 12, ['#3a0a10', '#ff2a3a', '#ff8a8a'], 260, 0.5);
         if (e.n < e.legs) fwLeg(e, false); else fwRecover(e, 1.2);
@@ -1361,7 +1396,7 @@ function updateFwBoss(e, dt) {
     case 'gcharge': {
       const s = 1250 * dt, ok = bossMove(e, e.x + e.dv.ax * s, e.y + e.dv.ay * s);
       if (e.ghost.length < 6 && Math.floor(e.t * 30) % 2 === 0) e.ghost.push({ x: e.x, y: e.y, t: 0, f: e.face, an: 'giant' });
-      if (!e.dashHit && Math.hypot(P.x - e.x, P.y - e.y) < 135) { e.dashHit = true; bossHit(fwDm(50)); }
+      if (!e.dashHit && Math.hypot(P.x - e.x, P.y - e.y) < 135 + PR()) { e.dashHit = true; bossHit(fwDm(50)); }
       if (!ok || e.stT <= 0) { shake = Math.max(shake, 14); addRing(e.x, e.y, 10, 200, 0.4, '255,40,60', 12); for (let q = 0; q < 5; q++) fwSpike(e.x + (rand() - 0.5) * 220, e.y + (rand() - 0.5) * 120, 1.1); fwRecover(e, 1.0); }
       break;
     }
@@ -1418,7 +1453,7 @@ function fwBossDefeated(e) {
   burst(e.x, e.y - 50, 90, ['#ff1a3a', '#ff8a8a', '#ffffff', '#2a0a10'], 560, 1.3); shake = 26; sfx('evolve');
   banner = { txt: '타락한 혈랑왕을 쓰러뜨렸다!' + (first ? '\n혈랑 루트 Lv.20 최종 진화에 [타락한 혈랑]이 열렸다!' : ''), t: 7, c: '#ff8a9a' };
   P.fwUnlock = first;
-  P.earned = calcShards() + Math.round(300 * tierMul()); SAVE.shards += P.earned;
+  P.earned = calcShards() + Math.round(300 * tierMul()) + (P.fee || 0); SAVE.shards += P.earned;   // + 참가비 반환
   saveSave(); state = 'win'; winT = 0;
 }
 /* ---------- 스켈레톤 마왕 (난이도 1단계부터 · 원숭이 마왕 / 마안군주와 1/3씩) ---------- */
@@ -1488,7 +1523,7 @@ function skStart(e, k) {
     const n = (e.rage ? 8 : 6) + (P.tier >= 3 ? 2 : 0), gap = 0.3 / tp;
     for (let i = 0; i < n; i++) skTele(e, { k: 'circle', x: P.x, y: P.y, r: 92, t: -i * gap, dur: 0.95 / tp, lead: true, fire: t => {
       skSpike(t.x, t.y, 1.1, 'pillar'); addRing(t.x, t.y, 8, t.r, 0.3, '255,70,190', 7); burst(t.x, t.y - 20, 8, ['#ff4ab4', '#ffc0e6', '#2a0a1e'], 200, 0.5); shake = Math.max(shake, 4); sfx('boom');
-      if (Math.hypot(P.x - t.x, P.y - t.y) < t.r + 10) skHit(22); } });
+      if (Math.hypot(P.x - t.x, P.y - t.y) < t.r + 10 + PR()) skHit(22); } });
     e.stT = (n - 1) * gap + 0.95 / tp + 0.3;
   }
 }
@@ -1500,7 +1535,7 @@ function skImpact(e) {   // 내려찍기 착지: 착지 지점 큰 피해 + 넓�
   burst(e.x, e.y - 8, 44, ['#1a0a14', '#4a2a3a', '#ff3aa8', '#ffc0e6'], 440, 0.9); shake = Math.max(shake, 20); sfx('boom');
   for (let q = 0; q < 10; q++) { const a = q * 0.628; skSpike(e.x + Math.cos(a) * 125, e.y + Math.sin(a) * 100, 1.15); }
   addRing(e.x, e.y, 150, 280, 0.4, '255,100,200', 10);   // 넓은 충격파 (스플래시)
-  const d = Math.hypot(P.x - e.x, P.y - e.y); if (d < 160) skHit(44); else if (d < 280) skHit(18);
+  const d = Math.hypot(P.x - e.x, P.y - e.y) - PR(); if (d < 160) skHit(44); else if (d < 280) skHit(18);
   petAoE(e.x, e.y, 160, 48);
 }
 function skPhase(e) {   // 결계: 무적 + 맵 외곽 3곳에 해골 첨탑, 첨탑마다 해골병 2기
@@ -1526,7 +1561,6 @@ function skMinion(x, y) {   // 해골병: 휘두르기 하나만 쓰는 하급 �
   enemies.push({ kind: 'skm', x, y, kx: 0, ky: 0, sp: 0, spec: null, sc: 1, r: 18, hp, max: hp, dmg: 0, exp: 0, elite: false, flash: 0, t: rand(), orbCd: 0, slowT: 0, kres: 0.9, face: x < P.x ? 1 : -1, st: 'rise', stT: 0.8, cd: 0.6 + rand() * 0.8, tele: [], swT: 0 });
 }
 function skMinorDead(e) {   // 첨탑 · 해골병이 쓰러짐
-  if (P.skill) P.gauge = Math.min(P.gmax, P.gauge + (e.kind === 'skh' ? 8 : 3) * gaugeMul());
   if (e.kind === 'skh') {
     addRing(e.x, e.y - 60, 10, 200, 0.6, '255,120,210', 12); burst(e.x, e.y - 70, 40, ['#ff4ab4', '#ffc0e6', '#cbbfa8', '#1a0a14'], 360, 0.9); shake = Math.max(shake, 10); sfx('chest');
     const n = enemies.filter(q => q.kind === 'skh' && q.hp > 0).length;
@@ -1603,7 +1637,7 @@ function updateSkBoss(e, dt) {
     case 'dash': {
       const s = 1350 * (1 + (bossTempo() - 1) * 0.3) * dt, ok = bossMove(e, e.x + e.dv.ax * s, e.y + e.dv.ay * s); e.left -= s; e.an = 'walk'; e.fr = 4;
       if (e.ghost.length < 8) e.ghost.push({ x: e.x, y: e.y, t: 0, f: e.face, an: 'walk', fr: 4 });
-      if (!e.dashHit && Math.hypot(P.x - e.x, P.y - e.y) < e.r + 30) { e.dashHit = true; skHit(34); }
+      if (!e.dashHit && Math.hypot(P.x - e.x, P.y - e.y) < e.r + 30 + PR()) { e.dashHit = true; skHit(34); }
       if (!ok || e.left <= 0) {
         e.n++; shake = Math.max(shake, 10); addRing(e.x, e.y, 8, 130, 0.35, '255,60,170', 9); burst(e.x, e.y - 8, 16, ['#1a0a14', '#ff3aa8', '#ffc0e6'], 260, 0.6);
         if (e.rage && e.n < 2) { skAim(e); e.st = 'dashWind'; e.stT = 0.55 * m; e.an = 'walk'; e.fr = 4; skTele(e, { k: 'rect', x: e.x, y: e.y, ang: Math.atan2(P.y - e.y, P.x - e.x), len: 640, w: 150, dur: e.stT, aim: e.stT * 0.5, nofire: true }); }
@@ -1651,7 +1685,7 @@ function updateSkFx(dt) {
   for (const q of skDead) q.t += dt; skDead = skDead.filter(q => q.t < 1.2);
   for (const w of skp) {   // 참격파: 곧게 날아가며 한 번 벤다
     w.t += dt; w.x += Math.cos(w.ang) * w.sp * dt; w.y += Math.sin(w.ang) * w.sp * dt;
-    if (!w.hit && state === 'play') { const ux = Math.cos(w.ang), uy = Math.sin(w.ang), rx = P.x - w.x, ry = P.y - w.y, al = rx * ux + ry * uy, side = -rx * uy + ry * ux; if (Math.abs(al) < 34 && Math.abs(side) < 55) { w.hit = true; skHit(22); } }
+    if (!w.hit && state === 'play') { const ux = Math.cos(w.ang), uy = Math.sin(w.ang), rx = P.x - w.x, ry = P.y - w.y, al = rx * ux + ry * uy, side = -rx * uy + ry * ux; if (Math.abs(al) < 34 + PR() && Math.abs(side) < 55 + PR()) { w.hit = true; skHit(22); } }
     if (rand() < 0.5) fx.push({ x: w.x + (rand() - 0.5) * 30, y: w.y - 30 + (rand() - 0.5) * 60, vx: -Math.cos(w.ang) * 80, vy: -40, life: 0.35, max: 0.35, c: ['#ff4ab4', '#ffc0e6'][(rand() * 2) | 0], s: 3 });
   }
   skp = skp.filter(w => w.t < w.life);
@@ -1898,7 +1932,9 @@ function startFw() {
   curChar = S.char; audioInit(); reset(S.char);
   for (const k of SNAP_KEYS) if (S[k] !== undefined && k !== 'tier') P[k] = JSON.parse(JSON.stringify(S[k]));
   if (P.orbD > 2) P.orbD = P.orbD >= 17 ? 0.95 : 0.55;   // v4.05 이전 스펙: 구슬 피해 고정값 → 배율
-  P.tier = S.tier || 0; P.fee = 0; P.fwRun = true; P.hp = P.max; P.spd0 = P.spd; P.gauge = P.skill ? P.gmax * 0.4 : 0; P.miniDone = true; P.poisonSpawned = true; P.exitLeft = 0; P.goal = null;
+  let ft = S.tier || 0; while (ft > 0 && SAVE.shards < ft * 25) ft--;   // v5.00: 숨은 난이도도 참가비(단계×25)를 낸다 (없으면 단계를 낮춘다)
+  P.tier = ft; P.fee = ft * 25; if (P.fee) { SAVE.shards -= P.fee; saveSave(); }
+  P.fwRun = true; P.hp = P.max; P.spd0 = P.spd; P.skT = P.skill ? skillCd() * 0.5 : 0; P.miniDone = true; P.poisonSpawned = true; P.exitLeft = 0; P.goal = null;
   if (P.char !== 'snail') ensureTint(P.form);
   show('startBox', false); show('overBox', false); show('levelBox', false); show('pauseBox', false);
   state = 'play'; enterBloodArena();
@@ -2010,7 +2046,7 @@ function updateEbul(dt) {
     }
     b.x += b.vx * dt; b.y += b.vy * dt;
     if (b.t >= b.life) { b.dead = true; continue; }
-    if (Math.hypot(P.x - b.x, P.y - b.y) < b.r + 11) { eyeHit(b); b.dead = true; burst(b.x, b.y - 18, 5, ['#d84cff', '#ffffff'], 140, 0.3); continue; }
+    if (Math.hypot(P.x - b.x, P.y - b.y) < b.r + 11 + PR()) { eyeHit(b); b.dead = true; burst(b.x, b.y - 18, 5, ['#d84cff', '#ffffff'], 140, 0.3); continue; }
     if (pet && !pet.down && Math.hypot(pet.x - b.x, pet.y - b.y) < b.r + 16) { petHurt(pet, b.dmg); b.dead = true; }
   }
   ebul = ebul.filter(b => !b.dead);
@@ -2124,7 +2160,7 @@ function eyeBeam(t) {
 function eyeTent(t) {
   addRing(t.x, t.y, t.r, t.r2, 0.35, '214,90,255', 10); shake = Math.max(shake, 7); sfx('boom');
   petDonut(t.x, t.y, t.r, t.r2, 28);
-  const d = Math.hypot(P.x - t.x, P.y - t.y); if (d > t.r - 10 && d < t.r2 + 10) bossHit(28);
+  const d = Math.hypot(P.x - t.x, P.y - t.y); if (d > t.r - 10 - PR() && d < t.r2 + 10 + PR()) bossHit(28);
 }
 function eyeStart(e, k) {
   const tp = bossTempo(), m = (e.rage ? 0.8 : 1) * (1 - 0.06 * P.tier) / tp, r = e.rage;
@@ -2317,14 +2353,14 @@ function newPlayer(char) {
   const p = {
     char, bossK: rand() < 0.5 ? 'eye' : 'monkey', shield: 0, boost: 0, armor: char === 'snail' ? 0.9 : 1, trailAcc: 0, tx: 0, ty: 0,
     syn: {}, aspd: 1, knock: 0.7, crit: 0, critD: 1.7, vx: 0, vy: 0, lavaT: 0, lavaTick: 0, banish: 0, banned: {}, cdT: { th: 1.5, bl: 1, nv: 2.5, au: 0, nv2: 0 }, vampCd: 0, expMul: 1, named: 0, bolts: 1, killHeal: 0, trailBonus: 0, orbR: 80, orbW: 3.2, orbD: 0.55, revived: false, earned: 0,
-    x: 0, y: 0, hp: sn ? 125 : ar ? 115 : 100, max: sn ? 125 : ar ? 115 : 100, spd: sn ? 175 : ar ? 215 : 200, face: 1,
+    x: 0, y: 0, hp: sn ? 125 : ar ? 100 : 100, max: sn ? 125 : ar ? 100 : 100, spd: sn ? 175 : ar ? 215 : 200, face: 1,
     anim: 'idle', animT: 0, inv: 0, hitT: 0,
     atkTimer: -1, atkCd: 0, atkHitN: 0, ax: 1, ay: 0,
     dmg: sn ? 18 : ar ? 22 : 18, rng: sn || ar ? 100 : 96, cd: sn ? 0.92 : ar ? 0.6 : 0.9, pickup: ar ? 95 : 90,
-    pierce: ar ? 2 : 1, fin: null, regen: 0, arrowScale: 1, far: ar ? 0.15 : 0, dodge: 0, kite: 0, fireArrow: 0, moving: false,
+    pierce: 1, fin: null, regen: 0, arrowScale: 1, far: ar ? 0.15 : 0, dodge: 0, kite: 0, fireArrow: 0, moving: false,
     orbsN: 0, orbAng: 0, shardN: 0, shardCd: 0,
     exp: 0, need: needFor(1), lvl: 1, kills: 0, up: {},
-    form: 0, route: null, skill: null, gauge: 0, gmax: 100, lastX: 1, lastY: 0,
+    form: 0, route: null, skill: null, skT: 0, gmax: 100, lastX: 1, lastY: 0,
     poisonRoll: ar && rand() < 0.65, poisonLv: 5 + ((rand() * 4) | 0), poisoned: false, poisonSpawned: false, poisonObj: null, skillTipT: 0, pet: null, miniDone: false, miniHits: 0, still: 0, healBank: 0, taken: 1, contractN: 0, contracts: [], tier: 0, fee: 0, goal: null, goalDone: 0, goalShards: 0,
     low10: false, minHp: 1e9, guardT: 0, rage: 0, rageCast: 0, tideT: 0, thornCd: 0, smashN: 0, potions: 0, rel: {}, teleN: 2, fangN: 0, phxUsed: false, stunT: 0, stunImm: 0, dotT: 0, dotD: 0, dotTick: 0, slowT: 0, curseCard: 0, slotN: 0, uniqSeen: {},
   };
@@ -2416,7 +2452,7 @@ function explodeBug(e) {
   addRing(e.x, e.y - 10, 4, R * 0.8, 0.3, '255,170,60', 8);
   burst(e.x, e.y - 14, 40, ['#d84cff', '#9a2bd0', '#ff8a2a', '#ffe28a', '#5a1a7a'], 330, 0.8);
   shake = Math.max(shake, 12);
-  if (Math.hypot(P.x - e.x, P.y - e.y) < R + 8) hurtPlayer((24 + gt * 0.04) * ease());
+  if (Math.hypot(P.x - e.x, P.y - e.y) < R + 8 + PR()) hurtPlayer((24 + gt * 0.04) * ease());
   for (const o of enemies) {
     if (o === e || o.hp <= 0) continue;
     if (Math.hypot(o.x - e.x, o.y - e.y) < R + o.r) {
@@ -2441,7 +2477,7 @@ function hurtEnemy(e, dmg, kx, ky, kn, quiet) {
   if (e.kind === 'mini') { if (quiet) dmg *= 0.5; const cap = e.max * 0.06; if (dmg > cap) dmg = cap + (dmg - cap) * 0.35; }   // 미니 보스: 한 방 폭딜은 깎는다
   if (e.kind === 'uniq') { if (quiet) dmg *= 0.6; const cap = e.max * 0.07; if (dmg > cap) dmg = cap + (dmg - cap) * 0.4; }   // 유니크: 미니 보스보다 약하지만 한 방 폭딜은 깎는다
   if (e.kind === 'boss' && quiet) dmg *= 0.12;   // 장판 같은 지속 피해는 보스에게 약하게
-  if (e.kind === 'boss') { const cap = e.max * 0.008; if (dmg > cap) dmg = cap + (dmg - cap) * 0.3; }   // 한 방 폭딜은 깎는다 (후반 늑대 20초 컷 방지)
+   // v5.00: 마왕의 '한 방 피해 상한'은 없앴다 (대신 마왕 체력을 올렸다)
   let crit = false;
   if (e.gazeT > gt) dmg *= 1.2;   // 광기의 시선: 촉수에 맞은 적
   if (!quiet && P.crit + critAdd > 0 && rand() < P.crit + critAdd) { dmg *= P.critD; crit = true; }   // 치명타 카드 (+ 저격수의 표식)
@@ -2469,7 +2505,6 @@ function hurtEnemy(e, dmg, kx, ky, kn, quiet) {
     if (bsig && inSig(e.x, e.y)) healP(1.2);   // 혈왕의 진: 진 안에서 처치하면 회복
     if (e.elite || e.kind === 'bug') { P.named++; if (e.sure || rand() < (e.elite ? 0.6 : 0.25) * Math.max(0.12, Math.pow(0.86, P.chestN || 0))) items.push({ type: 'chest', x: e.x, y: e.y, t: 0 }); }   // 네임드 몹은 상자를 떨어뜨린다
     if (e.kind === 'bug' && rand() < 0.012 && Object.keys(RELICS).some(k => !P.rel[k])) dropRelic(e.x + 24, e.y);   // 이공벌레: 아주 낮은 확률로 저주받은 성유물
-    if (P.skill) P.gauge = Math.min(P.gmax, P.gauge + (e.elite ? 3 : e.kind === 'bug' ? 1.5 : 0.35) * gaugeMul());
     if (e.kind === 'bug' && e.fuse > 0) explodeBug(e);   // 도화선이 타는 중에 죽여도 폭발한다
     if ((e.kind === 'bug' || e.elite) && rand() < RECRUIT_P * allyMul(e)) recruit(e);   // 네임드 몹: 낮은 확률로 동료 편입
   }
@@ -2713,7 +2748,7 @@ function startRage() {   // 광란: 5초 동안 공속이 치솟는다
   burst(P.x, P.y - 40, 36, ['#ff3a4a', '#ff8a5a', '#ffd88a'], 320, 0.8); floatNum(P.x, P.y - 96, '광란!', '#ff5a6a'); shake = 12;
 }
 function startTide() {   // 물의 주술: 즉시 자힐 + 주변 밀쳐내기
-  const n = P.up.tideUp | 0, amt = P.max * (0.35 + 0.08 * n), before = P.hp;
+  const n = P.up.tideUp | 0, amt = P.max * (0.22 + 0.05 * n), before = P.hp;   // v5.00: 35%(+8%p) -> 22%(+5%p), 대신 16초마다
   P.hp = Math.min(P.max, P.hp + amt); P.tideT = 0.9; P.inv = Math.max(P.inv, 0.9); P.atkTimer = -1;
   addRing(P.x, P.y - 24, 10, 230, 0.6, '90,190,255', 10); addRing(P.x, P.y - 24, 6, 140, 0.5, '200,245,255', 6);
   burst(P.x, P.y - 40, 34, ['#4aa8ff', '#9fe3ff', '#ffffff'], 300, 0.9);
@@ -2805,7 +2840,7 @@ const UNIQUE = {
     { id: 'smash', name: '대검 내려찍기', form: 1, max: 3, txt: n => `4번째 공격마다 땅을 내려찍어 범위 피해 (공격력의 ${60 + 25 * n}%)`, apply: () => {} },
     { id: 'bloodlust', name: '피에 굶주린 광기', form: 2, fin: 'rage', max: 3, txt: () => '체력이 낮을수록 늘어나는 광폭 피해 +20%p', apply: () => {} },
     { id: 'rageUp', name: '끝없는 광란', form: 2, fin: 'rage', needSkill: 'rage', max: 3, txt: () => '광란 지속 +1초 · 광란 중 공속 +8%', apply: () => {} },
-    { id: 'tideUp', name: '깊은 물결', form: 2, fin: 'water', needSkill: 'tide', max: 3, txt: () => '물의 주술 회복량 +8%p', apply: () => {} },
+    { id: 'tideUp', name: '깊은 물결', form: 2, fin: 'water', needSkill: 'tide', max: 3, txt: () => '물의 주술 회복량 +5%p', apply: () => {} },
   ],
   ghost: [
     { id: 'gmore', name: '구슬 늘리기', max: 3, txt: () => '한 번에 뿌리는 구슬 +1개', apply: () => {} },
@@ -2880,8 +2915,11 @@ const shardCard = () => ({ id: '_shard', name: '영혼 조각 주머니', desc: 
 function cardDefs() {
   return UPGRADES.concat(UNIQUE[P.char] || []).filter(u => (!u.route || u.route === P.route) && (!u.fin || u.fin === P.fin) && (!u.form || P.form >= u.form) && (!u.needSkill || P.skill === u.needSkill) && !P.banned[u.id] && (P.up[u.id] || 0) < (u.max || MAXLV));
 }
-function rollCards(n, skip) {   // 이미 가진 카드는 조금 더 자주, 조합 짝을 가진 재료 카드는 그보다 조금 더 자주 나온다
-  const pool = cardDefs().filter(u => !skip.includes(u.id)), out = [], wt = u => (u.w || 1) * (P.up[u.id] ? 1.7 : 1) * (synPartner(u.id) ? 1.4 : 1);
+const AUG_CAP = 10;   // v5.00: 서로 다른 증강을 10개 고르면 그 뒤로는 가진 증강만 나온다 (빌드 압축)
+const augOwned = () => UPGRADES.concat(UNIQUE[P.char] || []).filter(u => (P.up[u.id] || 0) > 0).length;
+function rollCards(n, skip) {   // 이미 가진 카드는 조금 더 자주(v5.00: 1.7 -> 1.85배), 조합 짝을 가진 재료 카드는 그보다 조금 더 자주 나온다
+  let pool = cardDefs().filter(u => !skip.includes(u.id)); const out = [], wt = u => (u.w || 1) * (P.up[u.id] ? 1.85 : 1) * (synPartner(u.id) ? 1.4 : 1);
+  if (augOwned() >= AUG_CAP) pool = pool.filter(u => P.up[u.id]);
   while (out.length < n && pool.length) {
     let tot = 0; for (const u of pool) tot += wt(u);
     let r = rand() * tot, k = 0; for (; k < pool.length - 1; k++) { r -= wt(pool[k]); if (r < 0) break; }
@@ -2929,28 +2967,28 @@ function levelUp() {
   sfx('level');
   P.exp -= P.need; P.lvl++; P.need = needFor(P.lvl); goalAdd('level', P.lvl); milestone();
   P.hp = Math.min(P.max, P.hp + 10);
-  if (P.lvl === 25 && !castle) raiseCastle();
+  if (P.lvl >= 25 && !castle) raiseCastle();
   if (P.char === 'wolf') {
-    if (P.lvl === 10 && !P.route) { openRoute(); return; }
-    if (P.lvl === 20 && P.form === 1) { if (P.route === 'crimson') openFinal(); else startEvolve(2); return; }
+    if (P.lvl >= 10 && !P.route) { openRoute(); return; }
+    if (P.lvl >= 20 && P.form === 1) { if (P.route === 'crimson') openFinal(); else startEvolve(2); return; }
   } else if (P.char === 'chimera') {
-    if (P.lvl === 10 && !P.route) { openChimRoute(); return; }
-    if (P.lvl === 20 && P.form === 1) { startEvolve(2); return; }
+    if (P.lvl >= 10 && !P.route) { openChimRoute(); return; }
+    if (P.lvl >= 20 && P.form === 1) { startEvolve(2); return; }
   } else if (P.char === 'ghost') {   // 진화는 아직 없음
   } else if (P.char === 'twins') {
-    if (P.lvl === 10 && P.form === 0) { startEvolve(1); return; }
-    if (P.lvl === 20 && P.form === 1) { startEvolve(2); return; }
+    if (P.lvl >= 10 && P.form === 0) { startEvolve(1); return; }
+    if (P.lvl >= 20 && P.form === 1) { startEvolve(2); return; }
   } else if (P.char === 'lizard') {
-    if (P.lvl === 10 && P.form === 0) { startEvolve(1); return; }
-    if (P.lvl === 20 && P.form === 1) { openLizFinal(); return; }
+    if (P.lvl >= 10 && P.form === 0) { startEvolve(1); return; }
+    if (P.lvl >= 20 && P.form === 1) { openLizFinal(); return; }
   } else if (P.char === 'archer') {
-    if (P.lvl === 10 && !P.route) { openArcherRoute(); return; }
-    if (P.lvl === 20 && P.route === 'elf' && P.form === 1) { openArcherFinal(); return; }
-    if (P.lvl === 20 && !P.skill) { openSkill(); return; }
+    if (P.lvl >= 10 && !P.route) { openArcherRoute(); return; }
+    if (P.lvl >= 20 && P.route === 'elf' && P.form === 1) { openArcherFinal(); return; }
+    if (P.lvl >= 20 && !P.skill) { openSkill(); return; }
   } else {
-    if (P.lvl === 10 && P.form === 0) { openSnailRoute(); return; }
-    if (P.lvl === 20 && P.form === 1) { startEvolve(2); return; }
-    if (P.lvl === 25 && P.form === 2 && P.route === 'lava') { startEvolve(3); return; }
+    if (P.lvl >= 10 && P.form === 0) { openSnailRoute(); return; }
+    if (P.lvl >= 20 && P.form === 1) { startEvolve(2); return; }
+    if (P.lvl >= 25 && P.form === 2 && P.route === 'lava') { startEvolve(3); return; }
   }
   openUpgrade();
 }
@@ -2974,6 +3012,7 @@ function openUpgrade() {
       if (P.exp >= P.need) levelUp();   // 경험치가 남아 있으면 연속 레벨업
     });
     if (P.banish > 0) document.getElementById('levelHint').textContent = `카드를 클릭하거나 1 2 3 키  ·  싫은 카드는 ✕ 삭제 (남은 ${P.banish}장 · 이번 판에서 다시 안 나옴)`;
+    if (augOwned() >= AUG_CAP) document.getElementById('levelHint').textContent += `  ·  증강 ${AUG_CAP}종 완성 — 이제 가진 증강만 나와요`;
   };
   const banCard = i => {
     const u = items[i]; if (!u || !u.def || P.banish <= 0) return;
@@ -3123,7 +3162,7 @@ function drawArcherFinPrev(c, k) {
 }
 function openArcherFinal() {
   const L = [['red', '진화한 지옥엘프 궁수', '체력 +50 · 공격력 +20% · 공속 +10% · 이속 +5% · 회피 25% · 관통 +1 · 이동 중 사격 피해 +20%', '전용 스킬 : 폭발 화살 (무적 백스텝 + 폭발 · 여진 2회)', null],
-             ['holy', '성화된 지옥엘프 궁수', '체력 +60 · 공격력 +15% · 사거리 +10% · 먼 거리 피해 +25% · 받는 피해 -10%', '전용 스킬 : 신성화살 (오래 모을수록 강한 차징 · 풀차지 명중 시 게이지 +50%)', 'holy']];
+             ['holy', '성화된 지옥엘프 궁수', '체력 +60 · 공격력 +15% · 사거리 +10% · 먼 거리 피해 +25% · 받는 피해 -10%', '전용 스킬 : 신성화살 (오래 모을수록 강한 차징 · 풀차지 명중 시 쿨타임 -50%)', 'holy']];
   const items = L.map(([k, nm, ds, sb, ck]) => Object.assign({ key: k, name: nm, desc: ds, sub: sb, preview: c => drawArcherFinPrev(c, k) }, ck ? condItem('archerFin', ck) : { tag: ' · 기본 진화' }));
   openChoice(`최종 진화  Lv.${P.lvl}`, items, u => { P.fin = u.key; ensureTint(2); startEvolve(2); }, 'route');
   document.getElementById('levelHint').textContent = '🔒 조건을 달성한 루트만 고를 수 있어요. [기본 진화]는 조건 없이 선택 가능';
@@ -3171,7 +3210,7 @@ function openRoute() {
 function applyEvo(to) {
   if (P.char === 'twins') {
     if (to === 1) { P.max += 25; P.dmg *= 1.0; P.spd *= 1.03; }   // 사슬의 악마: 붉은·푸른 사슬 두 가닥 · 스킬 사슬 휘두르기
-    else { P.max += 40; P.dmg *= 1.12; }                            // 사슬의 폭군: 사슬이 길고 무거워진다 · 스킬 강화
+    else { P.max += 40; P.dmg *= 1.29; }                            // 사슬의 폭군 (v5.00: 공격력 +15%): 사슬이 길고 무거워진다 · 스킬 강화
     P.hp = P.max; markDex('twins:' + to);
     return;
   }
@@ -3214,14 +3253,14 @@ function applyEvo(to) {
     return;
   }
   if (P.char === 'archer' && to === 2) {
-    if (P.fin === 'holy') { P.max += 60; P.dmg *= 1.15; P.rng *= 1.1; P.far += 0.25; P.armor *= 0.9; }   // 성화: 멀리서 모아 쏘는 저격수
-    else { P.max += 50; P.dmg *= 1.2; P.aspd += 0.1; P.spd *= 1.05; P.dodge = 0.25; P.pierce += 1; P.kite += 1; }   // 진화: 움직이며 싸우는 전술형
+    if (P.fin === 'holy') { P.max += 55; P.dmg *= 1.15; P.rng *= 1.1; P.far += 0.25; P.armor *= 0.9; }   // 성화: 멀리서 모아 쏘는 저격수
+    else { P.max += 45; P.dmg *= 1.2; P.aspd += 0.1; P.spd *= 1.05; P.dodge = 0.25; P.kite += 1; }   // 진화: 움직이며 싸우는 전술형
     P.hp = P.max; markDex('archer:2:' + (P.fin === 'holy' ? 'holy' : 'red'), P.route);
     return;
   }
   if (P.char === 'archer') {
-    if (P.route === 'elf') { P.max += 40; P.spd *= 1.12; P.aspd += 0.25; P.dmg *= 1.4; P.bolts++; P.pierce++; P.dodge = 0.2; }   // 두 발 동시 사격
-    else { P.armor *= 0.75; P.cd *= 1.5; P.dmg *= 2.8; P.pierce += 3; P.arrowScale = 1.6; P.far += 0.1; P.knock += 0.75; }   // 저주: 체력·공속 감소, 한 방이 강해진다
+    if (P.route === 'elf') { P.max += 30; P.spd *= 1.12; P.aspd += 0.25; P.dmg *= 1.4; P.bolts++; P.dodge = 0.2; }   // 두 발 동시 사격 (v5.00: 관통은 '관통 화살' 카드로만)
+    else { P.max += 15; P.armor *= 0.75; P.cd *= 1.5; P.dmg *= 2.8; P.pierce += 4; P.arrowScale = 1.6; P.far += 0.1; P.knock += 0.75; }   // 저주: 체력·공속 감소, 한 방이 강해진다
     P.hp = P.max; markDex('archer:1:' + P.route, P.route);
     return;
   }
@@ -3233,8 +3272,8 @@ function applyEvo(to) {
     if (r === 'twin')    { P.max += 20; P.spd *= 1.06; }   // 2연타는 형태(FD.hits)가 담당
   } else {
     P.max += 30; P.dmg *= 1.15;
-    if (r === 'crimson') { P.dmg *= 1.15; if (P.fin === 'holy') { P.max += 30; P.rng *= 1.1; P.regen = 0.8; } else if (P.fin === 'fallen') { P.max += 10; P.dmg *= 1.22; P.aspd += 0.1; P.taken *= 1.08; P.killHeal += 1; } else { P.max += 20; P.syn.vamp = true; P.killHeal += 1; } }
-    if (r === 'abyss')   { P.spd *= 1.08; P.aspd += 0.18; P.max += 15; P.dodge = 0.12; }
+    if (r === 'crimson') { P.dmg *= 1.15; if (P.fin === 'holy') { P.max += 30; P.rng *= 1.1; P.regen = 0.8; P.dmg *= 0.86; } else if (P.fin === 'fallen') { P.max += 10; P.dmg *= 1.22; P.aspd += 0.1; P.taken *= 1.08; P.killHeal += 1; } else { P.max += 20; P.syn.vamp = true; P.killHeal += 1; } }
+    if (r === 'abyss')   { P.spd *= 1.11; P.aspd += 0.24; P.max += 30; P.dmg *= 1.07; P.dodge = 0.12; }   // v5.00: 공격 +7% · 공속 +6% · 체력 +15 · 이속 +3%
     if (r === 'twin')    { P.max += 20; P.spd *= 1.04; }   // 3연타
   }
   P.hp = P.max;
@@ -3272,21 +3311,21 @@ function updateEvolve(dt) {
 }
 function openSkill() {
   const uqs = uniqueSkills();
-  const items = uqs.map(k => ({ key: k, name: skillName(k), desc: SKILLS[k].desc, sub: SKILLS[k].sub, cls: 'ultc', note: '⌨ 키보드 SPACE (또는 Q) 로 발동' }));
+  const items = uqs.map(k => ({ key: k, name: skillName(k), desc: SKILLS[k].desc, sub: `⏱ 쿨타임 ${SKILL_CD[k] || 14}초 · ` + SKILLS[k].sub, cls: 'ultc', note: '⌨ 키보드 SPACE (또는 Q) 로 발동' }));
   openChoice(uqs.length > 1 ? '★ 특수 스킬을 고르세요 ★' : '★ 특수 스킬 해금! ★', items, u => {
-    P.skill = u.key; P.gauge = 40; P.inv = 1; P.skillTipT = 16;
-    banner = { txt: `특수 스킬 [${skillName(u.key)}] 획득!  화면 아래 게이지가 100%가 되면 SPACE 로 발동`, t: 7 };
+    P.skill = u.key; P.skT = 0; P.inv = 1; P.skillTipT = 16;
+    banner = { txt: `특수 스킬 [${skillName(u.key)}] 획득!  SPACE 로 발동 · 쓰고 나면 ${Math.round(skillCd())}초 뒤 다시 쓸 수 있어요`, t: 7 };
     state = 'play';
     if (P.exp >= P.need) levelUp();
   }, 'skill');
-  document.getElementById('levelHint').textContent = '이제부터 화면 아래 게이지가 100%가 되면 SPACE 키(모바일은 아래 버튼)로 쓸 수 있어요';
+  document.getElementById('levelHint').textContent = '특수 스킬은 쿨타임제예요 — 화면 아래 바가 꽉 차면 SPACE 키(모바일은 아래 버튼)로 다시 쓸 수 있어요';
 }
 
 /* ---------- 특수 스킬 ---------- */
 function castSkill() {
   if (holyQ) { if (holyQ.t >= 0.3) fireHoly(); return; }   // 모으는 중 한 번 더 누르면 발사
-  if (state !== 'play' || !P.skill || P.gauge < P.gmax || P.stunT > 0) return;
-  P.gauge = 0; shake = 8; sfx('skill');
+  if (state !== 'play' || !P.skill || P.skT > 0 || P.stunT > 0) return;
+  P.skT = skillCd(); shake = 8; sfx('skill');
   if (P.char === 'snail') {   // 시전 동작: 가까운 적을 보며 공격 모션 + 발밑 분출
     const tn = nearestEnemy(600); if (tn && Math.abs(tn.x - P.x) > 6) P.face = tn.x > P.x ? 1 : -1;
     P.atkTimer = 0; P.atkHitN = 99; P.anim = 'attack'; P.animT = 0;
@@ -3333,7 +3372,7 @@ function castSkill() {
         for (let q = 0; q < 2; q++) fx.push({ x: e.x, y: e.y - e.r, vx: -dx / d * 260, vy: -dy / d * 260 - 40, life: 0.5, max: 0.5, c: q ? '#ff9aa8' : th.c1, s: 4 });
       }
     }
-    P.hp = Math.min(P.max, P.hp + P.max * Math.min(0.3, hit * 0.03));
+    P.hp = Math.min(P.max, P.hp + P.max * Math.min(0.15, hit * 0.02));   // v5.00: 자주 쓰는 만큼 1마리당 2% (최대 15%)
     if (hit) floatNum(P.x, P.y - 90, `피 흡수 ×${hit}`, '#ff9aa8');
     shake = 12;
   } else if (P.skill === 'bsigil') {
@@ -3374,15 +3413,15 @@ function castSkill() {
       if (n % 9 === 0) zones.push({ type: 'lavapool', x: z.x, y: z.y, r: 62, life: 3.5, max: 3.5, tick: 0, dm: 0.25, sp: rand() });
       z.life = 0;
     }
-    for (const [e, c] of cov) { if (e.hp <= 0) continue; const dx = e.x - P.x, dy = e.y - P.y, d = Math.hypot(dx, dy) || 1; hurtEnemy(e, P.dmg * 1.5 * f3 * (1 + 0.15 * Math.min(c, 6)), dx / d, dy / d, 240, true); }
+    for (const [e, c] of cov) { if (e.hp <= 0) continue; const dx = e.x - P.x, dy = e.y - P.y, d = Math.hypot(dx, dy) || 1; hurtEnemy(e, P.dmg * 1.32 * f3 * (1 + 0.15 * Math.min(c, 6)), dx / d, dy / d, 240, true); }   // v5.00: -12%
     const cand = enemies.filter(e => e.hp > 0 && Math.hypot(e.x - P.x, e.y - P.y) < 520).slice(0, 70);
     let tg = null, bs = -1;
     for (const e of cand) { let c = 0; for (const o of cand) if (Math.hypot(o.x - e.x, o.y - e.y) < 170) c++; if (c > bs) { bs = c; tg = e; } }
     const tx = tg ? tg.x : P.x + P.face * 200, ty = tg ? tg.y : P.y;
-    globs.push({ x0: tx, y0: ty - 420, x1: tx, y1: ty, t: 0, life: 0.75, big: true, fall: true, R: 215 * (f3 > 1 ? 1.12 : 1), dm: 5.2 * f3, kb: 520 });
+    globs.push({ x0: tx, y0: ty - 420, x1: tx, y1: ty, t: 0, life: 0.75, big: true, fall: true, R: 215 * (f3 > 1 ? 1.12 : 1), dm: 4.6 * f3, kb: 520 });
     for (let i = 0; i < 4; i++) {
       const o = cand.length ? cand[(rand() * cand.length) | 0] : null, x = o ? o.x + (rand() - 0.5) * 60 : P.x + Math.cos(i * 1.6) * 220, y = o ? o.y : P.y + Math.sin(i * 1.6) * 160;
-      globs.push({ x0: x, y0: y - 380, x1: x, y1: y, t: -0.18 * (i + 1), life: 0.55, fall: true, mini: true, R: 120, dm: 2.4 * f3, kb: 300 });
+      globs.push({ x0: x, y0: y - 380, x1: x, y1: y, t: -0.18 * (i + 1), life: 0.55, fall: true, mini: true, R: 120, dm: 2.1 * f3, kb: 300 });
     }
     addRing(P.x, P.y, 10, 200, 0.5, th.rgb, 8);
     shake = 10;
@@ -3546,7 +3585,7 @@ function stepBigArrow(dt) {
 
 /* ---------- 궁수 최종 진화: 폭발 화살(진화한 지옥엘프) / 신성화살(성화된 지옥엘프) ---------- */
 const ARFX = {"arrow":[0,0,82,46],"bombarrow":[84,0,92,48],"pierce":[178,0,117,51],"exp":[297,0,114,84],"ring":[413,0,80,92],"smoke":[495,0,138,84],"crescent":[635,0,69,82],"pillar":[706,0,90,99],"rain":[798,0,56,97]}, HLFX = {"h1":[0,0,48,40],"h2":[50,0,106,100],"h3":[158,0,264,102],"star":[424,0,55,72],"burst":[481,0,59,69]};
-const HOLY_T = 2.6, BOMB_R = 205;
+const HOLY_T = 1.8, BOMB_R = 205;   // v5.00: 최대 차징 2.6초 -> 1.8초
 function pushAfx(o) { if (afx.length < 90) afx.push(Object.assign({ t: 0, life: 0.4, sc: 1, sc1: 1, a: 1, set: 'r', rot: 0, ax: 0.5, ay: 0.5 }, o)); }
 function updateAfx(dt) { for (const q of afx) q.t += dt; afx = afx.filter(q => q.t < q.life); }
 function drawAfx(wx, wy) {
@@ -3559,7 +3598,6 @@ function drawAfx(wx, wy) {
   }
 }
 // --- 폭발 화살: 무적 백스텝 -> 폭발 화살 -> 폭발 + 여진 2회
-const gaugeMul = () => P.skill === 'bombshot' ? 1.3 : 1;   // 폭발 화살: 게이지가 30% 빨리 찬다
 function freeDir(dist) {   // 백스텝: 16방향 중 착지점 주변에 적·탄환·경고 장판이 가장 적은 빈 곳을 고른다
   let ax = 0, ay = 0;
   for (const e of enemies) { if (e.hp <= 0) continue; const dx = P.x - e.x, dy = P.y - e.y, d = Math.hypot(dx, dy) || 1; if (d < 420) { const w = 1 / (d + 60); ax += dx / d * w; ay += dy / d * w; } }
@@ -3588,8 +3626,15 @@ function freeDir(dist) {   // 백스텝: 16방향 중 착지점 주변에 적·�
   }
   return best;
 }
+function denseTarget(range, R) {   // 적이 가장 많이 모인 곳의 적 (보스·미니보스는 가중치)
+  const cand = []; for (const e of enemies) if (e.hp > 0 && !e.invul && Math.hypot(e.x - P.x, e.y - P.y) < range) cand.push(e);
+  if (cand.length > 90) cand.length = 90;
+  let tg = null, bs = -1;
+  for (const e of cand) { let c = (e.kind === 'boss' || e.kind === 'mini' || e.kind === 'uniq') ? 4 : e.elite ? 1.5 : 0; for (const o of cand) if (Math.hypot(o.x - e.x, o.y - e.y) < R) c++; if (c > bs) { bs = c; tg = e; } }
+  return tg;
+}
 function startBomb() {
-  const t = nearestEnemy(760), [vx, vy] = freeDir(180);
+  const t = denseTarget(760, BOMB_R * 0.9), [vx, vy] = freeDir(180);
   bombQ = { t: 0, dx: vx, dy: vy, fired: false, tx: t ? t.x : P.x + P.face * 320, ty: t ? t.y - t.r : P.y - 30 };
   if (t && Math.abs(t.x - P.x) > 6) P.face = t.x > P.x ? 1 : -1;
   P.atkTimer = -1; P.atkHitN = 99; P.atkCd = Math.max(P.atkCd, 0.5); P.inv = Math.max(P.inv, 0.55);
@@ -3600,12 +3645,12 @@ function stepBomb(dt) {
   const q = bombQ; q.t += dt; P.inv = Math.max(P.inv, 0.3);
   if (q.t < 0.34) { const k = 1 - q.t / 0.34, v = 820 * (0.3 + 0.7 * k); P.x += q.dx * v * dt; P.y += q.dy * v * dt; if (fx.length < 500 && rand() < 0.6) fx.push({ x: P.x, y: P.y - 6, vx: -q.dx * 40, vy: -30, life: 0.35, max: 0.35, c: '#b8a8a8', s: 4 }); }
   if (!q.fired) {
-    const t = nearestEnemy(760); if (t) { q.tx = t.x; q.ty = t.y - t.r; }
+    if (!q.lock) { const t = denseTarget(760, BOMB_R * 0.9); if (t) { q.tx = t.x; q.ty = t.y - t.r; } q.lock = true; }   // 쏘는 순간 한 번만 정한다
     if (Math.abs(q.tx - P.x) > 6) P.face = q.tx > P.x ? 1 : -1;
     if (q.t >= 0.32) {
       q.fired = true;
       const [ox, oy] = arrowOrigin(), dx = q.tx - ox, dy = q.ty - oy, d = Math.hypot(dx, dy) || 1, sp = 900;
-      shards.push({ x: ox, y: oy, vx: dx / d * sp, vy: dy / d * sp, life: Math.min(d, 900) / sp + 0.02, pierce: 1, hit: new Set(), bomb: true, sz: 1, dmg: 0 });
+      shards.push({ x: ox, y: oy, vx: dx / d * sp, vy: dy / d * sp, life: Math.min(d, 900) / sp + 0.02, pierce: 1, hit: new Set(), bomb: true, sz: 1, dmg: 0, tx: q.tx, ty: q.ty });
       pushAfx({ k: 'crescent', x: ox, y: oy, rot: Math.atan2(dy, dx), ax: 0.75, ay: 0.5, sc: 0.7, sc1: 1.1, life: 0.22, a: 0.9 });
       shake = Math.max(shake, 5); sfx('shoot');
     }
@@ -3615,7 +3660,8 @@ function stepBomb(dt) {
 function stepBombShard(s) {
   if (fx.length < 500 && rand() < 0.7) fx.push({ x: s.x, y: s.y + (rand() - 0.5) * 8, vx: -s.vx * 0.05, vy: (rand() - 0.5) * 40, life: 0.28, max: 0.28, c: rand() < 0.5 ? '#ff5a3a' : '#ffb070', s: 3 });
   let hit = false;
-  for (const e of enemies) { if (e.hp > 0 && Math.hypot(e.x - s.x, e.y - e.r * 0.6 - s.y) < 14 + e.r) { hit = true; break; } }
+  const nearT = s.tx === undefined || Math.hypot(s.tx - s.x, s.ty - s.y) < 150;   // 가는 길의 적은 지나치고, 목표(밀집 지점) 근처에서 터진다
+  if (nearT) for (const e of enemies) { if (e.hp > 0 && Math.hypot(e.x - s.x, e.y - e.r * 0.6 - s.y) < 14 + e.r) { hit = true; break; } }
   if (hit || s.life <= 0) {
     s.life = 0;
     boomAt(s.x, s.y, BOMB_R, 6.0, true);
@@ -3636,7 +3682,7 @@ function boomAt(x, y, R, dm, main) {
   shake = Math.max(shake, main ? 12 : 6); sfx('boom');
 }
 // --- 신성화살: 가만히 서서 빛을 모으고(방향키로 조준) 떼면 발사
-function holyStage(t) { return t >= HOLY_T ? 3 : t >= 1.5 ? 2 : t >= 0.7 ? 1 : 0; }
+function holyStage(t) { return t >= HOLY_T ? 3 : t >= 1.1 ? 2 : t >= 0.5 ? 1 : 0; }
 function startHoly() {
   holyQ = { t: 0, held: true, tap: false, ang: P.face > 0 ? 0 : Math.PI, st: 0, ix: 0, iy: 0 };
   P.atkTimer = -1; P.atkHitN = 99; P.atkCd = Math.max(P.atkCd, 0.4);
@@ -3653,11 +3699,11 @@ function stepHoly(dt) {
   if (st > q.st) { q.st = st; addRing(P.x, P.y - 40, 20, 90 + 40 * st, 0.4, '190,220,255', 6); sfx('item'); if (st === 3) { shake = Math.max(shake, 8); burst(ox, oy, 16, ['#bcd8ff', '#ffe9a8', '#ffffff'], 280, 0.5); } }
   if (fx.length < 500) for (let i = 0; i < 1 + st; i++) if (rand() < 0.5) { const a = rand() * 6.283, d = 50 + 60 * rand() * (0.5 + k); fx.push({ x: ox + Math.cos(a) * d, y: oy + Math.sin(a) * d, vx: -Math.cos(a) * d * 3.2, vy: -Math.sin(a) * d * 3.2, life: 0.3, max: 0.3, c: rand() < 0.5 ? '#bcd8ff' : '#ffe9a8', s: 3 }); }
   if (!q.held && !q.tap) { if (q.t < 0.3) q.tap = true; else { fireHoly(); return; } }   // 짧게 톡 누르면 '다시 누를 때까지' 모은다
-  if (q.t >= HOLY_T + 0.5) fireHoly();   // 풀차지에서 잠깐 버티면 자동 발사
+  if (q.t >= HOLY_T + 0.35) fireHoly();   // 풀차지에서 잠깐 버티면 자동 발사
 }
 function fireHoly() {
   const q = holyQ, D = FD(), at = D.anim.attack, k = clamp(q.t / HOLY_T, 0, 1), full = q.t >= HOLY_T - 0.02, [ox, oy] = arrowOrigin();
-  const m = 2.5 + 11.5 * Math.pow(k, 1.3), sp = 1300, rg = 620 + 400 * k;   // 2.5배 ~ 14배
+  const m = 2.9 + 13.2 * Math.pow(k, 1.3), sp = 1300, rg = 620 + 400 * k;   // 2.9배 ~ 16.1배 (v5.00: +15%)
   pushArrow(ox, oy, q.ang, { sp, life: rg / sp, pierce: 999, dmg: P.dmg * m, sz: 1.3 + 3.2 * k, kb: 380 + 520 * k, sk: true, holy: true, hk: k, full, ox: undefined, oy: undefined });
   P.atkTimer = D.hitF / at.fps; P.atkHitN = 99; P.atkCd = Math.max(P.atkCd, 0.5);
   shake = Math.max(shake, 6 + 10 * k); sfx('skill');
@@ -4069,7 +4115,7 @@ function updateUniq(e, dt) {
     if (a.t >= a.wind) { a.ph = 'lash'; a.t = 0; sfx('zap'); shake = Math.max(shake, 3); }
   } else {
     const p = clamp(a.t / a.dur, 0, 1), cur = a.ang + a.dir * (-a.half + 2 * a.half * p);
-    if (!a.hit && d < a.len + 14) {
+    if (!a.hit && d < a.len + 14 + PR()) {
       const bear = Math.atan2(dy, dx);
       if (Math.abs(angDiff(bear, cur)) < 0.24) { a.hit = true; uniqHit(e); }
     }
@@ -4084,7 +4130,6 @@ function uniqDefeated(e) {
   const U = UNIQ[e.uk]; e.tele = [];
   orbs.push({ x: e.x, y: e.y, val: Math.round(P.need * 0.6), t: rand() * 6 });
   P.named += 3; goalAdd('kills'); goalAdd('elite'); uniqCd = Math.max(uniqCd, 60);
-  if (P.skill) P.gauge = Math.min(P.gmax, P.gauge + 5);
   udeath.push({ x: e.x, y: e.y, face: e.face, t: 0, uk: e.uk });
   burst(e.x, e.y - 40, 34, ['#ff6a1c', '#ffc247', '#ffffff', '#a02aff'], 300, 0.9); addRing(e.x, e.y - 20, 10, 260, 0.7, U.rgb, 12); shake = Math.max(shake, 12); sfx('chest');
   banner = { txt: `${U.name}을(를) 쓰러뜨렸다!` + (dropRelic(e.x, e.y + 8) ? '  저주받은 성유물이 떨어졌다' : '  보물 상자가 떨어졌다'), t: 4, c: '#ffb070' };
@@ -4452,7 +4497,7 @@ function drawBlades(wx, wy) {
   }
 }
 function updateSkills(dt) {
-  if (P.skill) { P.gauge = Math.min(P.gmax, P.gauge + 1.0 * dt * gaugeMul()); if (P.gauge >= P.gmax && !P.skillReady1) { P.skillReady1 = true; P.skillTipT = Math.max(P.skillTipT, 7); sfx('item'); } }
+  if (P.skill) { P.skT = Math.max(0, P.skT - dt); if (P.skT <= 0 && !P.skillReady1) { P.skillReady1 = true; P.skillTipT = Math.max(P.skillTipT, 7); sfx('item'); } }
   stepBigArrow(dt); updateAfx(dt);
   for (const b of bombT) { b.t -= dt; if (b.t <= 0) { b.done = true; boomAt(b.x, b.y, b.R, b.dm, false); } }
   bombT = bombT.filter(b => !b.done);
@@ -4689,8 +4734,8 @@ function update(dt) {
         hurtEnemy(e, dm, s.vx / d, s.vy / d, (s.kb || 220) * (s.sk ? 1 : P.knock) * (s.gust ? 1.6 : 1)); s.hit.add(e); critAdd = 0;
         if (s.gust) e.slowT = Math.max(e.slowT || 0, 1.2);   // 바람의 궤적
         if (P.syn.spore && P.char === 'snail' && !s.arrow && !s.spored) { s.spored = true; let tn = 0; for (const z of zones) if (z.type === 'trail') tn++; if (tn < 110) dropTrail(e.x, e.y, FD().tr * 1.2, FD().tl); }   // 독가시 웅덩이
-        if (s.holy) {   // 신성화살: 풀차지로 맞히면 게이지가 절반 돌아온다
-          if (s.full && !s.refund) { s.refund = true; P.gauge = Math.min(P.gmax, P.gauge + P.gmax * 0.5); floatNum(P.x, P.y - 96, '풀차지 명중!  게이지 +50%', '#bcd8ff'); addRing(P.x, P.y - 30, 10, 150, 0.5, '190,220,255', 8); sfx('item'); }
+        if (s.holy) {   // 신성화살: 풀차지로 맞히면 남은 쿨타임이 절반 줄어든다
+          if (s.full && !s.refund) { s.refund = true; P.skT = Math.max(0, P.skT - skillCd() * 0.5); floatNum(P.x, P.y - 96, '풀차지 명중!  쿨타임 -50%', '#bcd8ff'); addRing(P.x, P.y - 30, 10, 150, 0.5, '190,220,255', 8); sfx('item'); }
           if (afx.length < 60) pushAfx({ set: 'h', k: 'star', x: e.x, y: e.y - e.r, sc: 0.5 + 0.8 * s.hk, sc1: 1.0 + 1.1 * s.hk, life: 0.3 });
         }
         if (P.syn.ricochet && s.arrow && !s.ric && e.hp <= 0) {   // 도탄 사격: 처치한 자리에서 가까운 다른 적에게 한 번만 튕긴다
@@ -4778,7 +4823,7 @@ function update(dt) {
     }
     e.x += (mx * sp + e.kx) * dt; e.y += (my * sp + e.ky) * dt;
     const k = Math.exp(-8 * dt); e.kx *= k; e.ky *= k;
-    if (d < e.r + 13) hurtPlayer(e.dmg * ease());
+    if (d < e.r + 13 + PR()) hurtPlayer(e.dmg * ease());
   }
   for (let i = 0; i < enemies.length; i++) {   // 적끼리 겹치지 않게 살짝 밀어내기
     const a = enemies[i]; if (a.hp <= 0) continue;
@@ -5624,24 +5669,24 @@ function drawHud() {
     ctx.strokeStyle = 'rgba(255,255,255,0.35)'; ctx.lineWidth = 2; ctx.stroke();
     ctx.fillStyle = 'rgba(255,255,255,0.45)'; ctx.beginPath(); ctx.arc(joy.ox + joy.x * 50, joy.oy + joy.y * 50, 22, 0, 6.283); ctx.fill();
   }
-  if (P.skill) {   // 특수 스킬 게이지 / 버튼
-    const R = theme(), ready = P.gauge >= P.gmax, bw2 = Math.min(300, W - 24), bh = 52;
+  if (P.skill) {   // 특수 스킬 쿨타임 / 버튼
+    const R = theme(), ready = P.skT <= 0, cdk = clamp(1 - P.skT / skillCd(), 0, 1), bw2 = Math.min(300, W - 24), bh = 52;
     skillBtn = { x: W / 2 - bw2 / 2, y: H - bh - 16, w: bw2, h: bh };
     const b = skillBtn, pulse = ready ? 0.5 + 0.5 * Math.sin(wallT * 8) : 0;
     ctx.fillStyle = 'rgba(14, 4, 8, 0.85)'; ctx.fillRect(b.x, b.y, b.w, b.h);
     ctx.fillStyle = ready ? R.c1 : 'rgba(255,255,255,0.14)'; ctx.fillRect(b.x + 4, b.y + 30, b.w - 8, 14);
-    ctx.fillStyle = R.c1; ctx.fillRect(b.x + 4, b.y + 30, (b.w - 8) * clamp(P.gauge / P.gmax, 0, 1), 14);
-    ctx.fillStyle = 'rgba(255,255,255,0.25)'; ctx.fillRect(b.x + 4, b.y + 30, (b.w - 8) * clamp(P.gauge / P.gmax, 0, 1), 4);
+    ctx.fillStyle = R.c1; ctx.fillRect(b.x + 4, b.y + 30, (b.w - 8) * cdk, 14);
+    ctx.fillStyle = 'rgba(255,255,255,0.25)'; ctx.fillRect(b.x + 4, b.y + 30, (b.w - 8) * cdk, 4);
     ctx.strokeStyle = ready ? `rgba(255,255,255,${0.5 + 0.5 * pulse})` : R.c1; ctx.lineWidth = ready ? 3 : 2; ctx.strokeRect(b.x, b.y, b.w, b.h);
     ctx.textAlign = 'center'; ctx.font = 'bold 15px "Malgun Gothic", monospace';
-    const t3 = ready ? `${skillName(P.skill)}  발동!  [SPACE / Q]` : `${skillName(P.skill)}  ${Math.floor(P.gauge)}%`;
+    const t3 = ready ? `${skillName(P.skill)}  발동!  [SPACE / Q]` : `${skillName(P.skill)}  ${P.skT.toFixed(1)}초`;
     ctx.strokeText(t3, W / 2, b.y + 22); ctx.fillStyle = ready ? '#ffffff' : '#f3d9c6'; ctx.fillText(t3, W / 2, b.y + 22);
     if (P.skillTipT > 0 && state === 'play') {   // 새 특수 스킬이 생겼다는 것을 확실히 알린다
       const pu = 0.5 + 0.5 * Math.sin(wallT * 6), tw2 = Math.min(W - 24, 540), tx = W / 2 - tw2 / 2, ty = b.y - 74;
       ctx.save(); ctx.globalAlpha = Math.min(1, P.skillTipT);
       ctx.fillStyle = 'rgba(10,4,16,0.88)'; ctx.fillRect(tx, ty, tw2, 56); ctx.strokeStyle = R.c2; ctx.lineWidth = 2 + 2 * pu; ctx.strokeRect(tx, ty, tw2, 56);
       ctx.textAlign = 'center'; ctx.font = 'bold 16px "Malgun Gothic", sans-serif'; ctx.fillStyle = R.c2; ctx.fillText(`★ 새 특수 스킬 : ${skillName(P.skill)} ★`, W / 2, ty + 23);
-      ctx.font = 'bold 13px "Malgun Gothic", sans-serif'; ctx.fillStyle = '#ffffff'; ctx.fillText(ready ? '지금 SPACE / Q 키 (모바일은 아래 바 터치) 로 발동!' : '아래 게이지가 100%가 되면 SPACE / Q 키 (모바일은 바 터치) 로 발동', W / 2, ty + 44);
+      ctx.font = 'bold 13px "Malgun Gothic", sans-serif'; ctx.fillStyle = '#ffffff'; ctx.fillText(ready ? '지금 SPACE / Q 키 (모바일은 아래 바 터치) 로 발동!' : '아래 바가 꽉 차면 (쿨타임이 끝나면) SPACE / Q 키 (모바일은 바 터치) 로 발동', W / 2, ty + 44);
       ctx.fillStyle = R.c2; ctx.beginPath(); ctx.moveTo(W / 2 - 11, ty + 58); ctx.lineTo(W / 2 + 11, ty + 58); ctx.lineTo(W / 2, ty + 70 + pu * 4); ctx.closePath(); ctx.fill(); ctx.restore();
     }
   }
@@ -5675,10 +5720,11 @@ function startGame(char) {
   if (char) curChar = char;
   if (!SAVE.chars[curChar]) curChar = 'wolf';
   audioInit();
-  let t = Math.min(SAVE.diff.sel | 0, SAVE.diff.max | 0); while (t > 0 && SAVE.shards < t * 25) t--;   // 참가비(단계×25)를 낼 수 없으면 낮춘다
+  const want = Math.min(SAVE.diff.sel | 0, SAVE.diff.max | 0); let t = want; while (t > 0 && SAVE.shards < t * 25) t--;   // 참가비(단계×25)를 낼 수 없으면 낮춘다
   reset(curChar); markDex(curChar + ':0');
   P.tier = t; if (t >= 1) { const r = rand(); P.bossK = r < 1 / 3 ? 'eye' : r < 2 / 3 ? 'monkey' : 'skel'; }   // 난이도 1단계부터 스켈레톤 마왕이 섞인다
   P.fee = t * 25; if (P.fee) { SAVE.shards -= P.fee; saveSave(); banner = { txt: `난이도 ${t}단계 도전! (참가비 ${P.fee})`, t: 3.5 }; }
+  if (t < want) banner = { txt: `영혼 조각이 모자라 난이도 ${want}단계 대신 ${t ? t + '단계' : '기본 난이도'}로 시작합니다` + (P.fee ? ` (참가비 ${P.fee})` : ''), t: 5, c: '#ff8a7a' };
   show('startBox', false); show('overBox', false); show('levelBox', false); show('pauseBox', false);
   state = 'play';
 }
@@ -5720,7 +5766,7 @@ function updateDiff() {
   if (SAVE.diff.fw) {
     const S = SAVE.fw.snap, C = CHARS[S.char];
     $('diffTxt').textContent = '☠ 타락한 혈랑';
-    $('diffDesc').textContent = `숨은 보스전 · 마지막으로 마왕을 쓰러뜨린 ${C ? C.name : S.char} Lv.${S.lvl}${S.tier ? ` (난이도 ${S.tier}단계)` : ''} 스펙 그대로 곧장 타락한 혈랑왕과 싸웁니다 · 참가비 없음` + (SAVE.fw.cleared ? ' · 처치함 ✔' : '');
+    $('diffDesc').textContent = `숨은 보스전 · 마지막으로 마왕을 쓰러뜨린 ${C ? C.name : S.char} Lv.${S.lvl}${S.tier ? ` (난이도 ${S.tier}단계)` : ''} 스펙 그대로 곧장 타락한 혈랑왕과 싸웁니다 · 참가비 ${25 * (S.tier || 0)} (클리어하면 반환)` + (SAVE.fw.cleared ? ' · 처치함 ✔' : '');
     return;
   }
   $('diffTxt').textContent = t ? `난이도 ${t}단계` : '기본 난이도';
@@ -5865,7 +5911,7 @@ function pauseStats() {
     if (rl.length) h += `<div class="pnote"><b>저주받은 성유물</b><br>` + rl.map(k => `<b>${RELICS[k].name}</b> : ${RELICS[k].desc}` + (k === 'key' ? ` (남은 ${P.teleN}회 · E 키)` : k === 'phoenix' && P.phxUsed ? ' (사용함)' : k === 'fang' ? ` (${P.fangN}/10)` : '')).join('<br>') + '</div>';
     const st = []; if (P.slowT > 0) st.push(`둔화 ${Math.ceil(P.slowT)}초`); if (P.curseCard > 0) st.push('다음 레벨업 카드 선택 불가'); if (P.dotT > 0) st.push('화상'); if (P.slotN) st.push(`잭팟 머신 ${P.slotN}회 사용`);
     if (st.length) h += `<div class="pnote"><b>상태</b> : ${st.join(' · ')}</div>`; }
-  if (P.skill) h += `<div class="pnote"><b>특수 스킬 · ${sk}</b> (SPACE / Q)<br>${SKILLS[P.skill].desc}</div>`;
+  if (P.skill) h += `<div class="pnote"><b>특수 스킬 · ${sk}</b> (SPACE / Q · 쿨타임 ${Math.round(skillCd())}초)<br>${SKILLS[P.skill].desc}</div>`;
   const cs = pendingConds();
   if (cs.length) h += `<div class="pnote"><b>진화 조건</b><br>` + cs.map(x => `${x.c.ok() ? '✔' : '✖'} <b>${x.name}</b> : ${x.c.txt} <span style="opacity:.8">(${x.c.prog()})</span>`).join('<br>') + `<br><span style="opacity:.75">조건을 못 채워도 [기본 진화]는 언제든 고를 수 있어요</span></div>`;
   $('pauseStats').innerHTML = h;
