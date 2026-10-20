@@ -443,7 +443,7 @@ const ROUTES = {
   crimson:  { name: '혈랑', title: '혈랑 (血狼)',  fur: 346, satAdd: 0.22, lm: 0.95, eye: 352, rgb: '255,50,80',  c1: '#e0384c', c2: '#ff9aa8',
     desc: '공격력 +20% · 범위 +8% · 처치 시 체력 +1 (피흡형)', later: 'Lv.20 : 혈랑(흡혈) / 성혈랑(피의 비) 중 선택' },
   abyss:    { name: '심연', title: '심연 (深淵)',  fur: 190, satAdd: 0.18, lm: 1.0,  eye: 186, rgb: '60,220,255', c1: '#35d6e8', c2: '#b8f6ff',
-    desc: '이속 +15% · 공속 +22% · 회피 6% · 체력 +15 (기동형)', later: 'Lv.20 : 이속 +8% · 공속 +18% · 회피 12% · 체력 +15' },
+    desc: '이속 +15% · 공속 +22% · 회피 6% · 체력 +15 (기동형)', later: 'Lv.20 : 이속 +8% · 공속 +18% · 회피 16% · 체력 +15' },
   twin:     { name: '쌍두', title: '쌍두 (雙頭)', fur: 330, satAdd: 0.2, lm: 0.95, eye: 340, rgb: '230,90,140', c1: '#e05a90', c2: '#ffc0d8',
     desc: '기본 공격 2연타 (타당 80%) · 이속 +6% · 체력 +20 (연타형)', later: 'Lv.20 : 삼두 늑대 (3연타) · 이속 +4% · 스킬 삼두 연쇄 물기' },
 };
@@ -1534,7 +1534,7 @@ function fwBossDefeated(e) {
 const SKB = {"idle":[[0,0,269,228,146.0,224],[271,0,272,229,149.0,225],[545,0,275,228,148.0,224],[822,0,412,229,161.0,225]],"walk":[[1236,0,260,166,141.0,162],[1498,0,292,166,143.0,162],[1792,0,256,166,123.0,162],[2050,0,299,166,144.0,162],[0,231,331,165,125.0,161]],"atk":[[333,231,323,152,152.0,147],[658,231,350,152,157.0,147],[1010,231,392,152,158.0,147],[1404,231,419,152,214.0,147]],"slam":[[1825,231,203,171,102.0,167],[2030,231,221,171,123.0,167],[2253,231,241,170,106.0,166],[0,404,241,171,115.0,167],[243,404,229,171,99.0,167],[474,404,215,171,93.0,167]],"summon":[[691,404,169,127,88.0,124],[862,404,161,127,87.0,124],[1025,404,158,127,87.0,124],[1185,404,200,127,122.0,124],[1387,404,218,127,126.0,124],[1607,404,177,127,95.0,124],[1786,404,159,127,72.0,124]],"hit":[[1947,404,143,118,73.0,116],[2092,404,132,118,65.0,116],[2226,404,162,118,82.0,116]],"death":[[2390,404,181,118,95.0,116],[0,577,208,118,95.0,116],[210,577,194,118,93.0,116],[406,577,193,118,88.0,116],[601,577,179,118,91.0,116]],"mn":[[782,577,55,104,26.0,100],[839,577,61,104,30.0,100],[902,577,62,102,23.0,100],[966,577,55,104,33.0,100],[1023,577,55,102,34.0,100],[1080,577,58,104,30.0,100],[1140,577,72,104,30.0,100],[1214,577,69,102,33.0,100],[1285,577,54,102,29.0,100],[1341,577,56,104,30.0,100],[1399,577,98,102,29.0,100]]};
 const SKB_K = { idle: 1, walk: 1.36, atk: 1.3, slam: 1.35, summon: 1.75, hit: 1.95, death: 1.95 };
 const SK_S = 1.05, SK_HP = 1.0;          // 그리기 배율 · 체력 배율 (BOSS_HP 기준)
-const SK_PH = [0.66, 0.33], SK_DM = 0.78;   // 결계 단계 · 피해 배율 (봇 시뮬로 원숭이 마왕과 비슷한 압박이 되게)
+const SK_PH = [0.66, 0.33], SK_DM = 0.78 * 0.92;   // 결계 단계 · 피해 배율 (봇 시뮬로 원숭이 마왕과 비슷한 압박이 되게)
 const skHit = d => bossHit(d * SK_DM);              // 결계 단계: 체력 66% · 33%
 const SKP = [[190, 650], [1125, 650], [657, 418]].map(([x, y]) => [x * AS, y * AS]);   // 해골 첨탑(서브 헤드)이 솟는 자리: 맵 외곽 3곳
 let skp = [], skSp = [], skDeath = null;  // 참격파 · 가시/불기둥 이펙트 · 쓰러지는 모습
@@ -2442,7 +2442,7 @@ function newPlayer(char) {
     x: 0, y: 0, hp: sn ? 125 : ar ? 100 : 100, max: sn ? 125 : ar ? 100 : 100, spd: sn ? 175 : ar ? 215 : 200, face: 1,
     anim: 'idle', animT: 0, inv: 0, hitT: 0,
     atkTimer: -1, atkCd: 0, atkHitN: 0, ax: 1, ay: 0,
-    dmg: sn ? 18 : ar ? 22 : 18, rng: sn || ar ? 100 : 96, cd: sn ? 0.92 : ar ? 0.56 : 0.9, pickup: ar ? 95 : 90,
+    dmg: sn ? 18 : ar ? 22 : 18, rng: sn || ar ? 100 : 96, cd: sn ? 0.85 : ar ? 0.51 : 0.9, pickup: ar ? 95 : 90,
     pierce: 1, fin: null, regen: 0, arrowScale: 1, far: ar ? 0.15 : 0, dodge: 0, kite: 0, fireArrow: 0, moving: false,
     orbsN: 0, orbAng: 0, shardN: 0, shardCd: 0,
     exp: 0, need: needFor(1), lvl: 1, kills: 0, up: {},
@@ -2451,10 +2451,10 @@ function newPlayer(char) {
     low10: false, minHp: 1e9, guardT: 0, rage: 0, rageCast: 0, tideT: 0, thornCd: 0, smashN: 0, potions: 0, rel: {}, teleN: 2, fangN: 0, phxUsed: false, stunT: 0, stunImm: 0, dotT: 0, dotD: 0, dotTick: 0, slowT: 0, curseCard: 0, slotN: 0, uniqSeen: {},
   };
   if (char === 'chimera') { p.max = p.hp = 105; p.spd = 205; p.dmg = 17; p.cd = 0.85; p.rng = 98; p.pickup = 90; }
-  if (char === 'twins') { p.max = p.hp = 108; p.spd = 212; p.dmg = 16; p.cd = 1.0; p.rng = 100; p.pickup = 90; p.knock += 0.1; p.tw = { x: -70, y: 10, vx: 0, vy: 0, dir: 1, spd: 0, ang: 0 }; }   // 사슬 악마: 빠르고 약하다, 사슬 끝 창날(tw)은 본체 기준 상대 위치로 시작
+  if (char === 'twins') { p.max = p.hp = 108; p.spd = 212; p.dmg = 17.5; p.cd = 1.0; p.rng = 100; p.pickup = 90; p.knock += 0.1; p.tw = { x: -70, y: 10, vx: 0, vy: 0, dir: 1, spd: 0, ang: 0 }; }   // 사슬 악마: 빠르고 약하다, 사슬 끝 창날(tw)은 본체 기준 상대 위치로 시작
   if (char === 'octo') { p.max = p.hp = 105; p.spd = 195; p.dmg = 20; p.cd = 1.15; p.rng = 100; p.pickup = 92; p.orbsN = 1; p.orbD = 0.40; }   // v5.17: 느리고 큰 마력탄 · 구체 피해 소폭 하향 (45% → 40%)   // 문어 마법사: 직선 마법탄 + 늘어나는 구체
   if (char === 'ghost') { p.max = p.hp = 100; p.spd = 210; p.dmg = 15; p.cd = 0.65; p.rng = 100; p.pickup = 95; p.gOrbs = 5; }   // 구슬 유령: 약한 구슬 여러 개
-  if (char === 'lizard') { p.max = p.hp = 112; p.spd = 163; p.dmg = 21; p.cd = 1.12; p.rng = 100; p.pickup = 90; p.armor = 0.85; p.knock += 0.15; }   // 느리고 단단하지만 한 방이 강하다
+  if (char === 'lizard') { p.max = p.hp = 112; p.spd = 163; p.dmg = 21; p.cd = 1.12; p.rng = 92; p.pickup = 90; p.armor = 0.85; p.knock += 0.15; }   // 느리고 단단하지만 한 방이 강하다
   const pk = SAVE.perks;   // 상점에서 산 영구 강화 적용
   p.max = Math.round(p.max * (1 + 0.08 * pk.hp)); p.hp = p.max;
   p.spd *= 1 + 0.04 * pk.spd; p.dmg *= 1 + 0.05 * pk.dmg; p.pickup *= 1 + 0.25 * pk.magnet; p.magPull = 1 + 0.25 * pk.magnet; p.reviveLeft = Math.min(1, pk.revive || 0); p.regen += 0.1 * (pk.regen | 0); p.critD += 0.1 * (pk.critd | 0); p.expMul = 1 + 0.08 * pk.exp;
@@ -3292,7 +3292,7 @@ function openLizRoute() {   // Lv.10: 대검의 길(리자드 검사) / 수호�
   document.getElementById('levelHint').textContent = '대검 = 한 방이 강한 공격형 · 수호 = 맞으면서 가시로 되갚는 방어형 (Lv.20에 반격의 갑주)';
 }
 function openLizFinal() {
-  const L = [['rage', '버서커 리자드', '체력 +40 · 공격력 +25% · 범위 +15% · 체력이 낮을수록 피해 최대 약 2.25배 (광폭)', '전용 스킬 : 광란 (5초간 공속 ×3 · 이속 +12%)'],
+  const L = [['rage', '버서커 리자드', '체력 +55 · 공격력 +25% · 범위 +15% · 체력이 낮을수록 피해 최대 약 2.25배 (광폭)', '전용 스킬 : 광란 (5초간 공속 ×3 · 이속 +12%)'],
              ['water', '물의 도마뱀 전사', '체력 +60 · 공격력 +12% · 받는 피해 -10% · 초당 재생 +1.0', '전용 스킬 : 물의 주술 (누르면 체력 22% 즉시 회복 · 무적 · 밀쳐냄)']];
   const items = L.map(([k, nm, ds, sb]) => Object.assign({ key: k, name: nm, desc: ds, sub: sb, preview: c => drawLizPrev(c, k) }, k === 'rage' ? condItem('lizardFin', 'rage') : { tag: ' · 기본 진화' }));
   openChoice(`최종 진화  Lv.${P.lvl}`, items, u => { P.fin = u.key; ensureTint(2); startEvolve(2); }, 'route');
@@ -3328,7 +3328,7 @@ function openChimRoute() {
 function openFinal() {
   const L = [['blood', 'crimsonB', '혈랑 (진화형)', '체력 +20 · 처치 시 체력 +1 · 흡혈', '전용 스킬 : 피의 갈취 (범위 흡혈)', null],
              ['holy', 'crimsonH', '성혈랑', '베기 2연타 (타당 55%) · 범위 +10% · 체력 +30 · 재생', '전용 스킬 : 신성한 피의 비', 'holy']];
-  if (SAVE.fw.open) L.push(['fallen', 'crimsonF', '타락한 혈랑', '공격력 +40% · 공속 +10% · 평타 범위 +25% · 체력 +10 · 처치 시 체력 +1 · 받는 피해 +8%', '전용 스킬 : 혈왕의 진 (진 안에서 공속↑ · 처치 회복)', 'fallen']);
+  if (SAVE.fw.open) L.push(['fallen', 'crimsonF', '타락한 혈랑', '공격력 +40% · 공속 +10% · 평타 범위 +25% · 체력 +25 · 처치 시 체력 +1', '전용 스킬 : 혈왕의 진 (진 안에서 공속↑ · 처치 회복)', 'fallen']);
   const items = L.map(([k, rt, nm, ds, sb, ck]) => Object.assign({ key: k, name: nm, desc: ds, sub: sb, preview: c => {
     const d = ROUTE_FORMS[rt][2], g = c.getContext('2d'), img = IMG[d.src], H = hq(img), K = H.width / img.width, f = Math.min(126 / d.pv[1], 100 / d.ch);
     g.imageSmoothingEnabled = true; g.imageSmoothingQuality = 'high';
@@ -3363,14 +3363,14 @@ function applyEvo(to) {
     return;
   }
   if (P.char === 'ghost') {   // 진화하면 구슬이 커진다 (구슬 크기는 ghostSpray에서 형태별로)
-    if (to === 1) { P.max += 30; P.dmg *= 1.15; }
-    else { P.max += 45; P.dmg *= 1.03; palSummon(4); }   // v5.11: 최종 기본 피해 소폭 너프 (×1.10 → ×1.03)
+    if (to === 1) { P.max += 30; P.dmg *= 1.30; }   // v5.26: ×1.15 → ×1.30
+    else { P.max += 45; P.dmg *= 1.10; palSummon(4); }   // v5.11: 최종 기본 피해 소폭 너프 (×1.10 → ×1.03)
     P.hp = P.max; markDex('ghost:' + to);
     return;
   }
   if (P.char === 'twins') {
-    if (to === 1) { P.max += 25; P.dmg *= 1.0; P.spd *= 1.03; }   // 사슬의 악마: 붉은·푸른 사슬 두 가닥 · 스킬 사슬 휘두르기
-    else { P.max += 40; P.dmg *= 1.29; }                            // 사슬의 폭군 (v5.00: 공격력 +15%): 사슬이 길고 무거워진다 · 스킬 강화
+    if (to === 1) { P.max += 25; P.dmg *= 1.15; P.spd *= 1.03; }   // 사슬의 악마: 붉은·푸른 사슬 두 가닥 · 스킬 사슬 휘두르기
+    else { P.max += 40; P.dmg *= 1.29 * 1.08; P.taken *= 0.92; }   // 사슬의 폭군 (v5.26: 공격력 +8% · 받는 피해 -8%): 사슬이 길고 무거워진다 · 스킬 강화
     P.hp = P.max; markDex('twins:' + to);
     return;
   }
@@ -3379,7 +3379,7 @@ function applyEvo(to) {
     else if (to === 2 && P.fin === 'guard') { P.max += 60; P.dmg *= 1.15; P.armor *= 0.88; P.regen += 0.3; }   // 수호의 리저드: 반격의 갑주
     else if (to === 1) { P.max += 30; P.dmg *= 1.32; P.cd *= 1.1; P.rng *= 1.1; P.knock += 0.2; }   // 대검: 한 방이 훨씬 세지고 공속은 근소하게 느려진다
     else if (P.fin === 'water') { P.max += 60; P.dmg *= 1.12; P.armor *= 0.9; P.regen += 1.0; }   // 물의 전사: 치유와 지구력
-    else { P.max += 40; P.dmg *= 1.25; P.rng *= 1.15; }   // 버서커: 초대형 대검 · 낮은 체력일수록 강하다
+    else { P.max += 55; P.dmg *= 1.25; P.rng *= 1.15; }   // 버서커: 초대형 대검 · 낮은 체력일수록 강하다
     P.hp = P.max; markDex(to === 1 ? (P.route === 'guard' ? 'lizard:1g' : 'lizard:1') : 'lizard:2:' + P.fin);
     return;
   }
@@ -3410,7 +3410,7 @@ function applyEvo(to) {
   }
   if (P.char === 'chimera' && P.route === 'flame') {
     if (to === 1) { P.max += 35; P.dmg *= 1.25; P.rng *= 1.15; P.spd *= 1.02; }   // 화염 발톱: 넓은 범위 + 화상
-    else { P.max += 50; P.dmg *= 1.25; P.rng *= 1.08; P.aspd += 0.1; }              // 업화: 최종 단계에서 화염 브레스 해금
+    else { P.max += 50; P.dmg *= 1.25; P.rng *= 1.08; P.aspd += 0.1; P.taken *= 0.92; }   // v5.26 받는 피해 -8% · 업화: 최종 단계에서 화염 브레스 해금
     P.hp = P.max; markDex('chimera:f' + to);
     return;
   }
@@ -3440,8 +3440,8 @@ function applyEvo(to) {
     if (r === 'twin')    { P.max += 20; P.spd *= 1.06; }   // 2연타는 형태(FD.hits)가 담당
   } else {
     P.max += 30; P.dmg *= 1.15;
-    if (r === 'crimson') { P.dmg *= 1.15; if (P.fin === 'holy') { P.max += 30; P.rng *= 1.1; P.regen += 0.8; P.dmg *= 0.86; } else if (P.fin === 'fallen') { P.max += 10; P.dmg *= 1.22; P.rng *= 1.25; P.aspd += 0.1; P.taken *= 1.08; P.killHeal += 1; } else { P.max += 20; P.dmg *= 1.06; P.syn.vamp = true; P.killHeal += 1; } }
-    if (r === 'abyss')   { P.spd *= 1.11; P.aspd += 0.24; P.max += 30; P.dmg *= 1.07; P.dodge = 0.12; }   // v5.00: 공격 +7% · 공속 +6% · 체력 +15 · 이속 +3%
+    if (r === 'crimson') { P.dmg *= 1.15; if (P.fin === 'holy') { P.max += 30; P.rng *= 1.1; P.regen += 0.65; P.dmg *= 0.86; } else if (P.fin === 'fallen') { P.max += 25; P.dmg *= 1.22; P.rng *= 1.25; P.aspd += 0.1; P.killHeal += 1; } else { P.max += 20; P.dmg *= 1.06; P.syn.vamp = true; P.killHeal += 1; } }
+    if (r === 'abyss')   { P.spd *= 1.11; P.aspd += 0.24; P.max += 30; P.dmg *= 1.07; P.dodge = 0.16; }   // v5.00: 공격 +7% · 공속 +6% · 체력 +15 · 이속 +3%
     if (r === 'twin')    { P.max += 30; P.spd *= 1.04; }   // 3연타
   }
   P.hp = P.max;
@@ -5182,7 +5182,7 @@ function update(dt) {
       if (nb < 3 + Math.floor(gt / 90)) spawnBug();
     }
     trySpawnUniq();   // 유니크 마물 (벨리아 · 셀리아)
-    spawnT = Math.max(0.28, 1.1 - gt * 0.0068) * (1 + 0.5 * Math.max(0, 1 - gt / 150));
+    spawnT = Math.max(0.28, 1.1 - gt * 0.0068) * (1 + 0.5 * Math.max(0, 1 - gt / 200));
   }
 
   // --- 적 이동 / 접촉 ---
