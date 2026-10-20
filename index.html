@@ -449,7 +449,7 @@ const ROUTES = {
 };
 // 달팽이 진화 루트: 지금은 1개만 선택 가능, 나머지는 도트가 준비되면 열린다 (avail: true 로 바꾸고 SNAIL_FORMS에 형태 추가)
 const SNAIL_ROUTES = {
-  venom: { name: '맹독', title: '맹독 (猛毒)', desc: '독 자국 확대 · 독 피해 +20% · 체력 +30 · 이속 +8%', later: 'Lv.20 : 맹독 달팽이 · 스킬 독 자국 폭파', avail: true },
+  venom: { name: '맹독', title: '맹독 (猛毒)', desc: '독 자국 확대 · 독 피해 +17% (자국 · 기본 공격 모두) · 체력 +30 · 이속 +8%', later: 'Lv.20 : 맹독 달팽이 · 스킬 독 자국 폭파', avail: true },
   lava: { name: '용암', title: '용암 (熔巖)', desc: '용암탄 폭발 + 용암 웅덩이 · 공격력 +15% · 체력 +30 · 공속 -9%', later: 'Lv.20 : 철갑 용암 (스킬 용암 대분출) · Lv.25 : 거대 용암', avail: true },
   bomb: { name: '폭탄', title: '폭탄 (爆彈)', desc: '기본 공격이 폭탄 투척 · 던질수록 폭탄이 커진다 (4번째는 대형 폭탄) · 공격력 +15% · 체력 +30', later: 'Lv.20 : 폭탄 달팽이 최종형 · 스킬 강화된 폭탄 투척', avail: true },
 };
@@ -2901,7 +2901,7 @@ const AU = n => ({ R: 95 + 22 * n, dm: 0.45 + 0.13 * n });   // v4.13 대폭 상
 // txt(n): n레벨이 되었을 때의 효과 한 줄 / alt: 캐릭터별 [이름, 효과]
 const UPGRADES = [
   { id: 'claw',   name: '날카로운 발톱', txt: () => '공격력 +16%',      apply: p => { p.dmg *= 1.16; },
-    alt: { lava: ['용암 강화', '용암 피해 +18%'], snail: ['맹독 강화', '독 피해 +18%'], archer: ['화살 강화', '화살 피해 +18%'], lizard: ['대검 단련', '공격력 +18%'], twins: ['악마의 분노', '공격력 +18%'], ghost: ['진한 저승 기운', '구슬 피해 +18%'] } },
+    alt: { lava: ['용암 강화', '공격력 +16% (용암탄 · 흔적 모두)'], snail: ['맹독 강화', '공격력 +16% (독 침 · 독 자국 모두)'], archer: ['화살 강화', '화살 피해 +16%'], lizard: ['대검 단련', '공격력 +16%'], twins: ['악마의 분노', '공격력 +16%'], ghost: ['진한 저승 기운', '구슬 피해 +16%'] } },
   { id: 'speed',  name: '날렵한 발톱',   txt: () => '공속 +12%',        apply: p => { p.aspd += 0.12; },
     alt: { snail: ['빠른 분비', '공속 +12%'], archer: ['속사', '공속 +12%'], lizard: ['가벼운 휘두르기', '공속 +12%'], twins: ['빠른 손놀림', '타격 간격 -11%'], ghost: ['빠른 손짓', '공속 +12%'] } },
   { id: 'move',   name: '질주',          txt: () => '이속 +7.5%',       apply: p => { p.spd *= 1.075; },
@@ -2927,7 +2927,7 @@ const UPGRADES = [
 const UNIQUE = {
   wolf:  [{ id: 'thirst', name: '피의 갈증', max: 5, txt: () => '처치 시 체력 +0.5', apply: p => { p.killHeal += 0.5; } }],   // 혈랑 진화의 조건
   snail: [{ id: 'sticky', name: '끈적한 독', txt: () => '독 자국 +20% 넓고 오래', lavaAlt: ['끈적한 용암', '용암 흔적 +32% 넓고 오래'], apply: p => { p.trailBonus += P.route === 'lava' ? 0.32 : 0.2; } },   // v5.11: 용암만 중폭 상향
-          { id: 'spread', name: '번지는 독', txt: () => '자국 크기 +16% · 독 피해 +9%', lavaAlt: ['번지는 용암', '흔적 크기 +14% · 피해 +7%'], apply: p => { const L = P.route === 'lava'; p.trailR = (p.trailR || 0) + (L ? 0.14 : 0.16); p.trailD = (p.trailD || 0) + (L ? 0.07 : 0.09); } },   // v5.11: 용암만 소폭 너프
+          { id: 'spread', name: '번지는 독', txt: () => '자국 크기 +16% · 독 피해 +9% (기본 공격 포함)', lavaAlt: ['번지는 용암', '흔적 크기 +14% · 피해 +7% (기본 공격 포함)'], apply: p => { const L = P.route === 'lava'; p.trailR = (p.trailR || 0) + (L ? 0.14 : 0.16); p.trailD = (p.trailD || 0) + (L ? 0.07 : 0.09); } },   // v5.11: 용암만 소폭 너프
           { id: 'magma', name: '끓는 용암', route: 'lava', txt: () => '폭발 +13% · 웅덩이 +22%', apply: p => { p.magma = (p.magma || 0) + 1; } }],
   chimera: [
     { id: 'airA', name: '날 선 바람',   form: 1, route: 'wind', txt: () => '에어슬래시 피해 +22%', apply: () => {} },
@@ -3983,7 +3983,7 @@ function snailSpit() {
 }
 const rngK = () => Math.min(1.8, Math.max(1, P.rng / 100));   // 범위 카드 1장당 반경 +20% (최대 ×1.8)
 function landLava(g) {
-  const f = FD(), mg = 1 + 0.13 * (P.magma || 0), R = (g.R || (f.lr * rngK())) * mg, dm = g.dm || f.ldm;
+  const f = FD(), mg = 1 + 0.13 * (P.magma || 0), R = (g.R || (f.lr * rngK())) * mg, dm = (g.dm || f.ldm) * (1 + (P.trailD || 0));
   for (const e of enemies) {
     if (e.hp <= 0) continue;
     if (Math.hypot(e.x - g.x1, e.y - g.y1) < R + e.r) {
@@ -4016,7 +4016,7 @@ function corpseBoom0(e) {   // 달팽이 시너지: 흔적/웅덩이 위에서 �
 }
 let bfx = [];   // 폭탄 폭발 효과
 function landBomb(g) {
-  const f = FD(), R = (g.R || f.br * g.sz) * rngK(), dm = g.dm || f.bdm * Math.pow(g.sz, 1.25);
+  const f = FD(), R = (g.R || f.br * g.sz) * rngK(), dm = (g.dm || f.bdm * Math.pow(g.sz, 1.25)) * (1 + (P.trailD || 0));
   for (const e of enemies) {
     if (e.hp <= 0) continue;
     if (Math.hypot(e.x - g.x1, e.y - g.y1) < R + e.r) {
@@ -4038,7 +4038,7 @@ function landGlob(g) {
     if (e.hp <= 0) continue;
     if (Math.hypot(e.x - g.x1, e.y - g.y1) < R + e.r) {
       const dx = e.x - g.x1, dy = e.y - g.y1, d = Math.hypot(dx, dy) || 1;
-      hurtEnemy(e, P.dmg * 1.15 * (0.5 + f.tdm * 0.5) * (e.kind === 'boss' ? 1.3 : 1), dx / d, dy / d, 160 * P.knock);
+      hurtEnemy(e, P.dmg * 1.15 * 1.075 * (f.tdm / 1.15) * (1 + (P.trailD || 0)) * (e.kind === 'boss' ? 1.3 : 1), dx / d, dy / d, 160 * P.knock);
     }
   }
   addRing(g.x1, g.y1, 8, R, 0.3, f.rgb, 6);
