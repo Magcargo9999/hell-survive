@@ -746,7 +746,8 @@ let slots = [], slotPlan = [], slotUI = null, uniqCd = 0, lasers = [], udeath = 
 let castle = null, arena = null, trans = null, banner = null, boss = null, winT = 0, darkT = 0, smokes = [];
 /* ---------- 마왕성 (Lv.25에 솟아오름) / 성 내부 맵 ---------- */
 const CAS = { s: 0.62, gx: 0.472, gate: 24 };   // 크기 배율, 성문 위치(그림 너비 비율), 성문 통로 반폭
-const AS = 1.1;   // v5.11: 마왕성 보스맵 1.1배 (그림 · 벽 · 출구 · 시작 위치 모두 같은 배율)
+const AS = 1.25;   // v5.18: 1.1 → 1.25 (중폭)
+//   // v5.11: 마왕성 보스맵 1.1배 (그림 · 벽 · 출구 · 시작 위치 모두 같은 배율)
 const ARENA = {
   w: 1312, h: 1199, start: [657, 1000],
   poly: [[260, 350], [500, 345], [505, 470], [590, 470], [602, 360], [712, 360], [722, 470], [805, 470], [805, 345], [1060, 350], [1100, 420], [1185, 520], [1185, 780], [1110, 835], [1000, 900], [990, 940], [715, 950], [715, 1199], [600, 1199], [600, 950], [320, 940], [310, 900], [200, 835], [130, 780], [130, 520], [215, 420]],
@@ -1255,7 +1256,8 @@ function updateBoss(e, dt) {
 const FWB = {"cw": 299, "ch": 182, "cx": 151, "fy": 178, "rows": {"idle": {"row": 0, "n": 5}, "walk": {"row": 1, "n": 5}, "attack": {"row": 2, "n": 5}, "frenzy": {"row": 3, "n": 5}, "drain": {"row": 4, "n": 4}, "grow": {"row": 5, "n": 3}, "hit": {"row": 6, "n": 2}, "death": {"row": 7, "n": 4}}};
 const FWFX = {"giant": [0, 0, 378, 185], "spike": [382, 0, 99, 108], "sigil": [485, 0, 97, 122], "psigil": [586, 0, 314, 67], "giantAnchor": [195, 185]};
 const FW_HP = 23500, FW_S = 1.7, FW_GS = 1.45;   // 체력 · 보통 크기 배율 · 거대화 배율
-const BMAP = { s: 1.45, w: 1818, h: 1818, cx: 909, cy: 848, rx: 632, ry: 501, start: [909, 1259] };   // 전용 맵 (원본 1254px를 1.45배 · v5.11 중폭 확장)
+const BMAP = { s: 1.65, w: 2069, h: 2069, cx: 1035, cy: 965, rx: 719, ry: 570, start: [1035, 1432] };   // v5.18: 1.45 → 1.65배
+//   // 전용 맵 (원본 1254px를 1.45배 · v5.11 중폭 확장)
 const inBlood = (x, y) => ((x - BMAP.cx) / BMAP.rx) ** 2 + ((y - BMAP.cy) / BMAP.ry) ** 2 < 1;
 let fwd = null, fwFx = [];   // 쓰러지는 모습 · 가시/진 이펙트
 function bloodPoint(x, y) {   // 맵 밖이면 가운데 쪽으로 당겨 넣는다
@@ -2120,7 +2122,8 @@ function updateEbul(dt) {
     }
     b.x += b.vx * dt; b.y += b.vy * dt;
     if (b.t >= b.life) { b.dead = true; continue; }
-    if (pil && pillarBlock(b.x, b.y)) { b.dead = true; burst(b.x, b.y - 18, 6, ['#d84cff', '#8a6a9a', '#ffffff'], 120, 0.3); continue; }   // 기둥이 탄을 막는다
+    if (false && pil && pillarBlock(b.x, b.y)) {   // v5.18: 기둥이 탄을 막지 않음
+ b.dead = true; burst(b.x, b.y - 18, 6, ['#d84cff', '#8a6a9a', '#ffffff'], 120, 0.3); continue; }   // 기둥이 탄을 막는다
     if (Math.hypot(P.x - b.x, P.y - b.y) < b.r + 11 + PR()) { eyeHit(b); b.dead = true; burst(b.x, b.y - 18, 5, ['#d84cff', '#ffffff'], 140, 0.3); continue; }
     if (pet && !pet.down && Math.hypot(pet.x - b.x, pet.y - b.y) < b.r + 16) { petHurt(pet, b.dmg); b.dead = true; }
   }
@@ -2354,7 +2357,7 @@ function updateCastle(dt, ox, oy) {
   if (banner) { banner.t -= dt; if (banner.t <= 0) banner = null; }
   if (arena) {
     if (!inPoly(P.x, P.y)) { if (inPoly(P.x, oy)) P.y = oy; else if (inPoly(ox, P.y)) P.x = ox; else { P.x = ox; P.y = oy; } }
-    if (eyePillars()) for (const [cx, cy] of PILLARS) {   // v5.11: 마안군주전 — 기둥은 못 지나간다
+    if (false) for (const [cx, cy] of PILLARS) {   // v5.18: 기둥 충돌 없앰   // v5.11: 마안군주전 — 기둥은 못 지나간다
       const dx = (P.x - cx) / PIL_RX, dy = (P.y - cy) / PIL_RY, d = Math.hypot(dx, dy);
       if (d < 1) { const k = 1 / (d || 0.01); P.x = cx + dx * k * PIL_RX; P.y = cy + (d ? dy * k : 1) * PIL_RY; }
     }
