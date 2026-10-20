@@ -273,7 +273,7 @@ const ROUTE_FORMS = {
     anim: { idle: { row: 0, n: 5, fps: 8 }, walk: { row: 1, n: 6, fps: 13 }, attack: { row: 2, n: 5, fps: 14 }, hit: { row: 3, n: 4, fps: 14 }, death: { row: 4, n: 5, fps: 8 } } } },
   crimsonH: { 2: { src: 'holy', name: '성혈랑', cw: 163, ch: 93, ws: 1.5, flip: 1, hitF: 1, hits: [1, 2], hm: 0.55, sh: 36, pv: [34, 96],
     anim: { idle: { row: 0, n: 5, fps: 8 }, walk: { row: 1, n: 5, fps: 12 }, attack: { row: 2, n: 4, fps: 12 }, hit: { row: 3, n: 2, fps: 8 }, death: { row: 4, n: 4, fps: 8 } } } },
-  crimsonF: { 2: { src: 'fwp', name: '타락한 혈랑', cw: 180, ch: 90, cx: 79, fy: 84, ws: 1.55, flip: 1, hitF: 2, sh: 38, pv: [17, 124],
+  crimsonF: { 2: { src: 'fwp', name: '타락한 혈랑', cw: 180, ch: 90, cx: 79, fy: 84, ws: 1.42, flip: 1, hitF: 2, sh: 38, pv: [17, 124],
     anim: { idle: { row: 0, n: 4, fps: 6 }, walk: { row: 1, n: 4, fps: 9 }, attack: { row: 2, n: 4, fps: 11 }, frenzy: { row: 3, n: 4, fps: 11 }, skill: { row: 4, n: 1, fps: 4 }, hit: { row: 5, n: 2, fps: 10 }, death: { row: 6, n: 3, fps: 5 } } } },   // 숨은 보스를 쓰러뜨리면 열린다 (공격은 물어뜯기 / 광폭을 번갈아)
   twin: {
     1: { src: 'twin', name: '쌍두 늑대', cw: 129, ch: 97, ws: 1.25, flip: 1, hitF: 3, hits: [3, 5], hm: 0.8, sh: 34, pv: [24, 81],
@@ -482,7 +482,7 @@ const SKILLS = {
   rage:   { name: '광란', desc: '[버서커 리자드 전용] 이성을 잃고 5초 동안 공격 속도가 3배로 치솟습니다 (이속 +12%). 체력이 낮을수록 광폭 피해가 크게 붙어, 위기일수록 더 위험해집니다.', sub: '5초 · 공속 ×3 · 이속 +12% · 붉은 광기' },
   tide:   { name: '물의 주술', desc: '[물의 도마뱀 전사 전용] 누르면 물의 주술로 체력을 즉시 회복합니다. 시전하는 짧은 순간 무적이고, 주변 적을 물결로 밀어내며 둔화시킵니다.', sub: '체력 22% 즉시 회복 · 0.9초 무적 · 주변 밀쳐냄 + 둔화' },
   whip:   { name: '사슬 휘두르기', desc: '[사슬 악마 전용] 사슬을 앞으로 길게 내던져 일직선의 적을 꿰뚫은 뒤, 몸 주위로 크게 휘둘러 4번 베고 마지막에 사슬 폭발을 일으킵니다. 최종 진화(사슬의 폭군)에서는 쓰는 동안과 쓰고 나서 10초 동안 사슬 길이 2배 · 회전 속도 2배 · 체력 재생이 크게 늘어납니다. 쓰는 동안 무적이에요. 쓰기 직전 사슬이 빨리 돌고 있을수록 강하고, 최종 진화(사슬의 폭군)에서 범위와 폭발이 커집니다.', sub: '일직선 관통 → 회전 4연타 → 사슬 폭발 · 시전 중 무적' },
-  bsigil: { name: '혈왕의 진', desc: '[타락한 혈랑 전용] 발밑에 6초 동안 핏빛 진을 펼칩니다. 진 안의 적은 0.5초마다 피해를 입고 진 가운데로 끌려가며, 내가 진 안에 서 있으면 공속이 크게 오르고 진 안에서 적을 쓰러뜨릴 때마다 체력이 회복됩니다.', sub: '6초 · 반경 175 · 진 안 공속 +43% · 끌어당김 · 처치 회복' },
+  bsigil: { name: '혈왕의 진', desc: '[타락한 혈랑 전용] 발밑에 6초 동안 핏빛 진을 펼칩니다. 진 안의 적은 0.5초마다 피해를 입고 진 가운데로 끌려가며, 내가 진 안에 서 있으면 공속이 크게 오르고 진 안에서 적을 쓰러뜨릴 때마다 체력이 회복됩니다.', sub: '6초 · 반경 230 · 진 안 공속 +100% · 끌어당김 · 처치 회복' },
   shell: { name: '반격의 갑주', desc: '[수호의 리저드 전용] 몸을 웅크려 갑주를 두릅니다. 3초 동안 모든 공격을 튕겨내고(피해 없음), 받은 피해의 2.5배를 공격한 쪽(보스 우선, 없으면 가까운 적)에게 되돌려줍니다. 보스·미니보스·유니크에게는 최대 체력의 30%를 더해 2배로 되돌려줍니다. 가시 비늘 반격도 그대로 함께 터집니다.', sub: '3초 · 피해 무효 · 반사 피해 ×2.5 · 가시 비늘과 중첩' },
   ele: { name: '코끼리 돌진', desc: '[문어 마법사 전용] 앞에 낡은 냉장고를 소환합니다. 문을 부수고 튀어나온 코끼리가 앞쪽으로 곧게 돌진해 길 위의 적을 모두 짓밟고 크게 밀어냅니다.', sub: '직선 돌진 · 공격력의 450% · 강한 넉백' },
   otent: { name: '문어의 심연', desc: '[심연의 문어 대마법사 전용] 3초 동안 적들의 발밑에서 거대한 문어 다리가 연달아 솟아올라 마구 후려칩니다. 다리 하나가 두 번씩 때립니다.', sub: '문어 다리 14개 · 범위 피해 (공격력의 160% × 2)' },
@@ -2829,7 +2829,7 @@ function drawTwin(wx, wy) {   // 손에서 뻗은 사슬 + 끝의 창날 (1진�
   ctx.restore();
 }
 let bsig = null;
-const BSIG_R = 175, inSig = (x, y) => !!bsig && Math.hypot(x - bsig.x, (y - bsig.y) * 1.3) < BSIG_R;
+const BSIG_R = 230, inSig = (x, y) => !!bsig && Math.hypot(x - bsig.x, (y - bsig.y) * 1.3) < BSIG_R;
 function startBsigil() {   // 혈왕의 진: 발밑에 6초짜리 핏빛 진
   bsig = { x: P.x, y: P.y, t: 0, life: 6, tick: 0.2 }; P.sigCast = 0.55; P.animT = 0;
   addRing(P.x, P.y - 4, 10, BSIG_R, 0.5, '255,30,50', 10); burst(P.x, P.y - 20, 30, ['#ff1a3a', '#ff8a8a', '#2a0a10'], 300, 0.8); floatNum(P.x, P.y - 96, '혈왕의 진!', '#ff6a7a'); shake = 10;
@@ -3328,7 +3328,7 @@ function openChimRoute() {
 function openFinal() {
   const L = [['blood', 'crimsonB', '혈랑 (진화형)', '체력 +20 · 처치 시 체력 +1 · 흡혈', '전용 스킬 : 피의 갈취 (범위 흡혈)', null],
              ['holy', 'crimsonH', '성혈랑', '베기 2연타 (타당 55%) · 범위 +10% · 체력 +30 · 재생', '전용 스킬 : 신성한 피의 비', 'holy']];
-  if (SAVE.fw.open) L.push(['fallen', 'crimsonF', '타락한 혈랑', '공격력 +40% · 공속 +10% · 체력 +10 · 처치 시 체력 +1 · 받는 피해 +8%', '전용 스킬 : 혈왕의 진 (진 안에서 공속↑ · 처치 회복)', 'fallen']);
+  if (SAVE.fw.open) L.push(['fallen', 'crimsonF', '타락한 혈랑', '공격력 +40% · 공속 +10% · 평타 범위 +25% · 체력 +10 · 처치 시 체력 +1 · 받는 피해 +8%', '전용 스킬 : 혈왕의 진 (진 안에서 공속↑ · 처치 회복)', 'fallen']);
   const items = L.map(([k, rt, nm, ds, sb, ck]) => Object.assign({ key: k, name: nm, desc: ds, sub: sb, preview: c => {
     const d = ROUTE_FORMS[rt][2], g = c.getContext('2d'), img = IMG[d.src], H = hq(img), K = H.width / img.width, f = Math.min(126 / d.pv[1], 100 / d.ch);
     g.imageSmoothingEnabled = true; g.imageSmoothingQuality = 'high';
@@ -3440,7 +3440,7 @@ function applyEvo(to) {
     if (r === 'twin')    { P.max += 20; P.spd *= 1.06; }   // 2연타는 형태(FD.hits)가 담당
   } else {
     P.max += 30; P.dmg *= 1.15;
-    if (r === 'crimson') { P.dmg *= 1.15; if (P.fin === 'holy') { P.max += 30; P.rng *= 1.1; P.regen += 0.8; P.dmg *= 0.86; } else if (P.fin === 'fallen') { P.max += 10; P.dmg *= 1.22; P.aspd += 0.1; P.taken *= 1.08; P.killHeal += 1; } else { P.max += 20; P.dmg *= 1.06; P.syn.vamp = true; P.killHeal += 1; } }
+    if (r === 'crimson') { P.dmg *= 1.15; if (P.fin === 'holy') { P.max += 30; P.rng *= 1.1; P.regen += 0.8; P.dmg *= 0.86; } else if (P.fin === 'fallen') { P.max += 10; P.dmg *= 1.22; P.rng *= 1.25; P.aspd += 0.1; P.taken *= 1.08; P.killHeal += 1; } else { P.max += 20; P.dmg *= 1.06; P.syn.vamp = true; P.killHeal += 1; } }
     if (r === 'abyss')   { P.spd *= 1.11; P.aspd += 0.24; P.max += 30; P.dmg *= 1.07; P.dodge = 0.12; }   // v5.00: 공격 +7% · 공속 +6% · 체력 +15 · 이속 +3%
     if (r === 'twin')    { P.max += 30; P.spd *= 1.04; }   // 3연타
   }
@@ -5067,7 +5067,7 @@ function update(dt) {
     if (t) {
       P.tx = t.x; P.ty = t.y;
       const dx = t.x - P.x, dy = t.y - t.r - (P.y - 18), d = Math.hypot(dx, dy) || 1;
-      P.atkTimer = 0; P.atkHitN = 0; P.atkCd = atkCdBase() * (moving && P.syn.rush ? 0.65 : 1) * (P.frenzy > 0 ? 0.72 : 1) * (P.rage > 0 ? (1 / 3) / (1 + 0.08 * (P.up.rageUp | 0)) : 1) * (inSig(P.x, P.y) ? 0.7 : 1); P.ax = dx / d; P.ay = dy / d; P.altAtk = !P.altAtk;
+      P.atkTimer = 0; P.atkHitN = 0; P.atkCd = atkCdBase() * (moving && P.syn.rush ? 0.65 : 1) * (P.frenzy > 0 ? 0.72 : 1) * (P.rage > 0 ? (1 / 3) / (1 + 0.08 * (P.up.rageUp | 0)) : 1) * (inSig(P.x, P.y) ? 0.5 : 1); P.ax = dx / d; P.ay = dy / d; P.altAtk = !P.altAtk;
       if (Math.abs(dx) > 6) P.face = dx > 0 ? 1 : -1;
     }
   }
