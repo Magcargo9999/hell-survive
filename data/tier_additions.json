@@ -1,0 +1,12 @@
+{
+  "note": "v5.01 티어표(tier_v501.json) 이후 추가 측정분. 같은 방식(보스 4종 x 10판 + 필드 18판, 점수 = 보스평균 75% + Lv.24 필드 25%, 기존 1등=100). 측정 이후 밸런스가 바뀐 항목은 changes 참고",
+  "s2": [
+    {"id": "ghost:2", "fam": "ghost", "name": "수호령의 총령", "tier": "B", "score": 78.2, "bavg": 75.5, "field": 19, "fk": 173, "boss": {"monkey": {"p": 83, "w": 5, "n": 10}, "eye": {"p": 96, "w": 7, "n": 10}, "skel": {"p": 76, "w": 3, "n": 10}, "fw": {"p": 47, "w": 0, "n": 10}}, "measured": "v5.0x", "changes": "v5.11 수호령 폭발 200→280%, 최종 기본 피해 x1.10→x1.03"},
+    {"id": "lizard:guard2", "fam": "lizard", "name": "수호의 리저드", "route": "수호의 길", "tier": "B", "score": 70.9, "bavg": 58.5, "field": 47, "fk": 422, "boss": {"monkey": {"p": 54, "w": 0, "n": 10, "t": 98}, "eye": {"p": 94, "w": 6, "n": 10, "t": 226}, "skel": {"p": 56, "w": 0, "n": 10, "t": 122}, "fw": {"p": 30, "w": 0, "n": 10, "t": 68}}, "measured": "v5.07", "changes": "v5.09 가시 3%→2.5%, v5.23 보스 반사·가시 대폭 상향"},
+    {"id": "snail:bomb2", "fam": "snail", "name": "폭탄 달팽이 (최종형)", "route": "폭탄", "tier": "A", "score": 89.0, "bavg": 61.5, "field": 95, "fk": 858, "boss": {"monkey": {"p": 74, "w": 1, "n": 10, "t": 103}, "eye": {"p": 97, "w": 6, "n": 10, "t": 130}, "skel": {"p": 52, "w": 0, "n": 10, "t": 87}, "fw": {"p": 23, "w": 0, "n": 10, "t": 42}}, "measured": "v5.15", "changes": "v5.16 trailD 기본공격 적용, v5.17 폭발 불웅덩이, v5.20 폭탄 계수 1.2/1.3→1.6/1.75"}
+  ],
+  "s1": [
+    {"id": "lizard:guard1", "fam": "lizard", "name": "리저드 플레이어", "route": "수호의 길", "kills": 511, "loss": 591, "n": 6, "score": 100.0, "tier": "S"},
+    {"id": "snail:bomb1", "fam": "snail", "name": "폭탄 달팽이", "route": "폭탄", "kills": 208, "loss": 426, "n": 6, "score": 59.9, "tier": "C"}
+  ]
+}

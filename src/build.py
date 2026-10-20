@@ -1,0 +1,78 @@
+"""게임 빌드: src/game_template.html 의 '__XXX__' 토큰을 src/assets 이미지(base64)로 바꿔 build/hell_survive.html 을 만든다.
+사용: python3 src/build.py  [출력경로]"""
+import base64, os, sys
+HERE = os.path.dirname(os.path.abspath(__file__)); ROOT = os.path.dirname(HERE)
+ASSETS = {
+    '__ATLAS__': 'opt/atlas.webp',
+    '__PUP__': 'opt/pup.webp',
+    '__DARK__': 'final/dark.webp',
+    '__TWIN__': 'final/twin.webp',
+    '__TRIPLE__': 'opt/triple.webp',
+    '__BUG__': 'evo/bug_q.png',
+    '__SNAIL__': 'snail/snail_q.png',
+    '__FLOOR__': 'opt/floor.webp',
+    '__PROPS__': 'opt/props.webp',
+    '__CASTLE__': 'castle/castle_q.png',
+    '__ARENA__': 'opt/arena.webp',
+    '__BOSS__': 'opt/boss.webp',
+    '__MOBS__': 'opt/mobs.webp',
+    '__BLOOD__': 'opt/blood.webp',
+    '__BLOOD2__': 'final/blood2.webp',
+    '__HOLY__': 'opt/holy.webp',
+    '__ITEMS__': 'final/items.webp',
+    '__ELF0__': 'opt/elf0.webp',
+    '__ELF1__': 'v401/n_elf.webp',
+    '__SKEL__': 'v401/n_skel.webp',
+    '__LAVASN__': 'opt/lavasn.webp',
+    '__LAVAFX__': 'opt/lavafx.webp',
+    '__VENOM2__': 'opt/venom2.webp',
+    '__VENOM3__': 'final/venom3.webp',
+    '__VENOMFX__': 'final/venomfx.webp',
+    '__MINI__': 'opt/mini.webp',
+    '__CHIM0__': 'v401/n_chimw.webp',
+    '__CHIM1__': 'v401/n_chim1.webp',
+    '__CHIM2__': 'opt/chim2.webp',
+    '__CHIMFX__': 'opt/chimfx.webp',
+    '__FLM1__': 'opt/flm1.webp',
+    '__FLM2__': 'final/flm2.webp',
+    '__FLMFX__': 'opt/flmfx.webp',
+    '__DRM1__': 'v401/n_drm1.webp',
+    '__DRM2__': 'v401/n_drm2.webp',
+    '__DRFX__': 'final/drfx.webp',
+    '__ARCR__': 'opt/arcr.webp',
+    '__ARCH__': 'opt/arch.webp',
+    '__ARFX__': 'final/arfx.webp',
+    '__HLFX__': 'final/hlfx.webp',
+    '__SLOT__': 'opt/slot.webp',
+    '__UNIQ__': 'opt/uniq.webp',
+    '__EYEM__': 'final/eyem.webp',
+    '__RELIC__': 'final/relic.webp',
+    '__LIZ0__': 'v401/n_liz0.webp',
+    '__LIZ1__': 'v401/n_liz1.webp',
+    '__LIZ2__': 'v401/n_liz2.webp',
+    '__LIZ3__': 'final/liz3.webp',
+    '__TW0__': 'cd/cd1.webp',
+    '__TW1__': 'cd/cd2.webp',
+    '__TW2__': 'cd/cd3.webp',
+    '__FWB__': 'v404/fwb.webp',
+    '__FWP__': 'v404/fwp.webp',
+    '__FWFX__': 'v404/fwfx.webp',
+    '__BMAP__': 'v404/bmap.webp',
+    '__GH__': 'gh/gh.webp',
+    '__GG__': 'gg/gg.webp',
+    '__OC__': 'oc/oc.webp',
+    '__LG__': 'lg/lg.webp',
+    '__OS__': 'os/os.webp',
+    '__BS__': 'bs/bs.webp',
+    '__SKB__': 'sk/skb.webp',
+    '__SKW__': 'sk/skw.webp'
+}
+def b64(p): return 'data:image/' + ('webp' if p.endswith('.webp') else 'png') + ';base64,' + base64.b64encode(open(os.path.join(HERE, 'assets', p), 'rb').read()).decode()
+s = open(os.path.join(HERE, 'game_template.html'), encoding='utf8').read()
+for k, p in ASSETS.items():
+    assert s.count("'" + k + "'") == 1, k
+    s = s.replace("'" + k + "'", "'" + b64(p) + "'")
+out = sys.argv[1] if len(sys.argv) > 1 else os.path.join(ROOT, 'build', 'hell_survive.html')
+os.makedirs(os.path.dirname(out), exist_ok=True)
+open(out, 'w', encoding='utf8').write(s)
+print(out, len(s) // 1024, 'KB')
