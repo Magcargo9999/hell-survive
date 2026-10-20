@@ -522,7 +522,7 @@ function mkCanvas(w, h) { const c = document.createElement('canvas'); c.width = 
 const SAVE_KEY = 'hellSurvivorSave1';
 const SAVE_DEF = () => ({
   shards: 0,
-  perks: { hp: 0, spd: 0, dmg: 0, exp: 0, magnet: 0, banish: 0, revive: 0 },
+  perks: { hp: 0, spd: 0, dmg: 0, exp: 0, magnet: 0, banish: 0, revive: 0, regen: 0, shard: 0, critd: 0, choice: 0 },
   chars: { wolf: true, snail: true, archer: false, chimera: false, lizard: false, twins: false, ghost: false, octo: false },
   dex: { seen: {}, kills: {}, final: {}, goals: 0 },
   diff: { max: 0, sel: 0, fw: false },
@@ -556,6 +556,10 @@ const PERKS = [
   { id: 'exp',    name: '영혼 공명',      desc: '경험치 획득 +8%',          max: 10, cost: l => 50 + 35 * l },
   { id: 'magnet', name: '끌어당기는 힘',  desc: '구슬 흡수 범위 +25% · 끌어당기는 속도 +25%', max: 10, cost: l => 30 + 25 * l },
   { id: 'banish', name: '선택지 삭제권',  desc: '판마다 레벨업 카드 N장 삭제 (단계마다 +1장)', max: 5, cost: l => 120 + 100 * l },
+  { id: 'regen',  name: '재생의 숨결',    desc: '체력 재생 초당 +0.1',       max: 3, cost: l => 150 + 120 * l },
+  { id: 'shard',  name: '조각 수집가',    desc: '영혼 조각 획득 +5%',        max: 5, cost: l => 100 + 80 * l },
+  { id: 'critd',  name: '날카로운 급소',  desc: '치명타 피해 +10%p',         max: 5, cost: l => 80 + 60 * l },
+  { id: 'choice', name: '넓어진 선택지',  desc: '레벨업 카드 선택지 +1장 (3장 → 4장)', max: 1, cost: () => 5000 },
   { id: 'revive', name: '불사조의 깃털',  desc: '판마다 1번, 죽어도 체력 50%로 부활', max: 1, cost: () => 400 },
 ];
 // 캐릭터 목록 (price가 0이면 기본 제공, 아니면 상점에서 영혼 조각으로 구매)
@@ -2453,7 +2457,7 @@ function newPlayer(char) {
   if (char === 'lizard') { p.max = p.hp = 112; p.spd = 163; p.dmg = 21; p.cd = 1.12; p.rng = 100; p.pickup = 90; p.armor = 0.85; p.knock += 0.15; }   // 느리고 단단하지만 한 방이 강하다
   const pk = SAVE.perks;   // 상점에서 산 영구 강화 적용
   p.max = Math.round(p.max * (1 + 0.08 * pk.hp)); p.hp = p.max;
-  p.spd *= 1 + 0.04 * pk.spd; p.dmg *= 1 + 0.05 * pk.dmg; p.pickup *= 1 + 0.25 * pk.magnet; p.magPull = 1 + 0.25 * pk.magnet; p.reviveLeft = Math.min(1, pk.revive || 0); p.expMul = 1 + 0.08 * pk.exp;
+  p.spd *= 1 + 0.04 * pk.spd; p.dmg *= 1 + 0.05 * pk.dmg; p.pickup *= 1 + 0.25 * pk.magnet; p.magPull = 1 + 0.25 * pk.magnet; p.reviveLeft = Math.min(1, pk.revive || 0); p.regen += 0.1 * (pk.regen | 0); p.critD += 0.1 * (pk.critd | 0); p.expMul = 1 + 0.08 * pk.exp;
   p.healBank = p.max * 0.12; p.banish = pk.banish || 0; p.spd0 = p.spd; p.exitLeft = 1;
   return p;
 }
@@ -2639,7 +2643,7 @@ function hurtPlayer(dmg) {
   if (P.hp <= 0) { P.hp = 0; die(); }
 }
 const tierMul = () => 1 + 0.3 * (P.tier || 0);
-function calcShards() { return Math.round((Math.floor(P.kills / 20) + Math.floor(gt / 30) + Math.floor(P.lvl * 1.5) + P.named * 2 + P.goalShards) * tierMul()); }   // v4.06: 한 번 더 상향 (판이 짧아진 만큼 + α)   // v4.02: 약 1.5배 상향
+function calcShards() { return Math.round((Math.floor(P.kills / 20) + Math.floor(gt / 30) + Math.floor(P.lvl * 1.5) + P.named * 2 + P.goalShards) * tierMul() * (1 + 0.05 * (SAVE.perks.shard | 0))); }   // v4.06: 한 번 더 상향 (판이 짧아진 만큼 + α)   // v4.02: 약 1.5배 상향
 /* ---------- 런 목표: 한 판 안에서 순서대로 나오는 작은 목표. 달성하면 영혼 조각을 추가로 받는다 ---------- */
 const GOAL_TYPES = [
   { k: 'kills', label: n => `마물 ${n}마리 처치`,       tg: i => 80 + 60 * i,            ok: () => true },
@@ -2987,7 +2991,7 @@ const SYNERGIES = [
   { id: 'bstorm',    name: '칼날 폭풍',   txt: '칼날 +2개 · 크기 +62%',            need: ['blade', 'range'] },
   { id: 'dnova',     name: '이중 충격파', txt: '충격파가 두 번 터지고 밀쳐냄',     need: ['nova', 'knock'] },
   { id: 'inferno',   name: '화염 지옥',   txt: '오라 반경 +40% · 피해 +70%',       need: ['aura', 'armor'] },
-  { id: 'deadeye',   name: '급소 사냥꾼', txt: '치명타 피해 ×2.3',                 need: ['crit', 'claw'], apply: p => { p.critD = 2.3; } },
+  { id: 'deadeye',   name: '급소 사냥꾼', txt: '치명타 피해 ×2.3',                 need: ['crit', 'claw'], apply: p => { p.critD += 0.6; } },
   { id: 'iron',      name: '철벽',        txt: '받는 피해 -10% · 피격 무적 +0.3초', need: ['armor', 'heart'], apply: p => { p.armor *= 0.9; } },
   { id: 'harvest',   name: '영혼 수확',   txt: '경험치 +30% · 흡수 범위 +30%',     need: ['exp', 'magnet'], apply: p => { p.expMul *= 1.3; p.pickup *= 1.3; } },
   // v5.17 문어 마법사 전용 조합
@@ -3120,8 +3124,9 @@ function levelUp() {
   openUpgrade();
 }
 function openUpgrade() {
-  const items = rollCards(3, []).map(cardView);
-  while (items.length < 3) items.push(items.length ? shardCard() : restCard());
+  const NC = 3 + ((SAVE.perks.choice | 0) > 0 ? 1 : 0);   // v5.24: 강화 상점 [넓어진 선택지] → 4장
+  const items = rollCards(NC, []).map(cardView);
+  while (items.length < NC) items.push(items.length ? shardCard() : restCard());
   const av = availSyn();
   if (av.length) items[(rand() * items.length) | 0] = synCard(av[(rand() * av.length) | 0]);   // 재료가 모이면 조합 카드가 한 장 끼어든다
   if (P.curseCard > 0) {   // 잭팟 머신의 저주: 카드를 고를 수 없고 무작위 1장이 억지로 적용된다
@@ -5043,7 +5048,7 @@ function update(dt) {
   updateCastle(dt, ox0, oy0);
   P.inv = Math.max(0, P.inv - dt); P.hitT = Math.max(0, P.hitT - dt);
   if (P.regen) P.hp = Math.min(P.max, P.hp + P.regen * dt * (P.still > 1.2 ? 0.25 : 1));
-  if (P.hp > 0 && P.hp < P.max) P.hp = Math.min(P.max, P.hp + (0.2 + (P.chain4 > 0 || (whipQ && P.form >= 2) ? P.max * 0.03 : 0)) * dt);   // v5.11: 모든 캐릭터 미미한 자연 회복 0.2/s · 사슬의 폭군 해방 중 초당 3%
+  if (P.hp > 0 && P.hp < P.max) P.hp = Math.min(P.max, P.hp + ((P.chain4 > 0 || (whipQ && P.form >= 2) ? P.max * 0.03 : 0)) * dt);   // v5.24: 기본 0.2 재생 제거 (강화 상점에서 구매)   // v5.11: 모든 캐릭터 미미한 자연 회복 0.2/s · 사슬의 폭군 해방 중 초당 3%
   P.healBank = Math.min(P.max * 0.12, P.healBank + P.max * 0.05 * dt * (P.still > 1.2 ? 0.2 : 1));
   P.shield = Math.max(0, P.shield - dt); P.boost = Math.max(0, P.boost - dt); P.vampCd -= dt; if (P.frenzy > 0) P.frenzy -= dt;
   P.thornCd -= dt; if (P.guardT > 0) P.guardT -= dt; if (P.regenCd > 0) P.regenCd -= dt; lowMark(); if (P.tideT > 0) P.tideT -= dt;
