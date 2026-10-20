@@ -18,7 +18,8 @@
  const rec={field:fld,dmg:Math.round(P.dmg),hp:P.max,cards:JSON.parse(JSON.stringify(P.up)),syn:Object.keys(P.syn).filter(k=>P.syn[k])};
  if(res!=='lv25'||!boss) return rec;
  while(G.state==='levelup'||G.state==='evolve'){ if(!pump())break; }
- if(window.__FW){ G.SAVE.fw.snap=G.snapP(); G.SAVE.fw.open=true; G.startFw(); P=G.P; for(let i=0;i<110;i++){ G.tick(dt); } } else { let gi=0; for(;gi<400&&!G.boss;gi++){ if(!G.trans&&!G.arena&&G.state==='play') G.enterArena(); if(!pump()) G.tick(dt); } for(let i=0;i<80;i++){ pump(); G.tick(dt); } }
+ for(const k of ['KeyW','KeyA','KeyS','KeyD']) keys.delete(k);
+ if(window.__FW){ G.SAVE.fw.snap=G.snapP(); G.SAVE.fw.open=true; G.startFw(); P=G.P; for(let i=0;i<110;i++){ G.tick(dt); } } else { let gi=0; for(;gi<400&&!G.boss;gi++){ if(!G.trans&&!G.arena&&G.state==='play') G.enterArena(); if(!pump()) G.tick(dt); } rec.diag0={gi,boss:!!G.boss,arena:!!G.arena,trans:!!G.trans,st:G.state,castle:!!G.castle}; for(let i=0;i<80;i++){ pump(); G.tick(dt); } rec.diag1={boss:!!G.boss,bst:G.boss&&G.boss.st,bhp:G.boss&&Math.round(G.boss.hp),arena:!!G.arena,st:G.state,ne:G.enemies.length}; }
  let bt=0,bloss=0; const REACT=0.16;
  function esc(b){ let fx=0,fy=0; const M=30;
    const TLs=b.tele.slice(); for(const m of G.enemies) if((m.kind==='skm'||m.kind==='mini')&&m.hp>0&&m.tele) for(const t of m.tele) TLs.push(t);
