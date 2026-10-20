@@ -3061,8 +3061,9 @@ function openChoice(title, items, cb, cls) {
     if (u.cond) html += `<span class="cond ${u.cond.ok ? 'ok' : 'no'}">${u.cond.ok ? '✔ 조건 달성' : '🔒 조건 미달성'}<br>${u.cond.txt}</span>`;
     if (u.note) html += `<span class="cond ok">${u.note}</span>`;
     if (u.sub) html += `<small>${u.sub}</small>`;
-    html += (u.syn ? `<span class="flh">누르면 스킬 조합 보기 ★</span>` : '') + `<em>[${i + 1}]${u.tag || ''}</em></div>`;
-    html += `<div class="bk"><strong>${u.name}</strong>` + (u.syn ? `<span class="synl">${u.syn}</span>` : `<span class="flh">이 카드로 만드는 조합이 없어요</span>`) + `<span class="flh">다시 누르면 앞면</span></div>`;   // v5.14: 앞면 = 효과 · 뒷면 = 조합
+    const evoPick = title.includes('갈림길') && u.sub;   // v5.19: 진화 갈림길 카드 뒷면 = 이후 최종 진화
+    html += (u.syn ? `<span class="flh">누르면 스킬 조합 보기 ★</span>` : evoPick ? `<span class="flh">누르면 최종 진화 형태 보기 ▶</span>` : '') + `<em>[${i + 1}]${u.tag || ''}</em></div>`;
+    html += `<div class="bk"><strong>${u.name}</strong>` + (u.syn ? `<span class="synl">${u.syn}</span>` : evoPick ? `<span class="synl">▶ 이후 최종 진화<br>${u.sub.replace(/^Lv\.20 ?: ?/, 'Lv.20 · ').replace(/ \/ /g, '<br>또는 ').replace(/ · Lv\.25 ?: ?/, '<br>Lv.25 · ')}</span>` : `<span class="flh">이 카드로 만드는 조합이 없어요</span>`) + `<span class="flh">다시 누르면 앞면</span></div>`;   // v5.14: 앞면 = 효과 · 뒷면 = 조합
     b.innerHTML = html;
     if (u.preview) u.preview(b.querySelector('canvas'));
     b.addEventListener('click', () => { b.classList.toggle('flip'); });
@@ -5094,7 +5095,7 @@ function update(dt) {
       const t = nearestEnemy(520, used); if (!t) break;
       used.push(t);
       const dx = t.x - P.x, dy = t.y - t.r - (P.y - 22), d = Math.hypot(dx, dy) || 1;
-      shards.push(Object.assign({ x: P.x, y: P.y - 22, vx: dx / d * 460, vy: dy / d * 460, life: 1.3, pierce: 2, hit: new Set(), src: 'shard' }, P.char === 'archer' ? { dmg: P.dmg * 0.65, arrow: true, auto: true, sz: 0.8, ox: P.x, oy: P.y - 22 } : { dmg: P.dmg * 0.81 }));   // 보조 투사체 (v5.02: 75 -> 81%): 공격력 비례 (궁수 60% · 나머지 75%)
+      shards.push(Object.assign({ x: P.x, y: P.y - 22, vx: dx / d * 460, vy: dy / d * 460, life: 1.3, pierce: 2, hit: new Set(), src: 'shard', ink: P.char === 'octo' }, P.char === 'archer' ? { dmg: P.dmg * 0.65, arrow: true, auto: true, sz: 0.8, ox: P.x, oy: P.y - 22 } : { dmg: P.dmg * 0.81 }));   // 보조 투사체 (v5.02: 75 -> 81%): 공격력 비례 (궁수 60% · 나머지 75%)
     }
     if (used.length) P.shardCd = 1.2;
   }
@@ -5113,6 +5114,7 @@ function update(dt) {
         critAdd = far && s.arrow && P.syn.mark ? 0.3 : 0;
         DSRC = s.src || null; hurtEnemy(e, dm, s.vx / d, s.vy / d, (s.kb || 220) * (s.sk ? 1 : P.knock) * (s.gust ? 1.6 : 1)); DSRC = null; s.hit.add(e); critAdd = 0;
         if (s.gust) e.slowT = Math.max(e.slowT || 0, 1.2);
+        if (s.ink) burst(e.x, e.y - e.r, 6, ['#07040a', '#1c1024', '#3a2a48'], 150, 0.45);   // 먹물 튀김
         if (s.obolt && P.syn.oDrain && P.vampCd <= 0) { healP(0.8); P.vampCd = 0.25; }   // 마력 흡수   // 바람의 궤적
         if (P.syn.spore && P.char === 'snail' && !s.arrow && !s.spored) { s.spored = true; let tn = 0; for (const z of zones) if (z.type === 'trail') tn++; if (tn < 110) dropTrail(e.x, e.y, FD().tr * 1.2, FD().tl); }   // 독가시 웅덩이
         if (s.holy) {   // 신성화살: 풀차지로 맞히면 남은 쿨타임이 절반 줄어든다
@@ -5916,6 +5918,12 @@ function render() {
   for (const s of shards) {
     ctx.save(); ctx.translate(wx(s.x), wy(s.y)); ctx.rotate(Math.atan2(s.vy, s.vx));
     if (s.bomb) { const r = ARFX.bombarrow; ctx.globalCompositeOperation = 'lighter'; ctx.imageSmoothingEnabled = true; ctx.drawImage(IMG.arfx, r[0], r[1], r[2], r[3], -r[2] * 0.8, -r[3] * 0.45, r[2] * 0.9, r[3] * 0.9); }
+    else if (s.ink) {   // v5.19: 문어 마법사 먹물 탄 — 검은 먹물 덩어리 + 흩날리는 방울
+      for (let q = 1; q <= 3; q++) { ctx.fillStyle = `rgba(10,6,14,${0.5 - q * 0.12})`; ctx.beginPath(); ctx.arc(-q * 9, Math.sin(wallT * 20 + q) * 2, 6 - q, 0, 6.283); ctx.fill(); }
+      ctx.fillStyle = '#2a1636'; ctx.beginPath(); ctx.ellipse(0, 0, 13, 9.5, 0, 0, 6.283); ctx.fill();
+      ctx.fillStyle = '#07040a'; ctx.beginPath(); ctx.ellipse(1, 0, 11, 8, 0, 0, 6.283); ctx.fill();
+      ctx.fillStyle = 'rgba(190,160,220,0.55)'; ctx.beginPath(); ctx.ellipse(4, -3, 3.5, 2, -0.4, 0, 6.283); ctx.fill();
+    }
     else if (s.obolt) { const r = s.big ? OCA.a_orb[1] : OCA.c_orb[0], k = (s.big ? 0.55 : 0.62) * (s.sz || 1.2) / 1.2; ctx.rotate(-Math.atan2(s.vy, s.vx)); ctx.globalCompositeOperation = 'lighter'; ctx.imageSmoothingEnabled = true; ctx.drawImage(IMG.oc, r[0], r[1], r[2], r[3], -r[2] * k / 2, -r[3] * k / 2, r[2] * k, r[3] * k); }
     else if (s.gorb) {   // 연보라 구슬 (시트의 구슬 이펙트)
       if (s.gchg) { const r = GG_FX.chg[1], k = 0.55 + 0.05 * Math.sin(wallT * 30); ctx.globalCompositeOperation = 'lighter'; ctx.imageSmoothingEnabled = true; ctx.drawImage(IMG.gg, r[0], r[1], r[2], r[3], -r[2] * k * 0.8, -r[3] * k / 2, r[2] * k, r[3] * k); ctx.restore(); continue; }
@@ -6039,7 +6047,7 @@ function drawHud() {
   {
     let sy2 = 76 + (Object.keys(P.rel).length ? 38 : 0); ctx.textAlign = 'left';
     { // 획득한 스킬 카드 (체력바 아래 칩)
-      if (!hudCards.t || wallT - hudCards.t > 0.5) { hudCards.t = wallT; hudCards.L = [];
+      if (!hudCards.t || wallT - hudCards.t > 0.5 || hudCards.c !== P) { hudCards.c = P; hudCards.t = wallT; hudCards.L = [];
         for (const u of UPGRADES.concat(...Object.values(UNIQUE))) if ((P.up[u.id] || 0) > 0 && !hudCards.L.some(x => x.id === u.id)) hudCards.L.push({ id: u.id, t: upName(u.id) + ' ' + P.up[u.id], syn: false });
         for (const sy of SYNERGIES) if (P.syn[sy.id]) { const a = altOf(sy); hudCards.L.push({ id: sy.id, t: '★' + (a ? a[0] : sy.name), syn: true }); } }
       ctx.font = 'bold 13px "Malgun Gothic", monospace'; let cx2 = 10, rows = hudCards.L.length ? 1 : 0;
