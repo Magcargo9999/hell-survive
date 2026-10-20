@@ -2913,7 +2913,7 @@ const UPGRADES = [
     alt: { octo: ['두꺼운 먹물막', '최대 체력 +16'], snail: ['단단한 껍질', '최대 체력 +16'], archer: ['엘프의 끈기', '최대 체력 +16'] } },
   { id: 'magnet', name: '영혼 자석',     txt: () => '흡수 범위 +60% · 끌어당기는 속도 +60%',   apply: p => { p.pickup *= 1.6; p.magPull = (p.magPull || 1) + 0.6; }, alt: { octo: ['마력 끌림', '흡수 범위 +60% · 끌어당기는 속도 +60%'] } },
   { id: 'range',  name: '넓은 발톱',     txt: () => '범위 +12%',        apply: p => { p.rng *= 1.12; },
-    alt: { octo: ['먼 마법진', '마력탄 사거리 +12%'], lava: ['넓은 용암 웅덩이', '폭발 범위 +12%'], snail: ['넓은 독 웅덩이', '폭발 범위 +12%'], archer: ['먼 곳 조준', '사거리 +12%'], lizard: ['넓은 휘두르기', '범위 +12%'], twins: ['긴 사슬', '사슬 길이 +12%'], ghost: ['멀리 뿌리기', '사거리 +12%'] } },
+    alt: { octo: ['먼 마법진', '마력탄 사거리 +12%'], lava: ['넓은 용암탄', '용암탄이 터지는 범위 +12%'], bomb: ['큰 화약', '폭탄 폭발 범위 +12%'], snail: ['넓은 독 침', '독 침이 터지는 범위 +12%'], archer: ['먼 곳 조준', '사거리 +12%'], lizard: ['넓은 휘두르기', '범위 +12%'], twins: ['긴 사슬', '사슬 길이 +12%'], ghost: ['멀리 뿌리기', '사거리 +12%'] } },
   { id: 'orb',    noChar: 'octo', name: '지옥불 구슬',   txt: () => '불꽃 구슬 +1 (공격력의 55%)', apply: p => { p.orbsN++; } },
   { id: 'shard',  name: '뼈 투사체',     txt: () => '뼈 투사체 +1발 (공격력의 81%)', apply: p => { p.shardN++; },
     alt: { octo: ['먹물 탄', '먹물 탄 +1발 (공격력의 81%)'], lava: ['용암 파편', '용암 파편 +1발 (공격력의 81%)'], snail: ['독가시', '독가시 +1발 (공격력의 81%)'], archer: ['추적 화살', '추적 화살 +1발 (공격력의 65%)'] } },
@@ -3008,7 +3008,7 @@ const SYNERGIES = [
   { id: 'quake',     name: '대지 진동',   txt: '내려찍기 범위 +30% · 맞은 적 1.5초 둔화', need: ['smash', 'knock'], only: 'lizard' },
 ];
 const SYN_LV = 3;   // 조합 재료 카드에 필요한 레벨 (v4.01: 5 → 3, 너무 늦게 열리던 것을 완화)
-const altOf = u => (P.char === 'snail' && P.route === 'lava' && u.alt && u.alt.lava) || (u.alt && u.alt[P.char]) || (u.lavaAlt && P.route === 'lava' ? u.lavaAlt : null);
+const altOf = u => (P.char === 'snail' && P.route === 'lava' && u.alt && u.alt.lava) || (P.char === 'snail' && P.route === 'bomb' && u.alt && u.alt.bomb) || (u.alt && u.alt[P.char]) || (u.lavaAlt && P.route === 'lava' ? u.lavaAlt : null);
 const upName = id => { const u = UPGRADES.concat(...Object.values(UNIQUE)).find(u => u.id === id) || { name: id }, a = altOf(u); return a ? a[0] : u.name; };
 const availSyn = () => SYNERGIES.filter(sy => (!sy.only || sy.only === P.char) && !P.up[sy.id] && sy.need.every(n => (P.up[n] || 0) >= SYN_LV));   // 재료 카드 2장이 모두 Lv.3
 const synPartner = id => SYNERGIES.some(sy => sy.need.includes(id) && (!sy.only || sy.only === P.char) && !P.up[sy.id] && (P.up[id] || 0) < SYN_LV && (P.up[sy.need.find(x => x !== id)] || 0) > 0);   // 짝 재료를 이미 가진 카드
