@@ -434,7 +434,7 @@ const SKILL_CD = { shell: 14, ele: 12, otent: 15, gcharge: 9, gsummon: 24, lavab
 const skillCd = () => ((window.__SKCD && window.__SKCD[P.skill]) || SKILL_CD[P.skill] || 14);
 const SKILL_UNIQUE = { wolf: 'howl', snail: 'blast', archer: 'bigarrow', chimera: 'dive', lizard: 'rage', twins: 'whip' };
 const uniqueSkill = () => (P.char === 'chimera' && P.route === 'dream') ? 'rush' : (P.char === 'chimera' && P.route === 'flame') ? 'breath' : (P.char === 'snail' && P.route === 'lava') ? 'lavaburst' : (P.char === 'wolf' && P.route === 'twin') ? 'cerb' : (P.char === 'wolf' && P.route === 'crimson') ? (P.fin === 'holy' ? 'bloodrain' : P.fin === 'fallen' ? 'bsigil' : 'drain') : SKILL_UNIQUE[P.char];
-const uniqueSkills = () => P.char === 'octo' ? [P.form >= 2 ? 'otent' : 'ele'] : P.char === 'ghost' ? ['gsummon'] : P.char === 'lizard' ? [P.fin === 'guard' ? 'shell' : P.fin === 'water' ? 'tide' : 'rage'] : P.char === 'archer' ? (P.route === 'elf' && P.fin ? [P.fin === 'holy' ? 'holyshot' : 'bombshot'] : ['bigarrow', 'backdash']) : [uniqueSkill()];
+const uniqueSkills = () => P.char === 'octo' ? [P.form >= 2 ? 'otent' : 'ele'] : P.char === 'ghost' ? [P.form >= 2 ? 'gsummon' : 'gcharge'] : P.char === 'lizard' ? [P.fin === 'guard' ? 'shell' : P.fin === 'water' ? 'tide' : 'rage'] : P.char === 'archer' ? (P.route === 'elf' && P.fin ? [P.fin === 'holy' ? 'holyshot' : 'bombshot'] : ['bigarrow', 'backdash']) : [uniqueSkill()];
 const skillName = k => (k === 'blast' && P.char === 'snail' && P.form === 2) ? '맹독 대폭파' : (k === 'bigarrow' && P.route === 'skel') ? '해골 대궁의 일격' : SKILLS[k].name;
 const SKILLS = {
   cerb:   { name: '삼두 연쇄 물기', desc: '[삼두 전용] 세 머리가 가까운 적을 차례로 물어뜯습니다. 한 번마다 범위 피해와 강한 넉백, 둔화.', sub: '3연속 · 서로 다른 적 · 범위 피해' },
@@ -537,7 +537,7 @@ const CHARS = {
   chimera: { name: '키메라', price: 300, desc: '날렵한 짐승형 근접 캐릭터.<br>Lv.10 진화 루트 선택: 바람(관통 에어슬래시 · Lv.20 천공 강하) / 화염(넓은 화상 발톱 · Lv.20 화염 브레스) / 몽환(촉수 · Lv.20 천안 난무, 0단계에서 이공벌레를 잡아야 열림).', ally: '특징: 진화 루트 3개 (바람 · 화염 · 몽환)' },
   lizard: { name: '리자드', price: 260, desc: '느리지만 단단하고 한 방이 묵직한 대검 전사.<br>Lv.10 리자드 검사 · Lv.20 버서커(광란) / 물의 전사(자힐) 중 선택.', ally: '특징: 이속 느림 · 받는 피해 -15% · 강한 기본 공격' },
   twins: { name: '사슬 악마', price: 0, cond: '벨리아·셀리아 둘 다 처치하면 해금', desc: '부서진 사슬을 쥔 작고 불완전한 악마.<br>직접 공격하지 않고, 움직일수록 사슬 끝 창날이 휘둘리며 적을 친다.', ally: '특징: 자동 공격 없음 · 이속이 곧 공격력 · Lv.10 사슬 두 가닥 + 스킬' },
-  ghost: { name: '연보라 구슬 유령', price: 240, desc: '저승의 기운이 맺힌 연보라 구슬을 앞쪽으로 흩뿌리는 유령.<br>구슬 하나는 약하지만 여러 개가 한꺼번에 날아간다.<br>Lv.10 연보라 총령 (큰 구슬) → Lv.20 수호령의 총령 (대신 맞고 터지는 수호령)', ally: '특징: 부채꼴 다발 사격 · 가까울수록 많이 맞힌다 · (진화는 아직 없음)' },
+  ghost: { name: '연보라 구슬 유령', price: 240, desc: '저승의 기운이 맺힌 연보라 구슬을 앞쪽으로 흩뿌리는 유령.<br>구슬 하나는 약하지만 여러 개가 한꺼번에 날아간다.<br>Lv.10 연보라 총령 (큰 구슬 · 차지 샷) → Lv.20 수호령의 총령 (대신 맞고 터지는 수호령)', ally: '특징: 부채꼴 다발 사격 · 가까울수록 많이 맞힌다 · (진화는 아직 없음)' },
   octo: { name: '문어 마법사', price: 0, hidden: true, cond: '난이도 2단계 이상에서 나오는 히든 마물 [문어 마법사]를 쓰러뜨리면 해금', desc: '책과 등불을 든 어린 문어 마법사.<br>곧게 날아가는 마법탄을 쏘고, 증강(스킬 카드)을 고를 때마다 몸 주위를 도는 마력 구체가 하나씩 늘어난다.', ally: '특징: 구체가 점점 늘어남 · Lv.10 진화 + 스킬 [코끼리 돌진] · Lv.20 스킬이 [문어의 심연]으로 바뀜' },
 };
 
@@ -3167,7 +3167,7 @@ function milestone() {   // 진화·스킬·마왕전을 미리 알려 준다
   if (P.char === 'octo' && L === 19) { banner = { txt: '다음 레벨(Lv.20)에 최종 진화!  스킬이 [문어의 심연]으로 바뀝니다', t: 6 }; return; }
   if (P.char === 'octo' && L === 15) return;
   if (P.char === 'octo' && L === 2) { banner = { txt: '문어 마법사는 증강(스킬 카드)을 고를 때마다 몸 주위를 도는 마력 구체가 하나씩 늘어나요', t: 7 }; return; }
-  if (P.char === 'ghost' && L === 9) { banner = { txt: '다음 레벨(Lv.10)에 [연보라 총령]으로 진화!  구슬이 커지고 공격력·체력이 오릅니다', t: 6 }; return; }
+  if (P.char === 'ghost' && L === 9) { banner = { txt: '다음 레벨(Lv.10)에 [연보라 총령]으로 진화!  구슬이 커지고 특수 스킬 [차지 샷]', t: 6 }; return; }
   if (P.char === 'ghost' && L === 19) { banner = { txt: '다음 레벨(Lv.20)에 최종 진화 [수호령의 총령]!  수호령이 대신 맞아 주고 터집니다', t: 6 }; return; }
   if (P.char === 'ghost' && L === 15) return;
   if (P.char === 'ghost' && L === 2) { banner = { txt: '구슬 유령은 약한 구슬을 부채꼴로 여러 개 뿌려요 — 적에게 가까이 붙을수록 많이 맞습니다', t: 7 }; return; }
@@ -3381,7 +3381,7 @@ function updateEvolve(dt) {
   updateFx(dt);
   if (evo.t >= 1.9) {
     const to = evo.to; evo = null; P.inv = 1.2;
-    if (P.char === 'twins' ? (to === 1 && !P.skill) : P.char === 'octo' ? true : to === 2) openSkill();
+    if (P.char === 'twins' ? (to === 1 && !P.skill) : (P.char === 'octo' || P.char === 'ghost') ? true : to === 2) openSkill();
     else if (P.char === 'twins' && to === 2) { banner = { txt: '사슬의 폭군!  [사슬 휘두르기] 강화 — 더 길게 꿰뚫고, 더 넓게 휘두르고, 폭발이 커집니다', t: 6 }; state = 'play'; if (P.exp >= P.need) levelUp(); }
     else { state = 'play'; if (P.exp >= P.need) levelUp(); }
   }
@@ -6100,7 +6100,7 @@ function openDex() {
   [['octo:0', OCTO_FORMS[0], '시작', '<br>조건: 히든 마물 문어 마법사 처치'], ['octo:1', OCTO_FORMS[1], '진화 · 코끼리 돌진', '<br>Lv.10 진화'], ['octo:2', OCTO_FORMS[2], '최종 진화 · 문어의 심연', '<br>Lv.20 진화', 1]].forEach(([key, D, sub, hint, tr]) => add(gr, { on: d.seen[key], trophy: !!tr, name: D.name, sub, hint, draw: (g, w, h, l) => dexSprite(g, w, h, IMG[D.src], D.pv[0], D.pv[1], D.pv[2], D.pv[3], false, l, true) }));
   }
   gr = sec('구슬 유령 계열');
-  [['ghost:0', GHOST_FORMS[0], '시작', ''], ['ghost:1', GHOST_FORMS[1], '진화 · 큰 구슬', '<br>Lv.10 진화'], ['ghost:2', GHOST_FORMS[2], '최종 진화 · 수호령 소환', '<br>Lv.20 진화', 1]].forEach(([key, D, sub, hint, tr]) => add(gr, { on: d.seen[key], trophy: !!tr, name: D.name, sub, hint, draw: (g, w, h, l) => dexSprite(g, w, h, IMG[D.src], D.pv[0], D.pv[1], D.pv[2], D.pv[3], false, l, true) }));
+  [['ghost:0', GHOST_FORMS[0], '시작', ''], ['ghost:1', GHOST_FORMS[1], '진화 · 큰 구슬 · 차지 샷', '<br>Lv.10 진화'], ['ghost:2', GHOST_FORMS[2], '최종 진화 · 수호령 소환', '<br>Lv.20 진화', 1]].forEach(([key, D, sub, hint, tr]) => add(gr, { on: d.seen[key], trophy: !!tr, name: D.name, sub, hint, draw: (g, w, h, l) => dexSprite(g, w, h, IMG[D.src], D.pv[0], D.pv[1], D.pv[2], D.pv[3], false, l, true) }));
   gr = sec('사슬 악마 계열');
   [['twins:0', TWIN_FORMS[0], '시작', '<br>조건: 벨리아·셀리아 처치'], ['twins:1', TWIN_FORMS[1], '진화 · 두 가닥 사슬 · 사슬 휘두르기', '<br>Lv.10 진화'], ['twins:2', TWIN_FORMS[2], '최종 진화 · 사슬의 폭군', '<br>Lv.20 진화', 1]].forEach(([key, D, sub, hint, tr]) => add(gr, { on: d.seen[key], trophy: !!tr, name: D.name, sub, hint,
     draw: (g, w, h, l) => dexSprite(g, w, h, IMG[D.src], D.pv[0], D.pv[1], D.pv[2], D.pv[3], false, l, true) }));
