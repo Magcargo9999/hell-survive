@@ -251,7 +251,7 @@ const ARCHER_FIN = {
 const archerForm = (route, form) => (form >= 2 && route === 'elf' && P && ARCHER_FIN[P.fin || 'red']) || (form > 0 && ARCHER_ROUTE_FORMS[route]) || ARCHER_FORMS[0];
 // 궁수 진화 루트 (최종 진화는 아직 없음)
 const ARCHER_ROUTES = {
-  elf:  { name: '지옥엘프', title: '성장한 지옥엘프', desc: '화살 2발 동시 발사 · 공격력 +40% · 공속 +25% · 이속 +12% · 회피 20% · 체력 +40', later: 'Lv.20 : 최종 진화 2갈래 (진화한 지옥엘프 · 폭발 화살 / 성화된 지옥엘프 · 신성화살)' },
+  elf:  { name: '지옥엘프', title: '성장한 지옥엘프', desc: '화살 2발 동시 발사 · 공격력 +48% · 공속 +25% · 이속 +12% · 회피 20% · 체력 +30', later: 'Lv.20 : 최종 진화 2갈래 (진화한 지옥엘프 · 폭발 화살 / 성화된 지옥엘프 · 신성화살)' },
   skel: { name: '해골 궁수', title: '저주받은 해골 궁수', desc: '받는 피해 -25% · 공속 -33% · 화살 피해 ×2.8 · 관통 +3 · 강한 넉백 (한 방이 묵직한 저격형)', later: 'Lv.20 : 특수 스킬 (큰 화살 강화형)' },
 };
 // 루트 전용 형태: 혈랑(1단계) / 쌍두(1단계) -> 삼두(최종). flip: 원본이 바라보는 방향(-1 = 왼쪽), hits: 공격 한 번에 타격이 들어가는 프레임, hm: 타격당 피해 배율
@@ -2383,7 +2383,7 @@ function newPlayer(char) {
     x: 0, y: 0, hp: sn ? 125 : ar ? 100 : 100, max: sn ? 125 : ar ? 100 : 100, spd: sn ? 175 : ar ? 215 : 200, face: 1,
     anim: 'idle', animT: 0, inv: 0, hitT: 0,
     atkTimer: -1, atkCd: 0, atkHitN: 0, ax: 1, ay: 0,
-    dmg: sn ? 18 : ar ? 22 : 18, rng: sn || ar ? 100 : 96, cd: sn ? 0.92 : ar ? 0.6 : 0.9, pickup: ar ? 95 : 90,
+    dmg: sn ? 18 : ar ? 22 : 18, rng: sn || ar ? 100 : 96, cd: sn ? 0.92 : ar ? 0.56 : 0.9, pickup: ar ? 95 : 90,
     pierce: 1, fin: null, regen: 0, arrowScale: 1, far: ar ? 0.15 : 0, dodge: 0, kite: 0, fireArrow: 0, moving: false,
     orbsN: 0, orbAng: 0, shardN: 0, shardCd: 0,
     exp: 0, need: needFor(1), lvl: 1, kills: 0, up: {},
@@ -2395,7 +2395,7 @@ function newPlayer(char) {
   if (char === 'twins') { p.max = p.hp = 108; p.spd = 212; p.dmg = 16; p.cd = 1.0; p.rng = 100; p.pickup = 90; p.knock += 0.1; p.tw = { x: -70, y: 10, vx: 0, vy: 0, dir: 1, spd: 0, ang: 0 }; }   // 사슬 악마: 빠르고 약하다, 사슬 끝 창날(tw)은 본체 기준 상대 위치로 시작
   if (char === 'octo') { p.max = p.hp = 105; p.spd = 195; p.dmg = 20; p.cd = 0.72; p.rng = 100; p.pickup = 92; p.orbsN = 1; p.orbD = 0.45; }   // 문어 마법사: 직선 마법탄 + 늘어나는 구체
   if (char === 'ghost') { p.max = p.hp = 100; p.spd = 210; p.dmg = 15; p.cd = 0.65; p.rng = 100; p.pickup = 95; p.gOrbs = 5; }   // 구슬 유령: 약한 구슬 여러 개
-  if (char === 'lizard') { p.max = p.hp = 112; p.spd = 163; p.dmg = 23; p.cd = 1.12; p.rng = 100; p.pickup = 90; p.armor = 0.85; p.knock += 0.15; }   // 느리고 단단하지만 한 방이 강하다
+  if (char === 'lizard') { p.max = p.hp = 112; p.spd = 163; p.dmg = 21; p.cd = 1.12; p.rng = 100; p.pickup = 90; p.armor = 0.85; p.knock += 0.15; }   // 느리고 단단하지만 한 방이 강하다
   const pk = SAVE.perks;   // 상점에서 산 영구 강화 적용
   p.max = Math.round(p.max * (1 + 0.08 * pk.hp)); p.hp = p.max;
   p.spd *= 1 + 0.04 * pk.spd; p.dmg *= 1 + 0.05 * pk.dmg; p.pickup *= 1 + 0.1 * pk.magnet; p.expMul = 1 + 0.08 * pk.exp;
@@ -2628,7 +2628,7 @@ function shellReflect(d) {
 }
 function thornBlast() {   // 가시 비늘: 맞으면 주변 적에게 반격
   const gd = P.char === 'lizard' && P.route === 'guard', n = (P.up.scale | 0) + (gd ? 1 : 0); if (!n || P.thornCd > 0) return; P.thornCd = gd ? 0.5 : 0.8;
-  const R = 95 + 12 * n + (gd ? 15 : 0), dm = (P.dmg * (0.5 + 0.15 * n) + (gd ? P.max * 0.03 * n : 0)) * berserkMul();   // 수호의 길: 최대 체력의 3%×단계만큼 더
+  const R = 95 + 12 * n + (gd ? 15 : 0), dm = (P.dmg * (0.5 + 0.15 * n) + (gd ? P.max * 0.025 * n : 0)) * berserkMul();   // 수호의 길: 최대 체력의 2.5%×단계만큼 더
   addRing(P.x, P.y - 22, 10, R, 0.3, theme().rgb, 6);
   for (const e of enemies) { if (e.hp <= 0) continue; const dx = e.x - P.x, dy = e.y - P.y, d = Math.hypot(dx, dy) || 1; if (d < R + e.r) hurtEnemy(e, dm, dx / d, dy / d, 260); }
 }
@@ -2694,8 +2694,8 @@ function twinHits() {
   }
 }
 function pendulumBoom(src) {   // 충격 진자: 창날이 칠 때마다 작은 충격파
-  const R = 72; addRing(src.x, src.y - src.r, 6, R, 0.25, theme().rgb, 5);
-  for (const o of enemies) { if (o === src || o.hp <= 0) continue; const dx = o.x - src.x, dy = o.y - src.y, d = Math.hypot(dx, dy) || 1; if (d < R + o.r) hurtEnemy(o, P.dmg * 0.45, dx / d, dy / d, 200, o.kind === 'boss'); }
+  const R = 78; addRing(src.x, src.y - src.r, 6, R, 0.25, theme().rgb, 5);
+  for (const o of enemies) { if (o === src || o.hp <= 0) continue; const dx = o.x - src.x, dy = o.y - src.y, d = Math.hypot(dx, dy) || 1; if (d < R + o.r) hurtEnemy(o, P.dmg * 0.49, dx / d, dy / d, 200, o.kind === 'boss'); }
 }
 // 사슬 휘두르기 (Lv.10 해금 · Lv.20 사슬의 폭군에서 강화): ① 사슬을 앞으로 길게 내던져 일직선 관통 ② 몸 주위로 크게 휘둘러 4연타 ③ 사슬 폭발
 function startWhip() {
@@ -2835,7 +2835,7 @@ const GD = n => 16 - 2 * n;   // 방어막: 레벨별 재충전 시간(초) Lv1 
 const AU = n => ({ R: 95 + 22 * n, dm: 0.45 + 0.13 * n });   // v4.13 대폭 상향 (반경 70→117 · 피해 ×2 이상)                                                 // 불길 오라
 // txt(n): n레벨이 되었을 때의 효과 한 줄 / alt: 캐릭터별 [이름, 효과]
 const UPGRADES = [
-  { id: 'claw',   name: '날카로운 발톱', txt: () => '공격력 +18%',      apply: p => { p.dmg *= 1.18; },
+  { id: 'claw',   name: '날카로운 발톱', txt: () => '공격력 +16%',      apply: p => { p.dmg *= 1.16; },
     alt: { lava: ['용암 강화', '용암 피해 +18%'], snail: ['맹독 강화', '독 피해 +18%'], archer: ['화살 강화', '화살 피해 +18%'], lizard: ['대검 단련', '공격력 +18%'], twins: ['악마의 분노', '공격력 +18%'], ghost: ['진한 저승 기운', '구슬 피해 +18%'] } },
   { id: 'speed',  name: '날렵한 발톱',   txt: () => '공속 +12%',        apply: p => { p.aspd += 0.12; },
     alt: { snail: ['빠른 분비', '공속 +12%'], archer: ['속사', '공속 +12%'], lizard: ['가벼운 휘두르기', '공속 +12%'], twins: ['빠른 손놀림', '타격 간격 -11%'], ghost: ['빠른 손짓', '공속 +12%'] } },
@@ -2915,10 +2915,10 @@ const SYNERGIES = [
   { id: 'ricochet',  name: '도탄 사격',   txt: '처치 시 근처 적에게 화살이 튕김',  need: ['claw', 'shard'], only: 'archer' },
   { id: 'lifeOrb',   name: '불사의 영혼', txt: '경험치 구슬마다 체력 회복',        need: ['heart', 'magnet'] },
   { id: 'tstorm',    name: '폭풍 낙뢰',   txt: '낙뢰 쿨타임 -40% · +2발',            need: ['thunder', 'speed'] },
-  { id: 'bstorm',    name: '칼날 폭풍',   txt: '칼날 +2개 · 크기 +50%',            need: ['blade', 'range'] },
+  { id: 'bstorm',    name: '칼날 폭풍',   txt: '칼날 +2개 · 크기 +62%',            need: ['blade', 'range'] },
   { id: 'dnova',     name: '이중 충격파', txt: '충격파가 두 번 터지고 밀쳐냄',     need: ['nova', 'knock'] },
   { id: 'inferno',   name: '화염 지옥',   txt: '오라 반경 +40% · 피해 +70%',       need: ['aura', 'armor'] },
-  { id: 'deadeye',   name: '급소 사냥꾼', txt: '치명타 피해 ×2.5',                 need: ['crit', 'claw'], apply: p => { p.critD = 2.5; } },
+  { id: 'deadeye',   name: '급소 사냥꾼', txt: '치명타 피해 ×2.3',                 need: ['crit', 'claw'], apply: p => { p.critD = 2.3; } },
   { id: 'iron',      name: '철벽',        txt: '받는 피해 -10% · 피격 무적 +0.3초', need: ['armor', 'heart'], apply: p => { p.armor *= 0.9; } },
   { id: 'harvest',   name: '영혼 수확',   txt: '경험치 +30% · 흡수 범위 +30%',     need: ['exp', 'magnet'], apply: p => { p.expMul *= 1.3; p.pickup *= 1.3; } },
   // v4.01 캐릭터 전용 조합 (각 캐릭터의 고유 방식을 바꾸는 것만)
@@ -3208,7 +3208,7 @@ function openLizRoute() {   // Lv.10: 대검의 길(리자드 검사) / 수호�
 }
 function openLizFinal() {
   const L = [['rage', '버서커 리자드', '체력 +40 · 공격력 +25% · 범위 +15% · 체력이 낮을수록 피해 최대 약 2.25배 (광폭)', '전용 스킬 : 광란 (5초간 공속 ×3 · 이속 +12%)'],
-             ['water', '물의 도마뱀 전사', '체력 +60 · 공격력 +20% · 받는 피해 -10% · 초당 재생 +1.0', '전용 스킬 : 물의 주술 (누르면 체력 35% 즉시 회복 · 무적 · 밀쳐냄)']];
+             ['water', '물의 도마뱀 전사', '체력 +60 · 공격력 +12% · 받는 피해 -10% · 초당 재생 +1.0', '전용 스킬 : 물의 주술 (누르면 체력 22% 즉시 회복 · 무적 · 밀쳐냄)']];
   const items = L.map(([k, nm, ds, sb]) => Object.assign({ key: k, name: nm, desc: ds, sub: sb, preview: c => drawLizPrev(c, k) }, k === 'rage' ? condItem('lizardFin', 'rage') : { tag: ' · 기본 진화' }));
   openChoice(`최종 진화  Lv.${P.lvl}`, items, u => { P.fin = u.key; ensureTint(2); startEvolve(2); }, 'route');
   document.getElementById('levelHint').textContent = '🔒 버서커 = 체력이 10 이하로 떨어진 적이 있어야 열림 (위험할수록 강한 공격형) · 물의 전사 = 기본 진화 (스스로 치유하는 지속형)';
@@ -3224,8 +3224,8 @@ function drawArcherFinPrev(c, k) {
   g.drawImage(H, d.pv[0] * K, 0, d.pv[1] * K, d.ch * K, (c.width - d.pv[1] * f) / 2, c.height - 2 - d.ch * f, d.pv[1] * f, d.ch * f);
 }
 function openArcherFinal() {
-  const L = [['red', '진화한 지옥엘프 궁수', '체력 +50 · 공격력 +20% · 공속 +10% · 이속 +5% · 회피 25% · 관통 +1 · 이동 중 사격 피해 +20%', '전용 스킬 : 폭발 화살 (무적 백스텝 + 폭발 · 여진 2회)', null],
-             ['holy', '성화된 지옥엘프 궁수', '체력 +60 · 공격력 +15% · 사거리 +10% · 먼 거리 피해 +25% · 받는 피해 -10%', '전용 스킬 : 신성화살 (오래 모을수록 강한 차징 · 풀차지 명중 시 쿨타임 -50%)', 'holy']];
+  const L = [['red', '진화한 지옥엘프 궁수', '체력 +45 · 공격력 +12% · 공속 +10% · 이속 +5% · 회피 25% · 이동 중 사격 피해 +20%', '전용 스킬 : 폭발 화살 (무적 백스텝 + 폭발 · 여진 2회)', null],
+             ['holy', '성화된 지옥엘프 궁수', '체력 +55 · 공격력 +15% · 사거리 +10% · 먼 거리 피해 +25% · 받는 피해 -10%', '전용 스킬 : 신성화살 (오래 모을수록 강한 차징 · 풀차지 명중 시 쿨타임 -50%)', 'holy']];
   const items = L.map(([k, nm, ds, sb, ck]) => Object.assign({ key: k, name: nm, desc: ds, sub: sb, preview: c => drawArcherFinPrev(c, k) }, ck ? condItem('archerFin', ck) : { tag: ' · 기본 진화' }));
   openChoice(`최종 진화  Lv.${P.lvl}`, items, u => { P.fin = u.key; ensureTint(2); startEvolve(2); }, 'route');
   document.getElementById('levelHint').textContent = '🔒 조건을 달성한 루트만 고를 수 있어요. [기본 진화]는 조건 없이 선택 가능';
@@ -3293,20 +3293,20 @@ function applyEvo(to) {
     if (to === 1 && P.route === 'guard') { P.max += 45; P.dmg *= 1.12; P.armor *= 0.85; P.regen += 0.4; P.knock += 0.3; }   // 수호: 단단하고 가시로 되갚는다 · 아주 느린 자연 회복
     else if (to === 2 && P.fin === 'guard') { P.max += 60; P.dmg *= 1.15; P.armor *= 0.88; P.regen += 0.3; }   // 수호의 리저드: 반격의 갑주
     else if (to === 1) { P.max += 30; P.dmg *= 1.32; P.cd *= 1.1; P.rng *= 1.1; P.knock += 0.2; }   // 대검: 한 방이 훨씬 세지고 공속은 근소하게 느려진다
-    else if (P.fin === 'water') { P.max += 60; P.dmg *= 1.2; P.armor *= 0.9; P.regen += 1.0; }   // 물의 전사: 치유와 지구력
+    else if (P.fin === 'water') { P.max += 60; P.dmg *= 1.12; P.armor *= 0.9; P.regen += 1.0; }   // 물의 전사: 치유와 지구력
     else { P.max += 40; P.dmg *= 1.25; P.rng *= 1.15; }   // 버서커: 초대형 대검 · 낮은 체력일수록 강하다
     P.hp = P.max; markDex(to === 1 ? (P.route === 'guard' ? 'lizard:1g' : 'lizard:1') : 'lizard:2:' + P.fin);
     return;
   }
   if (P.char === 'snail' && P.route === 'lava') {
-    if (to === 1) { P.max += 30; P.dmg *= 1.1; P.cd *= 1.1; }   // 공격은 조금 느려지지만 폭발이 크고 웅덩이가 남는다
+    if (to === 1) { P.max += 30; P.dmg *= 1.16; P.cd *= 1.1; }   // 공격은 조금 느려지지만 폭발이 크고 웅덩이가 남는다
     if (to === 2) { P.max += 40; P.dmg *= 1.12; P.spd *= 1.03; }
     if (to === 3) { P.max += 60; P.dmg *= 1.18; P.armor *= 0.85; P.spd *= 1.02; }
     P.hp = P.max; markDex('snail:L' + to, P.route);
     return;
   }
   if (P.char === 'snail') {
-    if (to === 1) { P.max += 30; P.dmg *= 1.12; P.spd *= 1.08; }
+    if (to === 1) { P.max += 30; P.dmg *= 1.18; P.spd *= 1.08; }
     if (to === 2) { P.max += 60; P.dmg *= 1.22; P.spd *= 1.05; P.armor *= 0.85; }
     P.hp = P.max; markDex('snail:V' + to, P.route);
     return;
@@ -3325,19 +3325,19 @@ function applyEvo(to) {
   }
   if (P.char === 'chimera') {
     if (to === 1) { P.max += 25; P.dmg *= 1.2; P.spd *= 1.04; P.rng *= 1.08; }   // 에어슬래시 해금
-    else { P.max += 40; P.dmg *= 1.25; P.aspd += 0.12; P.spd *= 1.04; }              // 날개가 완성된다: 에어슬래시 2갈래
+    else { P.max += 40; P.dmg *= 1.17; P.aspd += 0.12; P.spd *= 1.04; }              // 날개가 완성된다: 에어슬래시 2갈래
     P.hp = P.max; markDex('chimera:' + to);
     return;
   }
   if (P.char === 'archer' && to === 2) {
     if (P.fin === 'holy') { P.max += 55; P.dmg *= 1.15; P.rng *= 1.1; P.far += 0.25; P.armor *= 0.9; }   // 성화: 멀리서 모아 쏘는 저격수
-    else { P.max += 45; P.dmg *= 1.2; P.aspd += 0.1; P.spd *= 1.05; P.dodge = 0.25; P.kite += 1; }   // 진화: 움직이며 싸우는 전술형
+    else { P.max += 45; P.dmg *= 1.12; P.aspd += 0.1; P.spd *= 1.05; P.dodge = 0.25; P.kite += 1; }   // 진화: 움직이며 싸우는 전술형
     P.hp = P.max; markDex('archer:2:' + (P.fin === 'holy' ? 'holy' : 'red'), P.route);
     return;
   }
   if (P.char === 'archer') {
-    if (P.route === 'elf') { P.max += 30; P.spd *= 1.12; P.aspd += 0.25; P.dmg *= 1.4; P.bolts++; P.dodge = 0.2; }   // 두 발 동시 사격 (v5.00: 관통은 '관통 화살' 카드로만)
-    else { P.max += 15; P.armor *= 0.75; P.cd *= 1.5; P.dmg *= 2.8; P.pierce += 4; P.arrowScale = 1.6; P.far += 0.1; P.knock += 0.75; }   // 저주: 체력·공속 감소, 한 방이 강해진다
+    if (P.route === 'elf') { P.max += 30; P.spd *= 1.12; P.aspd += 0.25; P.dmg *= 1.48; P.bolts++; P.dodge = 0.2; }   // 두 발 동시 사격 (v5.00: 관통은 '관통 화살' 카드로만)
+    else { P.max += 15; P.armor *= 0.75; P.cd *= 1.5; P.dmg *= 2.95; P.pierce += 4; P.arrowScale = 1.6; P.far += 0.1; P.knock += 0.75; }   // 저주: 체력·공속 감소, 한 방이 강해진다
     P.hp = P.max; markDex('archer:1:' + P.route, P.route);
     return;
   }
@@ -3349,9 +3349,9 @@ function applyEvo(to) {
     if (r === 'twin')    { P.max += 20; P.spd *= 1.06; }   // 2연타는 형태(FD.hits)가 담당
   } else {
     P.max += 30; P.dmg *= 1.15;
-    if (r === 'crimson') { P.dmg *= 1.15; if (P.fin === 'holy') { P.max += 30; P.rng *= 1.1; P.regen = 0.8; P.dmg *= 0.86; } else if (P.fin === 'fallen') { P.max += 10; P.dmg *= 1.22; P.aspd += 0.1; P.taken *= 1.08; P.killHeal += 1; } else { P.max += 20; P.syn.vamp = true; P.killHeal += 1; } }
+    if (r === 'crimson') { P.dmg *= 1.15; if (P.fin === 'holy') { P.max += 30; P.rng *= 1.1; P.regen = 0.8; P.dmg *= 0.86; } else if (P.fin === 'fallen') { P.max += 10; P.dmg *= 1.22; P.aspd += 0.1; P.taken *= 1.08; P.killHeal += 1; } else { P.max += 20; P.dmg *= 1.06; P.syn.vamp = true; P.killHeal += 1; } }
     if (r === 'abyss')   { P.spd *= 1.11; P.aspd += 0.24; P.max += 30; P.dmg *= 1.07; P.dodge = 0.12; }   // v5.00: 공격 +7% · 공속 +6% · 체력 +15 · 이속 +3%
-    if (r === 'twin')    { P.max += 20; P.spd *= 1.04; }   // 3연타
+    if (r === 'twin')    { P.max += 30; P.spd *= 1.04; }   // 3연타
   }
   P.hp = P.max;
   markDex(to === 1 ? 'wolf:1:' + P.route : r === 'twin' ? 'wolf:2t' : r === 'crimson' ? 'wolf:2c:' + P.fin : 'wolf:2', P.route);
@@ -4677,7 +4677,7 @@ function castThunder(c) {
 }
 function castBlades(c, t) {
   const base = t ? Math.atan2(t.y - P.y, t.x - P.x) : Math.atan2(P.lastY, P.lastX), n = c.n + (P.syn.bstorm ? 2 : 0);
-  for (let i = 0; i < n; i++) blades.push({ x: P.x, y: P.y - 20, a: base + (i - (n - 1) / 2) * 0.55, out: true, dist: 0, max: 330, r: 24 * (P.syn.bstorm ? 1.5 : 1), dm: c.dm, hit: new Map(), t: 0, rot: rand() * 6 });
+  for (let i = 0; i < n; i++) blades.push({ x: P.x, y: P.y - 20, a: base + (i - (n - 1) / 2) * 0.55, out: true, dist: 0, max: 330, r: 24 * (P.syn.bstorm ? 1.62 : 1), dm: c.dm, hit: new Map(), t: 0, rot: rand() * 6 });
   sfx('shoot');
 }
 function castNova(c) {
