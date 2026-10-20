@@ -3042,7 +3042,7 @@ let choices = [], choiceCb = null;
 function openChoice(title, items, cb, cls) {
   choices = items; choiceCb = cb; state = 'levelup';
   document.getElementById('levelTitle').textContent = title;
-  document.getElementById('levelHint').textContent = '카드를 누르면 상세 설명 · 선택 버튼 또는 1 2 3 키로 선택';
+  document.getElementById('levelHint').textContent = '카드를 누르면 스킬 조합 · 선택 버튼 또는 1 2 3 키로 선택';
   const box = document.getElementById('cards'); box.innerHTML = '';
   items.forEach((u, i) => {
     const w = document.createElement('div'); w.className = 'cw';
@@ -3050,15 +3050,12 @@ function openChoice(title, items, cb, cls) {
     b.className = 'card ' + (cls || '') + (u.locked ? ' locked' : '') + (u.cls ? ' ' + u.cls : '');
     let html = '<div class="fr">' + (u.preview ? '<canvas width="130" height="105"></canvas>' : '');
     if (u.isNew) html += '<span class="newb">NEW</span>';
-    html += `<strong>${u.name}</strong>`;
+    html += `<strong>${u.name}</strong>` + (u.eff ? `<span class="eff">${u.desc}</span>` : u.desc);
     if (u.cond) html += `<span class="cond ${u.cond.ok ? 'ok' : 'no'}">${u.cond.ok ? '✔ 조건 달성' : '🔒 조건 미달성'}<br>${u.cond.txt}</span>`;
-    if (u.syn) html += `<span class="synl">${u.syn}</span>`;
-    if (u.sub) html += `<small>${u.sub}</small>`;
-    html += `<span class="flh">카드를 누르면 상세 설명</span><em>[${i + 1}]${u.tag || ''}</em></div>`;
-    html += `<div class="bk"><strong>${u.name}</strong>` + (u.eff ? `<span class="eff">${u.desc}</span>` : u.desc);
     if (u.note) html += `<span class="cond ok">${u.note}</span>`;
     if (u.sub) html += `<small>${u.sub}</small>`;
-    html += `<span class="flh">다시 누르면 앞면</span></div>`;
+    html += (u.syn ? `<span class="flh">누르면 스킬 조합 보기 ★</span>` : '') + `<em>[${i + 1}]${u.tag || ''}</em></div>`;
+    html += `<div class="bk"><strong>${u.name}</strong>` + (u.syn ? `<span class="synl">${u.syn}</span>` : `<span class="flh">이 카드로 만드는 조합이 없어요</span>`) + `<span class="flh">다시 누르면 앞면</span></div>`;   // v5.14: 앞면 = 효과 · 뒷면 = 조합
     b.innerHTML = html;
     if (u.preview) u.preview(b.querySelector('canvas'));
     b.addEventListener('click', () => { b.classList.toggle('flip'); });
