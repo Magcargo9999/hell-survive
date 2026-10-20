@@ -4289,7 +4289,7 @@ const UNIQ_P = 0.0011;     // 스폰 틱마다 나올 확률 (틱이 초당 2~3�
 const uniqHp = () => Math.max(1250 + 2 * gt, 585 * (1 + gt / 100)) * (1 + 0.3 * (P.tier || 0));   // 같은 시각 정예의 1.5~2배 · 미니 보스처럼 한 방에 녹지 않게
 function spawnUniq(k) {
   const U = UNIQ[k], a = rand() * 6.283, d = Math.hypot(W, H) / 2 + 100, hp = uniqHp() * U.hpK;
-  P.uniqSeen[k] = true; uniqCd = 80;
+  P.uniqSeen[k] = true; uniqCd = (P.tier || 0) >= 3 ? 40 : 80;
   enemies.push({ kind: 'uniq', uk: k, x: P.x + Math.cos(a) * d, y: P.y + Math.sin(a) * d, kx: 0, ky: 0, sp: U.spd, spec: null, sc: 1, r: 23, hp, max: hp, dmg: 0, exp: 0, elite: false,
     flash: 0, t: rand() * 4, orbCd: 0, slowT: 0, kres: 0.3, face: -1, st: 'chase', cd: 1.6, at: null, tele: [], rage: false, mv: false });
   if (k === 'octo') { const e = enemies[enemies.length - 1]; e.r = 30; e.st = 'chase'; e.cd = 2.2; banner = { txt: `히든 마물 ${U.name} 등장!  ${U.sub}\n곧게 뻗는 마법 — 바닥의 줄·원 경고를 옆으로 피하세요`, t: 6, c: '#e0a0ff' }; sfx('skill'); markDex('uq:' + k, 1); return; }
@@ -4546,7 +4546,7 @@ function drawOctoMob(e, x, y) {
 }
 function trySpawnUniq() {   // 스폰 틱마다 한 번 굴린다 — 한 판에 각자 한 번만, 동시에 한 명만
   if (arena || castle || mini || uniqCd > 0 || gt < 110) return;
-  if (enemies.some(q => q.kind === 'uniq' && q.hp > 0)) return;
+  if (enemies.filter(q => q.kind === 'uniq' && q.hp > 0).length >= ((P.tier || 0) >= 3 ? 2 : 1)) return;   // v5.15: 난이도 3단계 이상은 동시에 2마리까지 (같은 유니크는 한 판에 한 번)
   const pool = Object.keys(UNIQ).filter(k => !P.uniqSeen[k] && gt >= UNIQ[k].from && (P.tier || 0) >= (UNIQ[k].tier || 0));
   if (pool.length && rand() < UNIQ_P) spawnUniq(pool[(rand() * pool.length) | 0]);
 }
@@ -4681,15 +4681,17 @@ function drawLasers(wx, wy) {
   }
 }
 function drawUniqHud() {   // 유니크 체력바 · 화면 밖 방향 표시
-  const u = enemies.find(q => q.kind === 'uniq' && q.hp > 0); if (!u || arena) return;
+  if (arena) return;
+  enemies.filter(q => q.kind === 'uniq' && q.hp > 0).slice(0, 2).forEach((u, ui) => {   // v5.15: 2마리면 체력바 2줄
   const U = UNIQ[u.uk];
   if (!(mini && mini.hp > 0)) {
-    const bw = Math.min(340, W - 80), bx = W / 2 - bw / 2, by = 44; ctx.save();
+    const bw = Math.min(340, W - 80), bx = W / 2 - bw / 2, by = 44 + ui * 38; ctx.save();
     ctx.fillStyle = 'rgba(10,4,16,0.75)'; ctx.fillRect(bx - 4, by - 20, bw + 8, 34); ctx.fillStyle = '#ffd9a8'; ctx.font = 'bold 13px "Malgun Gothic", sans-serif'; ctx.textAlign = 'center';
     ctx.fillText(`유니크 · ${U.name} (${U.sub})` + (u.rage ? '  ·  분노' : ''), W / 2, by - 6);
     ctx.fillStyle = '#2a0a0e'; ctx.fillRect(bx, by, bw, 9); ctx.fillStyle = u.rage ? '#ff3a2a' : `rgb(${U.rgb})`; ctx.fillRect(bx, by, bw * Math.max(0, u.hp / u.max), 9); ctx.restore();
   }
   edgeArrow(u, '255,120,60', '!', '#ffb070');
+  });
 }
 function drawRelicHud() {
   const keys2 = Object.keys(RELICS).filter(k => P.rel[k]); if (!keys2.length) return;
