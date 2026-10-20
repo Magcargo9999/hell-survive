@@ -18,7 +18,7 @@
  const rec={field:fld,dmg:Math.round(P.dmg),hp:P.max,cards:JSON.parse(JSON.stringify(P.up)),syn:Object.keys(P.syn).filter(k=>P.syn[k])};
  if(res!=='lv25'||!boss) return rec;
  while(G.state==='levelup'||G.state==='evolve'){ if(!pump())break; }
- if(window.__FW){ G.SAVE.fw.snap=G.snapP(); G.SAVE.fw.open=true; G.startFw(); P=G.P; for(let i=0;i<110;i++){ G.tick(dt); } } else { G.enterArena(); for(let i=0;i<110;i++){ pump(); G.tick(dt); } }
+ if(window.__FW){ G.SAVE.fw.snap=G.snapP(); G.SAVE.fw.open=true; G.startFw(); P=G.P; for(let i=0;i<110;i++){ G.tick(dt); } } else { let gi=0; for(;gi<400&&!G.boss;gi++){ if(!G.trans&&!G.arena&&G.state==='play') G.enterArena(); if(!pump()) G.tick(dt); } for(let i=0;i<80;i++){ pump(); G.tick(dt); } }
  let bt=0,bloss=0; const REACT=0.16;
  function esc(b){ let fx=0,fy=0; const M=30;
    const TLs=b.tele.slice(); for(const m of G.enemies) if((m.kind==='skm'||m.kind==='mini')&&m.hp>0&&m.tele) for(const t of m.tele) TLs.push(t);
@@ -32,7 +32,7 @@
    if(b.st==='dash'||b.st==='air'||b.st==='rDash'||b.st==='gcharge'||b.st==='pAir'){ const d=Math.hypot(P.x-b.x,P.y-b.y); if(d<b.r+120){fx+=(P.x-b.x)/(d||1);fy+=(P.y-b.y)/(d||1);} }
    return [fx,fy]; }
  const HL={}; const hp0=P.hp; let bcasts=0, deadAt=null; const SMART0=false; const DUR=window.__DUR||(god?400:300); if(window.__BIGHP&&G.boss){G.boss.hp=G.boss.max=1e7;}
- while(bt<DUR && G.boss && G.state==='play'){
+ while(bt<DUR && G.boss && (G.state==='play'||G.state==='levelup'||G.state==='evolve')){
    const b=G.boss; if(pump())continue; let TG=b; if(b.shield){ let bd=1e9; for(const q of G.enemies) if(q.kind==='skh'&&q.hp>0){ const dd=Math.hypot(q.x-P.x,q.y-P.y); if(dd<bd){bd=dd;TG=q;} } }
    let dx=TG.x-P.x,dy=TG.y-P.y,d=Math.hypot(dx,dy)||1; if(d<30){ const a=(Math.floor(bt*2)%8)*0.785; dx=-Math.cos(a)*30; dy=-Math.sin(a)*30; d=30; }
    keys.delete('KeyW');keys.delete('KeyA');keys.delete('KeyS');keys.delete('KeyD');
