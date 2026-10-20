@@ -49,6 +49,13 @@ async def job(b, v, bk, seed, out):
         print(v, bk, seed, (r.get('field') or {}).get('res'), (r.get('field') or {}).get('gt'), (r.get('boss') or {}).get('left'), flush=True)
 
 async def main():
+    if sys.argv[1] == 'JOBS':   # JOBS <jobs.json [[v,bk,seed],...]> <출력>
+        jl = json.load(open(sys.argv[2])); out = sys.argv[3]
+        async with async_playwright() as pw:
+            b = await pw.chromium.launch()
+            await asyncio.gather(*[job(b, v, bk, sd, out) for v, bk, sd in jl])
+            await b.close()
+        return
     vs = json.loads(sys.argv[1]); bks = json.loads(sys.argv[2]); N = int(sys.argv[3]); out = sys.argv[4]; off = int(sys.argv[5]) if len(sys.argv) > 5 else 0
     async with async_playwright() as pw:
         b = await pw.chromium.launch()

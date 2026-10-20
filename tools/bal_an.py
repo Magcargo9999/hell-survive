@@ -13,7 +13,9 @@ rows = []
 for fn in sys.argv[1:]:
     for l in open(fn):
         d = json.loads(l)
-        if 'err' in d: continue
+        b = d.get('boss') or {}
+        if 'err' in d or b.get('t', 0) < 1: continue
+        if not b.get('dead') and b.get('left', 0) > 0 and b.get('mx', 0) > 0 and b.get('t', 0) < 179: continue   # 보스전 도중 끊긴 판
         rows.append(d)
 # 보스 최대 체력 (살아남은 판의 mx로 확인)
 BMX = {'monkey': 20000, 'eye': 22000, 'skel': 20000, 'fw': 23500}
