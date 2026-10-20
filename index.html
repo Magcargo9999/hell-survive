@@ -2494,7 +2494,7 @@ function spawnEnemy(ang, dist, forceElite) {
   const elite = forceElite || (gt > 60 && rand() < 0.02);
   const a = ang === undefined ? rand() * 6.283 : ang, d = dist || Math.hypot(W, H) / 2 + 60;
   const sc = pick.scale + (elite ? 2 : 0);
-  const hp = 26 * pick.hpMult * (1 + gt / 115) * (elite ? 7.5 : 1) * (0.75 + 0.25 * Math.min(1, gt / 150)) * (1 + 0.25 * P.tier);
+  const hp = 26 * pick.hpMult * (1 + gt / 115) * (elite ? 7.5 : 1) * (0.75 + 0.25 * Math.min(1, gt / 150)) * (1 + 0.1 * P.tier);   // v5.21: 난이도 단계당 +10% (1단계 +10% · 2단계 +20% · 3단계 +30%)
   const pl = Math.min(0.34, gt / 420), pf = Math.min(0.3, gt / 520), q = rand();   // 후반일수록 앞질러 막거나(ai 1) 옆으로 파고드는(ai 2) 마물이 늘어난다
   const e = {
     x: P.x + Math.cos(a) * d, y: P.y + Math.sin(a) * d, kx: 0, ky: 0,
@@ -2521,7 +2521,7 @@ const lateMul = () => {   // 후반(레벨 18~30 또는 7분 이후)에는 잡�
 };
 function spawnBug() {
   const a = rand() * 6.283, d = Math.hypot(W, H) / 2 + 80;
-  const hp = 95 * (1 + gt / 90) * (1 + 0.25 * P.tier);
+  const hp = 95 * (1 + gt / 90) * (1 + 0.1 * P.tier);   // v5.21: 단계당 +10%
   enemies.push({
     x: P.x + Math.cos(a) * d, y: P.y + Math.sin(a) * d, kx: 0, ky: 0,
     sp: 52, spec: null, sc: 1, r: 28, hp, max: hp, dmg: 12, exp: EXPK * 5, elite: false,
@@ -6228,7 +6228,7 @@ function updateDiff() {
     return;
   }
   $('diffTxt').textContent = t ? `난이도 ${t}단계` : '기본 난이도';
-  $('diffDesc').textContent = m <= 0 ? '' : t ? `몹 체력 +${25 * t}% · 몹 공격 +${10 * t}% · 보스 체력 +${30 * t}% · 보스 패턴 강화 · 영혼 조각 ×${(1 + 0.3 * t).toFixed(1)} · 참가비 ${25 * t} (클리어하면 반환)` : '마왕을 다시 쓰러뜨리면 다음 단계가 열립니다 (최대 5단계)';
+  $('diffDesc').textContent = m <= 0 ? '' : t ? `몹 체력 +${10 * t}% · 몹 공격 +${10 * t}% · 보스 체력 +${30 * t}% · 보스 패턴 강화 · 영혼 조각 ×${(1 + 0.3 * t).toFixed(1)} · 참가비 ${25 * t} (클리어하면 반환)` : '마왕을 다시 쓰러뜨리면 다음 단계가 열립니다 (최대 5단계)';
 }
 function selectChar(c) {
   if (!SAVE.chars[c]) { $('hint').textContent = CHARS[c].cond ? `🔒 ${CHARS[c].name}: ${CHARS[c].cond} (유니크 마물은 한 판에 한 번씩 등장)` : `🔒 ${CHARS[c].name}: 영혼 상점에서 영혼 조각 ${CHARS[c].price}개로 구매할 수 있어요.`; return; }
