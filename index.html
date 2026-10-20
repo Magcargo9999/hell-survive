@@ -98,6 +98,8 @@
   .cw { flex-direction: column; gap: 6px; }
   .card .bk { display: none; } .card.flip .bk { display: block; } .card.flip .fr { display: none; }
   .card.flip { animation: cflip 0.22s ease-out; } @keyframes cflip { from { transform: rotateY(90deg); } to { transform: none; } }
+  .card .crole, .card .cweak, .card .cget { display: block; margin-top: 6px; padding: 4px 6px; border-radius: 5px; font-size: 13px; font-weight: 700; line-height: 1.45; word-break: keep-all; }
+  .card .crole { color: #9be7ff; background: rgba(60,140,200,0.18); } .card .cweak { color: #ff9a8a; background: rgba(150,40,30,0.25); } .card .cget { color: var(--gold); background: rgba(255,194,71,0.12); }
   .card .synl { display: block; margin-top: 8px; padding: 5px 7px; border-radius: 5px; background: rgba(255, 194, 71, 0.13); color: #ffe28a; font-size: 13px; font-weight: 700; line-height: 1.55; }
   .card .flh { display: block; margin-top: 8px; color: var(--muted); font-size: 11px; }
   .pick { padding: 6px 0; font-size: 15px; font-weight: 800; letter-spacing: 0.05em; }
@@ -544,14 +546,14 @@ const PERKS = [
 ];
 // 캐릭터 목록 (price가 0이면 기본 제공, 아니면 상점에서 영혼 조각으로 구매)
 const CHARS = {
-  wolf:  { name: '지옥 늑대',   price: 0,   desc: '빠르고 날카로운 발톱 공격.<br>Lv.10에 3갈래 진화 루트를 고릅니다.', ally: '시너지 동료: 정예 몹(영입 확률 2배)' },
-  snail: { name: '독액 달팽이', price: 0,   desc: '느리지만 단단한 탱커 (받는 피해 -10%).<br>지나간 자리에 독 자국을 남깁니다.', ally: '시너지 동료: 이공벌레(영입 2배, 동료 피해 +30%)' },
-  archer: { name: '지옥엘프 궁수', price: 250, desc: '민첩하게 거리를 벌리며 화살을 쏘는 원거리 캐릭터.<br>Lv.10에 2갈래 진화 루트를 고릅니다.', ally: '시너지 동료: 동료의 공격 범위 +30%' },
-  chimera: { name: '키메라', price: 300, desc: '날렵한 짐승형 근접 캐릭터.<br>Lv.10 진화 루트 선택: 바람(관통 에어슬래시 · Lv.20 천공 강하) / 화염(넓은 화상 발톱 · Lv.20 화염 브레스) / 몽환(촉수 · Lv.20 천안 난무, 0단계에서 이공벌레를 잡아야 열림).', ally: '특징: 진화 루트 3개 (바람 · 화염 · 몽환)' },
-  lizard: { name: '리자드', price: 260, desc: '느리지만 단단하고 한 방이 묵직한 대검 전사.<br>Lv.10 리자드 검사 · Lv.20 버서커(광란) / 물의 전사(자힐) 중 선택.', ally: '특징: 이속 느림 · 받는 피해 -15% · 강한 기본 공격' },
-  twins: { name: '사슬 악마', price: 0, cond: '벨리아·셀리아 둘 다 처치하면 해금', desc: '부서진 사슬을 쥔 작고 불완전한 악마.<br>직접 공격하지 않고, 움직일수록 사슬 끝 창날이 휘둘리며 적을 친다.', ally: '특징: 자동 공격 없음 · 이속이 곧 공격력 · Lv.10 사슬 두 가닥 + 스킬' },
-  ghost: { name: '연보라 구슬 유령', price: 240, desc: '저승의 기운이 맺힌 연보라 구슬을 앞쪽으로 흩뿌리는 유령.<br>구슬 하나는 약하지만 여러 개가 한꺼번에 날아간다.<br>Lv.10 연보라 총령 (큰 구슬 · 차지 샷) → Lv.20 수호령의 총령 (대신 맞고 터지는 수호령)', ally: '특징: 부채꼴 다발 사격 · 가까울수록 많이 맞힌다 · (진화는 아직 없음)' },
-  octo: { name: '문어 마법사', price: 0, hidden: true, cond: '난이도 2단계 이상에서 나오는 히든 마물 [문어 마법사]를 쓰러뜨리면 해금', desc: '책과 등불을 든 어린 문어 마법사.<br>곧게 날아가는 마법탄을 쏘고, 증강(스킬 카드)을 고를 때마다 몸 주위를 도는 마력 구체가 하나씩 늘어난다.', ally: '특징: 구체가 점점 늘어남 · Lv.10 진화 + 스킬 [코끼리 돌진] · Lv.20 스킬이 [문어의 심연]으로 바뀜' },
+  wolf:  { role: '근접 만능 딜러', weak: '사거리가 짧다', name: '지옥 늑대',   price: 0,   desc: '빠르고 날카로운 발톱 공격.<br>Lv.10에 3갈래 진화 루트를 고릅니다.', ally: '시너지 동료: 정예 몹(영입 확률 2배)' },
+  snail: { role: '탱커 · 독 장판', weak: '매우 느리다', name: '독액 달팽이', price: 0,   desc: '느리지만 단단한 탱커 (받는 피해 -10%).<br>지나간 자리에 독 자국을 남깁니다.', ally: '시너지 동료: 이공벌레(영입 2배, 동료 피해 +30%)' },
+  archer: { role: '원거리 딜러', weak: '체력이 낮아 붙으면 약하다', name: '지옥엘프 궁수', price: 250, desc: '민첩하게 거리를 벌리며 화살을 쏘는 원거리 캐릭터.<br>Lv.10에 2갈래 진화 루트를 고릅니다.', ally: '시너지 동료: 동료의 공격 범위 +30%' },
+  chimera: { role: '진화 루트형 근접 딜러', weak: '진화 전 화력이 약하다', name: '키메라', price: 300, desc: '날렵한 짐승형 근접 캐릭터.<br>Lv.10 진화 루트 선택: 바람(관통 에어슬래시 · Lv.20 천공 강하) / 화염(넓은 화상 발톱 · Lv.20 화염 브레스) / 몽환(촉수 · Lv.20 천안 난무, 0단계에서 이공벌레를 잡아야 열림).', ally: '특징: 진화 루트 3개 (바람 · 화염 · 몽환)' },
+  lizard: { role: '단단한 대검 브루저', weak: '가장 느린 이동·공격 속도', name: '리자드', price: 260, desc: '느리지만 단단하고 한 방이 묵직한 대검 전사.<br>Lv.10 리자드 검사 · Lv.20 버서커(광란) / 물의 전사(자힐) 중 선택.', ally: '특징: 이속 느림 · 받는 피해 -15% · 강한 기본 공격' },
+  twins: { role: '기동형 사슬 근접', weak: '멈추면 딜이 안 나온다 (자동 공격 없음)', name: '사슬 악마', price: 0, cond: '벨리아·셀리아 둘 다 처치하면 해금', desc: '부서진 사슬을 쥔 작고 불완전한 악마.<br>직접 공격하지 않고, 움직일수록 사슬 끝 창날이 휘둘리며 적을 친다.', ally: '특징: 자동 공격 없음 · 이속이 곧 공격력 · Lv.10 사슬 두 가닥 + 스킬' },
+  ghost: { role: '부채꼴 다발 사격', weak: '구슬 하나하나가 약하고 멀면 약하다', name: '연보라 구슬 유령', price: 240, desc: '저승의 기운이 맺힌 연보라 구슬을 앞쪽으로 흩뿌리는 유령.<br>구슬 하나는 약하지만 여러 개가 한꺼번에 날아간다.<br>Lv.10 연보라 총령 (큰 구슬 · 차지 샷) → Lv.20 수호령의 총령 (대신 맞고 터지는 수호령)', ally: '특징: 부채꼴 다발 사격 · 가까울수록 많이 맞힌다 · (진화는 아직 없음)' },
+  octo: { role: '직선 마법 · 구체 성장형', weak: '직선 탄이라 빗나가기 쉽고 초반이 약하다', name: '문어 마법사', price: 0, hidden: true, cond: '난이도 2단계 이상에서 나오는 히든 마물 [문어 마법사]를 쓰러뜨리면 해금', desc: '책과 등불을 든 어린 문어 마법사.<br>곧게 날아가는 마법탄을 쏘고, 증강(스킬 카드)을 고를 때마다 몸 주위를 도는 마력 구체가 하나씩 늘어난다.', ally: '특징: 구체가 점점 늘어남 · Lv.10 진화 + 스킬 [코끼리 돌진] · Lv.20 스킬이 [문어의 심연]으로 바뀜' },
 };
 
 /* ---------- 소리 (파일 없이 WebAudio로 합성) ---------- */
@@ -2581,7 +2583,7 @@ function hurtEnemy(e, dmg, kx, ky, kn, quiet) {
     if (P.syn.corpse && !corpseBusy) corpseBoom(e);
     if (P.syn.blaze && e.burnT > 0 && !blazeBusy) blazeBoom(e);
     if (bsig && inSig(e.x, e.y)) healP(1.2);   // 혈왕의 진: 진 안에서 처치하면 회복
-    if (e.elite || e.kind === 'bug') { P.named++; if (e.sure || rand() < (e.elite ? 0.6 : 0.25) * Math.max(0.12, Math.pow(0.86, P.chestN || 0))) items.push({ type: 'chest', x: e.x, y: e.y, t: 0 }); }   // 네임드 몹은 상자를 떨어뜨린다
+    if (e.elite || e.kind === 'bug') { P.named++; if (e.sure || rand() < (e.elite ? 0.42 : 0.17) * Math.max(0.12, Math.pow(0.86, P.chestN || 0))) items.push({ type: 'chest', x: e.x, y: e.y, t: 0 }); }   // 네임드 몹은 상자를 떨어뜨린다
     if (e.kind === 'bug' && rand() < 0.012 && Object.keys(RELICS).some(k => !P.rel[k])) dropRelic(e.x + 24, e.y);   // 이공벌레: 아주 낮은 확률로 저주받은 성유물
     if (e.kind === 'bug' && e.fuse > 0) explodeBug(e);   // 도화선이 타는 중에 죽여도 폭발한다
     if ((e.kind === 'bug' || e.elite) && rand() < RECRUIT_P * allyMul(e)) recruit(e);   // 네임드 몹: 낮은 확률로 동료 편입
@@ -5176,7 +5178,11 @@ function update(dt) {
   orbs = orbs.filter(o => !o.got && !(o.amb && Math.hypot(o.x - P.x, o.y - P.y) > 1500));
   for (const it of items) {
     it.t += dt;
-    if (Math.hypot(it.x - P.x, it.y - P.y) < 38) { it.got = true; collectItem(it); }
+    if (it.type === 'chest' && it.t > 0.35 && state === 'play') {   // v5.12: 상자는 떨어지자마자 플레이어에게 날아온다 (줍기 쉽게 · 대신 드롭률 하향)
+      const dx = P.x - it.x, dy = P.y - 10 - it.y, d = Math.hypot(dx, dy) || 1, sp = 520 + 900 * (it.t - 0.35);
+      it.x += dx / d * Math.min(d, sp * dt); it.y += dy / d * Math.min(d, sp * dt);
+    }
+    if (Math.hypot(it.x - P.x, it.y - P.y) < (it.type === 'chest' ? 60 : 38)) { it.got = true; collectItem(it); }
   }
   items = items.filter(it => !it.got && (it.type === 'relic' ? it.t < 240 : it.type === 'chest' ? it.t < 60 : it.t < 45));
   for (const g of globs) {
@@ -6122,9 +6128,12 @@ function buildCards() {
   Object.keys(CHARS).filter(id => !CHARS[id].hidden || SAVE.chars[id]).forEach((id, i) => {
     const C = CHARS[id], owned = SAVE.chars[id], b = document.createElement('button');
     b.className = 'card' + (owned ? '' : ' locked'); b.dataset.c = id;
-    b.innerHTML = `<canvas width="130" height="104"></canvas><b>${i + 1}. ${C.name}${owned ? '' : ' 🔒'}</b><small>${C.desc}<br>${C.ally}${owned ? '' : C.cond ? `<br><span style="color:var(--gold)">${C.cond}${id === 'octo' ? '' : ` (벨리아 ${(SAVE.dex.kills['uq:belia'] || 0) > 0 ? '✔' : '✖'} · 셀리아 ${(SAVE.dex.kills['uq:celia'] || 0) > 0 ? '✔' : '✖'})`}</span>` : `<br><span style="color:var(--gold)">${C.price} 영혼 조각</span>`}</small>`;
+    const get = owned ? '✔ 보유 중' : C.cond ? `🔒 ${C.cond}${id === 'octo' ? '' : ` (벨리아 ${(SAVE.dex.kills['uq:belia'] || 0) > 0 ? '✔' : '✖'} · 셀리아 ${(SAVE.dex.kills['uq:celia'] || 0) > 0 ? '✔' : '✖'})`}` : C.price ? `🔒 캐릭터 상점 ${C.price} 영혼 조각` : '기본 제공';
+    b.innerHTML = `<div class="fr"><canvas width="130" height="104"></canvas><b>${i + 1}. ${C.name}${owned ? '' : ' 🔒'}</b>`
+      + `<span class="crole">역할 · ${C.role}</span><span class="cweak">약점 · ${C.weak}</span><span class="cget">${get}</span><span class="flh">한 번 더 누르면 상세 설명</span></div>`
+      + `<div class="bk"><b>${C.name}</b><small>${C.desc}<br>${C.ally}</small><span class="flh">다시 누르면 앞면</span></div>`;   // v5.12: 앞면은 역할·약점·획득 조건만, 상세는 뒷면
     PV[id] = b.querySelector('canvas');
-    b.addEventListener('click', () => selectChar(id));
+    b.addEventListener('click', () => { if (selChar === id || !SAVE.chars[id]) b.classList.toggle('flip'); else document.querySelectorAll('#charCards .card.flip').forEach(x => x.classList.remove('flip')); selectChar(id); });
     box.appendChild(b);
   });
   if (IMG.elf0) drawPreviews();
