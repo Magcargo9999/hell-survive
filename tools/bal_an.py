@@ -64,6 +64,18 @@ for v, ds in by.items():
     V['bossWin'] = round(100 * sum(x['win'] for x in bs) / max(1, sum(x['n'] for x in bs)))
     V['bossPct'] = round(st.mean(x['pct'] for x in bs)) if bs else None
     out['v'][v] = V
+base = collections.defaultdict(list)
+for d in rows:
+    f = d.get('field') or {}
+    if f.get('lt', {}).get('10'): base[d['v'].split(':')[0]].append(f['lt']['10'])
+out['t10base'] = {k: round(st.median(x)) for k, x in base.items()}
+for v, V in out['v'].items():
+    F = [d['field'] for d in by[v]]
+    seg = [f['lt']['25'] - f['lt']['10'] for f in F if f['lt'].get('25') and f['lt'].get('10')]
+    V['t10to25'] = round(st.median(seg)) if seg else None
+    bs = list(V['boss'].values()); nb = sum(x['n'] for x in bs) or 1
+    V['bossDead'] = round(100 * sum(x['dead'] for x in bs) / nb); V['bossTO'] = round(100 * sum(x['timeout'] for x in bs) / nb)
+    V['bossWin3'] = round(100 * sum(x['win'] for k, x in V['boss'].items() if k != 'fw') / max(1, sum(x['n'] for k, x in V['boss'].items() if k != 'fw')))
 allt = [x['t25'] for x in out['v'].values() if x['t25']]
 out['t25all'] = round(st.median(allt)) if allt else None
 os.makedirs('build/bal', exist_ok=True)
