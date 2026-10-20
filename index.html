@@ -483,7 +483,7 @@ const SKILLS = {
   tide:   { name: '물의 주술', desc: '[물의 도마뱀 전사 전용] 누르면 물의 주술로 체력을 즉시 회복합니다. 시전하는 짧은 순간 무적이고, 주변 적을 물결로 밀어내며 둔화시킵니다.', sub: '체력 22% 즉시 회복 · 0.9초 무적 · 주변 밀쳐냄 + 둔화' },
   whip:   { name: '사슬 휘두르기', desc: '[사슬 악마 전용] 사슬을 앞으로 길게 내던져 일직선의 적을 꿰뚫은 뒤, 몸 주위로 크게 휘둘러 4번 베고 마지막에 사슬 폭발을 일으킵니다. 최종 진화(사슬의 폭군)에서는 쓰는 동안과 쓰고 나서 10초 동안 사슬 길이 2배 · 회전 속도 2배 · 체력 재생이 크게 늘어납니다. 쓰는 동안 무적이에요. 쓰기 직전 사슬이 빨리 돌고 있을수록 강하고, 최종 진화(사슬의 폭군)에서 범위와 폭발이 커집니다.', sub: '일직선 관통 → 회전 4연타 → 사슬 폭발 · 시전 중 무적' },
   bsigil: { name: '혈왕의 진', desc: '[타락한 혈랑 전용] 발밑에 6초 동안 핏빛 진을 펼칩니다. 진 안의 적은 0.5초마다 피해를 입고 진 가운데로 끌려가며, 내가 진 안에 서 있으면 공속이 크게 오르고 진 안에서 적을 쓰러뜨릴 때마다 체력이 회복됩니다.', sub: '6초 · 반경 175 · 진 안 공속 +43% · 끌어당김 · 처치 회복' },
-  shell: { name: '반격의 갑주', desc: '[수호의 리저드 전용] 몸을 웅크려 갑주를 두릅니다. 3초 동안 모든 공격을 튕겨내고(피해 없음), 받은 피해의 2.5배를 공격한 쪽(보스 우선, 없으면 가까운 적)에게 되돌려줍니다. 가시 비늘 반격도 그대로 함께 터집니다.', sub: '3초 · 피해 무효 · 반사 피해 ×2.5 · 가시 비늘과 중첩' },
+  shell: { name: '반격의 갑주', desc: '[수호의 리저드 전용] 몸을 웅크려 갑주를 두릅니다. 3초 동안 모든 공격을 튕겨내고(피해 없음), 받은 피해의 2.5배를 공격한 쪽(보스 우선, 없으면 가까운 적)에게 되돌려줍니다. 보스·미니보스·유니크에게는 최대 체력의 30%를 더해 2배로 되돌려줍니다. 가시 비늘 반격도 그대로 함께 터집니다.', sub: '3초 · 피해 무효 · 반사 피해 ×2.5 · 가시 비늘과 중첩' },
   ele: { name: '코끼리 돌진', desc: '[문어 마법사 전용] 앞에 낡은 냉장고를 소환합니다. 문을 부수고 튀어나온 코끼리가 앞쪽으로 곧게 돌진해 길 위의 적을 모두 짓밟고 크게 밀어냅니다.', sub: '직선 돌진 · 공격력의 450% · 강한 넉백' },
   otent: { name: '문어의 심연', desc: '[심연의 문어 대마법사 전용] 3초 동안 적들의 발밑에서 거대한 문어 다리가 연달아 솟아올라 마구 후려칩니다. 다리 하나가 두 번씩 때립니다.', sub: '문어 다리 14개 · 범위 피해 (공격력의 160% × 2)' },
   gcharge: { name: '차지 샷', desc: '[연보라 총령 전용] 총구에 빛을 모아 거대한 연보라 구슬을 쏩니다. 일직선의 모든 적을 꿰뚫고 크게 밀어냅니다.', sub: '관통 · 공격력의 550% · 강한 넉백' },
@@ -556,7 +556,7 @@ const PERKS = [
   { id: 'exp',    name: '영혼 공명',      desc: '경험치 획득 +8%',          max: 10, cost: l => 50 + 35 * l },
   { id: 'magnet', name: '끌어당기는 힘',  desc: '구슬 흡수 범위 +25% · 끌어당기는 속도 +25%', max: 10, cost: l => 30 + 25 * l },
   { id: 'banish', name: '선택지 삭제권',  desc: '판마다 레벨업 카드 N장 삭제 (단계마다 +1장)', max: 5, cost: l => 120 + 100 * l },
-  { id: 'revive', name: '불사조의 깃털',  desc: '판마다 단계 수만큼, 죽어도 체력 50%로 부활', max: 2, cost: l => 400 + 400 * l },
+  { id: 'revive', name: '불사조의 깃털',  desc: '판마다 1번, 죽어도 체력 50%로 부활', max: 1, cost: () => 400 },
 ];
 // 캐릭터 목록 (price가 0이면 기본 제공, 아니면 상점에서 영혼 조각으로 구매)
 const CHARS = {
@@ -2453,7 +2453,7 @@ function newPlayer(char) {
   if (char === 'lizard') { p.max = p.hp = 112; p.spd = 163; p.dmg = 21; p.cd = 1.12; p.rng = 100; p.pickup = 90; p.armor = 0.85; p.knock += 0.15; }   // 느리고 단단하지만 한 방이 강하다
   const pk = SAVE.perks;   // 상점에서 산 영구 강화 적용
   p.max = Math.round(p.max * (1 + 0.08 * pk.hp)); p.hp = p.max;
-  p.spd *= 1 + 0.04 * pk.spd; p.dmg *= 1 + 0.05 * pk.dmg; p.pickup *= 1 + 0.25 * pk.magnet; p.magPull = 1 + 0.25 * pk.magnet; p.reviveLeft = pk.revive || 0; p.expMul = 1 + 0.08 * pk.exp;
+  p.spd *= 1 + 0.04 * pk.spd; p.dmg *= 1 + 0.05 * pk.dmg; p.pickup *= 1 + 0.25 * pk.magnet; p.magPull = 1 + 0.25 * pk.magnet; p.reviveLeft = Math.min(1, pk.revive || 0); p.expMul = 1 + 0.08 * pk.exp;
   p.healBank = p.max * 0.12; p.banish = pk.banish || 0; p.spd0 = p.spd; p.exitLeft = 1;
   return p;
 }
@@ -2690,7 +2690,8 @@ function shellReflect(d) {
   let t = boss && boss.hp > 0 && !boss.invul && Math.hypot(boss.x - P.x, boss.y - P.y) < 650 ? boss : null;
   if (!t) for (const e of enemies) if ((e.kind === 'mini' || e.kind === 'uniq') && e.hp > 0 && Math.hypot(e.x - P.x, e.y - P.y) < 420) { t = e; break; }
   if (!t) t = nearestEnemy(380);
-  if (t) { const dx = t.x - P.x, dy = t.y - P.y, dd = Math.hypot(dx, dy) || 1; hurtEnemy(t, d * k, dx / dd, dy / dd, 260); arcs.push({ x: P.x, y: P.y - 30, ang: Math.atan2(dy, dx), r: 60, t: 0, life: 0.2, rgb: '90,230,220' }); burst(t.x, t.y - t.r, 10, ['#5ae8dc', '#ffffff'], 220, 0.4); }
+  // v5.23: 보스·미니보스·유니크에게 반사 = (반사 피해 + 최대 체력 30%) ×2
+  if (t) { const dx = t.x - P.x, dy = t.y - P.y, dd = Math.hypot(dx, dy) || 1; hurtEnemy(t, (t.kind === 'boss' || t.kind === 'mini' || t.kind === 'uniq') ? (d * k + P.max * 0.3) * 2 : d * k, dx / dd, dy / dd, 260); arcs.push({ x: P.x, y: P.y - 30, ang: Math.atan2(dy, dx), r: 60, t: 0, life: 0.2, rgb: '90,230,220' }); burst(t.x, t.y - t.r, 10, ['#5ae8dc', '#ffffff'], 220, 0.4); }
   floatNum(P.x, P.y - 104, '반사!', '#7ff0e6'); addRing(P.x, P.y - 30, 30, 90, 0.25, '90,230,220', 6); sfx('hit');
   if (P.thornCd > 0) P.thornCd = Math.min(P.thornCd, 0.15);   // 갑주 중에는 가시 비늘도 거의 매번 터진다
   thornBlast();
@@ -2699,7 +2700,7 @@ function thornBlast() {   // 가시 비늘: 맞으면 주변 적에게 반격
   const gd = P.char === 'lizard' && P.route === 'guard', n = (P.up.scale | 0) + (gd ? 1 : 0); if (!n || P.thornCd > 0) return; P.thornCd = gd ? 0.5 : 0.8;
   const R = 95 + 12 * n + (gd ? 15 : 0), dm = (P.dmg * (0.5 + 0.15 * n) + (gd ? P.max * 0.025 * n : 0)) * berserkMul();   // 수호의 길: 최대 체력의 2.5%×단계만큼 더
   addRing(P.x, P.y - 22, 10, R, 0.3, theme().rgb, 6);
-  for (const e of enemies) { if (e.hp <= 0) continue; const dx = e.x - P.x, dy = e.y - P.y, d = Math.hypot(dx, dy) || 1; if (d < R + e.r) hurtEnemy(e, dm, dx / d, dy / d, 260); }
+  for (const e of enemies) { if (e.hp <= 0) continue; const dx = e.x - P.x, dy = e.y - P.y, d = Math.hypot(dx, dy) || 1; if (d < R + e.r) hurtEnemy(e, dm * (gd && (e.kind === 'boss' || e.kind === 'mini' || e.kind === 'uniq') ? 2 : 1), dx / d, dy / d, 260); }   // v5.23: 수호의 길 가시는 보스에게 2배
 }
 function smashBlow(px, py) {   // 대검 내려찍기: 4번째 공격마다 땅을 내려찍는다
   const n = P.up.smash | 0, R = (118 + 14 * n) * (P.syn.quake ? 1.3 : 1), dm = P.dmg * (0.65 + 0.27 * n) * berserkMul();
@@ -2949,7 +2950,7 @@ const UNIQUE = {
     { id: 'smash', name: '대검 내려찍기', noRoute: 'guard', form: 1, max: 3, txt: n => `4번째 공격마다 땅을 내려찍어 범위 피해 (공격력의 ${65 + 27 * n}%)`, apply: () => {} },
     { id: 'bloodlust', name: '피에 굶주린 광기', form: 2, fin: 'rage', max: 3, txt: () => '체력이 낮을수록 늘어나는 광폭 피해 +20%p', apply: () => {} },
     { id: 'rageUp', name: '끝없는 광란', form: 2, fin: 'rage', needSkill: 'rage', max: 3, txt: () => '광란 지속 +1초 · 광란 중 공속 +8%', apply: () => {} },
-    { id: 'shellUp', name: '갑주 단련', form: 2, fin: 'guard', needSkill: 'shell', max: 2, txt: () => '반격의 갑주 +0.5초 · 반사 피해 +0.25배', apply: () => {} },
+    { id: 'shellUp', name: '갑주 단련', form: 2, fin: 'guard', needSkill: 'shell', max: 2, txt: () => '반격의 갑주 +0.5초 · 반사 피해 +0.25배 (보스에게는 추가로 최대 체력 비례 피해)', apply: () => {} },
     { id: 'tideUp', name: '깊은 물결', form: 2, fin: 'water', needSkill: 'tide', max: 3, txt: () => '물의 주술 회복량 +5%p', apply: () => {} },
   ],
   ghost: [
