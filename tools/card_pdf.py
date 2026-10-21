@@ -51,6 +51,11 @@ for v in vs:
     c = A['ctrl'][v]
     if all(c.get(k, {}).get('win', 0) >= 0.99 for k in ('monkey', 'eye') if k in c): iss.append('%s: 카드 구성과 무관하게 원숭이·마안 보스를 거의 100%% 처치 (기준 빌드 승률 100%%).' % VN[v])
     if all(c.get(k, {}).get('win', 1) <= 0.34 for k in ('monkey', 'eye') if k in c): iss.append('%s: 기준 빌드 승률 33%% 이하 — 보스전이 구조적으로 어려움.' % VN[v])
+iss += ['[종합] 스킬카드가 한쪽으로 쏠림: 회전 칼날(+23%)·지옥 낙뢰(+16%)만 S이고 충격파(-5%)·불길 오라(-13%, 피해 점유율 4%)는 기준 빌드보다 약함. 공격 스킬카드 4종 중 2종이 사실상 안 뽑힘.',
+        '[종합] 상위 시너지가 전부 칼날·낙뢰 계열(칼날 폭풍·폭풍 낙뢰). 영혼 폭풍·영혼 수확·불사의 영혼은 재료가 자석·경험치 같은 비전투 카드라 보스전에서 25~33% 손해 (필드 레벨링 가치는 이 시뮬에서 측정 안 함).',
+        '[캐릭터] 기준 빌드만으로 연보라 총령·폭탄 달팽이·사슬의 폭군·문어 마법사가 두 보스 모두 거의 100% 승리 (처치 65~160초) — 카드 선택 영향이 작아 상향 여력이 큼. 반대로 피의 혈랑(마안 17%)·독액 달팽이(33~50%)·맹수형/천안의 키메라(마안 33%)는 낮음.',
+        '[전용 시너지] 키메라·궁수 시너지(광기의 시선 8%·질풍 날개 17%·업화 연쇄 17%·저격수의 표식 17%)는 재료 카드를 Lv.3까지 못 올려 열리는 비율이 낮음 — 열리면 효과는 좋아 보이나 열기 어려운 구조. 충격 진자(사슬의 폭군)는 열리면 가장 강함.',
+        '[전용 시너지] 재생 비늘·회오리 방벽·도탄 사격·바람의 궤적·끈적한 덫·부패 폭발은 열려도 기준보다 17~25% 낮음 — 상향 후보. (전용 시너지는 캐릭터당 판 수가 12~24로 오차 큼)']
 # 사이트 JSON
 site = {'game_ver': '6.22', 'note': 'ratio = 기준 빌드 대비 보스전 초당 피해(원숭이·마안 평균, 기하평균). tier S>=1.15 A>=1.06 B>=0.97 C>=0.88 D', 'cards': [], 'by_char': {}}
 for b in ('common', 'only', 'skill'):
@@ -61,7 +66,7 @@ for v in vs:
     site['by_char'][v] = dict(name=VN[v], synergy=[(e['key'], round(r, 3)) for r, e in best[v] if e['cfg'].startswith('syn')][:5], skill=[(e['key'], round(r, 3)) for r, e in best[v] if e['cfg'].startswith('skill')])
 json.dump(site, open(os.path.join(ROOT, 'build', 'card', 'site.json'), 'w'), ensure_ascii=False, indent=1)
 css = """body{font-family:'Noto Sans CJK KR',sans-serif;font-size:10.5px;color:#222;margin:0}h1{font-size:22px;margin:0 0 4px}h2{font-size:15px;border-bottom:2px solid #e0457b;padding-bottom:3px;margin:18px 0 6px;page-break-after:avoid}
-table{border-collapse:collapse;width:100%;margin:4px 0 10px;page-break-inside:auto}tr{page-break-inside:avoid}th{background:#2b2f3a;color:#fff;padding:3px 4px;font-size:9.5px}th.v{font-size:8.5px;width:52px}
+table{border-collapse:collapse;width:100%;margin:4px 0 10px;page-break-inside:auto}tr{page-break-inside:avoid}th{background:#2b2f3a;color:#fff;padding:3px 4px;font-size:9.5px}th.v{font-size:8px;width:46px}th:first-child{width:130px}td{font-size:9.5px}
 td{border:1px solid #ddd;padding:3px 4px;text-align:center}td.l{text-align:left}td.na{color:#bbb}.t{color:#fff;font-weight:700;padding:1px 8px;border-radius:9px}small{color:#777}.box{background:#f5f6f8;padding:6px 10px;border-radius:6px;margin:6px 0}li{margin:2px 0}pre{font-size:8px;background:#f5f6f8;padding:6px;white-space:pre-wrap;word-break:break-all}"""
 n = A['n']
 body = f"<h1>hell survive v6.22 카드 티어 (시너지 · 스킬카드 · 캐릭터 궁합)</h1><div class=box>측정 판 수 <b>{n}</b>판 · 봇 시뮬레이션(원숭이 마왕·마안군주, 난이도 0) · 기준 = 같은 캐릭터가 공용 스탯 카드(발톱·방어·심장·공속·범위·이속)만 올린 빌드. <b>효과 = 기준 대비 보스전 초당 피해 비율</b>(+15% 이상 S, +6% 이상 A, -3% 이상 B, -12% 이상 C, 그 아래 D). 승률 변화는 기준 대비 %p. 열 색: 초록 = 기준보다 강함, 빨강 = 약함. 판 수가 적은 칸은 오차가 큽니다(±10%p).</div>"
@@ -76,5 +81,5 @@ from playwright.sync_api import sync_playwright
 out = sys.argv[1]
 with sync_playwright() as p:
     b = p.chromium.launch(); pg = b.new_page(); pg.goto('file://' + os.path.join(ROOT, 'build', 'card', 'report.html'))
-    pg.pdf(path=out, format='A4', margin=dict(top='12mm', bottom='12mm', left='9mm', right='9mm'), print_background=True); b.close()
+    pg.pdf(path=out, format='A4', landscape=True, margin=dict(top='12mm', bottom='12mm', left='9mm', right='9mm'), print_background=True); b.close()
 print('ok', out, n)
