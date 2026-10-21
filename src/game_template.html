@@ -459,7 +459,7 @@ const SNAIL_ROUTES = {
 //  높음 → 길게: 용암 대분출 18 · 천안 난무 15 · 광란 14 · 사슬 휘두르기 12 · 혈왕의 진 13
 //  중간      : 신성한 피의 비 12 · 피의 갈취 11 · 삼두 연쇄 물기 10 · 신성화살 12 · 물의 주술 16 (회복량을 줄이고 자주 쓰게)
 //  낮음 → 짧게: 폭발 화살 6 · 큰 화살/후방 도약 7 · 울부짖음 8 · 독 자국 폭파 8 · 천공 강하 8 · 화염 브레스 9
-const SKILL_CD = { megabomb: 11, shell: 14, ele: 12, otent: 15, gcharge: 9, gsummon: 24, lavaburst: 18, rush: 15, rage: 14, whip: 12, bsigil: 11, bloodrain: 12, drain: 11, cerb: 10, holyshot: 12, tide: 16, bombshot: 6, bigarrow: 7, backdash: 7, howl: 8, blast: 8, dive: 8, breath: 9, laser: 10, zone: 10, meteor: 10 };
+const SKILL_CD = { megabomb: 11, shell: 16, ele: 12, otent: 15, gcharge: 9, gsummon: 24, lavaburst: 18, rush: 15, rage: 14, whip: 12, bsigil: 11, bloodrain: 12, drain: 11, cerb: 10, holyshot: 12, tide: 16, bombshot: 6, bigarrow: 7, backdash: 7, howl: 8, blast: 8, dive: 8, breath: 9, laser: 10, zone: 10, meteor: 10 };
 const skillCd = () => ((window.__SKCD && window.__SKCD[P.skill]) || SKILL_CD[P.skill] || 14);
 const SKILL_UNIQUE = { wolf: 'howl', snail: 'blast', archer: 'bigarrow', chimera: 'dive', lizard: 'rage', twins: 'whip' };
 const uniqueSkill = () => (P.char === 'chimera' && P.route === 'dream') ? 'rush' : (P.char === 'chimera' && P.route === 'flame') ? 'breath' : (P.char === 'snail' && P.route === 'lava') ? 'lavaburst' : (P.char === 'snail' && P.route === 'bomb') ? 'megabomb' : (P.char === 'wolf' && P.route === 'twin') ? 'cerb' : (P.char === 'wolf' && P.route === 'crimson') ? (P.fin === 'holy' ? 'bloodrain' : P.fin === 'fallen' ? 'bsigil' : 'drain') : SKILL_UNIQUE[P.char];
@@ -468,7 +468,7 @@ const skillName = k => (k === 'blast' && P.char === 'snail' && P.form === 2) ? '
 const SKILLS = {
   cerb:   { name: '삼두 연쇄 물기', desc: '[삼두 전용] 세 머리가 가까운 적을 차례로 물어뜯습니다. 한 번마다 범위 피해와 강한 넉백, 둔화.', sub: '3연속 · 서로 다른 적 · 범위 피해' },
   drain:  { name: '피의 갈취', desc: '[혈랑 전용] 사방의 적에게서 피를 짜내 큰 피해를 주고, 맞힌 적 수만큼 체력을 회복합니다.', sub: '반경 400 · 적 1마리당 체력 +2% (최대 15%)' },
-  bloodrain: { name: '신성한 피의 비', desc: '[성혈랑 전용] 3초 동안 성스러운 핏빛 기둥이 적들 위로 연달아 내리꽂히며, 명중할 때마다 체력을 조금 회복합니다.', sub: '기둥 16개 · 범위 피해 · 명중 시 회복' },
+  bloodrain: { name: '신성한 피의 비', desc: '[성혈랑 전용] 3초 동안 성스러운 핏빛 기둥이 적들 위로 연달아 내리꽂히며, 명중할 때마다 체력을 조금 회복합니다. 맞은 적은 2초간 느려집니다.', sub: '기둥 16개 · 범위 피해 · 명중 시 회복 · 둔화' },
   howl:   { name: '지옥의 울부짖음', desc: '[늑대 전용] 사방의 적을 크게 밀쳐내고 피해를 주며 느리게 만듭니다.', sub: '반경 420 · 강한 넉백 · 둔화' },
   megabomb: { name: '강화된 폭탄 투척', desc: '[폭탄 달팽이 전용] 적이 가장 많이 모인 곳에 거대한 폭탄을 던집니다. 떨어진 자리에서 크게 터지고, 작은 폭탄 6개가 사방으로 흩어져 연달아 터집니다.', sub: '거대 폭발 (공격력의 700%) + 작은 폭탄 6발 (각 120%)' },
   lavaburst: { name: '용암 대분출', desc: '[용암 달팽이 전용] 남겨둔 용암 흔적이 한꺼번에 터지고, 하늘에서 거대 용암탄 1발과 작은 용암탄 4발이 쏟아집니다.', sub: '흔적 폭발 · 거대 용암탄(범위 215) · 용암 웅덩이' },
@@ -484,8 +484,8 @@ const SKILLS = {
   tide:   { name: '물의 주술', desc: '[물의 도마뱀 전사 전용] 누르면 물의 주술로 체력을 즉시 회복합니다. 시전하는 짧은 순간 무적이고, 주변 적을 물결로 밀어내며 둔화시킵니다.', sub: '체력 22% 즉시 회복 · 0.9초 무적 · 주변 밀쳐냄 + 둔화' },
   whip:   { name: '사슬 휘두르기', desc: '[사슬 악마 전용] 사슬을 앞으로 길게 내던져 일직선의 적을 꿰뚫은 뒤, 몸 주위로 크게 휘둘러 4번 베고 마지막에 사슬 폭발을 일으킵니다. 최종 진화(사슬의 폭군)에서는 쓰는 동안과 쓰고 나서 10초 동안 사슬 길이 2배 · 회전 속도 2배 · 체력 재생이 크게 늘어납니다. 쓰는 동안 무적이에요. 쓰기 직전 사슬이 빨리 돌고 있을수록 강하고, 최종 진화(사슬의 폭군)에서 범위와 폭발이 커집니다.', sub: '일직선 관통 → 회전 4연타 → 사슬 폭발 · 시전 중 무적' },
   bsigil: { name: '혈왕의 진', desc: '[타락한 혈랑 전용] 발밑에 7초 동안 핏빛 진을 펼칩니다. 진 안의 적은 0.5초마다 피해를 입고 진 가운데로 끌려가며, 내가 진 안에 서 있으면 공속이 크게 오르고 진 안에서 적을 쓰러뜨릴 때마다 체력이 회복됩니다.', sub: '7초 · 반경 230 · 진 안 공속 +100% · 끌어당김 · 처치 회복' },
-  shell: { name: '반격의 갑주', desc: '[수호의 리저드 전용] 몸을 웅크려 갑주를 두릅니다. 3초 동안 모든 공격을 튕겨내고(피해 없음), 받은 피해의 2.5배를 공격한 쪽(보스 우선, 없으면 가까운 적)에게 되돌려줍니다. 보스·미니보스·유니크에게는 최대 체력의 30%를 더해 2배로 되돌려줍니다. 가시 비늘 반격도 그대로 함께 터집니다.', sub: '3초 · 피해 무효 · 반사 피해 ×2.5 · 가시 비늘과 중첩' },
-  ele: { name: '코끼리 돌진', desc: '[문어 마법사 전용] 앞에 낡은 냉장고를 소환합니다. 문을 부수고 튀어나온 코끼리가 앞쪽으로 곧게 돌진해 길 위의 적을 모두 짓밟고 크게 밀어냅니다.', sub: '직선 돌진 · 공격력의 450% · 강한 넉백' },
+  shell: { name: '반격의 갑주', desc: '[수호의 리저드 전용] 몸을 웅크려 갑주를 두릅니다. 3초 동안 모든 공격을 튕겨내고(받는 피해 70% 감소), 받은 피해의 2.5배를 공격한 쪽(보스 우선, 없으면 가까운 적)에게 되돌려줍니다. 보스·미니보스·유니크에게는 최대 체력의 30%를 더해 2배로 되돌려줍니다. 가시 비늘 반격도 그대로 함께 터집니다.', sub: '3초 · 받는 피해 -70% · 반사 피해 ×2.5 · 가시 비늘과 중첩' },
+  ele: { name: '코끼리 돌진', desc: '[문어 마법사 전용] 앞에 낡은 냉장고를 소환합니다. 문을 부수고 튀어나온 코끼리가 바라보는 방향(움직이는 중이면 그 방향, 위아래·대각선 포함)으로 곧게 돌진해 길 위의 적을 모두 짓밟고 크게 밀어냅니다.', sub: '직선 돌진 · 공격력의 520% · 강한 넉백' },
   otent: { name: '문어의 심연', desc: '[심연의 문어 대마법사 전용] 3초 동안 적들의 발밑에서 거대한 문어 다리가 연달아 솟아올라 마구 후려칩니다. 다리 하나가 두 번씩 때립니다.', sub: '문어 다리 14개 · 범위 피해 (공격력의 160% × 2)' },
   gcharge: { name: '차지 샷', desc: '[연보라 총령 전용] 총구에 빛을 모아 거대한 연보라 구슬을 쏩니다. 일직선의 모든 적을 꿰뚫고 크게 밀어냅니다.', sub: '관통 · 공격력의 550% · 강한 넉백' },
   gsummon: { name: '수호령 소환', desc: '[수호령의 총령 전용] 수호령 4마리를 불러 12초 동안 몸 주위를 돌게 합니다. 수호령은 적의 공격을 한 번 대신 맞아 주고 (최대 체력의 8%까지 막음), 그 자리에서 터지며 주변 적에게 피해를 줍니다.', sub: '수호령 4마리 · 12초 · 피격 1회 대신 받기 · 폭발 (공격력의 280%)' },
@@ -1065,12 +1065,12 @@ function drawPet(p, x, y) {
 }
 /* ---------- 원숭이 마왕 (근접 전투형 보스) ---------- */
 const BOSS_HP = 20000;   // v5.00: 한 방 피해 상한을 없앤 만큼 18000 -> 20000
-const bossHit = d => hurtPlayer(d * 1.19 * (boss && !boss.bk ? 0.92 : 0.8) * (1 + 0.08 * P.tier) * (chal ? 1 + 0.25 * chal.cyc : 1));   // v5.00: 마왕 공격력 +8%   // 원숭이 마왕은 조금 더 아프다   // 보스 공격은 일반 몹보다 강하다 (Lv.25 입장은 빡빡하게, Lv.30은 여유있게)
+const bossHit = d => hurtPlayer(d * 1.19 * (boss && !boss.bk ? 0.92 : 0.8) * (1 + 0.08 * P.tier) * (boss && !boss.bk && P.tier >= 5 ? 0.85 : 1) * (chal ? 1 + 0.25 * chal.cyc : 1));   // v6.22: 5단계 원숭이 마왕 피해 -15% · v5.00: 마왕 공격력 +8%   // 원숭이 마왕은 조금 더 아프다   // 보스 공격은 일반 몹보다 강하다 (Lv.25 입장은 빡빡하게, Lv.30은 여유있게)
 const BSP = { cw: 272, ch: 234, rows: { idle: [0, 4], walk: [1, 2], attack: [2, 3], hit: [3, 2], jump: [4, 1], roar: [5, 1] } };
 function spawnBoss() {
   boss = { kind: 'boss', x: 657 * AS, y: 760 * AS, kx: 0, ky: 0, sp: 0, spec: null, sc: 1, r: 58, hp: BOSS_HP * (1 + 0.3 * P.tier), max: BOSS_HP * (1 + 0.3 * P.tier), dmg: 0, exp: 0, elite: false, flash: 0, t: 0, orbCd: 0, slowT: 0,
     noKB: true, invul: true, face: -1, st: 'intro', stT: 2.4, rage: false, last: '', tele: [], jh: 0, combo: 0, dashN: 0, swing: 0, air: null, dv: null, dashHit: false, ghost: [] };
-  if (!P.bossK || P.bossK === 'monkey') { boss.hp *= 1.0; boss.max *= 1.0; }   // 원숭이 마왕 체력 (22500 → 18000: 너무 길어서 루즈했다)
+  if (!P.bossK || P.bossK === 'monkey') { const k5 = P.tier >= 5 ? 0.85 : 1; boss.hp *= k5; boss.max *= k5; }   // v6.22: 5단계 원숭이 마왕 체력 -15%   // 원숭이 마왕 체력 (22500 → 18000: 너무 길어서 루즈했다)
   if (P.bossK === 'skel') initSkBoss(boss);
   if (P.bossK === 'eye') { boss.bk = 'eye'; boss.hp *= EYE.hp; boss.max *= EYE.hp; boss.r = 72; boss.n = 0; boss.k = ''; boss.emT = 0; boss.ang = 0; boss.side = 1; boss.sideT = 4; boss.glow = 0; }
   chBossHp(boss); enemies.push(boss);
@@ -1116,7 +1116,7 @@ function bossPick(e, d) {
   e.last = pick; bossStart(e, pick);
 }
 function bossStart(e, k) {
-  const tp = bossTempo(), m = (e.rage ? 0.8 : 1) * (1 - 0.06 * P.tier) / tp;
+  const tp = bossTempo(), m = (e.rage ? 0.8 : 1) * (1 - 0.06 * P.tier) / tp * (P.tier >= 5 ? 1 / 0.9 : 1);   // v6.22: 5단계 원숭이 마왕 패턴 속도 -10% (예고·간격이 길어진다)
   if (k === 'combo') { e.st = 'combo'; e.combo = 0; e.stT = 0; }
   else if (k === 'jump') {   // 점프 후 내려찍기: 빨간 원이 플레이어를 따라오다가 고정된다
     e.st = 'jumpWind'; e.stT = 0.55 * m;
@@ -1196,14 +1196,14 @@ function updateBoss(e, dt) {
   }
   e.tele = e.tele.filter(t => !(t.done && t.t >= t.dur + 0.15));
   e.stT -= dt;
-  const tpo = bossTempo(), dx = P.x - e.x, dy = P.y - e.y, d = Math.hypot(dx, dy) || 1, m = (e.rage ? 0.8 : 1) * (1 - 0.06 * P.tier) / tpo;
+  const tpo = bossTempo(), dx = P.x - e.x, dy = P.y - e.y, d = Math.hypot(dx, dy) || 1, m = (e.rage ? 0.8 : 1) * (1 - 0.06 * P.tier) / tpo * (P.tier >= 5 ? 1 / 0.9 : 1);   // v6.22: 5단계 원숭이 마왕 패턴 속도 -10% (예고·간격이 길어진다)
   if (Math.abs(dx) > 6 && e.st !== 'dash') e.face = dx > 0 ? 1 : -1;
   e.ghost = e.ghost.filter(g => (g.t += dt) < 0.25);
   switch (e.st) {
     case 'intro': e.invul = true; if (e.stT <= 0) bossChase(e); break;
     case 'roar': if (e.stT <= 0) { bossChase(e); } break;
     case 'chase': {
-      const sp = (e.rage ? 190 : 140) * (P.tier >= 5 ? 1.12 : 1) * (1 + (tpo - 1) * 0.7);
+      const sp = (e.rage ? 190 : 140) * (P.tier >= 5 ? 1.12 * 0.9 : 1) * (1 + (tpo - 1) * 0.7);   // v6.22: 5단계 이속 -10%
       if (d > e.r + 50) bossMove(e, e.x + dx / d * sp * dt, e.y + dy / d * sp * dt);
       if (e.stT <= 0) bossPick(e, d);
       break;
@@ -1238,7 +1238,7 @@ function updateBoss(e, dt) {
       e.face = e.dv.ax >= 0 ? 1 : -1; e.st = 'dash'; e.stT = 0.5; e.invul = false; sfx('skill');
     } break;
     case 'dash': {
-      const sp = 1250 * (1 + (tpo - 1) * 0.3) * dt, nx = e.x + e.dv.ax * sp, ny = e.y + e.dv.ay * sp;
+      const sp = 1250 * (P.tier >= 5 ? 0.9 : 1) * (1 + (tpo - 1) * 0.3) * dt, nx = e.x + e.dv.ax * sp, ny = e.y + e.dv.ay * sp;
       if (e.ghost.length < 8 && Math.floor(e.t * 40) % 2 === 0) e.ghost.push({ x: e.x, y: e.y, t: 0, f: e.face });
       const ok = bossMove(e, nx, ny);
       if (!e.dashHit) {   // 몸통 근처에 있으면 맞는다
@@ -2457,7 +2457,7 @@ function newPlayer(char) {
   const p = {
     char, bossK: rand() < 0.5 ? 'eye' : 'monkey', shield: 0, boost: 0, armor: char === 'snail' ? 0.9 : 1, trailAcc: 0, tx: 0, ty: 0,
     syn: {}, aspd: 1, knock: 0.7, crit: 0, critD: 1.7, vx: 0, vy: 0, lavaT: 0, lavaTick: 0, banish: 0, banned: {}, cdT: { th: 1.5, bl: 1, nv: 2.5, au: 0, nv2: 0 }, vampCd: 0, expMul: 1, named: 0, bolts: 1, killHeal: 0, trailBonus: 0, orbR: 80, orbW: 3.2, orbD: 0.55, revived: false, earned: 0,
-    x: 0, y: 0, hp: sn ? 125 : ar ? 100 : 100, max: sn ? 125 : ar ? 100 : 100, spd: sn ? 175 : ar ? 215 : 200, face: 1,
+    x: 0, y: 0, hp: sn ? 125 : ar ? 92 : 100, max: sn ? 125 : ar ? 92 : 100, spd: sn ? 175 : ar ? 215 : 200, face: 1,
     anim: 'idle', animT: 0, inv: 0, hitT: 0,
     atkTimer: -1, atkCd: 0, atkHitN: 0, ax: 1, ay: 0,
     dmg: sn ? 18 : ar ? 22 : 18, rng: sn || ar ? 100 : 96, cd: sn ? 0.85 : ar ? 0.51 : 0.9, pickup: ar ? 95 : 90,
@@ -2658,16 +2658,17 @@ function hurtPlayer(dmg) {
   if (P.inv > 0 || P.shield > 0 || state !== 'play') return;
   if (P.dodge && rand() < P.dodge) { P.inv = 0.35; floatNum(P.x, P.y - 70, '회피!', '#b8f6ff'); burst(P.x, P.y - 40, 8, ['#b8f6ff', '#ffffff'], 160, 0.4); return; }
   if (P.rel.mirror && rand() < 0.25) { mirrorBlock(dmg); return; }
-  if (P.shellT > 0) { shellReflect(dmg); P.inv = Math.max(P.inv, 0.12); return; }   // 반격의 갑주: 튕겨내고 되돌려준다
+  const shellOn = P.shellT > 0;
+  if (shellOn) shellReflect(dmg);   // 반격의 갑주: 튕겨내고 되돌려준다 (v6.22: 피해 완전 무효 → 받는 피해 70% 감소)
   if (P.pals && P.pals.length) { palPop(); const cap = P.max * PAL_ABS; if (dmg <= cap) { P.inv = 0.3; return; } dmg -= cap; }   // 수호령이 대신 맞고 터진다 (아주 큰 공격은 일부만 막는다)
   if (P.up.guard && P.guardT <= 0) {   // 수호의 방어막: 한 번 막고 재충전
     P.guardT = GD(P.up.guard); P.inv = 0.5; floatNum(P.x, P.y - 70, '방어막!', '#9fe3ff');
     addRing(P.x, P.y - 34, 20, 70, 0.35, '150,220,255', 6); burst(P.x, P.y - 40, 10, ['#9fe3ff', '#ffffff'], 180, 0.4); sfx('item'); return;
   }   // 저주받은 거울
-  dmg *= P.armor * P.taken * (holyQ ? 0.6 : 1) * (P.syn.vortex && P.tw && P.tw.spd > 420 ? 0.8 : 1);
+  dmg *= P.armor * P.taken * (shellOn ? 0.3 : 1) * (holyQ ? 0.6 : 1) * (P.syn.vortex && P.tw && P.tw.spd > 420 ? 0.8 : 1);
   if (SAVE.ch.tr.mirror && !P.trMir) { P.trMir = true; dmg *= 0.5; floatNum(P.x, P.y - 96, '깨진 거울!  피해 -50%', '#bfe9ff'); }   // 보물: 판마다 첫 피격 절반   // 신성화살을 모으는 동안은 단단하다 · 회오리 방벽
   if (P.goal && P.goal.k === 'nohit') P.goal.n = 0;
-  P.hp -= dmg; P.inv = P.syn.iron ? 0.9 : 0.6; P.hitT = 0.28; P.atkTimer = -1;
+  P.hp -= dmg; P.inv = shellOn ? 0.2 : P.syn.iron ? 0.9 : 0.6; P.hitT = shellOn ? 0 : 0.28; if (!shellOn) P.atkTimer = -1;
   if ((P.up.scale || (P.char === 'lizard' && P.route === 'guard')) && P.hp > 0) thornBlast();
   lowMark();
   if (P.syn.regen && P.hp > 0 && !(P.regenCd > 0)) { P.hp = Math.min(P.max, P.hp + P.max * 0.03); P.regenCd = 0.6; }   // 재생 비늘
@@ -2913,7 +2914,7 @@ function claw(hi = 0, n = 1) {
     if (e.hp <= 0) continue;
     if (Math.hypot(e.x - cx, e.y - e.r - cy) < R + e.r) {
       const dx = e.x - P.x, dy = e.y - P.y, d = Math.hypot(dx, dy) || 1;
-      hurtEnemy(e, P.dmg * hm * bz * (0.9 + rand() * 0.3), dx / d, dy / d, (n > 1 ? (hi === n - 1 ? 330 : 90) : 380) * P.knock);   // 다중 타격은 마지막 타격에서만 크게 밀어낸다 (앞 타격에서 밀려나 다음 타격이 빗나가지 않도록)
+      hurtEnemy(e, P.dmg * hm * bz * (P.char === 'chimera' && P.route === 'wind' && P.form >= 1 ? 1.07 : 1) * (0.9 + rand() * 0.3), dx / d, dy / d, (n > 1 ? (hi === n - 1 ? 330 : 90) : 380) * P.knock);   // 다중 타격은 마지막 타격에서만 크게 밀어낸다 (앞 타격에서 밀려나 다음 타격이 빗나가지 않도록)
       hits++; if (flm) igniteE(e); if (drm) hset.add(e);
     }
   }
@@ -2936,7 +2937,7 @@ function addExp(v) {
  * 재료 카드 2장이 모두 Lv.3 이상이 되면 둘을 합친 '조합' 카드가 열린다 (v4.01: Lv.5 → Lv.3).
  * ============================================================ */
 const MAXLV = 5;
-const TH = n => ({ n: 2 + Math.ceil(n / 2), cd: +(2.9 - 0.3 * n).toFixed(1), dm: 1.6 + 0.3 * n });   // v4.13 상향          // 낙뢰: 발 수 · 주기 · 피해 배율
+const TH = n => ({ n: 2 + Math.ceil(n / 2), cd: +(2.9 - 0.3 * n).toFixed(1), dm: (1.6 + 0.3 * n) * 0.85 });   // v6.22: 피해 -15%   // v4.13 상향          // 낙뢰: 발 수 · 주기 · 피해 배율
 const BL = n => ({ n: 1 + (n >= 3 ? 1 : 0) + (n >= 5 ? 1 : 0), cd: +(2.6 - 0.2 * n).toFixed(1), dm: 0.8 + 0.12 * n });   // 회전 칼날
 const NV = n => ({ R: 130 + 28 * n, cd: +(5.4 - 0.6 * n).toFixed(1), dm: 1.3 + 0.18 * n });                // 충격파
 const GD = n => 16 - 2 * n;   // 방어막: 레벨별 재충전 시간(초) Lv1 14 → Lv5 6
@@ -2960,7 +2961,7 @@ const UPGRADES = [
   { id: 'knock',  name: '밀치기',        txt: () => '넉백 +25%p (기본 70%)', apply: p => { p.knock += 0.25; }, alt: { octo: ['마력 충격', '넉백 +25%p (기본 70%)'] } },
   { id: 'crit',   name: '급소 노리기',   txt: () => '치명타 +6.5%',     apply: p => { p.crit += 0.065; }, alt: { octo: ['약점 간파', '치명타 +6.5%'] } },
   { id: 'guard',  name: '수호의 방어막', txt: n => `피격 1회 무효 · ${GD(n)}초마다 재충전`, apply: p => { if (!p.up.guard) p.guardT = 0; } },
-  { id: 'armor',  name: '단단한 피부',   txt: () => '받는 피해 -10%',    apply: p => { p.armor *= 0.90; }, alt: { octo: ['단단한 비늘', '받는 피해 -10%'] } },   // v5.11: 중폭 상향 (-7% → -10%)
+  { id: 'armor',  name: '단단한 피부',   txt: () => '받는 피해 -6%',    apply: p => { p.armor *= 0.94; }, alt: { octo: ['단단한 비늘', '받는 피해 -6%'] } },   // v6.22: -10% → -6%
   { id: 'exp',    name: '배움의 눈',     txt: () => '경험치 +10%',      apply: p => { p.expMul += 0.1; }, alt: { octo: ['고서 해독', '경험치 +10%'] } },
   { id: 'thunder', name: '지옥 낙뢰',    txt: n => `낙뢰 ${TH(n).n}발 · ${TH(n).cd}초마다`,   apply: () => {} },
   { id: 'blade',  name: '회전 칼날',     txt: n => `칼날 ${BL(n).n}개 · ${BL(n).cd}초마다`,   apply: () => {} },
@@ -3321,7 +3322,7 @@ function drawLizPrev(c, key) {
 const LIZ_ROUTES = { sword: { name: '대검' }, guard: { name: '수호' } };
 function openLizRoute() {   // Lv.10: 대검의 길(리자드 검사) / 수호의 길(리저드 플레이어)
   const L = [['sword', '대검의 길 · 리자드 검사', '체력 +30 · 공격력 +32% · 범위 +10% · 한 방이 무거운 대검', 'Lv.20 : 버서커 리자드(광란) / 물의 도마뱀 전사(물의 주술)', 1],
-             ['guard', '수호의 길 · 리저드 플레이어', '체력 +45 · 받는 피해 -15% · 공격력 +12% · 아주 느린 자연 회복 · 가시 비늘 기본 장착 (맞으면 반격)', 'Lv.20 : 수호의 리저드 (스킬 반격의 갑주)', 'g1']];
+             ['guard', '수호의 길 · 리저드 플레이어', '체력 +45 · 받는 피해 -12% · 공격력 +12% · 아주 느린 자연 회복 · 가시 비늘 기본 장착 (맞으면 반격)', 'Lv.20 : 수호의 리저드 (스킬 반격의 갑주)', 'g1']];
   const items = L.map(([k, nm, ds, sb, pk]) => ({ key: k, name: nm, desc: ds, sub: sb, preview: c => drawLizPrev(c, pk), tag: k === 'sword' ? ' · 기본 진화' : '' }));
   openChoice(`진화의 갈림길  Lv.${P.lvl}`, items, u => { P.route = u.key; ensureTint(1); startEvolve(1); }, 'route');
   document.getElementById('levelHint').textContent = '대검 = 한 방이 강한 공격형 · 수호 = 맞으면서 가시로 되갚는 방어형 (Lv.20에 반격의 갑주)';
@@ -3344,8 +3345,8 @@ function drawArcherFinPrev(c, k) {
   g.drawImage(H, d.pv[0] * K, 0, d.pv[1] * K, d.ch * K, (c.width - d.pv[1] * f) / 2, c.height - 2 - d.ch * f, d.pv[1] * f, d.ch * f);
 }
 function openArcherFinal() {
-  const L = [['red', '진화한 지옥엘프 궁수', '체력 +45 · 공격력 +12% · 공속 +10% · 이속 +5% · 회피 25% · 이동 중 사격 피해 +20%', '전용 스킬 : 폭발 화살 (무적 백스텝 + 폭발 · 여진 2회)', null],
-             ['holy', '성화된 지옥엘프 궁수', '체력 +55 · 공격력 +15% · 사거리 +10% · 먼 거리 피해 +25% · 받는 피해 -10%', '전용 스킬 : 신성화살 (오래 모을수록 강한 차징 · 풀차지 명중 시 쿨타임 -50%)', 'holy']];
+  const L = [['red', '진화한 지옥엘프 궁수', '체력 +45 후 최대 체력 ×0.85 · 공격력 +12% · 공속 +10% · 이속 +5% · 회피 25% · 이동 중 사격 피해 +20%', '전용 스킬 : 폭발 화살 (무적 백스텝 + 폭발 · 여진 2회)', null],
+             ['holy', '성화된 지옥엘프 궁수', '체력 +63 · 공격력 +15% · 사거리 +10% · 먼 거리 피해 +25% · 받는 피해 -10%', '전용 스킬 : 신성화살 (오래 모을수록 강한 차징 · 풀차지 명중 시 쿨타임 -50%)', 'holy']];
   const items = L.map(([k, nm, ds, sb, ck]) => Object.assign({ key: k, name: nm, desc: ds, sub: sb, preview: c => drawArcherFinPrev(c, k) }, ck ? condItem('archerFin', ck) : { tag: ' · 기본 진화' }));
   openChoice(`최종 진화  Lv.${P.lvl}`, items, u => { P.fin = u.key; ensureTint(2); startEvolve(2); }, 'route');
   document.getElementById('levelHint').textContent = '🔒 조건을 달성한 루트만 고를 수 있어요. [기본 진화]는 조건 없이 선택 가능';
@@ -3410,8 +3411,8 @@ function applyEvo(to) {
     return;
   }
   if (P.char === 'lizard') {
-    if (to === 1 && P.route === 'guard') { P.max += 45; P.dmg *= 1.12; P.armor *= 0.85; P.regen += 0.4; P.knock += 0.3; }   // 수호: 단단하고 가시로 되갚는다 · 아주 느린 자연 회복
-    else if (to === 2 && P.fin === 'guard') { P.max += 60; P.dmg *= 1.15; P.armor *= 0.88; P.regen += 0.3; }   // 수호의 리저드: 반격의 갑주
+    if (to === 1 && P.route === 'guard') { P.max += 45; P.dmg *= 1.12; P.armor *= 0.88; P.regen += 0.4; P.knock += 0.3; }   // v6.22 피해감소 -15% → -12% · 수호: 단단하고 가시로 되갚는다 · 아주 느린 자연 회복
+    else if (to === 2 && P.fin === 'guard') { P.max += 60; P.dmg *= 1.15; P.armor *= 0.90; P.regen += 0.3; }   // v6.22 피해감소 -12% → -10% · 수호의 리저드: 반격의 갑주
     else if (to === 1) { P.max += 30; P.dmg *= 1.32; P.cd *= 1.1; P.rng *= 1.1; P.knock += 0.2; }   // 대검: 한 방이 훨씬 세지고 공속은 근소하게 느려진다
     else if (P.fin === 'water') { P.max += 60; P.dmg *= 1.12; P.armor *= 0.9; P.regen += 1.0; }   // 물의 전사: 치유와 지구력
     else { P.max += 55; P.dmg *= 1.25; P.rng *= 1.15; }   // 버서커: 초대형 대검 · 낮은 체력일수록 강하다
@@ -3444,8 +3445,8 @@ function applyEvo(to) {
     return;
   }
   if (P.char === 'chimera' && P.route === 'flame') {
-    if (to === 1) { P.max += 35; P.dmg *= 1.25; P.rng *= 1.15; P.spd *= 1.02; }   // 화염 발톱: 넓은 범위 + 화상
-    else { P.max += 50; P.dmg *= 1.25; P.rng *= 1.08; P.aspd += 0.1; P.taken *= 0.92; }   // v5.26 받는 피해 -8% · 업화: 최종 단계에서 화염 브레스 해금
+    if (to === 1) { P.max += 40; P.dmg *= 1.25 * 1.08; P.rng *= 1.15; P.spd *= 1.02; }   // 화염 발톱: 넓은 범위 + 화상 · v6.22: 소폭 버프(공격력 +8% · 체력 +5)
+    else { P.max += 58; P.dmg *= 1.25; P.rng *= 1.08; P.aspd += 0.1; P.taken *= 0.92; }   // v6.22: 체력 +8 · v5.26 받는 피해 -8% · 업화: 최종 단계에서 화염 브레스 해금
     P.hp = P.max; markDex('chimera:f' + to);
     return;
   }
@@ -3456,14 +3457,14 @@ function applyEvo(to) {
     return;
   }
   if (P.char === 'archer' && to === 2) {
-    if (P.fin === 'holy') { P.max += 55; P.dmg *= 1.15; P.rng *= 1.1; P.far += 0.25; P.armor *= 0.9; }   // 성화: 멀리서 모아 쏘는 저격수
-    else { P.max += 45; P.dmg *= 1.12; P.aspd += 0.1; P.spd *= 1.05; P.dodge = 0.25; P.kite += 1; }   // 진화: 움직이며 싸우는 전술형
+    if (P.fin === 'holy') { P.max += 63; P.dmg *= 1.15; P.rng *= 1.1; P.far += 0.25; P.armor *= 0.9; }   // 성화: 멀리서 모아 쏘는 저격수 · v6.22: 0진화 체력 -8을 진화 때 되돌려 줌 (+55 → +63)
+    else { P.max = Math.round((P.max + 45) * 0.85); P.dmg *= 1.12; P.aspd += 0.1; P.spd *= 1.05; P.dodge = 0.25; P.kite += 1; }   // 진화: 움직이며 싸우는 전술형 · v6.22: 진화한 지옥엘프 체력 -15%
     P.hp = P.max; markDex('archer:2:' + (P.fin === 'holy' ? 'holy' : 'red'), P.route);
     return;
   }
   if (P.char === 'archer') {
     if (P.route === 'elf') { P.max += 30; P.spd *= 1.12; P.aspd += 0.25; P.dmg *= 1.48; P.bolts++; P.dodge = 0.2; }   // 두 발 동시 사격 (v5.00: 관통은 '관통 화살' 카드로만)
-    else { P.max += 15; P.armor *= 0.75; P.cd *= 1.5; P.dmg *= 2.95; P.pierce += 4; P.arrowScale = 1.6; P.far += 0.1; P.knock += 0.75; }   // 저주: 체력·공속 감소, 한 방이 강해진다
+    else { P.max += 23; P.armor *= 0.75; P.cd *= 1.5; P.dmg *= 2.95; P.pierce += 4; P.arrowScale = 1.6; P.far += 0.1; P.knock += 0.75; }   // 저주: 체력·공속 감소, 한 방이 강해진다 · v6.22: 0진화 체력 -8 보전 (+15 → +23)
     P.hp = P.max; markDex('archer:1:' + P.route, P.route);
     return;
   }
@@ -3475,9 +3476,9 @@ function applyEvo(to) {
     if (r === 'twin')    { P.max += 20; P.spd *= 1.06; }   // 2연타는 형태(FD.hits)가 담당
   } else {
     P.max += 30; P.dmg *= 1.15;
-    if (r === 'crimson') { P.dmg *= 1.15; if (P.fin === 'holy') { P.max += 30; P.rng *= 1.1; P.regen += 0.65; P.dmg *= 0.86; } else if (P.fin === 'fallen') { P.max += 45; P.dmg *= 1.22; P.rng *= 1.25; P.aspd += 0.1; P.killHeal += 1; } else { P.max += 20; P.dmg *= 1.06; P.syn.vamp = true; P.killHeal += 1; } }
+    if (r === 'crimson') { P.dmg *= 1.15; if (P.fin === 'holy') { P.max += 30; P.rng *= 1.1; P.regen += 0.65; P.dmg *= 0.86; } else if (P.fin === 'fallen') { P.max += 45; P.dmg *= 1.22; P.rng *= 1.25; P.aspd += 0.1; P.killHeal += 1; } else { P.max += 20; P.dmg *= 1.06 * 1.12; P.syn.vamp = true; P.killHeal += 1; } }   // v6.22: 피의 혈랑 공격력 +12%
     if (r === 'abyss')   { P.spd *= 1.11; P.aspd += 0.24; P.max += 30; P.dmg *= 1.07; P.dodge = 0.16; }   // v5.00: 공격 +7% · 공속 +6% · 체력 +15 · 이속 +3%
-    if (r === 'twin')    { P.max += 30; P.spd *= 1.04; }   // 3연타
+    if (r === 'twin')    { P.max += 30; P.spd *= 1.04; P.dmg *= 1.12; }   // 3연타 · v6.22: 삼두 늑대 공격력 +12%
   }
   P.hp = P.max;
   markDex(to === 1 ? 'wolf:1:' + P.route : r === 'twin' ? 'wolf:2t' : r === 'crimson' ? 'wolf:2c:' + P.fin : 'wolf:2', P.route);
@@ -3919,9 +3920,9 @@ function stepBombShard(s) {
   if (nearT) for (const e of enemies) { if (e.hp > 0 && Math.hypot(e.x - s.x, e.y - e.r * 0.6 - s.y) < 14 + e.r) { hit = true; break; } }
   if (hit || s.life <= 0) {
     s.life = 0;
-    boomAt(s.x, s.y, BOMB_R, 6.0, true);
-    bombT.push({ t: 0.28, x: s.x + (rand() - 0.5) * 50, y: s.y + (rand() - 0.5) * 30, R: 155, dm: 1.8 });
-    bombT.push({ t: 0.52, x: s.x + (rand() - 0.5) * 70, y: s.y + (rand() - 0.5) * 40, R: 155, dm: 1.8 });
+    boomAt(s.x, s.y, BOMB_R, 5.5, true);   // v6.22: -8%
+    bombT.push({ t: 0.28, x: s.x + (rand() - 0.5) * 50, y: s.y + (rand() - 0.5) * 30, R: 155, dm: 1.66 });
+    bombT.push({ t: 0.52, x: s.x + (rand() - 0.5) * 70, y: s.y + (rand() - 0.5) * 40, R: 155, dm: 1.66 });
   }
 }
 function boomAt(x, y, R, dm, main) {
@@ -4003,13 +4004,13 @@ function drawHolyCharge(wx, wy) {
   ctx.fillStyle = full ? (Math.floor(wallT * 10) % 2 ? '#ffe9a8' : '#ffffff') : st >= 2 ? '#8fb8ff' : '#5f88e8'; ctx.fillRect(bx, by, bw * k, 6);
   ctx.fillStyle = 'rgba(255,255,255,0.6)'; ctx.fillRect(bx + bw * 0.27, by - 2, 1, 10); ctx.fillRect(bx + bw * 0.58, by - 2, 1, 10);
 }
-function fireBoneBlast(src, key) { return withSrc(key || 'fireBone', () => fireBoneBlast0(src)); }
-function fireBoneBlast0(src) {
+function fireBoneBlast(src, key) { return withSrc(key || 'fireBone', () => fireBoneBlast0(src, key === 'fireArrow' ? 0.9 : 1)); }   // v6.22: 지옥불 화살 -10%
+function fireBoneBlast0(src, k = 1) {
   addRing(src.x, src.y - src.r, 6, 70, 0.3, '255,140,40', 5);
   burst(src.x, src.y - src.r, 6, ['#ff6a1c', '#ffb030'], 180, 0.4);
   for (const o of enemies) {
     if (o === src || o.hp <= 0) continue;
-    if (Math.hypot(o.x - src.x, o.y - src.y) < 70 + o.r) hurtEnemy(o, 6 + P.dmg * 0.4, 0, 0, 0, true);
+    if (Math.hypot(o.x - src.x, o.y - src.y) < 70 + o.r) hurtEnemy(o, (6 + P.dmg * 0.4) * k, 0, 0, 0, true);
   }
 }
 /* ---------- 독액 달팽이: 독 자국 / 독 침 ---------- */
@@ -4032,7 +4033,7 @@ function snailSpit() {
 }
 const rngK = () => Math.min(1.8, Math.max(1, P.rng / 100));   // 범위 카드 1장당 반경 +20% (최대 ×1.8)
 function landLava(g) {
-  const f = FD(), mg = 1 + 0.13 * (P.magma || 0), R = (g.R || (f.lr * rngK())) * mg, dm = (g.dm || f.ldm) * (1 + (P.trailD || 0));
+  const f = FD(), mg = 1 + 0.13 * (P.magma || 0), R = (g.R || (f.lr * rngK())) * mg, dm = (g.dm || f.ldm * 0.88) * (1 + (P.trailD || 0));   // v6.22: 용암탄 평타 -12% (스킬 탄 g.dm · 웅덩이는 그대로)
   for (const e of enemies) {
     if (e.hp <= 0) continue;
     if (Math.hypot(e.x - g.x1, e.y - g.y1) < R + e.r) {
@@ -4089,7 +4090,7 @@ function landGlob(g) {
     if (e.hp <= 0) continue;
     if (Math.hypot(e.x - g.x1, e.y - g.y1) < R + e.r) {
       const dx = e.x - g.x1, dy = e.y - g.y1, d = Math.hypot(dx, dy) || 1;
-      hurtEnemy(e, P.dmg * 1.15 * 1.075 * (f.tdm / 1.15) * (1 + (P.trailD || 0)) * (e.kind === 'boss' ? 1.3 : 1), dx / d, dy / d, 160 * P.knock);
+      hurtEnemy(e, P.dmg * 1.15 * 1.075 * (f.tdm / 1.15) * (1 + (P.trailD || 0)) * (e.kind === 'boss' ? 1.3 : 1) * (P.form >= 1 ? 0.88 : 1), dx / d, dy / d, 160 * P.knock);   // v6.22: 진화 후 평타 -12%
     }
   }
   addRing(g.x1, g.y1, 8, R, 0.3, f.rgb, 6);
@@ -4482,9 +4483,11 @@ function octoSprite(r, x, y, face, s, add) {   // r = [x, y, w, h, ax, ay] (원�
   if (add) ctx.globalCompositeOperation = 'lighter';
   ctx.drawImage(IMG.oc, r[0], r[1], r[2], r[3], -r[4] * s, -r[5] * s, r[2] * s, r[3] * s); ctx.restore();
 }
-function startEle() {   // 코끼리 돌진: 냉장고 소환 -> 코끼리가 튀어나와 앞으로 돌진
-  const t = nearestEnemy(700), dir = t ? (t.x >= P.x ? 1 : -1) : (P.face || 1);
-  eleQ = { t: 0, x: P.x + dir * 90, y: P.y + 4, dir, hit: new Set(), ph: 'fridge' };
+function startEle() {   // 코끼리 돌진: 냉장고 소환 -> 코끼리가 튀어나와 앞으로 돌진 (v6.22: 이동 중이면 그 방향(상하·대각 포함), 서 있으면 바라보는 방향)
+  let ux = P.face || 1, uy = 0;
+  if (P.moving) { const l = Math.hypot(P.lastX, P.lastY) || 1; ux = P.lastX / l; uy = P.lastY / l; }
+  const dir = Math.abs(ux) > 0.2 ? (ux > 0 ? 1 : -1) : (P.face || 1);   // 그림이 바라보는 좌우 (거의 수직이면 캐릭터가 보던 쪽)
+  eleQ = { t: 0, x: P.x + ux * 90, y: P.y + 4 + uy * 90, ux, uy, dir, hit: new Set(), ph: 'fridge' };
   addRing(eleQ.x, eleQ.y - 30, 10, 90, 0.4, '200,220,255', 6); shake = Math.max(shake, 5);
 }
 function stepOcto(dt) {
@@ -4493,12 +4496,17 @@ function stepOcto(dt) {
     if (q.t < 0.85) q.ph = 'fridge'; else if (q.t < 1.4) q.ph = 'emerge';
     else {
       if (q.ph !== 'charge') { q.ph = 'charge'; shake = Math.max(shake, 10); sfx('boom'); }
-      q.x += q.dir * 980 * dt;
-      for (const e of enemies) {
-        if (e.hp <= 0 || q.hit.has(e)) continue;
-        if (Math.abs(e.y - q.y) < 70 + e.r && (e.x - q.x) * q.dir < 70 + e.r && (e.x - q.x) * q.dir > -130) { q.hit.add(e); hurtEnemy(e, P.dmg * 4.5, q.dir, 0, 700); e.slowT = Math.max(e.slowT || 0, 1); }
+      const nx = q.x + q.ux * 980 * dt, ny = q.y + q.uy * 980 * dt;
+      if (arena ? !inPoly(nx, ny) : (chal && !inCh(nx, ny))) eleQ = null;   // 보스방·챌린지 맵 벽에서 멈춘다
+      else {
+        q.x = nx; q.y = ny;
+        for (const e of enemies) {
+          if (e.hp <= 0 || q.hit.has(e)) continue;
+          const rx = e.x - q.x, ry = e.y - q.y, al = rx * q.ux + ry * q.uy, pp = Math.abs(-rx * q.uy + ry * q.ux);   // 진행 방향 기준 앞뒤 · 옆 거리
+          if (pp < 70 + e.r && al < 70 + e.r && al > -130) { q.hit.add(e); hurtEnemy(e, P.dmg * 5.2, q.ux, q.uy, 700); e.slowT = Math.max(e.slowT || 0, 1); }   // v6.22: 공격력 450% → 520%
+        }
       }
-      if (fx.length < 600 && rand() < 0.8) fx.push({ x: q.x - q.dir * 60, y: q.y - 6, vx: -q.dir * 90, vy: -40 - rand() * 40, life: 0.45, max: 0.45, c: rand() < 0.5 ? '#e8d6b4' : '#b8a684', s: 5 });
+      if (eleQ && fx.length < 600 && rand() < 0.8) fx.push({ x: q.x - q.ux * 60, y: q.y - 6 - q.uy * 60, vx: -q.ux * 90, vy: -40 - rand() * 40 - q.uy * 90, life: 0.45, max: 0.45, c: rand() < 0.5 ? '#e8d6b4' : '#b8a684', s: 5 });
       if (q.t > 2.5) eleQ = null;
     }
   }
@@ -5044,7 +5052,8 @@ function updateSkills(dt) {
           if (e.hp <= 0) continue;
           if (Math.hypot(e.x - z.x, e.y - z.y) < z.r + e.r) {
             const dx = e.x - z.x, dy = e.y - z.y, d = Math.hypot(dx, dy) || 1;
-            withSrc(skSrc(z.holy ? 'bloodrain' : 'meteor'), () => hurtEnemy(e, P.dmg * (z.holy ? 2.3 : 4), dx / d, dy / d, z.holy ? 260 : 520)); z.hit = (z.hit || 0) + 1;
+            withSrc(skSrc(z.holy ? 'bloodrain' : 'meteor'), () => hurtEnemy(e, P.dmg * (z.holy ? 1.61 : 4), dx / d, dy / d, z.holy ? 260 : 520)); z.hit = (z.hit || 0) + 1;
+            if (z.holy) e.slowT = Math.max(e.slowT || 0, 2);   // v6.22: 피해 -30% 대신 맞은 적 둔화 2초
           }
         }
         if (z.holy) {
@@ -5392,7 +5401,7 @@ function airSlash() {
   for (let i = 0; i < n; i++) {
     const off = (i - (n - 1) / 2) * spread, a = base + off, side = Math.abs(off) > 0.01;
     airs.push({ x: P.x + Math.cos(a) * 34, y: P.y - 26 + Math.sin(a) * 34, a, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp, life: 0.72 * rng, t: 0, r: 26 * sz, sz,
-      dmg: P.dmg * (f >= 2 ? 0.38 : 0.3) * (1 + 0.22 * (up.airA || 0)) * (1 + 0.3 * gale) * (side ? 0.7 : 1), hit: new Set(), f });
+      dmg: P.dmg * 1.07 * (f >= 2 ? 0.38 : 0.3) * (1 + 0.22 * (up.airA || 0)) * (1 + 0.3 * gale) * (side ? 0.7 : 1), hit: new Set(), f });
   }
   sfx('shoot');
 }
@@ -5470,7 +5479,7 @@ function dreamTent(hset) {   // 발톱을 휘두를 때 촉수가 근처 적을 
     cfx.push({ k: 'tent', x: P.x, y: P.y - 34, tx: e.x, ty: e.y - e.r, t: 0, life: 0.24, s: i });
   }
 }
-const RUSH_PATH = 0.55, RUSH_STRIKE = 0.9;   // 천안 난무: 조금 상향 (경로 0.48→0.55 · 일격 0.8→0.9 · 범위 +10%)
+const RUSH_PATH = 0.4675, RUSH_STRIKE = 0.765;   // v6.22: 계수 -15% (0.55 → 0.4675 · 0.9 → 0.765)   // 천안 난무: 조금 상향 (경로 0.48→0.55 · 일격 0.8→0.9 · 범위 +10%)
 function startRush() {
   const up = P.up.rushUp || 0;
   rushQ = { ph: 'wind', t: 0, i: 0, n: 8 + 2 * up, last: null, sx: P.x, sy: P.y, tx: P.x, ty: P.y, hit: new Set(), dm: 1 + 0.08 * up, f: 0 };
@@ -5521,7 +5530,7 @@ function stepRush(dt) {
     if (q.t >= T) { rushStrike(q); q.ph = 'gap'; q.t = 0; q.f = 7; }
   } else if (q.ph === 'gap') {
     if (q.t >= 0.06) { if (q.i >= q.n) { q.ph = 'end'; q.t = 0; q.f = 0; } else rushNext(q); }
-  } else if (q.t >= 0.35) { rushQ = null; P.inv = Math.max(P.inv, 0.6); P.anim = 'idle'; P.animT = 0; }
+  } else if (q.t >= 0.35) { rushQ = null; P.inv = Math.max(P.inv, 1.14); P.anim = 'idle'; P.animT = 0; }   // v6.22: 마무리 무적 0.6 → 1.14초 (스킬 전체 무적 시간 약 +20%)
 }
 function drawRush(x, y) {
   const D = FD(), a = D.anim.skill, q = rushQ, ws = D.ws, img = IMG[D.src];
@@ -7180,7 +7189,7 @@ castSkill = skWrap(castSkill); updateWhip = skWrap(updateWhip, 'whip'); stepPals
 backdashVolley = skWrap(backdashVolley, 'backdash'); stepDash = skWrap(stepDash, 'backdash'); stepBigArrow = skWrap(stepBigArrow, 'bigarrow');
 stepBomb = skWrap(stepBomb, 'bombshot'); stepBombShard = skWrap(stepBombShard, 'bombshot'); boomAt = skWrap(boomAt, 'bombshot');
 stepHoly = skWrap(stepHoly, 'holyshot'); fireHoly = skWrap(fireHoly, 'holyshot'); startEle = skWrap(startEle); stepOcto = skWrap(stepOcto);
-stepDive = skWrap(stepDive, 'dive'); updateAirs = skWrap(updateAirs); stepRush = skWrap(stepRush, 'rush'); rushStrike = skWrap(rushStrike, 'rush'); stepBreath = skWrap(stepBreath, 'breath');
+stepDive = skWrap(stepDive, 'dive'); updateAirs = (f => function (...a) { return withSrc('basic', () => f.apply(this, a)); })(updateAirs);   // v6.22: 에어슬래시는 평타 — 예전엔 skWrap이 '【스킬】?'로 집계했다 stepRush = skWrap(stepRush, 'rush'); rushStrike = skWrap(rushStrike, 'rush'); stepBreath = skWrap(stepBreath, 'breath');
 { const _tb = thornBlast, _sb = smashBlow; thornBlast = function (...a) { return withSrc('scale', () => _tb.apply(this, a)); }; smashBlow = function (...a) { return withSrc('smash', () => _sb.apply(this, a)); }; }
 shellReflect = skWrap(shellReflect, 'shell'); updateBsig = skWrap(updateBsig, 'bsigil');
 window.__G = {
@@ -7189,7 +7198,7 @@ window.__G = {
   get zones() { return zones; }, get ebul() { return ebul; }, get EYE() { return EYE; }, get shards() { return shards; }, get bigQ() { return bigQ; }, get bombQ() { return bombQ; }, get holyQ() { return holyQ; }, get afx() { return afx; }, get dashQ() { return dashQ; }, get beam() { return beam; }, get evo() { return evo; }, get choices() { return choices; },
   get SAVE() { return SAVE; }, render, get boss() { return boss; }, get mini() { return mini; }, get skp() { return skp; }, SK_PH, SKB, get mdeath() { return mdeath; }, spawnMini, miniDefeated, spawnBoss, raiseCastle, enterArena, exitArena, get castle() { return castle; }, get arena() { return arena; }, get trans() { return trans; }, openChest, openShop, buildCards, get joy() { return joy; }, get gt() { return gt; }, get allies() { return allies; }, get items() { return items; }, spawnItem, get globs() { return globs; }, recruit, keys, tick, needFor, pick: pickChoice, cast: castSkill, spawnBug,
   get slots() { return slots; }, get slotUI() { return slotUI; }, get udeath() { return udeath; }, get lasers() { return lasers; }, get eyeF() { return eyeF; }, get uniqCd() { return uniqCd; }, spawnSlot, spawnUniq, gainRelic, useTeleport, closeSlot, slotSpin, slotKey, updateSlotUI, SLOT_FX, SLOT_APPLY, UNIQ, RELICS, trySpawnUniq, UNIQ_P, setState(v) { state = v; }, spawnEnemy,
-  get DMETER() { return DMETER; }, PILLARS, fwStart, setT(v) { gt = v; }, calcShards, FD, LIZ_FORMS, TWIN_FORMS, startFw, snapP, get fwFx() { return fwFx; }, get bsig() { return bsig; }, BMAP, inBlood, twLen, availSyn, SYNERGIES, inPoly, hurtEnemy, startGame, addExp, hurt: hurtPlayer, rebuild: buildSpecies,
+  get DMETER() { return DMETER; }, dmName, get eleQ() { return eleQ; }, PILLARS, fwStart, setT(v) { gt = v; }, calcShards, FD, LIZ_FORMS, TWIN_FORMS, startFw, snapP, get fwFx() { return fwFx; }, get bsig() { return bsig; }, BMAP, inBlood, twLen, availSyn, SYNERGIES, inPoly, hurtEnemy, startGame, addExp, hurt: hurtPlayer, rebuild: buildSpecies,
   get chal() { return chal; }, startChallenge, chEvent, chEnterBoss, chFrag, chGoldSpawn, chShelter, inCh, CHM, spawnCut, spawnAb, abStart, RUNES, TREASURES, get cutSaws() { return cutSaws; }, setChMode(v) { chMode = v; }, get W() { return W; }, get H() { return H; }, get species() { return SPECIES; },
 };
 

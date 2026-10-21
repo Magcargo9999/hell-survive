@@ -64,6 +64,7 @@ JS="""([ch,route,fin,prof,L,gt0,win,boss,seed,tier,god,bk])=>{
      minhp=Math.min(minhp,P.hp);
      if(P.hp<P.max*0.15){ deaths++; P.hp=P.max; P.inv=2; }   // 거의 죽을 뻔한 횟수
    }
+   rec.dm=Object.fromEntries(Object.entries(G.DMETER).map(([k,v])=>[G.dmName?G.dmName(k):k,Math.round(v)]));
    rec.win={edmg:Math.round(edmg),casts:casts,kills:P.kills-k0,loss:Math.round(loss),near:deaths,exp:Math.round(expGain),t:Math.round(t),dead:G.state==='dead'};
    return rec;
  }
@@ -100,6 +101,7 @@ JS="""([ch,route,fin,prof,L,gt0,win,boss,seed,tier,god,bk])=>{
    if(G.state==='dead'){deadAt=bt;break;}
    if(P.y>1055)P.y=1055;
  }
+ rec.dm=Object.fromEntries(Object.entries(G.DMETER).map(([k,v])=>[G.dmName?G.dmName(k):k,Math.round(v)]));
  rec.boss={bdmg:G.boss?Math.round(G.boss.max-G.boss.hp):0,mx:G.boss?Math.round(G.boss.max):0,t:Math.round(bt),dead:G.state==='dead',left:G.boss?Math.round(G.boss.hp):0,loss:Math.round(bloss),hp0:Math.round(hp0),casts:bcasts,hl:HL};
  return rec;
 }"""
@@ -123,7 +125,7 @@ async def run(b,cfg):
         except Exception as e: r={'err':str(e)[:1500]}
         await pg.close();return r
 VAR={'archer:red':('archer','elf','red'),'archer:holy':('archer','elf','holy'),'wolf:abyss':('wolf','abyss',''),'wolf:crimson':('wolf','crimson','blood'),'wolf:holy':('wolf','crimson','holy'),'wolf:twin':('wolf','twin',''),
-     'snail:venom':('snail','venom',''),'snail:lava':('snail','lava',''),'snail:bomb':('snail','bomb',''),'archer:elf':('archer','elf',''),'archer:skel':('archer','skel',''),'chimera':('chimera','',''),'chimera:flame':('chimera','flame',''),'chimera:dream':('chimera','dream',''),'lizard:rage':('lizard','','rage'),'lizard:water':('lizard','','water'),'twins':('twins','',''),'ghost':('ghost','',''),'octo':('octo','',''),'lizard:guard':('lizard','guard','guard')}
+     'snail:venom':('snail','venom',''),'snail:lava':('snail','lava',''),'snail:bomb':('snail','bomb',''),'archer:elf':('archer','elf',''),'archer:skel':('archer','skel',''),'chimera':('chimera','',''),'chimera:flame':('chimera','flame',''),'chimera:dream':('chimera','dream',''),'lizard:rage':('lizard','','rage'),'lizard:water':('lizard','','water'),'twins':('twins','',''),'ghost':('ghost','',''),'octo':('octo','',''),'lizard:guard':('lizard','guard','guard'),'wolf:fallen':('wolf','crimson','fallen'),'wolf:blood':('wolf','crimson','blood'),'chimera:wind':('chimera','wind','')}
 BHP=int(os.environ.get('BHP','18000'))
 async def main():
     # argv: mode(L|B) variants(json list) N prof tier
@@ -145,13 +147,13 @@ async def main():
             if any('err' in r for r in rs): print(v,L,'ERR',[r.get('err') for r in rs][:1]); continue
             r0=rs[0]
             if mode=='B' and os.environ.get('RAW'):
-                for r in rs: print('RAW',json.dumps({'v':v,'boss':r['boss'],'dmg':r['dmg'],'cards':r['cards'],'syn':r['synk'],'hp':r['hp']}))
+                for r in rs: print('RAW',json.dumps({'v':v,'boss':r['boss'],'dmg':r['dmg'],'cards':r['cards'],'syn':r['synk'],'hp':r['hp'],'dm':r.get('dm')},ensure_ascii=False))
                 continue
             if mode=='B':
                 if os.environ.get('HL'): [print('   ',r['boss']['hl']) for r in rs]
                 print(v.ljust(12),'build dmg',r0['dmg'],'cd',r0['cd'],'hp',r0['hp'],'spd',r0['spd'],'tempo',r0['tempo'],'| boss',[(r['boss']['t'],'D' if r['boss']['dead'] else 'W' if r['boss']['left']==0 else 'T',r['boss']['loss'],'dps%d'%round((BHP-r['boss']['left'])/max(1,r['boss']['t']))) for r in rs])
             elif os.environ.get('RAW'):
-                for r in rs: print('RAWL',json.dumps({'v':v,'L':L,'win':r['win'],'dmg':r['dmg'],'cards':r['cards'],'syn':r['synk']}))
+                for r in rs: print('RAWL',json.dumps({'v':v,'L':L,'win':r['win'],'dmg':r['dmg'],'cards':r['cards'],'syn':r['synk'],'dm':r.get('dm')},ensure_ascii=False))
             else:
                 f=lambda k:round(st.mean([r['win'][k] for r in rs]),1)
                 print(v.ljust(12),'Lv',L,'dmg',r0['dmg'],'cd',r0['cd'],'hp',r0['hp'],'spd',r0['spd'],'sk',r0['skill'],'syn',[r['syn'] for r in rs],'| kills',f('kills'),'exp',f('exp'),'loss',f('loss'),'near',f('near'),'dead',sum(r['win']['dead'] for r in rs))
