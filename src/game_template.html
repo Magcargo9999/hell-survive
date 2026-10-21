@@ -6520,6 +6520,7 @@ backdashVolley = skWrap(backdashVolley, 'backdash'); stepDash = skWrap(stepDash,
 stepBomb = skWrap(stepBomb, 'bombshot'); stepBombShard = skWrap(stepBombShard, 'bombshot'); boomAt = skWrap(boomAt, 'bombshot');
 stepHoly = skWrap(stepHoly, 'holyshot'); fireHoly = skWrap(fireHoly, 'holyshot'); startEle = skWrap(startEle); stepOcto = skWrap(stepOcto);
 stepDive = skWrap(stepDive, 'dive'); updateAirs = skWrap(updateAirs); stepRush = skWrap(stepRush, 'rush'); rushStrike = skWrap(rushStrike, 'rush'); stepBreath = skWrap(stepBreath, 'breath');
+{ const _tb = thornBlast, _sb = smashBlow; thornBlast = function (...a) { return withSrc('scale', () => _tb.apply(this, a)); }; smashBlow = function (...a) { return withSrc('smash', () => _sb.apply(this, a)); }; }
 shellReflect = skWrap(shellReflect, 'shell'); updateBsig = skWrap(updateBsig, 'bsigil');
 window.__G = {
   bossDefeated, get IMG() { return IMG; },
