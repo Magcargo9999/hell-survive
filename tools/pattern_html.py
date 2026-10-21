@@ -8,7 +8,7 @@ def chk_tbl(d):
     rows = ''
     for lab, r in d['res']:
         if min(r.values()) >= 99: rows += f'<tr><td>{e(lab)}</td><td colspan="6" class="c">해당 없음 (피해 판정 증가 없음)</td></tr>'; continue
-        v, m = verdict(r) if '이속÷240' not in lab else ('참고', min(r.values()))
+        v, m = verdict(r) if '이속÷150' not in lab else ('참고', min(r.values()))
         cls = {'통과':'ok','주의':'wn','실패':'ng','참고':'nt'}[v]
         rows += f'<tr><td>{e(lab)}</td>' + ''.join(f'<td class="c">{r[k]:.2f}</td>' for k in SPDK) + f'<td class="c {cls}">{v}</td></tr>'
     return rows
@@ -27,7 +27,7 @@ def check_all():
     for d in D:
         for i,(lab, r) in enumerate(d['res']):
             if min(r.values()) >= 99: o += f'<tr><td>{d["id"]}</td><td>{e(lab)}</td><td colspan="6" class="c">해당 없음</td></tr>'; continue
-            v, m = verdict(r) if '이속÷240' not in lab else ('참고', min(r.values()))
+            v, m = verdict(r) if '이속÷150' not in lab else ('참고', min(r.values()))
             cls = {'통과':'ok','주의':'wn','실패':'ng','참고':'nt'}[v]
             o += f'<tr><td>{d["id"]}</td><td>{e(lab)}</td>' + ''.join(f'<td class="c">{r[k]:.2f}</td>' for k in SPDK) + f'<td class="c {cls}">{v}</td></tr>'
     return o + '</table>'
@@ -110,7 +110,7 @@ HTML = f"""<!doctype html><html lang="ko"><head><meta charset="utf-8"><style>{CS
 <h3>결과 해석</h3><ul>
 <li>신규 12개 중 판정 대상 항목 모두 최저 이속(리자드)에서도 <b>1.10 이상</b>으로 설계 (F3는 1차 설계 0.63~0.83로 <b>실패</b> → R120/0.7초 → R100/1.0초로 수정해 통과).</li>
 <li><b>기존 패턴 점검</b>: 도약 내려찍기(R140, 고정 0.95초)는 리자드 기준 여유 <b>1.03</b>(155÷150)으로 매우 빠듯합니다. 이번 기획의 M1은 1.05초·R140으로 1.14를 확보했습니다. 기존 패턴을 건드리는 건 요청 범위 밖이라 <b>수정하지 않고 참고 정보로만</b> 기록합니다.</li>
-<li>E2의 "이속÷240" 행은 참고용입니다. 구체는 느리고 옆으로 빠지는 것만으로 피할 수 있어 따라잡힘은 문제가 아닙니다.</li>
+<li>E2 상향: 구체 속도 240→150(리자드 163보다 느려 달려서도 따돌림, 이속÷150 ≥ 1.09), 예고 0.8→1.1초(옆 이동 여유 1.80→2.64), 튕김 2→1회, 동시 3→2개(분노 3). 참고 행은 판정 제외.</li>
 <li>면적 비교(순간 점유): M1 11% · M3 16% · E1 13%(섬광 1회) · E2 1.5% · E3 영구 27% · S2 11%(이동) · S3 8.5% · F1 45%(순차·틈 160 상시) · F2 16%(피해 없음) · F3 2.4%. 어느 것도 화면 전체를 덮지 않으며 틈/통로가 항상 남음.</li></ul>
 </section>
 
@@ -129,6 +129,17 @@ HTML = f"""<!doctype html><html lang="ko"><head><meta charset="utf-8"><style>{CS
 검색으로 목록만 확인(내용 미열람): speedrun.com Gungeon 가이드, dualshockers/cbr Malenia 가이드, fextralife Perilous Attacks. ☆ 표시 표본은 일반 지식.</div>
 </section>
 
+<section class="pg"><h2>체크리스트 — 신규 패턴 12개 전체에 적용된 항목만 ✔</h2>
+<table><tr><th style="width:34px">✔</th><th>항목</th><th>근거</th></tr>
+<tr><td class="c ok">✔</td><td>예고가 항상 보임(기존 빨강·보라 체계, 소등 중에도 예고선 유지)</td><td>6장 각 카드 "예고" 칸</td></tr>
+<tr><td class="c ok">✔</td><td>규칙 9: 5단계 최악 조건(분노 배율 + 리자드 163)에서 안전 구역·통로·시간 확보 (판정 증가 없는 S1·F2는 해당 없음)</td><td>7장 표: 판정 대상 전 항목 여유 1.10 이상</td></tr>
+<tr><td class="c ok">✔</td><td>화면·보스방 전체를 덮는 패턴 없음 (최대 순간 점유 F1 45%, 틈 160px 상시)</td><td>7장 면적 비교</td></tr>
+<tr><td class="c ok">✔</td><td>보스전 전용 — 1진화 이하 캐릭터 스킬·스탯 변경 없음</td><td>모든 카드(보스 코드만 수정)</td></tr>
+<tr><td class="c ok">✔</td><td>기존 패턴과 재미 축이 겹치지 않게 구분(리듬·선택·공간·보상)</td><td>6장 설계 원칙 ④</td></tr>
+<tr><td class="c ok">✔</td><td>E2 회피 가능성 상향 반영(속도 150·예고 1.1초·튕김 1회)</td><td>7장</td></tr>
+<tr><td class="c nt">☐</td><td>규격표 ② 피해·배율 보정 확인 — <b>미적용</b>(도입 시 확인)</td><td>8장</td></tr>
+<tr><td class="c nt">☐</td><td>봇 시뮬·smoke 15/15 검증 — <b>미실행</b>(원하실 때만)</td><td>8장, 규칙 8</td></tr>
+<tr><td class="c nt">☐</td><td>스크린샷 가독성 확인 — <b>미실행</b>(코드 미구현)</td><td>8장</td></tr></table></section>
 <section><h2>부록 A. 패턴 표본 {N}개 (★ 이번에 읽음 · ☆ 일반 지식)</h2>{catalog()}</section>
 </body></html>"""
 open(OUT+'report.html','w').write(HTML)
