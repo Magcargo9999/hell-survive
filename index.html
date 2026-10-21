@@ -953,6 +953,7 @@ const arenaExit = () => !arena || arena.k === 'blood' ? null : arena.k === 'ange
 const BOSS_TEMPO = 1.22;   // 마왕 기술은 모든 캐릭터에게 같은 속도로 빠르다 (이속 약 190 이상이면 피하기 편함 · 가장 느린 리자드는 이속 카드 2~3장)
 const bossTempo = () => BOSS_TEMPO;
 function inPoly(x, y) {
+  if (chal && !arena) return inCh(x, y);   // v6.41: 챌린지 마왕은 챌린지 맵(필드)에서 싸운다
   if (arena && arena.k === 'blood') return inBlood(x, y);   // 타락한 혈랑왕의 제단 (타원)
   let c = false; const q = arena && arena.k === 'angel' ? AMAP.poly : ARENA.poly;   // v6.30: 타락천사 보스맵
   for (let i = 0, j = q.length - 1; i < q.length; j = i++) {
@@ -1267,7 +1268,7 @@ function spawnBoss() {
   if (P.bossK === 'skel') initSkBoss(boss);
   if (P.bossK === 'angel') initAnBoss(boss);
   if (P.bossK === 'eye') { boss.bk = 'eye'; boss.hp *= EYE.hp; boss.max *= EYE.hp; boss.r = 72; boss.n = 0; boss.k = ''; boss.emT = 0; boss.ang = 0; boss.side = 1; boss.sideT = 4; boss.glow = 0; }
-  chBossHp(boss); enemies.push(boss);
+  chBossHp(boss); if (chal && !arena) chFieldPlace(boss); enemies.push(boss);
   if (P.pet) { const q = P.pet; q.hp = q.max; q.down = false; q.act = null; q.inv = 0; q.intro = 0; q.cd1 = 1.2; q.cd2 = 4; q.cd3 = 7; }   // 마왕전: 동료 체력이 가득 찬 채로 시작
 }
 const bossPlayerHit = (x, y, r) => Math.hypot(P.x - x, P.y - y) < r + 10 + PR();
@@ -1467,6 +1468,7 @@ const BMAP = { s: 1.65, w: 2069, h: 2069, cx: 1035, cy: 965, rx: 719, ry: 570, s
 const inBlood = (x, y) => ((x - BMAP.cx) / BMAP.rx) ** 2 + ((y - BMAP.cy) / BMAP.ry) ** 2 < 1;
 let fwd = null, fwFx = [];   // 쓰러지는 모습 · 가시/진 이펙트
 function bloodPoint(x, y) {   // 맵 밖이면 가운데 쪽으로 당겨 넣는다
+  if (chal && !arena) { if (inCh(x, y)) return [x, y]; const c = chal.fbC || { x: P.x, y: P.y }; for (let k = 1; k > 0; k -= 0.05) { const qx = c.x + (x - c.x) * k, qy = c.y + (y - c.y) * k; if (inCh(qx, qy)) return [qx, qy]; } return [c.x, c.y]; }   // v6.41 필드 마왕전
   for (let k = 1; k > 0; k -= 0.05) { const qx = BMAP.cx + (x - BMAP.cx) * k, qy = BMAP.cy + (y - BMAP.cy) * k; if (inBlood(qx, qy)) return [qx, qy]; }
   return [BMAP.cx, BMAP.cy];
 }
@@ -1484,7 +1486,7 @@ function spawnFw() {
   const hp = FW_HP * (1 + 0.3 * P.tier);
   boss = { kind: 'boss', bk: 'fw', x: BMAP.cx, y: BMAP.cy - 70, kx: 0, ky: 0, sp: 0, spec: null, sc: 1, r: 64, hp, max: hp, dmg: 0, exp: 0, elite: false, flash: 0, t: 0, orbCd: 0, slowT: 0,
     noKB: true, invul: true, face: -1, st: 'intro', stT: 2.6, rage: false, last: '', tele: [], jh: 0, an: 'drain', fr: -1, giant: 0, gT: 0, gCd: 0, n: 0, legs: 0, leg: null, ghost: [], touchCd: 0, poolAcc: 0, dv: null, dashHit: false };
-  chBossHp(boss); enemies.push(boss);
+  chBossHp(boss); if (chal && !arena) chFieldPlace(boss); enemies.push(boss);
 }
 const fwM = e => (e.rage ? 0.8 : 1) * (1 - 0.05 * P.tier) / bossTempo();
 const fwDm = d => d * 0.8 * (1 + 0.04 * P.tier);   // 피해 배율 (시뮬 기준 원숭이 마왕보다 확실히 어렵게, 그래도 깰 수 있게)
@@ -1506,7 +1508,7 @@ function fwPick(e, d) {
 function fwLeg(e, first) {   // 광란 질주의 한 구간: 플레이어 쪽(지나쳐서) / 맵 아무 곳을 번갈아 노린다
   const m = fwM(e); let tx, ty;
   if (e.n % 2 === 0) { const ax = P.x + P.vx * 0.3 - e.x, ay = P.y + P.vy * 0.3 - e.y, al = Math.hypot(ax, ay) || 1; tx = e.x + ax / al * (al + 170); ty = e.y + ay / al * (al + 170); }
-  else { const a = rand() * 6.283, k = 0.35 + rand() * 0.55; tx = BMAP.cx + Math.cos(a) * BMAP.rx * k; ty = BMAP.cy + Math.sin(a) * BMAP.ry * k; }
+  else { const a = rand() * 6.283, k = 0.35 + rand() * 0.55; if (chal && !arena) { const c = chal.fbC || { x: e.x, y: e.y }; tx = c.x + Math.cos(a) * 719 * k; ty = c.y + Math.sin(a) * 570 * k; } else { tx = BMAP.cx + Math.cos(a) * BMAP.rx * k; ty = BMAP.cy + Math.sin(a) * BMAP.ry * k; } }
   [tx, ty] = bloodPoint(tx, ty);
   const ang = Math.atan2(ty - e.y, tx - e.x), len = Math.hypot(tx - e.x, ty - e.y);
   e.leg = { tx, ty, ang, len }; e.st = 'rWind'; e.stT = Math.max((first ? 0.8 : 0.6) * m, first ? 0.65 : 0.5); e.an = 'walk'; e.fr = 0;
@@ -1739,7 +1741,12 @@ const SKB_K = { idle: 1, walk: 1.36, atk: 1.3, slam: 1.35, summon: 1.75, hit: 1.
 const SK_S = 1.05, SK_HP = 1.0;          // 그리기 배율 · 체력 배율 (BOSS_HP 기준)
 const SK_PH = [0.66, 0.33], SK_DM = 0.78 * 0.92 * 1.1;   // 결계 단계 · 피해 배율 (봇 시뮬로 원숭이 마왕과 비슷한 압박이 되게)
 const skHit = d => bossHit(d * SK_DM);              // 결계 단계: 체력 66% · 33%
-const SKP = [[190, 650], [1125, 650], [657, 418]].map(([x, y]) => [x * AS, y * AS]);   // 해골 첨탑(서브 헤드)이 솟는 자리: 맵 외곽 3곳
+const SKP = [[190, 650], [1125, 650], [657, 418]].map(([x, y]) => [x * AS, y * AS]);
+function skpPts() {   // v6.41: 챌린지 필드 마왕전은 마왕이 처음 선 자리를 가운데로 같은 모양(왼·오른·위)으로 솟는다
+  if (!(chal && !arena)) return SKP;
+  const c = chal.fbC || { x: P.x, y: P.y };
+  return [[-584, 62], [585, 62], [0, -228]].map(([dx, dy]) => { for (let k = 1; k > 0; k -= 0.1) { const x = c.x + dx * k, y = c.y + dy * k; if (inCh(x, y)) return [x, y]; } return [c.x, c.y]; });
+}   // 해골 첨탑(서브 헤드)이 솟는 자리: 맵 외곽 3곳
 let skp = [], skSp = [], skDeath = null;  // 참격파 · 가시/불기둥 이펙트 · 쓰러지는 모습
 const skM = e => (e.rage ? 0.82 : 1) * (1 - 0.05 * P.tier) / bossTempo();
 function skTele(e, o) { e.tele.push(Object.assign({ t: 0, dur: 1, done: false }, o)); }
@@ -1821,7 +1828,7 @@ function skPhase(e) {   // 결계: 무적 + 맵 외곽 3곳에 해골 첨탑, �
 }
 function skSpawnAdds(e) {
   const hp = e.max * 0.025;
-  SKP.forEach(([x, y], i) => {
+  skpPts().forEach(([x, y], i) => {
     enemies.push({ kind: 'skh', x, y, kx: 0, ky: 0, sp: 0, spec: null, sc: 1, r: 34, hp, max: hp, dmg: 0, exp: 0, elite: false, flash: 0, t: 0, orbCd: 0, slowT: 0, noKB: true, invul: true, idx: i });
     addRing(x, y, 10, 160, 0.7, '255,60,180', 10); burst(x, y - 30, 26, ['#ff4ab4', '#ffc0e6', '#1a0a14'], 300, 0.8);
     for (const s of [-1, 1]) {
@@ -5795,7 +5802,7 @@ function update(dt) {
   if (!arena && gt >= waveT && !(chal && (chal.busyBoss || chal.shelter))) { waveT = gt + 34 + rand() * 16; spawnWave(); }
   spawnT -= dt;
   if (spawnT <= 0 && arena) spawnT = 1;
-  if (spawnT <= 0 && chal && (chal.shelter || (boss && boss.bk === 'ab'))) spawnT = 0.5;   // 쉼터 · 촉수마왕전에는 잡몹이 새로 나오지 않는다
+  if (spawnT <= 0 && chal && (chal.shelter || chal.busyBoss)) spawnT = 0.5;   // 쉼터 · 마왕전에는 잡몹이 새로 나오지 않는다
   if (spawnT <= 0) {
     const n = chal ? 1 + Math.floor(gt / 55) : 1 + Math.floor(gt / 40), cap = chal ? Math.min(280, 150 + gt / 12) : 220;   // v6.20: 챌린지는 생성량이 천천히 오른다
     for (let i = 0; i < n && enemies.length < cap; i++) spawnEnemy();
@@ -6730,7 +6737,7 @@ function drawHud() {
     ctx.textAlign = 'right';
   }
   if (SAVE.set.dmeter) drawDmeter();
-  if (boss && boss.hp > 0 && (arena || boss.bk === 'ab')) {   // 보스 체력바
+  if (boss && boss.hp > 0 && (arena || chal)) {   // 보스 체력바
     const bw = Math.min(560, W - 80), bx = W / 2 - bw / 2, by = 44;
     ctx.fillStyle = 'rgba(10,4,16,0.75)'; ctx.fillRect(bx - 4, by - 22, bw + 8, 40);
     ctx.fillStyle = '#ffd36a'; ctx.font = 'bold 14px sans-serif'; ctx.textAlign = 'center'; ctx.fillText((boss.bk === 'ab' ? '심연의 촉수마왕' : boss.bk === 'eye' ? '심연의 마안군주' : boss.bk === 'fw' ? '타락한 혈랑왕' + (boss.giant ? '  ·  거대화' : '') : boss.bk === 'skel' ? '스켈레톤 마왕' + (boss.shield ? `  ·  결계 (첨탑 ${boss.tow} / 3)` : '') : boss.bk === 'angel' ? '타락천사' + (boss.ph === 2 ? '  ·  흑화' : '') + (boss.shT > 0 ? '  ·  성스러운 방패 (등 뒤에서 공격!)' : '') : '원숭이 마왕') + (boss.rage ? '  ·  분노' : ''), W / 2, by - 6);
@@ -6841,13 +6848,13 @@ function chSpot(e, d) {   // 플레이어에게서 d 떨어진 맵 안쪽 자리
   for (let i = 0; i < 16; i++) { const a = rand() * 6.283, x = P.x + Math.cos(a) * d, y = P.y + Math.sin(a) * d; if (inCh(x, y)) { e.x = x; e.y = y; return; } }
   chPull(e);
 }
-const chTime = () => gt <= 600 ? 1 + gt / 115 : 1 + 600 / 115 + (gt - 600) / 230;   // 잡몹 체력 배율: 10분까지는 원래 속도, 그 뒤로는 절반 속도
-const chDmgT = () => 1 + Math.max(0, gt - 600) / 1800;                              // 잡몹 공격력: 10분 이후 아주 천천히
-const chRew = () => 1 + (chTime() - 1) * 0.18;                                      // 마물이 강할수록 룬 조각도 많이
+const chTime = () => gt <= 600 ? 1 + gt / 115 : (1 + 600 / 115) * Math.pow(1.07, (gt - 600) / 60);   // v6.41 잡몹 체력 배율: 10분까지는 원래 속도, 그 뒤로는 분당 ×1.07 (기하급수 · 20분 약 ×12 · 30분 ×24 · 45분 ×68)
+const chDmgT = () => 1 + 0.12 * Math.floor(Math.max(0, gt - 300) / 60);              // v6.41 잡몹 공격력: 5분부터 1분마다 +12% (10분 ×1.6 · 20분 ×2.8 · 30분 ×4 · 60분 ×7.6)
+const chRew = () => 1 + (Math.min(chTime(), 12) - 1) * 0.1;   // v6.41 마물이 강할수록 룬 조각도 많이 (최대 ×2.1 · 체력이 기하급수로 커져도 보상은 더 안 늘어난다)                                      // 마물이 강할수록 룬 조각도 많이
 const chPact = () => 1 + 0.15 * (chal ? chal.pact : 0);                             // 어둠의 계약: 마물·강적·마왕 체력 +15%씩
 
 /* ---------- 룬 조각 · 보물 ---------- */
-const RUNE_MAX = 5, RUNE_COST = 15;
+const RUNE_MAX = 5, RUNE_COST = 3;   // v6.41: 룬 조각 3개 = 룬 1개
 const RUNES = [
   { k: 'dmg', name: '공격력', txt: '+2%', ap: p => { p.dmg *= 1.02; } },
   { k: 'hp', name: '최대 체력', txt: '+2%', ap: p => { const a = Math.max(1, Math.round(p.max * 0.02)); p.max += a; p.hp = Math.min(p.max, p.hp + a); } },
@@ -6867,7 +6874,7 @@ function dropChest(x, y) {   // 보물 상자 드롭 (도깨비 주머니: 3% �
   items.push({ type: 'chest', x, y, t: 0 });
   if (SAVE.ch.tr.pouch && rand() < 0.03) { items.push({ type: 'chest', x: x + 36, y: y + 8, t: 0 }); floatNum(x, y - 70, '도깨비 주머니!  상자 ×2', '#ffe28a'); }
 }
-function chFrag(base, x, y) {   // 룬 조각 획득 → 15개마다 룬 하나 완성 (랜덤 스탯 영구 +)
+function chFrag(base, x, y) {   // 룬 조각 획득 → 3개마다 룬 하나 완성 (랜덤 스탯 영구 +)
   if (!chal) return 0;
   const n = Math.max(1, Math.round(base * chRew() * (1 + 0.4 * chal.pact)));
   chal.frag += n; SAVE.ch.frag = (SAVE.ch.frag | 0) + n;
@@ -6920,24 +6927,26 @@ function chEvent(lv) {
 }
 function chEvDone() {
   const e = chal.ev[0]; chal.ev = null; chal.evCd = gt + 40; chal.evN++;
-  chFrag(2, e.x, e.y);
+  chFrag(1, e.x, e.y);
+}
+function chFieldPlace(e) {   // v6.41: 마왕을 플레이어 앞(약 560px)에 세운다 — 챌린지 맵 안쪽 (이후 패턴은 이 자리를 기준으로)
+  let a0 = rand() * 6.283, ok = false;
+  for (let i = 0; i < 40 && !ok; i++) { const a = a0 + i * 0.5, d = 560 - (i > 20 ? 200 : 0), x = P.x + Math.cos(a) * d, y = P.y + Math.sin(a) * d; if (inCh(x, y)) { e.x = x; e.y = y; ok = true; } }
+  if (!ok) { e.x = P.x; e.y = P.y - 60; chPull(e); }
+  chal.fbC = { x: e.x, y: e.y };
 }
 function chBossCall(k, lv) {
   chal.busyBoss = true; chal.bossK = k; chal.bossT = 3.2;
-  banner = { txt: `☠ Lv.${lv} — ${CH_NAME[k]}이(가) 부른다!\n3초 뒤 마왕전 (챌린지 · 기믹 약화 · 체력 회복)`, t: 3.4, c: '#ff8a7a' }; sfx('chest');
+  banner = { txt: `☠ Lv.${lv} — ${CH_NAME[k]}이(가) 부른다!\n3초 뒤 필드에서 마왕전 (챌린지 · 기믹 약화 · 체력 회복)`, t: 3.4, c: '#ff8a7a' }; sfx('chest');
 }
 function chEnterBoss(k) {
   chal.ret = { x: P.x, y: P.y }; ebul = []; P.bossK = k; chal.gold = null;
   if (k === 'ab') { P.hp = P.max; P.healBank = P.max * 0.12; spawnAb(); return; }
-  if (k === 'fw') { enterBloodArena(); return; }
-  startTrans(() => {
-    arena = { sealed: true, hold: 0 }; P.exitLeft = 0;
-    clearField();
-    P.x = ARENA.start[0]; P.y = ARENA.start[1]; cam.x = P.x; cam.y = P.y - 20; placeAllies();
-    P.hp = P.max; P.healBank = P.max * 0.12;
-    spawnBoss(); itemT = 14;
-    banner = { txt: `${CH_NAME[k]} 등장!  (챌린지 · 기믹 약화)\n쓰러뜨리면 챌린지 맵으로 돌아가 쉼터가 열립니다` + (k === 'skel' ? '\n스켈레톤 마왕: 체력 66%·33%에 결계(무적)' : ''), t: 6, c: '#ffe28a' };
-  });
+  // v6.41: 마왕도 보스맵으로 끌려가지 않고 챌린지 맵(필드)에서 싸운다 — 잡몹은 사라지고 새로 나오지 않는다
+  enemies = []; zones = []; shards = []; globs = []; ebul = []; P.hp = P.max; P.healBank = P.max * 0.12;
+  if (k === 'fw') spawnFw(); else spawnBoss();
+  shake = Math.max(shake, 10); sfx('boom'); addRing(boss.x, boss.y - 30, 10, 320, 0.8, '255,90,60', 10);
+  banner = { txt: `${CH_NAME[k]} 등장!  (챌린지 · 기믹 약화)\n쓰러뜨리면 쉼터가 열립니다` + (k === 'skel' ? '\n스켈레톤 마왕: 체력 66%·33%에 결계(무적)' : ''), t: 6, c: '#ffe28a' };
 }
 function chBossHp(b) {   // 챌린지 마왕 체력: 처음(Lv.15)은 절반, 사이클마다 +45%
   if (!chal) return;
@@ -6948,7 +6957,7 @@ function chBossWin(e) {
   chal.bossN++;
   banner = { txt: `${CH_NAME[e.bk || 'monkey']}을(를) 쓰러뜨렸다!\n잠시 후 쉼터가 열립니다`, t: 4, c: '#ffe28a' };
   if (e.bk === 'ab') { enemies = enemies.filter(q => q.kind !== 'abm'); chal.abZ = []; chal.abDeath = { x: e.x, y: e.y, t: 0 }; ebul = []; }
-  chFrag(5, e.x, e.y);
+  chFrag(2, e.x, e.y);
   chal.retT = arena ? 3 : 1.8;
 }
 function chReturn() {
@@ -6990,7 +6999,7 @@ function chGoldSpawn() {
   chal.goldT = gt + 170 + rand() * 60;
   const e = spawnEnemy(rand() * 6.283, 430);
   e.gold = true; e.goldT = 20; e.elite = false; e.pfx = null; e.shd = 0; e.ai = 0; e.dmg = 0; e.sc = e.spec.scale + 0.6; e.r = 4.2 * e.sc;
-  e.hp = e.max = Math.max(260, e.max * 6); e.exp *= 8; e.kres = 0.5; e.gsp = Math.max(120, P.spd * 0.78); e.jig = rand() * 6;
+  e.hp = e.max = Math.max(350, e.max * 8.1); e.exp *= 8; e.kres = 0.5; e.gsp = Math.max(95, P.spd * 0.6);   // v6.41: 체력 +35% · 이속 0.78 → 0.6배 e.jig = rand() * 6;
   chal.gold = e; chal.goldN++;
   banner = { txt: '✨ 황금 도망자 출현!  20초 안에 잡으면 룬 조각', t: 4, c: '#ffe28a' }; sfx('item');
 }
@@ -7012,7 +7021,7 @@ function chGoldKill(e) {
   burst(e.x, e.y - 20, 40, ['#ffe28a', '#fff6c0', '#c8a040', '#ffffff'], 320, 0.9); addRing(e.x, e.y - 20, 10, 200, 0.6, '255,220,120', 10); sfx('chest');
   for (let i = 0; i < 6; i++) orbs.push({ x: e.x + (rand() - 0.5) * 70, y: e.y + (rand() - 0.5) * 40, val: Math.max(4, Math.round(P.need * 0.05)), t: rand() * 6 });
   banner = { txt: '✨ 황금 도망자 처치!', t: 2.5, c: '#ffe28a' };
-  chFrag(2, e.x, e.y);
+  chFrag(1, e.x, e.y);
 }
 const CHASE = { sp: 100, R: 44, dm: 0.22 };   // 심연 추격자: 이속 100 (가장 느린 캐릭터 163보다 훨씬 느림) · 닿으면 최대 체력 22%
 function chChaserPlace() {
@@ -7069,7 +7078,7 @@ function chUpdate(dt) {
   }
   if (gt >= 1200 && !chal.eliteSeen) { chal.eliteSeen = true; banner = { txt: '20분 돌파!  접두사가 붙은 마물이 나타난다\n빠름 · 분열 · 보호막', t: 4.5, c: '#ffb070' }; }
   if (gt >= 1500 && !chal.chaser) { chal.chaser = { x: 0, y: 0, t: 0, hitCd: 0, stun: 0 }; chChaserPlace(); banner = { txt: '⚠ 심연 추격자가 깨어났다!\n아주 느리지만 죽지 않는다 — 한곳에 머물지 말고 계속 움직이세요', t: 6, c: '#d6a8ff' }; sfx('evolve'); }
-  if (chal.chaser) chChaserStep(dt);
+  if (chal.chaser && !chal.busyBoss) chChaserStep(dt);   // v6.41: 마왕전 중에는 심연 추격자가 멈춘다
 }
 function chOnDeath() {   // 버틴 시간으로 보물 하나 (가진 적 없는 것 중 가장 좋은 것)
   chal.tr = null;
@@ -7412,7 +7421,7 @@ function chHud() {
   ctx.restore();
   if (chal.gold && chal.gold.hp > 0 && !arena) edgeArrow(chal.gold, '255,215,90', '✨', '#ffe28a');
   if (chal.chaser && !arena) edgeArrow(chal.chaser, '170,80,255', '☠', '#d6a8ff');
-  if (boss && boss.bk === 'ab' && boss.hp > 0) edgeArrow(boss, '190,80,255', '☠', '#e0a0ff');
+  if (boss && chal && !arena && boss.hp > 0) edgeArrow(boss, '190,80,255', '☠', '#e0a0ff');   // v6.41 필드 마왕 방향
 }
 
 /* ============================================================
@@ -7784,7 +7793,7 @@ window.__G = {
   get DMETER() { return DMETER; }, dmName, get eleQ() { return eleQ; }, fwStart, setT(v) { gt = v; }, calcShards, FD, LIZ_FORMS, TWIN_FORMS, startFw, snapP, get fwFx() { return fwFx; }, get bsig() { return bsig; }, BMAP, inBlood, twLen, availSyn, SYNERGIES, inPoly, hurtEnemy, startGame, addExp, hurt: hurtPlayer, rebuild: buildSpecies,
   get rollQ() { return rollQ; }, get gunFx() { return gunFx; }, GUN, GUN_AMMO, GUNA, gunLoad, gunRange,
   get anOrbs() { return anOrbs; }, get anFx() { return anFx; }, AMAP, ANB, ANX, AN, anStart, anTrans, pickBossK, floorName, arenaExit,
-  get chal() { return chal; }, startChallenge, chEvent, chEnterBoss, chFrag, chGoldSpawn, chShelter, inCh, CHM, spawnCut, spawnAb, abStart, RUNES, TREASURES, get cutSaws() { return cutSaws; }, setChMode(v) { chMode = v; }, get W() { return W; }, get H() { return H; }, get species() { return SPECIES; },
+  get chal() { return chal; }, chTime, chDmgT, startChallenge, chEvent, chEnterBoss, chFrag, chGoldSpawn, chShelter, inCh, CHM, spawnCut, spawnAb, abStart, RUNES, TREASURES, get cutSaws() { return cutSaws; }, setChMode(v) { chMode = v; }, get W() { return W; }, get H() { return H; }, get species() { return SPECIES; },
 };
 
 function loadImg(src) {   // v6.30 프레임 드랍: 미리 해독한 ImageBitmap으로 바꿔 둔다 (Image는 처음 그릴 때 해독·업로드로 큰 시트마다 20~40ms씩 멈췄다)
