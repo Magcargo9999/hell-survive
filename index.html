@@ -3197,7 +3197,7 @@ function openChest() {
 /* ---------- 진화 ---------- */
 const HQ = new Map();
 // 도트를 정수배로 먼저 키워 두고(최근접) 줄여서 그리면 어떤 배율에서도 뭉개지지 않는다
-function hq(img, k = (img === IMG.liz0 || img === IMG.liz1 || img === IMG.liz2 || img === IMG.elf1 || img === IMG.skel || img === IMG.tw0 || img === IMG.tw1 || img === IMG.tw2 || img === IMG.skb || img === IMG.skw || img === IMG.gh) ? 1 : (img === IMG.arcr || img === IMG.arch || img === IMG.liz3 || img === IMG.fwp) ? 2 : 3) {
+function hq(img, k = (img === IMG.liz0 || img === IMG.liz1 || img === IMG.liz2 || img === IMG.elf1 || img === IMG.skel || img === IMG.tw0 || img === IMG.tw1 || img === IMG.tw2 || img === IMG.skb || img === IMG.skw || img === IMG.gh) ? 1 : (img === IMG.arcr || img === IMG.arch || img === IMG.liz3 || img === IMG.fwp || img === IMG.elf0) ? 2 : 3) {
   if (k === 1) return img;   // 이미 고해상도인 시트 (v4.01): 그대로 줄여 그린다
   let c = HQ.get(img);
   if (!c) { c = mkCanvas(img.width * k, img.height * k); const g = c.getContext('2d'); g.imageSmoothingEnabled = false; g.drawImage(img, 0, 0, c.width, c.height); HQ.set(img, c); }

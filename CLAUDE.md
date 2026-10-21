@@ -4,7 +4,7 @@
 **이 문서를 먼저 다 읽고 작업할 것.** 답변은 한국어로 짧고 간결하게.
 
 ## 꼭 지킬 규칙 (사용자 지시)
-1. **파일 이름:** 매 빌드 `hell survive v.N.NN.html`, 버전은 매번 올린다. 마지막 배포 = **v6.04** → 다음은 v6.05. (v6.01부터 번호 체계가 6대로 바뀜)
+1. **파일 이름:** 매 빌드 `hell survive v.N.NN.html`, 버전은 매번 올린다. 마지막 배포 = **v6.05** → 다음은 v6.06. (v6.01부터 번호 체계가 6대로 바뀜)
    - 끝자리: 작은 수정 · 가운데 자리: 캐릭터·보스 추가 같은 큰 변화.
 2. **도트는 절대 수정·재색칠 금지.** 자르기·배경 제거·마스크·배율 조정만 허용.
 3. 기능은 **단순하게**. 서로 복사한 듯한 중복 스킬/카드 금지.
@@ -42,9 +42,9 @@ python3 src/build.py                   # 2) 빌드 → build/hell_survive.html
 timeout 900 python3 tools/smoke.py | grep -c "\[\]$"   # 3) 15 이어야 정상 (약 5분)
 PYTHONPATH=tools python3 tools/tests/octo.py        # 필요할 때 캐릭터별 테스트
 # 4) 새 UI·이펙트는 playwright로 스크린샷 찍어 직접 눈으로 확인
-cp build/hell_survive.html "hell survive v.6.04.html"   # 사용자에게 보낼 파일 (SendUserFile)
+cp build/hell_survive.html "hell survive v.6.05.html"   # 사용자에게 보낼 파일 (SendUserFile)
 cp build/hell_survive.html index.html
-git add -A && git commit -m "v6.05: 변경점 한 줄" && git push origin main
+git add -A && git commit -m "v6.06: 변경점 한 줄" && git push origin main
 ```
 - 커밋 작성자: `-c user.name="Magcargo9999" -c user.email="gyubinpyeon@gmail.com"`
 - 템플릿 수정은 python 문자열 치환(정확히 1회 일치 assert)으로 하는 게 안전했다. 주석을 줄 중간에 넣으면 뒤 코드가 주석 처리되니 주의 (실제로 한 번 깨졌음 → check.py로 잡힘).
@@ -73,7 +73,7 @@ git add -A && git commit -m "v6.05: 변경점 한 줄" && git push origin main
 - 점수 = 보스 평균 깎은 체력 75% + Lv.24 필드 처치 25%, 기존 1등 = 100. S≥92 · A≥80 · B≥64 · C≥56 · D.
 - 보고서: 보스별(원숭이/마안/스켈레톤/혈랑왕) 깎은 체력·승리·평균 대비 상성 + s2/s1 JSON → PDF.
 
-## 최근 변경 (v5.11 ~ v6.04)
+## 최근 변경 (v5.11 ~ v6.05)
 - 5.11 카드 앞뒷면 UI, 카드 칩, 머리 위 체력바, 딜 미터기, 사슬의 폭군 진 강화, 보스맵 확대, 혈랑왕 통로, 상점 분리 등 23개
 - 5.12 캐릭터 카드 앞면(역할·약점·획득조건)/뒷면, 상자 자동 흡수 + 드롭률 -30%
 - 5.13 폭탄 달팽이 루트 · 5.14 스킬카드 앞=효과/뒤=조합 · 5.15 유니크 난이도3+ 2마리
@@ -86,4 +86,5 @@ git add -A && git commit -m "v6.05: 변경점 한 줄" && git push origin main
 - 6.02 버그 수정: 수호의 리저드가 원숭이 마왕 도약 착지 순간 보스를 처치하면 오류(`bossTele` null)가 나던 문제
 - 6.03 성혈랑은 [신성한 피](난이도 0~5 마왕 10% 드랍, 먹으면 영구 해금, 지옥의 심장 Lv.2 조건 유지 · `SAVE.holyBlood`), 연보라 구슬 유령은 [보라구슬](난이도 1~5 마왕 10% 드랍)을 먹어야 해금 (구매 불가, 기존 보유자는 유지). 드랍은 마왕 처치 후 플레이어에게 날아와 먹힘. 시뮬 도구는 `G.SAVE.holyBlood=true` 로 해금 상태에서 측정
 - 6.04 신성한 피(성배)·보라구슬 드랍 아이템을 사용자가 준 도트로 교체 (`src/assets/final/drop_hb.webp`, `drop_po.webp` · 크기만 맞춤)
+- 6.05 지옥 궁수 0진화 렉 수정: 고해상도 변환 캔버스(`hq`)가 elf0은 3배(가로 4872px)로 캔버스 한도 4096을 넘어 느려졌음 → 2배. (chim0·drm1/2 등 다른 시트도 3배에서 4096 초과 — 렉 보고 시 `hq` 배율부터 확인)
 - 밸런스 시뮬: `python3 tools/bal_make.py` → `tools/sim_bal.py` → `tools/bal_an.py` → `tools/bal_report.py`
