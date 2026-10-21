@@ -1,0 +1,619 @@
+{
+ "game_ver": "6.01",
+ "commit": "c1cd25b",
+ "count": {
+  "stage0": 8,
+  "stage1": 16,
+  "stage2": 20,
+  "total": 44
+ },
+ "bosses": [
+  {
+   "key": "monkey",
+   "name": "원숭이 마왕",
+   "hp": 20000
+  },
+  {
+   "key": "eye",
+   "name": "마안군주",
+   "hp": 22000
+  },
+  {
+   "key": "skel",
+   "name": "스켈레톤 마왕",
+   "hp": 20000
+  },
+  {
+   "key": "fw",
+   "name": "타락한 혈랑왕",
+   "hp": 23500
+  }
+ ],
+ "notes": [
+  "variant 키는 tools/sim600.py VAR 기준(blood 최종은 wolf:crimson). 1진화 분기가 같은 형태는 한 번만 측정(archer:elf 는 red/holy 공유, lizard:rage 1진화는 rage/water 공유, wolf:crimson 1진화는 blood/holy/fallen 공유).",
+  "site_id: 0진화 {fam}0, 1진화·최종은 variant 키+단계 숫자. 기존 티어표의 ghost:2 는 새 규칙에서 ghost2 입니다(기존 id와 다름).",
+  "보스 체력은 난이도 0단계 기준(마안 22000)."
+ ],
+ "targets": [
+  {
+   "variant": "wolf",
+   "stage": 0,
+   "site_id": "wolf0",
+   "name": "새끼 늑대",
+   "family": "wolf",
+   "route": null,
+   "fin": null,
+   "field_L": 8,
+   "boss": false,
+   "note": "필드 Lv.8 (90초)"
+  },
+  {
+   "variant": "snail",
+   "stage": 0,
+   "site_id": "snail0",
+   "name": "독액 달팽이",
+   "family": "snail",
+   "route": null,
+   "fin": null,
+   "field_L": 8,
+   "boss": false,
+   "note": "필드 Lv.8 (90초)"
+  },
+  {
+   "variant": "archer",
+   "stage": 0,
+   "site_id": "archer0",
+   "name": "어린 지옥엘프",
+   "family": "archer",
+   "route": null,
+   "fin": null,
+   "field_L": 8,
+   "boss": false,
+   "note": "필드 Lv.8 (90초)"
+  },
+  {
+   "variant": "chimera",
+   "stage": 0,
+   "site_id": "chimera0",
+   "name": "키메라 (미숙한 개체)",
+   "family": "chimera",
+   "route": null,
+   "fin": null,
+   "field_L": 8,
+   "boss": false,
+   "note": "필드 Lv.8 (90초)"
+  },
+  {
+   "variant": "lizard",
+   "stage": 0,
+   "site_id": "lizard0",
+   "name": "리자드",
+   "family": "lizard",
+   "route": null,
+   "fin": null,
+   "field_L": 8,
+   "boss": false,
+   "note": "필드 Lv.8 (90초)"
+  },
+  {
+   "variant": "twins",
+   "stage": 0,
+   "site_id": "twins0",
+   "name": "부서진 사슬의 악마",
+   "family": "twins",
+   "route": null,
+   "fin": null,
+   "field_L": 8,
+   "boss": false,
+   "note": "필드 Lv.8 (90초)"
+  },
+  {
+   "variant": "ghost",
+   "stage": 0,
+   "site_id": "ghost0",
+   "name": "연보라 구슬 유령",
+   "family": "ghost",
+   "route": null,
+   "fin": null,
+   "field_L": 8,
+   "boss": false,
+   "note": "필드 Lv.8 (90초)"
+  },
+  {
+   "variant": "octo",
+   "stage": 0,
+   "site_id": "octo0",
+   "name": "문어 마법사 (어린 시절)",
+   "family": "octo",
+   "route": null,
+   "fin": null,
+   "field_L": 8,
+   "boss": false,
+   "note": "필드 Lv.8 (90초)"
+  },
+  {
+   "variant": "wolf:crimson",
+   "stage": 1,
+   "site_id": "wolf:crimson1",
+   "name": "혈랑",
+   "family": "wolf",
+   "route": "crimson",
+   "fin": null,
+   "field_L": 15,
+   "boss": false,
+   "finals": [
+    "wolf:crimson",
+    "wolf:holy",
+    "wolf:fallen"
+   ],
+   "note": "필드 Lv.15 (90초) · 최종 wolf:crimson, wolf:holy, wolf:fallen과 공유"
+  },
+  {
+   "variant": "wolf:abyss",
+   "stage": 1,
+   "site_id": "wolf:abyss1",
+   "name": "지옥늑대",
+   "family": "wolf",
+   "route": "abyss",
+   "fin": null,
+   "field_L": 15,
+   "boss": false,
+   "finals": [
+    "wolf:abyss"
+   ],
+   "note": "필드 Lv.15 (90초)"
+  },
+  {
+   "variant": "wolf:twin",
+   "stage": 1,
+   "site_id": "wolf:twin1",
+   "name": "쌍두 늑대",
+   "family": "wolf",
+   "route": "twin",
+   "fin": null,
+   "field_L": 15,
+   "boss": false,
+   "finals": [
+    "wolf:twin"
+   ],
+   "note": "필드 Lv.15 (90초)"
+  },
+  {
+   "variant": "snail:venom",
+   "stage": 1,
+   "site_id": "snail:venom1",
+   "name": "진화한 독액 달팽이",
+   "family": "snail",
+   "route": "venom",
+   "fin": null,
+   "field_L": 15,
+   "boss": false,
+   "finals": [
+    "snail:venom"
+   ],
+   "note": "필드 Lv.15 (90초)"
+  },
+  {
+   "variant": "snail:lava",
+   "stage": 1,
+   "site_id": "snail:lava1",
+   "name": "용암 달팽이",
+   "family": "snail",
+   "route": "lava",
+   "fin": null,
+   "field_L": 15,
+   "boss": false,
+   "finals": [
+    "snail:lava"
+   ],
+   "note": "필드 Lv.15 (90초)"
+  },
+  {
+   "variant": "snail:bomb",
+   "stage": 1,
+   "site_id": "snail:bomb1",
+   "name": "폭탄 달팽이",
+   "family": "snail",
+   "route": "bomb",
+   "fin": null,
+   "field_L": 15,
+   "boss": false,
+   "finals": [
+    "snail:bomb"
+   ],
+   "note": "필드 Lv.15 (90초)"
+  },
+  {
+   "variant": "archer:elf",
+   "stage": 1,
+   "site_id": "archer:elf1",
+   "name": "성장한 지옥엘프",
+   "family": "archer",
+   "route": "elf",
+   "fin": null,
+   "field_L": 15,
+   "boss": false,
+   "finals": [
+    "archer:red",
+    "archer:holy"
+   ],
+   "note": "필드 Lv.15 (90초) · 최종 archer:red, archer:holy과 공유"
+  },
+  {
+   "variant": "archer:skel",
+   "stage": 1,
+   "site_id": "archer:skel1",
+   "name": "저주받은 해골 궁수",
+   "family": "archer",
+   "route": "skel",
+   "fin": null,
+   "field_L": 15,
+   "boss": false,
+   "finals": [
+    "archer:skel"
+   ],
+   "note": "필드 Lv.15 (90초)"
+  },
+  {
+   "variant": "chimera",
+   "stage": 1,
+   "site_id": "chimera1",
+   "name": "키메라 (성장체)",
+   "family": "chimera",
+   "route": "wind",
+   "fin": null,
+   "field_L": 15,
+   "boss": false,
+   "finals": [
+    "chimera"
+   ],
+   "note": "필드 Lv.15 (90초)"
+  },
+  {
+   "variant": "chimera:flame",
+   "stage": 1,
+   "site_id": "chimera:flame1",
+   "name": "키메라 (불씨 사자)",
+   "family": "chimera",
+   "route": "flame",
+   "fin": null,
+   "field_L": 15,
+   "boss": false,
+   "finals": [
+    "chimera:flame"
+   ],
+   "note": "필드 Lv.15 (90초)"
+  },
+  {
+   "variant": "chimera:dream",
+   "stage": 1,
+   "site_id": "chimera:dream1",
+   "name": "키메라 (다안 개체)",
+   "family": "chimera",
+   "route": "dream",
+   "fin": null,
+   "field_L": 15,
+   "boss": false,
+   "finals": [
+    "chimera:dream"
+   ],
+   "note": "필드 Lv.15 (90초)"
+  },
+  {
+   "variant": "lizard:rage",
+   "stage": 1,
+   "site_id": "lizard:rage1",
+   "name": "리자드 검사",
+   "family": "lizard",
+   "route": "sword",
+   "fin": null,
+   "field_L": 15,
+   "boss": false,
+   "finals": [
+    "lizard:rage",
+    "lizard:water"
+   ],
+   "note": "필드 Lv.15 (90초) · 최종 lizard:rage, lizard:water과 공유"
+  },
+  {
+   "variant": "lizard:guard",
+   "stage": 1,
+   "site_id": "lizard:guard1",
+   "name": "리저드 플레이어",
+   "family": "lizard",
+   "route": "guard",
+   "fin": null,
+   "field_L": 15,
+   "boss": false,
+   "finals": [
+    "lizard:guard"
+   ],
+   "note": "필드 Lv.15 (90초)"
+  },
+  {
+   "variant": "twins",
+   "stage": 1,
+   "site_id": "twins1",
+   "name": "사슬의 악마",
+   "family": "twins",
+   "route": null,
+   "fin": null,
+   "field_L": 15,
+   "boss": false,
+   "finals": [
+    "twins"
+   ],
+   "note": "필드 Lv.15 (90초)"
+  },
+  {
+   "variant": "ghost",
+   "stage": 1,
+   "site_id": "ghost1",
+   "name": "연보라 총령",
+   "family": "ghost",
+   "route": null,
+   "fin": null,
+   "field_L": 15,
+   "boss": false,
+   "finals": [
+    "ghost"
+   ],
+   "note": "필드 Lv.15 (90초)"
+  },
+  {
+   "variant": "octo",
+   "stage": 1,
+   "site_id": "octo1",
+   "name": "문어 마법사",
+   "family": "octo",
+   "route": null,
+   "fin": null,
+   "field_L": 15,
+   "boss": false,
+   "finals": [
+    "octo"
+   ],
+   "note": "필드 Lv.15 (90초)"
+  },
+  {
+   "variant": "wolf:crimson",
+   "stage": 2,
+   "site_id": "wolf:crimson2",
+   "name": "혈랑 (진화형)",
+   "family": "wolf",
+   "route": "crimson",
+   "fin": "blood",
+   "field_L": 24,
+   "boss": true,
+   "note": "보스전 4종 + 필드 Lv.24"
+  },
+  {
+   "variant": "wolf:holy",
+   "stage": 2,
+   "site_id": "wolf:holy2",
+   "name": "성혈랑",
+   "family": "wolf",
+   "route": "crimson",
+   "fin": "holy",
+   "field_L": 24,
+   "boss": true,
+   "note": "보스전 4종 + 필드 Lv.24"
+  },
+  {
+   "variant": "wolf:fallen",
+   "stage": 2,
+   "site_id": "wolf:fallen2",
+   "name": "타락한 혈랑",
+   "family": "wolf",
+   "route": "crimson",
+   "fin": "fallen",
+   "field_L": 24,
+   "boss": true,
+   "note": "보스전 4종 + 필드 Lv.24 · 숨은 진화(혈랑왕 처치 해금, 시뮬은 해금 상태로 측정)"
+  },
+  {
+   "variant": "wolf:abyss",
+   "stage": 2,
+   "site_id": "wolf:abyss2",
+   "name": "지옥 군주 늑대",
+   "family": "wolf",
+   "route": "abyss",
+   "fin": null,
+   "field_L": 24,
+   "boss": true,
+   "note": "보스전 4종 + 필드 Lv.24"
+  },
+  {
+   "variant": "wolf:twin",
+   "stage": 2,
+   "site_id": "wolf:twin2",
+   "name": "삼두 늑대",
+   "family": "wolf",
+   "route": "twin",
+   "fin": null,
+   "field_L": 24,
+   "boss": true,
+   "note": "보스전 4종 + 필드 Lv.24"
+  },
+  {
+   "variant": "snail:venom",
+   "stage": 2,
+   "site_id": "snail:venom2",
+   "name": "맹독 달팽이 (최종형)",
+   "family": "snail",
+   "route": "venom",
+   "fin": null,
+   "field_L": 24,
+   "boss": true,
+   "note": "보스전 4종 + 필드 Lv.24"
+  },
+  {
+   "variant": "snail:lava",
+   "stage": 2,
+   "site_id": "snail:lava2",
+   "name": "거대 용암 달팽이",
+   "family": "snail",
+   "route": "lava",
+   "fin": null,
+   "field_L": 24,
+   "boss": true,
+   "note": "보스전 4종 + 필드 Lv.24"
+  },
+  {
+   "variant": "snail:bomb",
+   "stage": 2,
+   "site_id": "snail:bomb2",
+   "name": "폭탄 달팽이 (최종형)",
+   "family": "snail",
+   "route": "bomb",
+   "fin": null,
+   "field_L": 24,
+   "boss": true,
+   "note": "보스전 4종 + 필드 Lv.24"
+  },
+  {
+   "variant": "archer:red",
+   "stage": 2,
+   "site_id": "archer:red2",
+   "name": "진화한 지옥엘프 궁수",
+   "family": "archer",
+   "route": "elf",
+   "fin": "red",
+   "field_L": 24,
+   "boss": true,
+   "note": "보스전 4종 + 필드 Lv.24"
+  },
+  {
+   "variant": "archer:holy",
+   "stage": 2,
+   "site_id": "archer:holy2",
+   "name": "성화된 지옥엘프 궁수",
+   "family": "archer",
+   "route": "elf",
+   "fin": "holy",
+   "field_L": 24,
+   "boss": true,
+   "note": "보스전 4종 + 필드 Lv.24"
+  },
+  {
+   "variant": "archer:skel",
+   "stage": 2,
+   "site_id": "archer:skel2",
+   "name": "저주받은 해골 궁수",
+   "family": "archer",
+   "route": "skel",
+   "fin": null,
+   "field_L": 24,
+   "boss": true,
+   "note": "보스전 4종 + 필드 Lv.24"
+  },
+  {
+   "variant": "chimera",
+   "stage": 2,
+   "site_id": "chimera2",
+   "name": "키메라 (각성체)",
+   "family": "chimera",
+   "route": "wind",
+   "fin": null,
+   "field_L": 24,
+   "boss": true,
+   "note": "보스전 4종 + 필드 Lv.24"
+  },
+  {
+   "variant": "chimera:flame",
+   "stage": 2,
+   "site_id": "chimera:flame2",
+   "name": "키메라 (업화의 사자)",
+   "family": "chimera",
+   "route": "flame",
+   "fin": null,
+   "field_L": 24,
+   "boss": true,
+   "note": "보스전 4종 + 필드 Lv.24"
+  },
+  {
+   "variant": "chimera:dream",
+   "stage": 2,
+   "site_id": "chimera:dream2",
+   "name": "키메라 (천안의 군주)",
+   "family": "chimera",
+   "route": "dream",
+   "fin": null,
+   "field_L": 24,
+   "boss": true,
+   "note": "보스전 4종 + 필드 Lv.24"
+  },
+  {
+   "variant": "lizard:rage",
+   "stage": 2,
+   "site_id": "lizard:rage2",
+   "name": "버서커 리자드",
+   "family": "lizard",
+   "route": "sword",
+   "fin": "rage",
+   "field_L": 24,
+   "boss": true,
+   "note": "보스전 4종 + 필드 Lv.24"
+  },
+  {
+   "variant": "lizard:water",
+   "stage": 2,
+   "site_id": "lizard:water2",
+   "name": "물의 도마뱀 전사",
+   "family": "lizard",
+   "route": "sword",
+   "fin": "water",
+   "field_L": 24,
+   "boss": true,
+   "note": "보스전 4종 + 필드 Lv.24"
+  },
+  {
+   "variant": "lizard:guard",
+   "stage": 2,
+   "site_id": "lizard:guard2",
+   "name": "수호의 리저드",
+   "family": "lizard",
+   "route": "guard",
+   "fin": "guard",
+   "field_L": 24,
+   "boss": true,
+   "note": "보스전 4종 + 필드 Lv.24"
+  },
+  {
+   "variant": "twins",
+   "stage": 2,
+   "site_id": "twins2",
+   "name": "사슬의 폭군",
+   "family": "twins",
+   "route": null,
+   "fin": null,
+   "field_L": 24,
+   "boss": true,
+   "note": "보스전 4종 + 필드 Lv.24"
+  },
+  {
+   "variant": "ghost",
+   "stage": 2,
+   "site_id": "ghost2",
+   "name": "수호령의 총령",
+   "family": "ghost",
+   "route": null,
+   "fin": null,
+   "field_L": 24,
+   "boss": true,
+   "note": "보스전 4종 + 필드 Lv.24"
+  },
+  {
+   "variant": "octo",
+   "stage": 2,
+   "site_id": "octo2",
+   "name": "심연의 문어 대마법사",
+   "family": "octo",
+   "route": null,
+   "fin": null,
+   "field_L": 24,
+   "boss": true,
+   "note": "보스전 4종 + 필드 Lv.24"
+  }
+ ]
+}
