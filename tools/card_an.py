@@ -12,10 +12,11 @@ rows = [r for r in rows if r['removed'] is not None]
 def m(r): return r['removed'] / max(r['t'], 20)    # 초당 깎은 체력 %p (최소 20초로 하한)
 G = collections.defaultdict(list)
 for r in rows: G[(r['v'], r['cfg'], r['boss'])].append(r)
-def cellstat(v, cfg):
+def cellstat(v, cfg, only_open=False):
     out = {}
     for bk in ('monkey', 'eye'):
         L = G.get((v, cfg, bk), [])
+        if only_open: L = [r for r in L if cfg[4:] in r['syn']]
         if L: out[bk] = dict(n=len(L), m=st.mean(map(m, L)), rem=st.mean(r['removed'] for r in L), win=sum(r['win'] for r in L) / len(L), t=st.mean(r['t'] for r in L),
                               open=sum(1 for r in L if cfg.startswith('syn:') and cfg[4:] in r['syn']) / len(L), loss=st.mean(r['loss'] for r in L))
     return out
@@ -35,7 +36,13 @@ for v in vs:
 for cfg in cfgs:
     if cfg == 'ctrl': continue
     kind, _, key = cfg.partition(':')
-    per = {v: ratio(v, cfg) for v in vs}; per = {v: x for v, x in per.items() if x}
+    per = {v: ratio(v, cfg) for v in vs}
+    po = {}
+    if kind == 'syn':
+        for v in vs:
+            a, c = cellstat(v, cfg, True), cellstat(v, 'ctrl'); rr = [a[b]['m'] / c[b]['m'] for b in a if b in c and c[b]['m'] > 0]
+            if rr: po[v] = (math.exp(st.mean(map(math.log, rr))), sum(a[b]['n'] for b in a))
+    per = {v: x for v, x in per.items() if x}
     if not per: continue
     bucket = 'skill' if kind == 'skill' else ('common' if key in ('fireBone', 'soulStorm', 'rush', 'lifeOrb', 'tstorm', 'bstorm', 'dnova', 'inferno', 'deadeye', 'iron', 'harvest') else 'only')
     rl = [x['ratio'] for x in per.values()]
@@ -45,6 +52,8 @@ for cfg in cfgs:
     ent = dict(cfg=cfg, key=key, gm=gm, n=nn, nch=len(per), per={v: dict(ratio=round(x['ratio'], 3), n=x['n'], dwin=round(x['dwin'], 2), open=round(x['open'], 2), rem=round(x['rem'], 1)) for v, x in per.items()},
                tier=tier(gm), open=st.mean(x['open'] for x in per.values()), dwin=st.mean(x['dwin'] for x in per.values()), best=sorted(per, key=lambda v: -per[v]['ratio'])[:3], worst=sorted(per, key=lambda v: per[v]['ratio'])[:2],
                se=(sd / math.sqrt(len(rl))) if len(rl) > 1 else None)
+    if po:
+        tw = sum(n for _, n in po.values()); ent['gm_open'] = math.exp(sum(math.log(r) * n for r, n in po.values()) / tw); ent['n_open'] = tw
     # 피해 점유율 (스킬/시너지 카드가 낸 피해 비율)
     sh = []
     for r in rows:

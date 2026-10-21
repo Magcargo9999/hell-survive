@@ -15,11 +15,11 @@ def cell(x):
     return '<td style="background:%s" title="n=%d">%+d%%</td>' % (col, x['n'], round(d))
 def tbl(bucket, cols):
     L = sorted(A[bucket].values(), key=lambda e: -e['gm'])
-    h = '<table><tr><th>카드</th><th>티어</th><th>평균 효과</th><th>승률 변화</th><th>시너지 열림</th><th>판</th>' + ''.join('<th class=v>%s</th>' % E(VN[v]) for v in cols) + '</tr>'
+    h = '<table><tr><th>카드</th><th>티어</th><th>평균 효과</th><th>열렸을 때</th><th>승률 변화</th><th>시너지 열림</th><th>판</th>' + ''.join('<th class=v>%s</th>' % E(VN[v]) for v in cols) + '</tr>'
     for e in L:
         mat = ' + '.join(SI[e['key']]['need']) if e['cfg'].startswith('syn') and e['key'] in SI else ''
-        h += '<tr><td class=l><b>%s</b><br><small>%s</small></td><td><span class=t style="background:%s">%s</span></td><td><b>%+.1f%%</b></td><td>%+d%%p</td><td>%d%%</td><td>%d</td>%s</tr>' % (
-            E(nm(e)), E(SI.get(e['key'], {}).get('txt', '') if e['cfg'].startswith('syn') else '피해 점유율 %d%%' % round(100 * e.get('share', 0))), TC[e['tier']], e['tier'], (e['gm'] - 1) * 100, round(100 * e['dwin']),
+        h += '<tr><td class=l><b>%s</b><br><small>%s</small></td><td><span class=t style="background:%s">%s</span></td><td><b>%+.1f%%</b></td><td>%s</td><td>%+d%%p</td><td>%d%%</td><td>%d</td>%s</tr>' % (
+            E(nm(e)), E(SI.get(e['key'], {}).get('txt', '') if e['cfg'].startswith('syn') else '피해 점유율 %d%%' % round(100 * e.get('share', 0))), TC[e['tier']], e['tier'], (e['gm'] - 1) * 100, ('%+d%% (n%d)' % (round((e['gm_open'] - 1) * 100), e['n_open']) if 'gm_open' in e else '-'), round(100 * e['dwin']),
             round(100 * e['open']) if e['cfg'].startswith('syn') else 0, e['n'], ''.join(cell(e['per'].get(v)) for v in cols))
     return h + '</table>'
 vs = [v for v in VN if v in A['ctrl']]
