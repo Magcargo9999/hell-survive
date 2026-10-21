@@ -458,7 +458,7 @@ const SNAIL_ROUTES = {
 //  높음 → 길게: 용암 대분출 18 · 천안 난무 15 · 광란 14 · 사슬 휘두르기 12 · 혈왕의 진 13
 //  중간      : 신성한 피의 비 12 · 피의 갈취 11 · 삼두 연쇄 물기 10 · 신성화살 12 · 물의 주술 16 (회복량을 줄이고 자주 쓰게)
 //  낮음 → 짧게: 폭발 화살 6 · 큰 화살/후방 도약 7 · 울부짖음 8 · 독 자국 폭파 8 · 천공 강하 8 · 화염 브레스 9
-const SKILL_CD = { megabomb: 11, shell: 14, ele: 12, otent: 15, gcharge: 9, gsummon: 24, lavaburst: 18, rush: 15, rage: 14, whip: 12, bsigil: 13, bloodrain: 12, drain: 11, cerb: 10, holyshot: 12, tide: 16, bombshot: 6, bigarrow: 7, backdash: 7, howl: 8, blast: 8, dive: 8, breath: 9, laser: 10, zone: 10, meteor: 10 };
+const SKILL_CD = { megabomb: 11, shell: 14, ele: 12, otent: 15, gcharge: 9, gsummon: 24, lavaburst: 18, rush: 15, rage: 14, whip: 12, bsigil: 11, bloodrain: 12, drain: 11, cerb: 10, holyshot: 12, tide: 16, bombshot: 6, bigarrow: 7, backdash: 7, howl: 8, blast: 8, dive: 8, breath: 9, laser: 10, zone: 10, meteor: 10 };
 const skillCd = () => ((window.__SKCD && window.__SKCD[P.skill]) || SKILL_CD[P.skill] || 14);
 const SKILL_UNIQUE = { wolf: 'howl', snail: 'blast', archer: 'bigarrow', chimera: 'dive', lizard: 'rage', twins: 'whip' };
 const uniqueSkill = () => (P.char === 'chimera' && P.route === 'dream') ? 'rush' : (P.char === 'chimera' && P.route === 'flame') ? 'breath' : (P.char === 'snail' && P.route === 'lava') ? 'lavaburst' : (P.char === 'snail' && P.route === 'bomb') ? 'megabomb' : (P.char === 'wolf' && P.route === 'twin') ? 'cerb' : (P.char === 'wolf' && P.route === 'crimson') ? (P.fin === 'holy' ? 'bloodrain' : P.fin === 'fallen' ? 'bsigil' : 'drain') : SKILL_UNIQUE[P.char];
@@ -482,7 +482,7 @@ const SKILLS = {
   rage:   { name: '광란', desc: '[버서커 리자드 전용] 이성을 잃고 5초 동안 공격 속도가 3배로 치솟습니다 (이속 +12%). 체력이 낮을수록 광폭 피해가 크게 붙어, 위기일수록 더 위험해집니다.', sub: '5초 · 공속 ×3 · 이속 +12% · 붉은 광기' },
   tide:   { name: '물의 주술', desc: '[물의 도마뱀 전사 전용] 누르면 물의 주술로 체력을 즉시 회복합니다. 시전하는 짧은 순간 무적이고, 주변 적을 물결로 밀어내며 둔화시킵니다.', sub: '체력 22% 즉시 회복 · 0.9초 무적 · 주변 밀쳐냄 + 둔화' },
   whip:   { name: '사슬 휘두르기', desc: '[사슬 악마 전용] 사슬을 앞으로 길게 내던져 일직선의 적을 꿰뚫은 뒤, 몸 주위로 크게 휘둘러 4번 베고 마지막에 사슬 폭발을 일으킵니다. 최종 진화(사슬의 폭군)에서는 쓰는 동안과 쓰고 나서 10초 동안 사슬 길이 2배 · 회전 속도 2배 · 체력 재생이 크게 늘어납니다. 쓰는 동안 무적이에요. 쓰기 직전 사슬이 빨리 돌고 있을수록 강하고, 최종 진화(사슬의 폭군)에서 범위와 폭발이 커집니다.', sub: '일직선 관통 → 회전 4연타 → 사슬 폭발 · 시전 중 무적' },
-  bsigil: { name: '혈왕의 진', desc: '[타락한 혈랑 전용] 발밑에 6초 동안 핏빛 진을 펼칩니다. 진 안의 적은 0.5초마다 피해를 입고 진 가운데로 끌려가며, 내가 진 안에 서 있으면 공속이 크게 오르고 진 안에서 적을 쓰러뜨릴 때마다 체력이 회복됩니다.', sub: '6초 · 반경 230 · 진 안 공속 +100% · 끌어당김 · 처치 회복' },
+  bsigil: { name: '혈왕의 진', desc: '[타락한 혈랑 전용] 발밑에 7초 동안 핏빛 진을 펼칩니다. 진 안의 적은 0.5초마다 피해를 입고 진 가운데로 끌려가며, 내가 진 안에 서 있으면 공속이 크게 오르고 진 안에서 적을 쓰러뜨릴 때마다 체력이 회복됩니다.', sub: '7초 · 반경 230 · 진 안 공속 +100% · 끌어당김 · 처치 회복' },
   shell: { name: '반격의 갑주', desc: '[수호의 리저드 전용] 몸을 웅크려 갑주를 두릅니다. 3초 동안 모든 공격을 튕겨내고(피해 없음), 받은 피해의 2.5배를 공격한 쪽(보스 우선, 없으면 가까운 적)에게 되돌려줍니다. 보스·미니보스·유니크에게는 최대 체력의 30%를 더해 2배로 되돌려줍니다. 가시 비늘 반격도 그대로 함께 터집니다.', sub: '3초 · 피해 무효 · 반사 피해 ×2.5 · 가시 비늘과 중첩' },
   ele: { name: '코끼리 돌진', desc: '[문어 마법사 전용] 앞에 낡은 냉장고를 소환합니다. 문을 부수고 튀어나온 코끼리가 앞쪽으로 곧게 돌진해 길 위의 적을 모두 짓밟고 크게 밀어냅니다.', sub: '직선 돌진 · 공격력의 450% · 강한 넉백' },
   otent: { name: '문어의 심연', desc: '[심연의 문어 대마법사 전용] 3초 동안 적들의 발밑에서 거대한 문어 다리가 연달아 솟아올라 마구 후려칩니다. 다리 하나가 두 번씩 때립니다.', sub: '문어 다리 14개 · 범위 피해 (공격력의 160% × 2)' },
@@ -2846,7 +2846,7 @@ function drawTwin(wx, wy) {   // 손에서 뻗은 사슬 + 끝의 창날 (1진�
 let bsig = null;
 const BSIG_R = 230, inSig = (x, y) => !!bsig && Math.hypot(x - bsig.x, (y - bsig.y) * 1.3) < BSIG_R;
 function startBsigil() {   // 혈왕의 진: 발밑에 6초짜리 핏빛 진
-  bsig = { x: P.x, y: P.y, t: 0, life: 6, tick: 0.2 }; P.sigCast = 0.55; P.animT = 0;
+  bsig = { x: P.x, y: P.y, t: 0, life: 7, tick: 0.2 }; P.sigCast = 0.55; P.animT = 0;
   addRing(P.x, P.y - 4, 10, BSIG_R, 0.5, '255,30,50', 10); burst(P.x, P.y - 20, 30, ['#ff1a3a', '#ff8a8a', '#2a0a10'], 300, 0.8); floatNum(P.x, P.y - 96, '혈왕의 진!', '#ff6a7a'); shake = 10;
 }
 function updateBsig(dt) {
@@ -2861,7 +2861,7 @@ function updateBsig(dt) {
   }
   if (bsig.tick <= 0) {
     bsig.tick = 0.5;
-    for (const e of enemies) { if (e.hp <= 0 || !inSig(e.x, e.y)) continue; hurtEnemy(e, P.dmg * 0.9, 0, 0, 0, e.kind === 'boss'); e.slowT = Math.max(e.slowT || 0, 0.6); }
+    for (const e of enemies) { if (e.hp <= 0 || !inSig(e.x, e.y)) continue; hurtEnemy(e, P.dmg * 1.1, 0, 0, 0, e.kind === 'boss'); e.slowT = Math.max(e.slowT || 0, 0.6); }
   }
 }
 function drawBsig(wx, wy) {
@@ -3343,7 +3343,7 @@ function openChimRoute() {
 function openFinal() {
   const L = [['blood', 'crimsonB', '혈랑 (진화형)', '체력 +20 · 처치 시 체력 +1 · 흡혈', '전용 스킬 : 피의 갈취 (범위 흡혈)', null],
              ['holy', 'crimsonH', '성혈랑', '베기 2연타 (타당 55%) · 범위 +10% · 체력 +30 · 재생', '전용 스킬 : 신성한 피의 비', 'holy']];
-  if (SAVE.fw.open) L.push(['fallen', 'crimsonF', '타락한 혈랑', '공격력 +40% · 공속 +10% · 평타 범위 +25% · 체력 +25 · 처치 시 체력 +1', '전용 스킬 : 혈왕의 진 (진 안에서 공속↑ · 처치 회복)', 'fallen']);
+  if (SAVE.fw.open) L.push(['fallen', 'crimsonF', '타락한 혈랑', '공격력 +40% · 공속 +10% · 평타 범위 +25% · 체력 +45 · 처치 시 체력 +1', '전용 스킬 : 혈왕의 진 (진 안에서 공속↑ · 처치 회복)', 'fallen']);
   const items = L.map(([k, rt, nm, ds, sb, ck]) => Object.assign({ key: k, name: nm, desc: ds, sub: sb, preview: c => {
     const d = ROUTE_FORMS[rt][2], g = c.getContext('2d'), img = IMG[d.src], H = hq(img), K = H.width / img.width, f = Math.min(126 / d.pv[1], 100 / d.ch);
     g.imageSmoothingEnabled = true; g.imageSmoothingQuality = 'high';
@@ -3455,7 +3455,7 @@ function applyEvo(to) {
     if (r === 'twin')    { P.max += 20; P.spd *= 1.06; }   // 2연타는 형태(FD.hits)가 담당
   } else {
     P.max += 30; P.dmg *= 1.15;
-    if (r === 'crimson') { P.dmg *= 1.15; if (P.fin === 'holy') { P.max += 30; P.rng *= 1.1; P.regen += 0.65; P.dmg *= 0.86; } else if (P.fin === 'fallen') { P.max += 25; P.dmg *= 1.22; P.rng *= 1.25; P.aspd += 0.1; P.killHeal += 1; } else { P.max += 20; P.dmg *= 1.06; P.syn.vamp = true; P.killHeal += 1; } }
+    if (r === 'crimson') { P.dmg *= 1.15; if (P.fin === 'holy') { P.max += 30; P.rng *= 1.1; P.regen += 0.65; P.dmg *= 0.86; } else if (P.fin === 'fallen') { P.max += 45; P.dmg *= 1.22; P.rng *= 1.25; P.aspd += 0.1; P.killHeal += 1; } else { P.max += 20; P.dmg *= 1.06; P.syn.vamp = true; P.killHeal += 1; } }
     if (r === 'abyss')   { P.spd *= 1.11; P.aspd += 0.24; P.max += 30; P.dmg *= 1.07; P.dodge = 0.16; }   // v5.00: 공격 +7% · 공속 +6% · 체력 +15 · 이속 +3%
     if (r === 'twin')    { P.max += 30; P.spd *= 1.04; }   // 3연타
   }
