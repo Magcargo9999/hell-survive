@@ -1059,7 +1059,7 @@ function drawPet(p, x, y) {
 }
 /* ---------- 원숭이 마왕 (근접 전투형 보스) ---------- */
 const BOSS_HP = 20000;   // v5.00: 한 방 피해 상한을 없앤 만큼 18000 -> 20000
-const bossHit = d => hurtPlayer(d * 1.08 * (boss && !boss.bk ? 0.92 : 0.8) * (1 + 0.08 * P.tier));   // v5.00: 마왕 공격력 +8%   // 원숭이 마왕은 조금 더 아프다   // 보스 공격은 일반 몹보다 강하다 (Lv.25 입장은 빡빡하게, Lv.30은 여유있게)
+const bossHit = d => hurtPlayer(d * 1.19 * (boss && !boss.bk ? 0.92 : 0.8) * (1 + 0.08 * P.tier));   // v5.00: 마왕 공격력 +8%   // 원숭이 마왕은 조금 더 아프다   // 보스 공격은 일반 몹보다 강하다 (Lv.25 입장은 빡빡하게, Lv.30은 여유있게)
 const BSP = { cw: 272, ch: 234, rows: { idle: [0, 4], walk: [1, 2], attack: [2, 3], hit: [3, 2], jump: [4, 1], roar: [5, 1] } };
 function spawnBoss() {
   boss = { kind: 'boss', x: 657 * AS, y: 760 * AS, kx: 0, ky: 0, sp: 0, spec: null, sc: 1, r: 58, hp: BOSS_HP * (1 + 0.3 * P.tier), max: BOSS_HP * (1 + 0.3 * P.tier), dmg: 0, exp: 0, elite: false, flash: 0, t: 0, orbCd: 0, slowT: 0,
@@ -1096,7 +1096,7 @@ function tierEx(e, dt) {
     const a = rand() * 3.1416, c = Math.cos(a), sn = Math.sin(a);
     for (let i = -1; i <= 1; i++) { const ox = P.x - sn * i * 170, oy = P.y + c * i * 170; T({ k: 'rect', x: ox - c * 450, y: oy - sn * 450, ang: a, len: 900, w: 90, dur: 0.95, fire: line(20) }); }
   } else {   // 마력 폭발: 마왕 주변이 크게 터진다 (일반) — 근접 캐릭터는 잠깐 물러난다
-    T({ k: 'circle', x: e.x, y: e.y, r: 230, dur: 1.1, stick: true, fire: t => boom(t, 26) });
+    T({ k: 'circle', x: e.x, y: e.y, r: 230, dur: 1.5, stick: true, fire: t => boom(t, 26) });
   }
 }
 function bossMove(e, nx, ny) { if (inPoly(nx, ny)) { e.x = nx; e.y = ny; return true; } if (inPoly(nx, e.y)) { e.x = nx; return true; } if (inPoly(e.x, ny)) { e.y = ny; return true; } return false; }
@@ -1114,26 +1114,26 @@ function bossStart(e, k) {
   if (k === 'combo') { e.st = 'combo'; e.combo = 0; e.stT = 0; }
   else if (k === 'jump') {   // 점프 후 내려찍기: 빨간 원이 플레이어를 따라오다가 고정된다
     e.st = 'jumpWind'; e.stT = 0.55 * m;
-    bossTele({ k: 'circle', x: P.x, y: P.y, r: 140, dur: 0.55 * m + 0.95, follow: 0.55 * m, nofire: true });
+    bossTele({ k: 'circle', x: P.x, y: P.y, r: 140, dur: 0.55 * m + 1.05, follow: 0.55 * m, nofire: true });
   } else if (k === 'dash') {
-    e.st = 'dashWind'; e.stT = 0.8 * m; e.dashN = 0;
-    bossTele({ k: 'rect', x: e.x, y: e.y, ang: Math.atan2(P.y - e.y, P.x - e.x), len: 720, w: 150, dur: 0.8 * m, aim: 0.3 * m, nofire: true });
+    e.st = 'dashWind'; e.stT = 0.3 * m + Math.max(0.5 * m, 0.6); e.dashN = 0;
+    bossTele({ k: 'rect', x: e.x, y: e.y, ang: Math.atan2(P.y - e.y, P.x - e.x), len: 720, w: 150, dur: 0.3 * m + Math.max(0.5 * m, 0.6), aim: 0.3 * m, nofire: true });
   } else if (k === 'tail') {
-    e.st = 'tailWind'; e.stT = 1.0 * m; e.tailN = 0;
-    bossTele({ k: 'circle', x: e.x, y: e.y, r: 195, dur: 1.0 * m, stick: true, fire: () => bossTailHit(e) });
+    e.st = 'tailWind'; e.stT = Math.max(1.0 * m, 0.95); e.tailN = 0;
+    bossTele({ k: 'circle', x: e.x, y: e.y, r: 195, dur: Math.max(1.0 * m, 0.95), stick: true, fire: () => bossTailHit(e) });
   } else if (k === 'wave') {   // 충격파 라인: 땅을 쳐서 곧은 충격파를 여러 갈래로 쏜다 (선 사이 틈으로 피한다)
-    e.st = 'waveWind'; e.stT = (e.rage ? 0.7 : 0.9) * m;
+    e.st = 'waveWind'; e.stT = (e.rage ? 0.7 : 0.9) * m + 0.22;
     const n = e.rage ? 5 : 3, sp = e.rage ? 0.5 : 0.62;
     for (let i = 0; i < n; i++) bossTele({ k: 'rect', x: e.x, y: e.y, ang: 0, off: (i - (n - 1) / 2) * sp, len: 780, w: 76, dur: e.stT, aim: e.stT * 0.4, fire: waveHit });
   } else if (k === 'sweep') {   // 분노 전용: 붉은 선이 보스를 중심으로 차례차례 휩쓴다 (선과 선 사이 틈에 서면 안전)
     const n = 8, a0 = Math.atan2(P.y - e.y, P.x - e.x), dir = rand() < 0.5 ? 1 : -1, gap = 0.2 * m;
-    e.st = 'sweepWind'; e.stT = (n - 1) * gap + 0.6 * m + 0.25;
-    for (let i = 0; i < n; i++) bossTele({ k: 'rect', x: e.x, y: e.y, ang: a0 + dir * i * 0.78, len: 640, w: 86, t: -i * gap, dur: 0.6 * m, fire: waveHit });
+    e.st = 'sweepWind'; e.stT = (n - 1) * gap + 0.6 * m + 0.45;
+    for (let i = 0; i < n; i++) bossTele({ k: 'rect', x: e.x, y: e.y, ang: a0 + dir * i * 0.78, len: 640, w: 86, t: -i * gap, dur: 0.6 * m + 0.2, fire: waveHit });
   } else if (k === 'quake') {
-    e.st = 'quake'; e.stT = (e.rage ? 2.9 : 2.5) / tp;
+    e.st = 'quake'; e.stT = (e.rage ? 2.9 : 2.5) / tp + 0.25;
     for (let i = 0; i < (e.rage ? 12 : 9) + (P.tier >= 2 ? 2 : 0); i++) {
       let x = P.x, y = P.y; if (i) for (let n = 0; n < 12; n++) { const a = rand() * 6.283, dd = 60 + rand() * 260; x = P.x + Math.cos(a) * dd; y = P.y + Math.sin(a) * dd; if (inPoly(x, y)) break; }
-      bossTele({ k: 'circle', x, y, r: 96, t: -i * 0.2 / tp, dur: 1.0 / tp, fire: t => { bossAoE(t.x, t.y, t.r, 30); addRing(t.x, t.y, 8, t.r, 0.35, '255,70,50', 7); burst(t.x, t.y - 6, 14, ['#3a2a2a', '#ff5a3a', '#ffb05a'], 260, 0.7); shake = Math.max(shake, 6); sfx('boom'); } });
+      bossTele({ k: 'circle', x, y, r: 96, t: -i * 0.2 / tp, dur: 1.2 / tp, fire: t => { bossAoE(t.x, t.y, t.r, 30); addRing(t.x, t.y, 8, t.r, 0.35, '255,70,50', 7); burst(t.x, t.y - 6, 14, ['#3a2a2a', '#ff5a3a', '#ffb05a'], 260, 0.7); shake = Math.max(shake, 6); sfx('boom'); } });
     }
   }
 }
@@ -1159,10 +1159,10 @@ function bossLand(e) {
   burst(e.x, e.y - 8, 40, ['#2a1c1c', '#5a3a3a', '#ff5a3a', '#ffb05a'], 420, 0.9); shake = Math.max(shake, 18); sfx('boom');
   bossAoE(e.x, e.y, 140, 52);
   if (e.rage || P.tier >= 5) {   // 분노 상태(5단계는 항상): 충격파가 한 번 더 퍼진다
-    bossTele({ k: 'donut', x: e.x, y: e.y, r: 140, r2: 300, dur: 0.7, fire: t => {
+    bossTele({ k: 'donut', x: e.x, y: e.y, r: 140, r2: 300, dur: 1.15, fire: t => {
       addRing(t.x, t.y, 125, 285, 0.35, '255,110,50', 10); shake = Math.max(shake, 8);
       const d = Math.hypot(P.x - t.x, P.y - t.y); petDonut(t.x, t.y, 140, 300, 32); if (d > 140 - 10 - PR() && d < 300 + 10 + PR()) bossHit(32); } });
-    e.stT = 1.1;
+    e.stT = 1.55;
   }
 }
 function updateBoss(e, dt) {
@@ -1208,7 +1208,7 @@ function updateBoss(e, dt) {
         e.combo++;
         const a = Math.atan2(dy, dx), nx = e.x + Math.cos(a) * 45, ny = e.y + Math.sin(a) * 45; bossMove(e, nx, ny);
         const cx = e.x + Math.cos(a) * 85, cy = e.y + Math.sin(a) * 85;
-        bossTele({ k: 'circle', x: cx, y: cy, r: 112, dur: (e.combo === 1 ? 0.9 : 0.38) * m, fire: t => {
+        bossTele({ k: 'circle', x: cx, y: cy, r: 112, dur: Math.max(e.combo === 1 ? 0.9 * m : 0.38 * m, 0.98), fire: t => {
           e.swing = 0.25; sfx('hit'); addRing(t.x, t.y, 10, t.r, 0.25, '255,90,60', 8); burst(t.x, t.y - 8, 8, ['#ff5a3a', '#ffb05a'], 200, 0.5); shake = Math.max(shake, 5);
           bossAoE(t.x, t.y, t.r, 24); } });
         e.stT = (e.combo === 1 ? 0.9 : 0.38) * m + 0.08;
@@ -1241,14 +1241,14 @@ function updateBoss(e, dt) {
         if (!ok) { shake = Math.max(shake, 12); addRing(e.x, e.y, 8, 120, 0.4, '255,80,60', 9); burst(e.x, e.y - 8, 16, ['#3a2a2a', '#ff5a3a'], 260, 0.6); }
         e.dashN++;
         if (e.rage && e.dashN < 3) {   // 분노 상태: 한 번 더 돌진
-          e.st = 'dashWind'; e.stT = 0.6; bossTele({ k: 'rect', x: e.x, y: e.y, ang: Math.atan2(P.y - e.y, P.x - e.x), len: 720, w: 150, dur: 0.5, aim: 0.18, nofire: true });
+          e.st = 'dashWind'; e.stT = 0.88; bossTele({ k: 'rect', x: e.x, y: e.y, ang: Math.atan2(P.y - e.y, P.x - e.x), len: 720, w: 150, dur: 0.78, aim: 0.18, nofire: true });
         } else bossRecover(e, 1.0);
       }
       break;
     }
     case 'tailWind': if (e.stT <= 0) {
       e.tailN++;
-      if (e.rage && e.tailN < 3) { e.stT = 0.6; bossTele({ k: 'circle', x: e.x, y: e.y, r: 195, dur: 0.5, stick: true, fire: () => bossTailHit(e) }); e.swing = 0.3; }
+      if (e.rage && e.tailN < 3) { e.stT = 1.0; bossTele({ k: 'circle', x: e.x, y: e.y, r: 195, dur: 0.9, stick: true, fire: () => bossTailHit(e) }); e.swing = 0.3; }
       else bossRecover(e, 0.9);
     } break;
     case 'quake': if (e.stT <= 0) bossRecover(e, 0.9); break;
@@ -1308,12 +1308,12 @@ function fwLeg(e, first) {   // 광란 질주의 한 구간: 플레이어 쪽(�
   else { const a = rand() * 6.283, k = 0.35 + rand() * 0.55; tx = BMAP.cx + Math.cos(a) * BMAP.rx * k; ty = BMAP.cy + Math.sin(a) * BMAP.ry * k; }
   [tx, ty] = bloodPoint(tx, ty);
   const ang = Math.atan2(ty - e.y, tx - e.x), len = Math.hypot(tx - e.x, ty - e.y);
-  e.leg = { tx, ty, ang, len }; e.st = 'rWind'; e.stT = (first ? 0.8 : 0.6) * m; e.an = 'walk'; e.fr = 0;
+  e.leg = { tx, ty, ang, len }; e.st = 'rWind'; e.stT = Math.max((first ? 0.8 : 0.6) * m, first ? 0.65 : 0.5); e.an = 'walk'; e.fr = 0;
   fwTele(e, { k: 'rect', x: e.x, y: e.y, ang, len: len + 50, w: 130, dur: e.stT, nofire: true });
 }
 function fwBite(e) {   // 물어뜯기 한 번: 앞쪽 띠가 따라오다 고정 → 짧게 덮친다
   const m = fwM(e); e.n++;
-  const dur = (e.n === 1 ? 0.85 : 0.8) * m;
+  const dur = Math.max((e.n === 1 ? 0.85 : 0.8) * m, 0.9);
   fwTele(e, { k: 'rect', x: e.x, y: e.y, ang: Math.atan2(P.y - e.y, P.x - e.x), len: 250, w: 130, dur, aim: dur * 0.42, fire: t => {
     const nx = e.x + Math.cos(t.ang) * 150, ny = e.y + Math.sin(t.ang) * 150; bossMove(e, nx, ny);
     e.an = 'attack'; e.fr = 3; e.frT = 0.2; sfx('hit'); shake = Math.max(shake, 6); addRing(t.x + Math.cos(t.ang) * 160, t.y + Math.sin(t.ang) * 160, 8, 90, 0.25, '255,40,60', 7);
@@ -1322,7 +1322,7 @@ function fwBite(e) {   // 물어뜯기 한 번: 앞쪽 띠가 따라오다 고�
 }
 function fwSlash(e) {   // 광폭: 부채꼴 베기를 번갈아
   const m = fwM(e); e.n++;
-  const dur = (e.n === 1 ? 0.85 : 0.78) * m, a = Math.atan2(P.y - e.y, P.x - e.x);
+  const dur = Math.max((e.n === 1 ? 0.85 : 0.78) * m, 1.1), a = Math.atan2(P.y - e.y, P.x - e.x);
   bossMove(e, e.x + Math.cos(a) * 55, e.y + Math.sin(a) * 55);
   fwTele(e, { k: 'fan', x: e.x, y: e.y, ang: a, len: 280, half: 0.75, dur, aim: dur * 0.3, rgb: '255,40,60', fire: t => {
     e.an = 'frenzy'; e.fr = e.n % 2 ? 1 : 3; e.frT = 0.25; sfx('zap'); shake = Math.max(shake, 7);
@@ -1347,30 +1347,30 @@ function fwStart(e, k) {
     e.stT = (R.length - 1) * gap + 0.95 * m + 0.35; e.drainT = e.stT;
   } else if (k === 'pounce') {
     e.st = 'pWind'; e.stT = 0.55 * m; e.an = 'walk'; e.fr = 4;
-    fwTele(e, { k: 'circle', x: P.x, y: P.y, r: 150, dur: 0.55 * m + 0.85, follow: 0.55 * m, nofire: true });
+    fwTele(e, { k: 'circle', x: P.x, y: P.y, r: 150, dur: 0.55 * m + 1.05, follow: 0.55 * m, nofire: true });
   } else if (k === 'sigil') {   // 핏빛 진: 플레이어가 갈 자리를 노려 차례로 가시가 솟는다
     e.st = 'sigil'; e.an = 'drain'; e.fr = 1;
     const n = (e.rage ? 9 : 6) + (P.tier >= 2 ? 2 : 0);
-    for (let i = 0; i < n; i++) fwTele(e, { k: 'circle', x: P.x, y: P.y, r: 108, t: -i * 0.3 / tp, dur: 0.95 / tp, lead: true, fire: t => {
+    for (let i = 0; i < n; i++) fwTele(e, { k: 'circle', x: P.x, y: P.y, r: 108, t: -i * 0.3 / tp, dur: 1.0, lead: true, fire: t => {
       fwSpike(t.x, t.y, 1.2); addRing(t.x, t.y, 8, t.r, 0.3, '255,40,60', 7); shake = Math.max(shake, 5); sfx('boom');
       if (Math.hypot(P.x - t.x, P.y - t.y) < t.r + 10 + PR()) bossHit(fwDm(30)); } });
-    e.stT = (n - 1) * 0.3 / tp + 0.95 / tp + 0.2;
+    e.stT = (n - 1) * 0.3 / tp + 1.0 + 0.2;
   } else if (k === 'grow') {
     e.st = 'grow'; e.stT = 1.7; e.invul = true; e.an = 'grow'; e.fr = 0; e.tele = [];
     addRing(e.x, e.y - 60, 20, 420, 1.0, '255,30,50', 14); shake = 14; sfx('evolve');
     banner = { txt: '혈랑왕이 피를 끌어모아 거대해진다!', t: 2.5, c: '#ff6a7a' };
   } else if (k === 'stomp') {   // 거대화: 거대한 발이 플레이어를 따라 차례로 내려찍는다 + 충격파
     e.st = 'stomp'; const n = e.rage ? 4 : 3, gap = 0.75 * m;
-    for (let i = 0; i < n; i++) fwTele(e, { k: 'circle', x: P.x, y: P.y, r: 200, t: -i * gap, dur: 1.0 * m, follow: 0.55 * m, fire: t => {
+    for (let i = 0; i < n; i++) fwTele(e, { k: 'circle', x: P.x, y: P.y, r: 200, t: -i * gap, dur: 0.55 * m + 1.45, follow: 0.55 * m, fire: t => {
       fwSpike(t.x, t.y, 1.6, 'sigil'); addRing(t.x, t.y, 10, t.r, 0.4, '255,40,60', 12); shake = Math.max(shake, 14); sfx('boom');
       if (Math.hypot(P.x - t.x, P.y - t.y) < t.r + 10 + PR()) bossHit(fwDm(46));
       fwTele(boss, { k: 'donut', x: t.x, y: t.y, r: 200, r2: 360, dur: 0.45, fire: q => { addRing(q.x, q.y, 200, 360, 0.3, '255,90,60', 8); const dd = Math.hypot(P.x - q.x, P.y - q.y); if (dd > 190 - PR() && dd < 370 + PR()) bossHit(fwDm(26)); } }); } });
-    e.stT = (n - 1) * gap + 1.0 * m + 0.6; e.an = 'grow'; e.fr = 2;
+    e.stT = (n - 1) * gap + 0.55 * m + 1.45 + 0.6; e.an = 'grow'; e.fr = 2;
   } else if (k === 'gsweep') {   // 거대화: 맵 절반을 쓸어버리는 앞발 휘두르기 (두 번)
     e.st = 'gsweep'; e.n = 0; e.stT = 0;
   } else if (k === 'gcharge') {   // 거대화: 굵은 띠를 따라 몸통 돌진
-    e.st = 'gcWind'; e.stT = 0.95 * m;
-    fwTele(e, { k: 'rect', x: e.x, y: e.y, ang: Math.atan2(P.y - e.y, P.x - e.x), len: 1000, w: 240, dur: e.stT, aim: e.stT * 0.4, nofire: true });
+    e.st = 'gcWind'; e.stT = 0.95 * m * 0.4 + 0.9;
+    fwTele(e, { k: 'rect', x: e.x, y: e.y, ang: Math.atan2(P.y - e.y, P.x - e.x), len: 1000, w: 240, dur: e.stT, aim: 0.95 * m * 0.4, nofire: true });
   }
 }
 function fwRecover(e, t) { e.st = 'recover'; e.stT = t * 1.0 / bossTempo(); e.invul = false; e.an = e.giant ? 'giant' : 'idle'; e.fr = -1; }
@@ -1414,8 +1414,8 @@ function updateFwBoss(e, dt) {
     case 'bite': if (e.stT <= 0) { if (e.n >= (e.rage ? 4 : 3) + (P.tier >= 4 ? 1 : 0)) fwRecover(e, 0.9); else fwBite(e); } break;
     case 'frenzy': if (e.stT <= 0) {
       if (e.n >= (e.rage ? 3 : 2)) {   // 마무리: 몸 주위로 가시 폭발
-        e.st = 'frenzyEnd'; e.stT = 0.6 * m + 0.25; e.an = 'frenzy'; e.fr = 4;
-        fwTele(e, { k: 'circle', x: e.x, y: e.y, r: 165, dur: 0.6 * m, stick: true, fire: t => { for (let q = 0; q < 8; q++) { const a = q * 0.785; fwSpike(t.x + Math.cos(a) * 110, t.y + Math.sin(a) * 90, 0.9); } addRing(t.x, t.y, 10, 165, 0.35, '255,40,60', 10); shake = Math.max(shake, 10); sfx('boom'); if (Math.hypot(P.x - t.x, P.y - t.y) < 175 + PR()) bossHit(fwDm(36)); } });
+        e.st = 'frenzyEnd'; e.stT = Math.max(0.6 * m, 0.8) + 0.25; e.an = 'frenzy'; e.fr = 4;
+        fwTele(e, { k: 'circle', x: e.x, y: e.y, r: 165, dur: Math.max(0.6 * m, 0.8), stick: true, fire: t => { for (let q = 0; q < 8; q++) { const a = q * 0.785; fwSpike(t.x + Math.cos(a) * 110, t.y + Math.sin(a) * 90, 0.9); } addRing(t.x, t.y, 10, 165, 0.35, '255,40,60', 10); shake = Math.max(shake, 10); sfx('boom'); if (Math.hypot(P.x - t.x, P.y - t.y) < 175 + PR()) bossHit(fwDm(36)); } });
       } else fwSlash(e);
     } break;
     case 'frenzyEnd': for (const t of e.tele) if (t.stick) { t.x = e.x; t.y = e.y; } if (e.stT <= 0) fwRecover(e, 1.0); break;
@@ -1461,8 +1461,8 @@ function updateFwBoss(e, dt) {
     case 'shrink': e.fr = Math.max(0, 2 - Math.floor((1 - e.stT / 0.9) * 3)); if (e.stT <= 0) { e.giant = 0; e.gCd = e.rage ? 18 : 26; e.invul = false; fwChase(e); } break;
     case 'gsweep': if (e.stT <= 0) {
       if (e.n >= 2) { fwRecover(e, 1.0); break; }
-      e.n++; const dur = (e.n === 1 ? 1.0 : 0.6) * m;
-      fwTele(e, { k: 'fan', x: e.x, y: e.y, ang: Math.atan2(dy, dx), len: 480, half: 1.25, dur, aim: dur * 0.5, rgb: '255,30,50', fire: t => { addRing(t.x, t.y, 30, 480, 0.35, '255,40,60', 12); shake = Math.max(shake, 14); sfx('boom'); if (inFanT(t, 16)) bossHit(fwDm(48)); } });
+      e.n++; const dur = Math.max((e.n === 1 ? 1.0 : 0.6) * m, 1.9);
+      fwTele(e, { k: 'fan', x: e.x, y: e.y, ang: Math.atan2(dy, dx), len: 420, half: 1.25, dur, aim: dur * 0.3, rgb: '255,30,50', fire: t => { addRing(t.x, t.y, 30, 420, 0.35, '255,40,60', 12); shake = Math.max(shake, 14); sfx('boom'); if (inFanT(t, 16)) bossHit(fwDm(48)); } });
       e.stT = dur + 0.15;
     } break;
     case 'gcWind': if (e.stT <= 0) { const t = e.tele.find(q => q.k === 'rect'); const ang = t ? t.ang : Math.atan2(dy, dx); e.dv = { ax: Math.cos(ang), ay: Math.sin(ang) }; e.dashHit = false; e.face = e.dv.ax >= 0 ? 1 : -1; e.st = 'gcharge'; e.stT = 0.8; sfx('skill'); } break;
@@ -1535,7 +1535,7 @@ function fwBossDefeated(e) {
 const SKB = {"idle":[[0,0,269,228,146.0,224],[271,0,272,229,149.0,225],[545,0,275,228,148.0,224],[822,0,412,229,161.0,225]],"walk":[[1236,0,260,166,141.0,162],[1498,0,292,166,143.0,162],[1792,0,256,166,123.0,162],[2050,0,299,166,144.0,162],[0,231,331,165,125.0,161]],"atk":[[333,231,323,152,152.0,147],[658,231,350,152,157.0,147],[1010,231,392,152,158.0,147],[1404,231,419,152,214.0,147]],"slam":[[1825,231,203,171,102.0,167],[2030,231,221,171,123.0,167],[2253,231,241,170,106.0,166],[0,404,241,171,115.0,167],[243,404,229,171,99.0,167],[474,404,215,171,93.0,167]],"summon":[[691,404,169,127,88.0,124],[862,404,161,127,87.0,124],[1025,404,158,127,87.0,124],[1185,404,200,127,122.0,124],[1387,404,218,127,126.0,124],[1607,404,177,127,95.0,124],[1786,404,159,127,72.0,124]],"hit":[[1947,404,143,118,73.0,116],[2092,404,132,118,65.0,116],[2226,404,162,118,82.0,116]],"death":[[2390,404,181,118,95.0,116],[0,577,208,118,95.0,116],[210,577,194,118,93.0,116],[406,577,193,118,88.0,116],[601,577,179,118,91.0,116]],"mn":[[782,577,55,104,26.0,100],[839,577,61,104,30.0,100],[902,577,62,102,23.0,100],[966,577,55,104,33.0,100],[1023,577,55,102,34.0,100],[1080,577,58,104,30.0,100],[1140,577,72,104,30.0,100],[1214,577,69,102,33.0,100],[1285,577,54,102,29.0,100],[1341,577,56,104,30.0,100],[1399,577,98,102,29.0,100]]};
 const SKB_K = { idle: 1, walk: 1.36, atk: 1.3, slam: 1.35, summon: 1.75, hit: 1.95, death: 1.95 };
 const SK_S = 1.05, SK_HP = 1.0;          // 그리기 배율 · 체력 배율 (BOSS_HP 기준)
-const SK_PH = [0.66, 0.33], SK_DM = 0.78 * 0.92;   // 결계 단계 · 피해 배율 (봇 시뮬로 원숭이 마왕과 비슷한 압박이 되게)
+const SK_PH = [0.66, 0.33], SK_DM = 0.78 * 0.92 * 1.1;   // 결계 단계 · 피해 배율 (봇 시뮬로 원숭이 마왕과 비슷한 압박이 되게)
 const skHit = d => bossHit(d * SK_DM);              // 결계 단계: 체력 66% · 33%
 const SKP = [[190, 650], [1125, 650], [657, 418]].map(([x, y]) => [x * AS, y * AS]);   // 해골 첨탑(서브 헤드)이 솟는 자리: 맵 외곽 3곳
 let skp = [], skSp = [], skDeath = null;  // 참격파 · 가시/불기둥 이펙트 · 쓰러지는 모습
@@ -1558,7 +1558,7 @@ function skPick(e, d) {
   e.last = pick; skStart(e, pick);
 }
 function skSlamUp(e, again) {   // 타겟팅 내려찍기: 대검을 높이 들어 올리고, 플레이어 자리에 거대한 그림자 + 경고
-  const m = skM(e), up = (again ? 1.05 : 1.3) * m;   // 그림자가 따라오다 멈춘 뒤 약 0.8초 안에 빠져나가야 한다
+  const m = skM(e), up0 = (again ? 1.05 : 1.3) * m, up = Math.max(up0, again ? 1.25 : 1.4);   // 그림자가 따라오다 멈춘 뒤 약 0.8초 안에 빠져나가야 한다
   e.st = 'slamUp'; e.stT = up; e.upT = up; e.an = 'slam'; e.fr = 0;
   skTele(e, { k: 'circle', x: P.x, y: P.y, r: 270, dur: up + 0.24, follow: up * 0.4, nofire: true, splash: true });   // 바깥: 충격파(약한 피해)
   skTele(e, { k: 'circle', x: P.x, y: P.y, r: 150, dur: up + 0.24, follow: up * 0.4, nofire: true, shadow: true });   // 안쪽: 내려찍기(큰 피해)
@@ -1566,7 +1566,7 @@ function skSlamUp(e, again) {   // 타겟팅 내려찍기: 대검을 높이 들�
 }
 function skSlash(e) {   // 연속 베기: 앞쪽 부채꼴 (조준하다 고정)
   const m = skM(e); e.n++;
-  const dur = (e.n === 1 ? 0.9 : 0.65) * m, a = Math.atan2(P.y - e.y, P.x - e.x);
+  const dur = Math.max((e.n === 1 ? 0.9 : 0.65) * m, 1.2), a = Math.atan2(P.y - e.y, P.x - e.x);
   skAim(e); bossMove(e, e.x + Math.cos(a) * 40, e.y + Math.sin(a) * 40);
   skTele(e, { k: 'fan', x: e.x, y: e.y, ang: a, len: 240, half: 0.8, dur, aim: dur * 0.4, rgb: '255,60,170', fire: t => {
     e.fr = e.n % 2 ? 1 : 3; e.frT = 0.28; e.face = Math.cos(t.ang) >= 0 ? 1 : -1; sfx('zap'); shake = Math.max(shake, 7);
@@ -1580,8 +1580,8 @@ function skStart(e, k) {
   if (k === 'slam') skSlamUp(e, false);
   else if (k === 'combo') skSlash(e);
   else if (k === 'dash') {   // 망령 돌진: 굵은 띠를 따라 대검을 끌며 돌진
-    skAim(e); e.st = 'dashWind'; e.stT = 0.8 * m; e.an = 'walk'; e.fr = 4;
-    skTele(e, { k: 'rect', x: e.x, y: e.y, ang: Math.atan2(P.y - e.y, P.x - e.x), len: 640, w: 150, dur: e.stT, aim: e.stT * 0.55, nofire: true });
+    skAim(e); e.st = 'dashWind'; e.stT = 0.8 * m * 0.55 + 0.6; e.an = 'walk'; e.fr = 4;
+    skTele(e, { k: 'rect', x: e.x, y: e.y, ang: Math.atan2(P.y - e.y, P.x - e.x), len: 640, w: 150, dur: e.stT, aim: 0.8 * m * 0.55, nofire: true });
   } else if (k === 'spikes') {   // 망자의 가시: 대검을 땅에 꽂으면 플레이어 쪽으로 가시 줄기가 퍼진다
     skAim(e); e.st = 'spikes'; e.an = 'slam'; e.fr = 1;
     const n = e.rage ? 7 : 5, a0 = Math.atan2(P.y - e.y, P.x - e.x), sp = e.rage ? 0.36 : 0.44, dur = 0.95 * m;
@@ -1594,10 +1594,10 @@ function skStart(e, k) {
   } else if (k === 'souls') {   // 저주의 불꽃: 손을 들면 플레이어가 갈 자리에 차례로 영혼 불기둥
     skAim(e); e.st = 'souls'; e.an = 'summon'; e.fr = 0;
     const n = (e.rage ? 8 : 6) + (P.tier >= 3 ? 2 : 0), gap = 0.3 / tp;
-    for (let i = 0; i < n; i++) skTele(e, { k: 'circle', x: P.x, y: P.y, r: 92, t: -i * gap, dur: 0.95 / tp, lead: true, fire: t => {
+    for (let i = 0; i < n; i++) skTele(e, { k: 'circle', x: P.x, y: P.y, r: 92, t: -i * gap, dur: Math.max(0.95 / tp, 0.95), lead: true, fire: t => {
       skSpike(t.x, t.y, 1.1, 'pillar'); addRing(t.x, t.y, 8, t.r, 0.3, '255,70,190', 7); burst(t.x, t.y - 20, 8, ['#ff4ab4', '#ffc0e6', '#2a0a1e'], 200, 0.5); shake = Math.max(shake, 4); sfx('boom');
       if (Math.hypot(P.x - t.x, P.y - t.y) < t.r + 10 + PR()) skHit(22); } });
-    e.stT = (n - 1) * gap + 0.95 / tp + 0.3;
+    e.stT = (n - 1) * gap + Math.max(0.95 / tp, 0.95) + 0.3;
   }
 }
 function skRecover(e, t) { e.st = 'recover'; e.stT = t / bossTempo(); e.an = 'idle'; e.fr = -1; }
@@ -1695,8 +1695,8 @@ function updateSkBoss(e, dt) {
     case 'slamEnd': e.fr = e.stT > 0.4 ? 4 : 5; if (e.stT <= 0) { e.n++; if (e.rage && e.n < 2 && skFront(e)) skSlamUp(e, true); else skRecover(e, 0.5); } break;   // 분노: 한 번 더
     case 'combo': if (e.frT <= 0 && e.fr % 2 === 1) e.fr--; if (e.stT <= 0) {
       if (e.n >= (e.rage ? 3 : 2)) {   // 마무리: 참격파
-        e.st = 'wave'; skAim(e); e.an = 'atk'; e.fr = 2; const dur = 0.5 * m, a = Math.atan2(P.y - e.y, P.x - e.x);
-        skTele(e, { k: 'rect', x: e.x, y: e.y, ang: a, len: 940, w: 110, dur, aim: dur * 0.45, fire: t => {
+        e.st = 'wave'; skAim(e); e.an = 'atk'; e.fr = 2; const dur = 0.5 * m * 0.45 + 0.5, a = Math.atan2(P.y - e.y, P.x - e.x);
+        skTele(e, { k: 'rect', x: e.x, y: e.y, ang: a, len: 940, w: 110, dur, aim: 0.5 * m * 0.45, fire: t => {
           e.fr = 3; e.frT = 0.35; e.face = Math.cos(t.ang) >= 0 ? 1 : -1; sfx('zap'); shake = Math.max(shake, 8);
           skp.push({ x: t.x + Math.cos(t.ang) * 60, y: t.y + Math.sin(t.ang) * 60, ang: t.ang, sp: 620, t: 0, life: 1.5, hit: false }); } });
         e.stT = dur + 0.45;
@@ -1713,7 +1713,7 @@ function updateSkBoss(e, dt) {
       if (!e.dashHit && Math.hypot(P.x - e.x, P.y - e.y) < e.r + 30 + PR()) { e.dashHit = true; skHit(34); }
       if (!ok || e.left <= 0) {
         e.n++; shake = Math.max(shake, 10); addRing(e.x, e.y, 8, 130, 0.35, '255,60,170', 9); burst(e.x, e.y - 8, 16, ['#1a0a14', '#ff3aa8', '#ffc0e6'], 260, 0.6);
-        if (e.rage && e.n < 2) { skAim(e); e.st = 'dashWind'; e.stT = 0.55 * m; e.an = 'walk'; e.fr = 4; skTele(e, { k: 'rect', x: e.x, y: e.y, ang: Math.atan2(P.y - e.y, P.x - e.x), len: 640, w: 150, dur: e.stT, aim: e.stT * 0.5, nofire: true }); }
+        if (e.rage && e.n < 2) { skAim(e); e.st = 'dashWind'; e.stT = 0.55 * m * 0.5 + 0.6; e.an = 'walk'; e.fr = 4; skTele(e, { k: 'rect', x: e.x, y: e.y, ang: Math.atan2(P.y - e.y, P.x - e.x), len: 640, w: 150, dur: e.stT, aim: 0.55 * m * 0.5, nofire: true }); }
         else skRecover(e, 0.9);
       }
       break;
@@ -2258,16 +2258,16 @@ function eyeStart(e, k) {
     const n = r ? 10 : 7; e.st = 'rain'; e.stT = (n * 0.17 + 1.0) * m;
     for (let i = 0; i < n; i++) {
       let x = P.x, y = P.y; if (i) for (let q = 0; q < 12; q++) { const a = rand() * 6.283, dd = 50 + rand() * 280; x = P.x + Math.cos(a) * dd; y = P.y + Math.sin(a) * dd; if (inPoly(x, y)) break; }
-      bossTele({ k: 'circle', x, y, r: 64, t: -i * 0.17 * m, dur: 0.95 * m, fire: q => { bossAoE(q.x, q.y, q.r, 22); addRing(q.x, q.y, 6, q.r, 0.35, '214,90,255', 7); burst(q.x, q.y - 10, 12, ['#d84cff', '#ffffff', '#7a2bd0'], 240, 0.6); shake = Math.max(shake, 4); sfx('boom'); } });
+      bossTele({ k: 'circle', x, y, r: 64, t: -i * 0.17 * m, dur: Math.max(0.95 * m, 0.75), fire: q => { bossAoE(q.x, q.y, q.r, 22); addRing(q.x, q.y, 6, q.r, 0.35, '214,90,255', 7); burst(q.x, q.y - 10, 12, ['#d84cff', '#ffffff', '#7a2bd0'], 240, 0.6); shake = Math.max(shake, 4); sfx('boom'); } });
     }
   } else if (k === 'orbs') { e.st = 'orbs'; e.stT = 0.8 * m; }
   else if (k === 'judge') {
-    e.st = 'judge'; e.stT = 1.7 * m; const offs = r ? [-0.7, 0, 0.7] : [0];
-    for (const o of offs) bossTele({ k: 'rect', x: e.x, y: e.y, ang: 0, off: o, len: 1000, w: 118, dur: 1.4 * m, aim: 0.8 * m, fire: eyeBeam });
+    e.st = 'judge'; e.stT = 1.1 * m + Math.max(0.6 * m, 0.5) + 0.3 * m; const offs = r ? [-0.7, 0, 0.7] : [0];
+    for (const o of offs) bossTele({ k: 'rect', x: e.x, y: e.y, ang: 0, off: o, len: 1000, w: 118, dur: 0.8 * m + Math.max(0.6 * m, 0.5), aim: 0.8 * m, fire: eyeBeam });
   } else if (k === 'tent') {
     e.st = 'tent'; e.stT = 1.9 * m;
-    bossTele({ k: 'donut', x: e.x, y: e.y, r: 70, r2: 210, dur: 0.95 * m, stick: true, fire: eyeTent });
-    bossTele({ k: 'donut', x: e.x, y: e.y, r: 210, r2: 360, t: -0.5 * m, dur: 0.95 * m, stick: true, fire: eyeTent });
+    bossTele({ k: 'donut', x: e.x, y: e.y, r: 70, r2: 210, dur: Math.max(0.95 * m, 0.95), stick: true, fire: eyeTent });
+    bossTele({ k: 'donut', x: e.x, y: e.y, r: 210, r2: 360, t: -0.5 * m, dur: Math.max(0.95 * m, 0.95), stick: true, fire: eyeTent });
   } else if (k === 'burst') { e.st = 'burst'; e.stT = 0.8 * m; }
 }
 function updateEyeBoss(e, dt) {
@@ -6208,7 +6208,7 @@ function startGame(char) {
   audioInit();
   const want = Math.min(SAVE.diff.sel | 0, SAVE.diff.max | 0); let t = want; while (t > 0 && SAVE.shards < t * 25) t--;   // 참가비(단계×25)를 낼 수 없으면 낮춘다
   reset(curChar); markDex(curChar + ':0');
-  P.tier = t; if (t >= 1) { const r = rand(); P.bossK = r < 1 / 3 ? 'eye' : r < 2 / 3 ? 'monkey' : 'skel'; }   // 난이도 1단계부터 스켈레톤 마왕이 섞인다
+  P.tier = t; { const r = rand(); P.bossK = t === 0 ? 'monkey' : t === 1 ? (r < 0.3 ? 'monkey' : 'eye') : t === 2 ? (r < 0.15 ? 'monkey' : r < 0.30 ? 'eye' : 'skel') : (r < 1 / 3 ? 'eye' : r < 2 / 3 ? 'monkey' : 'skel'); }   // v6.07: 0단계 원숭이 100% · 1단계 원숭이30/마안70 · 2단계 원숭이15/마안15/스켈레톤70 · 3단계~ 균등
   P.fee = t * 25; if (P.fee) { SAVE.shards -= P.fee; saveSave(); banner = { txt: `난이도 ${t}단계 도전! (참가비 ${P.fee})`, t: 3.5 }; }
   if (t < want) banner = { txt: `영혼 조각이 모자라 난이도 ${want}단계 대신 ${t ? t + '단계' : '기본 난이도'}로 시작합니다` + (P.fee ? ` (참가비 ${P.fee})` : ''), t: 5, c: '#ff8a7a' };
   show('startBox', false); show('overBox', false); show('levelBox', false); show('pauseBox', false);
