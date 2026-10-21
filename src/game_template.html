@@ -220,7 +220,7 @@
 /* ============================================================
  * 0. 기본 설정
  * ============================================================ */
-const SRC = { mini: '__MINI__', snail: '__SNAIL__', base: '__ATLAS__', pup: '__PUP__', dark: '__DARK__', bug: '__BUG__', floor: '__FLOOR__', props: '__PROPS__', castle: '__CASTLE__', arena: '__ARENA__', boss: '__BOSS__', mobs: '__MOBS__', blood: '__BLOOD__', twin: '__TWIN__', triple: '__TRIPLE__', items: '__ITEMS__', drophb: '__DROPHB__', droppo: '__DROPPO__', blood2: '__BLOOD2__', holy: '__HOLY__', lavasn: '__LAVASN__', lavafx: '__LAVAFX__', venom2: '__VENOM2__', venom3: '__VENOM3__', venomfx: '__VENOMFX__', elf0: '__ELF0__', elf1: '__ELF1__', skel: '__SKEL__', chim0: '__CHIM0__', chim1: '__CHIM1__', chim2: '__CHIM2__', chimfx: '__CHIMFX__', flm1: '__FLM1__', flm2: '__FLM2__', flmfx: '__FLMFX__', drm1: '__DRM1__', drm2: '__DRM2__', drfx: '__DRFX__', arcr: '__ARCR__', arch: '__ARCH__', arfx: '__ARFX__', hlfx: '__HLFX__', slot: '__SLOT__', uniq: '__UNIQ__', eyem: '__EYEM__', relic: '__RELIC__', liz0: '__LIZ0__', liz1: '__LIZ1__', liz2: '__LIZ2__', liz3: '__LIZ3__', gh: '__GH__', gg: '__GG__', oc: '__OC__', lg: '__LG__', os: '__OS__', bs: '__BS__', tw0: '__TW0__', tw1: '__TW1__', tw2: '__TW2__', fwb: '__FWB__', fwp: '__FWP__', fwfx: '__FWFX__', bmap: '__BMAP__', skb: '__SKB__', skw: '__SKW__', chm: '__CHMAP__', cm: '__CM__', ab: '__AB__', an: '__AN__', anfx: '__ANFX__', amap: '__AMAP__' };
+const SRC = { mini: '__MINI__', snail: '__SNAIL__', base: '__ATLAS__', pup: '__PUP__', dark: '__DARK__', bug: '__BUG__', floor: '__FLOOR__', props: '__PROPS__', castle: '__CASTLE__', arena: '__ARENA__', boss: '__BOSS__', mobs: '__MOBS__', blood: '__BLOOD__', twin: '__TWIN__', triple: '__TRIPLE__', items: '__ITEMS__', drophb: '__DROPHB__', droppo: '__DROPPO__', blood2: '__BLOOD2__', holy: '__HOLY__', lavasn: '__LAVASN__', lavafx: '__LAVAFX__', venom2: '__VENOM2__', venom3: '__VENOM3__', venomfx: '__VENOMFX__', elf0: '__ELF0__', elf1: '__ELF1__', skel: '__SKEL__', chim0: '__CHIM0__', chim1: '__CHIM1__', chim2: '__CHIM2__', chimfx: '__CHIMFX__', flm1: '__FLM1__', flm2: '__FLM2__', flmfx: '__FLMFX__', drm1: '__DRM1__', drm2: '__DRM2__', drfx: '__DRFX__', arcr: '__ARCR__', arch: '__ARCH__', arfx: '__ARFX__', hlfx: '__HLFX__', slot: '__SLOT__', uniq: '__UNIQ__', eyem: '__EYEM__', relic: '__RELIC__', liz0: '__LIZ0__', liz1: '__LIZ1__', liz2: '__LIZ2__', liz3: '__LIZ3__', gh: '__GH__', gg: '__GG__', oc: '__OC__', lg: '__LG__', os: '__OS__', bs: '__BS__', tw0: '__TW0__', tw1: '__TW1__', tw2: '__TW2__', fwb: '__FWB__', fwp: '__FWP__', fwfx: '__FWFX__', bmap: '__BMAP__', skb: '__SKB__', skw: '__SKW__', chm: '__CHMAP__', cm: '__CM__', ab: '__AB__', an: '__AN__', anfx: '__ANFX__', amap: '__AMAP__', gun: '__GUN__' };
 const SNAIL_RECTS = [[0, 0, 216, 146], [220, 0, 273, 208], [497, 0, 276, 208], [777, 0, 289, 214]];
 const PROP_RECTS = [[0, 0, 38, 48], [40, 0, 22, 49], [64, 0, 34, 48], [100, 0, 26, 44], [128, 0, 29, 44], [159, 0, 56, 44], [217, 0, 64, 59], [283, 0, 42, 44], [327, 0, 20, 48], [349, 0, 62, 62], [413, 0, 47, 64], [462, 0, 44, 56], [0, 66, 33, 62], [35, 66, 36, 56], [73, 66, 28, 57], [103, 66, 19, 29], [124, 66, 20, 46], [146, 66, 18, 28], [166, 66, 18, 23], [186, 66, 19, 31], [207, 66, 21, 31], [230, 66, 22, 30], [254, 66, 21, 18], [277, 66, 20, 19], [299, 66, 32, 50], [333, 66, 32, 49], [367, 66, 40, 46], [409, 66, 39, 46], [450, 66, 33, 45], [0, 130, 37, 45], [39, 130, 19, 29], [60, 130, 18, 29], [80, 130, 17, 18], [99, 130, 20, 19], [121, 130, 20, 20], [143, 130, 58, 60], [203, 130, 31, 54], [236, 130, 30, 54], [268, 130, 30, 54], [300, 130, 47, 53], [349, 130, 28, 53], [379, 130, 31, 53], [412, 130, 43, 41], [457, 130, 44, 40], [0, 192, 36, 11], [38, 192, 25, 16], [65, 192, 48, 11], [115, 192, 76, 57], [193, 192, 43, 49], [238, 192, 21, 21], [261, 192, 35, 45], [298, 192, 50, 38], [350, 192, 67, 77], [419, 192, 53, 57], [0, 271, 45, 79], [47, 271, 53, 24], [102, 271, 32, 36], [136, 271, 59, 53]];
 // 늑대 형태별 스프라이트 설정: 한 칸 크기, 배율, 원본이 바라보는 방향(flip), 공격이 맞는 프레임(hitF), 동작별 (줄, 프레임 수, 초당 프레임)
@@ -423,7 +423,186 @@ const OCTO_SKIN = { src: 'os', name: '심연의 문어 대마법사', ws: 0.84, 
   anim: { idle: { n: 8, fps: 7, fr: [[0,0,143,114,86.0,113],[145,0,149,114,85.0,113],[296,0,167,114,97.0,113],[465,0,164,114,99.0,113],[631,0,182,114,114.0,113],[815,0,152,114,89.0,113],[969,0,134,114,79.0,113],[1105,0,131,114,76.0,113]] }, walk: { n: 8, fps: 10, fr: [[1238,0,146,105,86.0,102],[1386,0,153,105,96.0,102],[0,116,140,105,89.0,102],[142,116,127,105,78.0,102],[271,116,139,105,87.0,102],[412,116,140,105,86.0,102],[554,116,140,105,85.0,102],[696,116,145,105,87.0,102]] }, attack: { n: 4, fps: 10, fr: [[843,116,166,106,94.0,103],[1011,116,183,106,108.0,103],[1196,116,196,106,112.0,103],[1394,116,202,104,124.0,101]] }, hit: { n: 4, fps: 12, fr: [[0,224,156,96,99.0,95],[158,224,147,92,94.0,91],[307,224,152,91,93.0,90],[461,224,144,89,85.0,88]] }, death: { n: 4, fps: 6, fr: [[607,224,166,96,94.0,93],[775,224,168,89,99.0,86],[945,224,211,79,135.0,76],[1158,224,204,82,105.0,79]] } } };
 const GH_ORB = [667, 241, 43, 42, 21.5, 21];
 const GG_FX = { orb: [[1246,585,25,25,12.5,12],[1273,585,42,41,21.0,20],[1317,585,62,62,31.0,31],[1381,585,77,74,38.5,37]], chg: [[1460,585,85,69,42.5,34],[0,713,181,96,90.5,48]], pal: [[584,585,122,125,61.0,62],[708,585,124,122,62.0,61],[834,585,118,125,59.0,62]], shield: [[954,585,154,117,77.0,58]], boom: [[1110,585,134,126,67.0,63]], sk1: [[1014,221,177,105,74.0,103],[1193,221,214,104,110.0,101],[1409,221,175,104,97.0,101],[0,328,144,105,65.0,103]], sk2: [[0,509,151,74,63.0,72],[153,509,129,73,59.0,71],[284,509,122,74,54.0,72],[408,509,155,74,76.0,72]] };   // 총령 이펙트 · 수호령
-const FORMS = { wolf: WOLF_FORMS, snail: SNAIL_FORMS, archer: ARCHER_FORMS, chimera: CHIM_FORMS, lizard: [LIZ_FORMS[0], LIZ_FORMS[1], LIZ_FORMS.rage], twins: TWIN_FORMS, ghost: GHOST_FORMS, octo: OCTO_FORMS };
+/* ---------- v6.40 악마 총잡이 (지하 6층 마왕 처치 시 해금) ---------- */
+// 아틀라스 gun: 프레임마다 [x, y, 너비, 높이, 기준x(발 가운데), 기준y(발)] · 원본 몸은 오른쪽을 본다
+// i/w/a/r/h/d + 형태 번호 = 대기 · 이동 · 사격 · 재장전 · 피격 · 사망 · s2 = 구르기(최종 스킬) · b? = 날아가는 탄 · x? = 적중 이펙트 · tF/tB = 불씨탄 꼬리 · 공포탄 해골
+const GUNA = {"i0":[[0,0,52,92,18.0,90],[54,0,61,91,33.0,89],[117,0,53,91,31.0,89],[172,0,53,90,19.0,88]],"w0":[[227,0,80,91,53.0,89],[309,0,85,90,56.0,88],[396,0,86,90,58.0,88],[484,0,90,91,60.0,89],[576,0,88,89,56.0,87],[666,0,86,90,56.0,87]],"a0":[[754,0,94,93,18.0,92],[850,0,146,91,22.5,90],[998,0,126,96,35.0,95],[1126,0,153,96,24.0,95],[0,98,132,90,26.0,89],[134,98,121,89,36.0,88],[257,98,96,88,35.5,87]],"h0":[[355,98,69,88,41.0,86],[426,98,89,91,57.0,89],[517,98,71,69,27.0,67]],"d0":[[590,98,84,79,45.0,76],[676,98,84,71,51.0,70],[762,98,116,52,53.5,50],[880,98,129,65,69.0,61],[1011,98,169,91,78.0,87]],"i1":[[1182,98,90,125,38.0,124],[0,225,96,126,39.0,125],[98,225,88,124,43.0,123]],"w1":[[188,225,114,125,41.5,122],[304,225,101,128,26.0,126]],"a1":[[407,225,148,112,31.0,110],[557,225,140,118,34.0,116],[699,225,145,114,59.0,112],[846,225,145,115,39.0,113],[993,225,144,115,42.0,113],[1139,225,162,115,47.0,113],[0,355,140,114,44.0,112]],"r1":[[142,355,87,125,30.0,124],[231,355,87,127,46.0,126],[320,355,89,126,25.0,125],[411,355,91,128,47.0,126],[504,355,106,135,49.0,130],[612,355,119,129,53.5,127],[733,355,126,127,24.0,125]],"h1":[[861,355,93,120,60.0,119],[956,355,94,115,37.0,114],[1052,355,94,115,44.0,114]],"d1":[[1148,355,143,91,74.0,88],[0,492,144,87,71.0,84],[146,492,132,86,67.0,84]],"i2":[[280,492,114,104,40.0,102]],"w2":[[396,492,77,104,43.0,101],[475,492,67,102,37.0,100],[544,492,62,105,14.5,101],[608,492,56,104,18.0,100]],"a2":[[666,492,75,93,21.0,92],[743,492,91,93,31.0,92],[836,492,89,92,22.0,91],[927,492,95,93,52.0,92],[1024,492,88,92,45.0,91],[1114,492,87,93,24.0,92]],"r2":[[1203,492,82,115,30.5,109],[0,609,81,112,27.0,106],[83,609,94,113,30.0,111],[179,609,77,111,21.0,105],[258,609,81,110,50.0,104],[341,609,88,112,27.0,106]],"h2":[[431,609,82,95,29.0,93],[515,609,87,93,31.0,88],[604,609,99,92,33.0,89],[705,609,93,93,59.0,90],[800,609,108,93,38.0,89]],"d2":[[910,609,82,91,23.0,88],[994,609,109,75,55.0,72],[1105,609,134,92,68.0,88],[0,724,178,87,82.0,84]],"s2":[[180,724,184,81,100.0,80],[366,724,163,98,68.0,97],[531,724,136,92,77.0,91],[669,724,266,98,146.0,97],[937,724,147,98,54.0,97],[1086,724,140,98,47.0,97]],"bN":[[1228,724,48,23,24.0,11]],"bR":[[1278,724,46,23,23.0,11]],"bF":[[0,824,48,22,24.0,11]],"bB":[[50,824,47,22,23.5,11]],"xN":[[99,824,77,76,38.5,38],[178,824,80,64,40.0,32]],"xR":[[260,824,27,39,13.5,19],[289,824,33,37,16.5,18],[324,824,23,24,11.5,12]],"xF":[[349,824,92,67,46.0,33],[443,824,95,68,47.5,34]],"xB":[[540,824,81,58,40.5,29],[623,824,74,51,37.0,25]],"tF":[[699,824,42,55,21.0,27]],"tB":[[743,824,52,50,26.0,25],[797,824,80,74,40.0,37]]};
+// 탄환: 재장전할 때 6발이 하나씩 무작위로 정해진다 (불씨 각인 카드만큼 일반탄 → 불씨탄)
+const GUN_AMMO = {
+  N: { name: '일반탄', p: 0.55, dm: 1.0, rgb: '255,170,80', spr: 'bN', hit: 'xN' },
+  R: { name: '도탄', p: 0.25, dm: 1.0, rgb: '90,140,255', spr: 'bR', hit: 'xR', bounce: 3 },   // 적이나 화면 끝에 맞으면 튕긴다 (최대 3번)
+  F: { name: '불씨탄', p: 0.15, dm: 2.0, rgb: '255,60,50', spr: 'bF', hit: 'xF', burn: 3 },    // 2배 피해 · 관통 · 3초 지속 피해
+  B: { name: '공포탄', p: 0.05, dm: 0.1, rgb: '190,90,255', spr: 'bB', hit: 'xB' },          // 꽝 (10%)
+};
+const GUN = { mag: 6, reload: 1.0, sp: 900, burnK: 0.18 };   // 탄창 · 재장전(초) · 탄 속도 · 불씨 지속 피해(0.5초마다 공격력 비율)
+const GUN_FORMS = [
+  { src: 'gun', name: '악마 총잡이', ws: 0.82, flip: 1, hitF: 0, sh: 20, hy: 62, pv: GUNA.i0[0].slice(0, 4), rgb: '255,90,110', c1: '#ff5a6e', c2: '#ffd0d8',
+    L: { idle: 'i0', walk: 'w0', attack: 'a0', hit: 'h0', death: 'd0' }, anim: { idle: { n: 4, fps: 5 }, walk: { n: 6, fps: 10 }, attack: { n: 2, fps: 12 }, hit: { n: 3, fps: 14 }, death: { n: 5, fps: 7 } } },
+  { src: 'gun', name: '지옥의 무법자', ws: 0.7, flip: 1, hitF: 0, sh: 24, hy: 72, pv: GUNA.i1[0].slice(0, 4), rgb: '255,50,70', c1: '#ff3a4e', c2: '#ffc0c8',
+    L: { idle: 'i1', walk: 'w1', attack: 'a1', reload: 'r1', hit: 'h1', death: 'd1' }, anim: { idle: { n: 3, fps: 4 }, walk: { n: 2, fps: 5 }, attack: { n: 2, fps: 12 }, reload: { n: 7, fps: 7 }, hit: { n: 3, fps: 14 }, death: { n: 3, fps: 5 } } },
+  { src: 'gun', name: '악마처형자', ws: 0.86, flip: 1, hitF: 0, sh: 28, hy: 78, pv: GUNA.i2[0].slice(0, 4), rgb: '255,40,60', c1: '#ff2a44', c2: '#ffd27a',
+    L: { idle: 'i2', walk: 'w2', attack: 'a2', reload: 'r2', hit: 'h2', death: 'd2', roll: 's2' }, anim: { idle: { n: 1, fps: 4 }, walk: { n: 4, fps: 9 }, attack: { n: 2, fps: 12 }, reload: { n: 6, fps: 6 }, hit: { n: 5, fps: 16 }, death: { n: 4, fps: 5 }, roll: { n: 6, fps: 22 } } },
+];
+let gunFx = [], rollQ = null;
+const gunRange = () => (P.rng * 3.2 + 40) * (P.form >= 2 ? 1.06 : 1);   // 보통보다 조금 짧다 (궁수 480 · 마안 구슬 유령 430 · 총잡이 360)
+const gunReload = () => GUN.reload * (1 - 0.15 * (P.up.gReload | 0));
+const gunSpec = k => (k === 'R' || k === 'F') ? 1 + 0.15 * (P.up.gSpec | 0) : 1;
+function gunRoll1() {   // 탄 하나 뽑기
+  const f = GUN_AMMO.F.p + 0.05 * (P.up.gEmber | 0), r = rand();
+  return r < f ? 'F' : r < f + GUN_AMMO.R.p ? 'R' : r < f + GUN_AMMO.R.p + GUN_AMMO.B.p ? 'B' : 'N';
+}
+function gunLoad() { P.mag = []; for (let i = 0; i < GUN.mag; i++) P.mag.push(gunRoll1()); P.magI = 0; }
+function gunMuzzle() { const D = FD(); return [P.x + P.face * 34 * D.ws * 1.2, P.y - 50 * D.ws]; }
+function gunFire(k, ang, src) {   // 탄 한 발 발사
+  const A = GUN_AMMO[k], [ox, oy] = gunMuzzle(), sp = GUN.sp;
+  shards.push({ src, x: ox, y: oy, vx: Math.cos(ang) * sp, vy: Math.sin(ang) * sp, life: gunRange() / sp, pierce: k === 'F' ? 99 : k === 'R' ? 1 + A.bounce : 1, hit: new Set(), dmg: P.dmg * A.dm * gunSpec(k), gun: k, kb: k === 'F' ? 260 : 150, sz: 1, eb: 0 });
+  gunFx.push({ k: 'muz', x: ox, y: oy, t: 0, life: 0.1, rgb: A.rgb, ang });
+}
+function gunShot() {   // 평타: 탄창의 다음 탄을 쏜다 · 6발을 다 쓰면 재장전
+  if (!P.mag) gunLoad();
+  const R = gunRange(), t = nearestEnemy(R + 40), [ox, oy] = gunMuzzle();
+  const tx = t ? t.x : P.x + P.face * 200, ty = t ? t.y - t.r : oy;
+  if (Math.abs(tx - P.x) > 6) P.face = tx > P.x ? 1 : -1;
+  const k = P.mag[P.magI]; P.gShot = P.magI; P.magI++;
+  gunFire(k, Math.atan2(ty - oy, tx - ox), 'g:' + k);
+  sfx(k === 'B' ? 'hit' : 'shoot');
+  if (k === 'B' && rand() < 0.5) floatNum(P.x, P.y - 96, '공포탄…', '#d0a0ff');
+  if (P.magI >= GUN.mag) gunStartReload();
+}
+function gunStartReload() { P.reloadT = P.reloadMax = gunReload(); P.magI = GUN.mag; }
+function gunStep(dt) {   // 재장전 · 현상금 사냥 · 구르기
+  if (P.reloadT > 0) { P.reloadT -= dt; if (P.reloadT <= 0) { P.reloadT = 0; gunLoad(); sfx('item'); } }
+  if (P.bountyT > 0) { P.bountyT -= dt; if (P.bountyT <= 0) P.bountyN = 0; }
+  if (rollQ) {
+    rollQ.t -= dt;
+    const d = rollQ.d;
+    if (d) {
+      d.t += dt; const k = Math.min(1, d.t / d.dur), s = 210 / d.dur * (1 - k * 0.6) * dt / 0.7;   // 짧은 구르기 (약 210px)
+      P.x += d.ux * s; P.y += d.uy * s; P.inv = Math.max(P.inv, 0.12);
+      if (rand() < 0.6) fx.push({ x: P.x - d.ux * 20, y: P.y - 10 - rand() * 40, vx: -d.ux * 60, vy: -20, life: 0.35, max: 0.35, c: rand() < 0.5 ? '#ff2a44' : '#ffb0c0', s: 4 });
+      if (d.t >= d.dur) rollQ.d = null;
+    }
+    if (!rollQ.d && (rollQ.n <= 0 || rollQ.t <= 0)) { if (rollQ.n > 0 && rollQ.t <= 0) floatNum(P.x, P.y - 110, `구르기 ${rollQ.n}회 증발`, '#ff9aa8'); rollQ = null; }
+  }
+}
+function gunBounty() {   // 현상금 사냥: 처치할 때마다 이속 +2% 중첩 (1.5초 · 최대 3/5/7중첩)
+  const n = P.up.gBounty | 0; if (!n) return;
+  P.bountyN = Math.min(1 + 2 * n, (P.bountyN || 0) + 1); P.bountyT = 1.5;
+}
+const gunSpdMul = () => P.bountyT > 0 ? 1 + 0.02 * (P.bountyN || 0) : 1;
+function gunHit(s, e) {   // 탄이 적에게 맞았을 때: 이펙트 · 불씨 · 도탄
+  const A = GUN_AMMO[s.gun];
+  if (gunFx.length < 80) gunFx.push({ k: A.hit, x: e.x, y: e.y - e.r, t: 0, life: 0.32, i: (rand() * GUNA[A.hit].length) | 0 });
+  if (s.gun === 'F') { e.burnT = A.burn; e.burnD = P.dmg * GUN.burnK * gunSpec('F'); e.burnSrc = 'g:F'; }
+  if (s.gun === 'R' && s.pierce > 1) {   // 가까운 다른 적에게 튕긴다
+    let t2 = null, bd = 420 * 420;
+    for (const o of enemies) { if (o.hp <= 0 || o.invul || s.hit.has(o)) continue; const dd = (o.x - s.x) ** 2 + (o.y - o.r - s.y) ** 2; if (dd < bd) { bd = dd; t2 = o; } }
+    if (t2) { const dx = t2.x - s.x, dy = t2.y - t2.r - s.y, dl = Math.hypot(dx, dy) || 1; s.vx = dx / dl * GUN.sp; s.vy = dy / dl * GUN.sp; s.life = Math.max(s.life, 0.55); }
+    else s.pierce = 1;
+  }
+}
+function gunEdge(s) {   // 도탄: 화면 끝에 닿으면 튕긴다 (최대 2번)
+  if (s.eb >= 2) return;
+  const x0 = cam.x - W / 2, x1 = cam.x + W / 2, y0 = cam.y - H / 2, y1 = cam.y + H / 2;
+  let b = false;
+  if (s.x < x0 + 6 && s.vx < 0 || s.x > x1 - 6 && s.vx > 0) { s.vx = -s.vx; b = true; }
+  if (s.y < y0 + 6 && s.vy < 0 || s.y > y1 - 6 && s.vy > 0) { s.vy = -s.vy; b = true; }
+  if (b) { s.eb++; s.life = Math.max(s.life, 0.5); if (gunFx.length < 80) gunFx.push({ k: 'xR', x: s.x, y: s.y, t: 0, life: 0.25, i: 2 }); }
+}
+/* 최종 스킬: 구르기 — 4초 안에 3번 · 첫 구르기 때 남은 탄을 전부 쏘고 재장전 */
+const ROLL = { n: 3, win: 4, dur: 0.26 };
+function gunRollStart() {
+  rollQ = { n: ROLL.n, t: ROLL.win, d: null, first: true };
+  banner = { txt: '구르기!  4초 안에 SPACE로 2번 더 구를 수 있어요', t: 2.2, c: '#ffb0c0' };
+  gunRoll();
+}
+function gunRoll() {
+  if (!rollQ || rollQ.n <= 0 || rollQ.d || state !== 'play') return;
+  let ux = P.face || 1, uy = 0;
+  if (P.moving) { const l = Math.hypot(P.lastX, P.lastY) || 1; ux = P.lastX / l; uy = P.lastY / l; }
+  if (Math.abs(ux) > 0.2) P.face = ux > 0 ? 1 : -1;
+  rollQ.n--; rollQ.d = { t: 0, dur: ROLL.dur, ux, uy };
+  P.inv = Math.max(P.inv, ROLL.dur + 0.1); P.atkTimer = -1; sfx('skill');
+  if (gunFx.length < 80) gunFx.push({ k: 'roll', x: P.x, y: P.y, t: 0, life: 0.35, f: P.face });
+  if (rollQ.first) { rollQ.first = false; gunDump(); }
+}
+function gunDump() {   // 탄창에 남은 탄을 한꺼번에 쏜다 (가까운 적들에게 나눠서) → 재장전
+  if (!P.mag) gunLoad();
+  const left = P.reloadT > 0 ? [] : P.mag.slice(P.magI), T = [];
+  for (const e of enemies) if (e.hp > 0 && !e.invul && Math.hypot(e.x - P.x, e.y - P.y) < gunRange() + 80) T.push(e);
+  T.sort((a, b) => Math.hypot(a.x - P.x, a.y - P.y) - Math.hypot(b.x - P.x, b.y - P.y));
+  const [ox, oy] = gunMuzzle();
+  left.forEach((k, i) => {
+    const t = T[i % Math.max(1, T.length)], a = t ? Math.atan2(t.y - t.r - oy, t.x - ox) + (rand() - 0.5) * 0.06 : (P.face > 0 ? 0 : Math.PI) + (i - (left.length - 1) / 2) * 0.12;
+    gunFire(k, a, 'sk:roll');
+  });
+  if (left.length) { floatNum(P.x, P.y - 104, `${left.length}발 난사!`, '#ffd27a'); shake = Math.max(shake, 5); }
+  if (P.reloadT <= 0) gunStartReload();
+}
+function updateGunFx(dt) { for (const q of gunFx) q.t += dt; gunFx = gunFx.filter(q => q.t < q.life); }
+/* --- 그리기 --- */
+function gunSpr(k, i, x, y, s, face, alpha, add) {
+  const L = GUNA[k], r = L && L[Math.min(L.length - 1, i)], img = IMG.gun; if (!r || !img) return;
+  const H = hq(img), K = H.width / img.width;
+  ctx.save(); ctx.translate(Math.round(x), Math.round(y)); if (face < 0) ctx.scale(-1, 1); ctx.imageSmoothingEnabled = true; ctx.imageSmoothingQuality = 'high';
+  if (alpha < 1) ctx.globalAlpha = Math.max(0, alpha); if (add) ctx.globalCompositeOperation = 'lighter';
+  ctx.drawImage(H, r[0] * K, r[1] * K, r[2] * K, r[3] * K, -r[4] * s, -r[5] * s, r[2] * s, r[3] * s); ctx.restore();
+}
+function gunFrame() {   // 지금 그릴 [목록, 칸]
+  const D = FD(), L = D.L, an = P.anim, a = D.anim[an] || D.anim.idle;
+  if (an === 'roll') return [L.roll, Math.min(5, Math.floor(rollQ && rollQ.d ? rollQ.d.t / rollQ.d.dur * 6 : 5))];
+  if (an === 'attack' || an === 'atkMove') {   // 사격: 몇 번째 탄인지에 맞는 칸 (총구 불꽃) → 겨눈 자세
+    const n = GUNA[L.attack].length, s = P.gShot | 0, fire = P.atkTimer < 0.09;
+    return [L.attack, P.form >= 2 ? Math.min(n - 1, s) : fire ? 1 + s % (n - 1) : 0];
+  }
+  if (an === 'reload' && L.reload) return [L.reload, Math.min(GUNA[L.reload].length - 1, Math.floor((1 - P.reloadT / (P.reloadMax || 1)) * GUNA[L.reload].length))];
+  const k = L[an] || L.idle, n = GUNA[k].length, f = Math.floor(P.animT * a.fps);
+  return [k, an === 'idle' || an === 'walk' ? f % n : Math.min(n - 1, f)];
+}
+function drawGun(x, y) {
+  const D = FD(), [k, f] = gunFrame(), r = GUNA[k][f], ws = D.ws * (evo && !evo.swapped ? 1 + Math.sin(evo.t * 20) * 0.03 : 1);
+  const bob = P.anim === 'idle' && P.form >= 1 ? Math.round(Math.sin(P.animT * 3) * 1.5) : P.anim === 'walk' && GUNA[k].length <= 2 ? -Math.abs(Math.round(Math.sin(P.animT * 10) * 3)) : 0;
+  const blink = P.inv > 0 && P.inv < 5 && P.anim !== 'death' && P.anim !== 'roll' && Math.floor(wallT * 22) % 2 === 0;
+  P.hpTop = y + bob - r[5] * ws + sprTop(IMG.gun, r[0], r[1], r[2], r[3]) * ws;
+  gunSpr(k, f, x, y + bob, ws, P.face * D.flip, blink ? 0.5 : 1, false);
+  if (P.anim !== 'death' && P.mag) drawGunMag(x, P.hpTop - 22);   // 머리 위 체력바(hpTop - 10) 바로 위
+  if (rollQ && rollQ.n > 0 && !rollQ.d) {   // 남은 구르기 · 시간
+    ctx.save(); ctx.font = 'bold 13px "Malgun Gothic", monospace'; ctx.textAlign = 'center'; ctx.lineWidth = 3; ctx.strokeStyle = '#120406'; ctx.fillStyle = '#ffb0c0';
+    const t = `구르기 ${rollQ.n} · ${rollQ.t.toFixed(1)}초`; ctx.strokeText(t, x, P.hpTop - 30); ctx.fillText(t, x, P.hpTop - 30); ctx.restore();
+  }
+}
+function drawGunMag(x, y) {   // 머리 위 탄창: 남은 탄은 색깔대로 · 재장전 중엔 차오르는 막대
+  ctx.save();
+  if (P.reloadT > 0) {
+    const w = 46, p = 1 - P.reloadT / (P.reloadMax || 1);
+    ctx.fillStyle = 'rgba(10,4,8,0.8)'; ctx.fillRect(x - w / 2 - 1, y - 1, w + 2, 6); ctx.fillStyle = '#ffd27a'; ctx.fillRect(x - w / 2, y, w * p, 4);
+  } else for (let i = 0; i < GUN.mag; i++) {
+    const k = P.mag[i], used = i < P.magI, bx = x - 25 + i * 9;
+    ctx.fillStyle = used ? 'rgba(40,30,36,0.7)' : `rgb(${GUN_AMMO[k].rgb})`; ctx.fillRect(bx, y - 2, 6, 7);
+    if (!used) { ctx.fillStyle = 'rgba(255,255,255,0.55)'; ctx.fillRect(bx + 1, y - 1, 2, 2); }
+  }
+  ctx.restore();
+}
+function drawGunBullet(s) {   // 날아가는 탄 (회전된 좌표에서) + 꼬리
+  const A = GUN_AMMO[s.gun];
+  ctx.globalCompositeOperation = 'lighter';
+  const g = ctx.createLinearGradient(-60, 0, 0, 0); g.addColorStop(0, `rgba(${A.rgb},0)`); g.addColorStop(1, `rgba(${A.rgb},0.75)`);
+  ctx.fillStyle = g; ctx.fillRect(-60, -2.5, 60, 5);
+  ctx.rotate(0); const r = GUNA[A.spr][0], img = IMG.gun; if (img) { ctx.imageSmoothingEnabled = true; ctx.drawImage(img, r[0], r[1], r[2], r[3], -r[2] * 0.3, -r[3] * 0.3, r[2] * 0.6, r[3] * 0.6); }
+  if (s.gun === 'F' && img) { const t = GUNA.tF[0]; ctx.globalAlpha = 0.8; ctx.drawImage(img, t[0], t[1], t[2], t[3], -t[2] * 0.75, -t[3] * 0.3, t[2] * 0.6, t[3] * 0.6); ctx.globalAlpha = 1; }
+}
+function drawGunFx(wx, wy) {
+  if (!gunFx.length || !IMG.gun) return;
+  for (const q of gunFx) {
+    const p = q.t / q.life, x = wx(q.x), y = wy(q.y);
+    if (q.k === 'muz') {   // 총구 불꽃
+      ctx.save(); ctx.globalCompositeOperation = 'lighter'; const g = ctx.createRadialGradient(x, y, 1, x, y, 22); g.addColorStop(0, `rgba(255,240,200,${0.9 * (1 - p)})`); g.addColorStop(1, `rgba(${q.rgb},0)`); ctx.fillStyle = g; ctx.fillRect(x - 22, y - 22, 44, 44); ctx.restore();
+    } else if (q.k === 'roll') {   // 구르기 잔상
+      gunSpr('s2', Math.min(5, Math.floor(p * 6)), x, y, FD().ws, q.f, 0.35 * (1 - p), true);
+    } else gunSpr(q.k, q.i || 0, x, y, 0.55 * (0.8 + 0.5 * p), 1, 1 - p * p, true);
+  }
+}
+const FORMS = { gun: GUN_FORMS, wolf: WOLF_FORMS, snail: SNAIL_FORMS, archer: ARCHER_FORMS, chimera: CHIM_FORMS, lizard: [LIZ_FORMS[0], LIZ_FORMS[1], LIZ_FORMS.rage], twins: TWIN_FORMS, ghost: GHOST_FORMS, octo: OCTO_FORMS };
 // 편의: 현재 캐릭터·형태의 설정 / 이펙트 색
 const FD = () => P.char === 'wolf' ? routeForm(P.route, P.form) : P.char === 'archer' ? archerForm(P.route, P.form) : P.char === 'snail' ? snailForm(P.route, P.form) : P.char === 'chimera' ? chimForm(P.route, P.form) : P.char === 'lizard' ? lizForm(P.route, P.form) : (P.char === 'octo' && P.form >= 2 && octoSkin) ? OCTO_SKIN : FORMS[P.char][P.form];
 const formAt = f => P.char === 'wolf' ? routeForm(P.route, f) : P.char === 'archer' ? archerForm(P.route, f) : P.char === 'snail' ? snailForm(P.route, f) : P.char === 'chimera' ? chimForm(P.route, f) : P.char === 'lizard' ? lizForm(P.route, f) : (P.char === 'octo' && f >= 2 && octoSkin) ? OCTO_SKIN : FORMS[P.char][f];
@@ -459,13 +638,14 @@ const SNAIL_ROUTES = {
 //  높음 → 길게: 용암 대분출 18 · 천안 난무 15 · 광란 14 · 사슬 휘두르기 12 · 혈왕의 진 13
 //  중간      : 신성한 피의 비 12 · 피의 갈취 11 · 삼두 연쇄 물기 10 · 신성화살 12 · 물의 주술 16 (회복량을 줄이고 자주 쓰게)
 //  낮음 → 짧게: 폭발 화살 6 · 큰 화살/후방 도약 7 · 울부짖음 8 · 독 자국 폭파 8 · 천공 강하 8 · 화염 브레스 9
-const SKILL_CD = { megabomb: 11, shell: 16, ele: 12, otent: 15, gcharge: 9, gsummon: 24, lavaburst: 18, rush: 15, rage: 14, whip: 12, bsigil: 11, bloodrain: 12, drain: 11, cerb: 10, holyshot: 12, tide: 16, bombshot: 6, bigarrow: 7, backdash: 7, howl: 8, blast: 8, dive: 8, breath: 9, laser: 10, zone: 10, meteor: 10 };
+const SKILL_CD = { roll: 11, megabomb: 11, shell: 16, ele: 12, otent: 15, gcharge: 9, gsummon: 24, lavaburst: 18, rush: 15, rage: 14, whip: 12, bsigil: 11, bloodrain: 12, drain: 11, cerb: 10, holyshot: 12, tide: 16, bombshot: 6, bigarrow: 7, backdash: 7, howl: 8, blast: 8, dive: 8, breath: 9, laser: 10, zone: 10, meteor: 10 };
 const skillCd = () => ((window.__SKCD && window.__SKCD[P.skill]) || SKILL_CD[P.skill] || 14);
 const SKILL_UNIQUE = { wolf: 'howl', snail: 'blast', archer: 'bigarrow', chimera: 'dive', lizard: 'rage', twins: 'whip' };
 const uniqueSkill = () => (P.char === 'chimera' && P.route === 'dream') ? 'rush' : (P.char === 'chimera' && P.route === 'flame') ? 'breath' : (P.char === 'snail' && P.route === 'lava') ? 'lavaburst' : (P.char === 'snail' && P.route === 'bomb') ? 'megabomb' : (P.char === 'wolf' && P.route === 'twin') ? 'cerb' : (P.char === 'wolf' && P.route === 'crimson') ? (P.fin === 'holy' ? 'bloodrain' : P.fin === 'fallen' ? 'bsigil' : 'drain') : SKILL_UNIQUE[P.char];
-const uniqueSkills = () => P.char === 'octo' ? [P.form >= 2 ? 'otent' : 'ele'] : P.char === 'ghost' ? [P.form >= 2 ? 'gsummon' : 'gcharge'] : P.char === 'lizard' ? [P.fin === 'guard' ? 'shell' : P.fin === 'water' ? 'tide' : 'rage'] : P.char === 'archer' ? (P.route === 'elf' && P.fin ? [P.fin === 'holy' ? 'holyshot' : 'bombshot'] : ['bigarrow', 'backdash']) : [uniqueSkill()];
+const uniqueSkills = () => P.char === 'gun' ? ['roll'] : P.char === 'octo' ? [P.form >= 2 ? 'otent' : 'ele'] : P.char === 'ghost' ? [P.form >= 2 ? 'gsummon' : 'gcharge'] : P.char === 'lizard' ? [P.fin === 'guard' ? 'shell' : P.fin === 'water' ? 'tide' : 'rage'] : P.char === 'archer' ? (P.route === 'elf' && P.fin ? [P.fin === 'holy' ? 'holyshot' : 'bombshot'] : ['bigarrow', 'backdash']) : [uniqueSkill()];
 const skillName = k => (k === 'blast' && P.char === 'snail' && P.form === 2) ? '맹독 대폭파' : (k === 'bigarrow' && P.route === 'skel') ? '해골 대궁의 일격' : SKILLS[k].name;
 const SKILLS = {
+  roll:   { name: '구르기', desc: '[악마처형자 전용] 4초 동안 짧게 3번 구를 수 있습니다 (SPACE를 다시 누를 때마다 한 번). 첫 구르기 때 탄창에 남은 탄을 모두 쏘고 바로 재장전합니다. 구르는 동안 무적.', sub: '3회 · 4초 안에 다 쓰지 않으면 증발 · 첫 구르기 = 남은 탄 난사' },
   cerb:   { name: '삼두 연쇄 물기', desc: '[삼두 전용] 세 머리가 가까운 적을 차례로 물어뜯습니다. 한 번마다 범위 피해와 강한 넉백, 둔화.', sub: '3연속 · 서로 다른 적 · 범위 피해' },
   drain:  { name: '피의 갈취', desc: '[혈랑 전용] 사방의 적에게서 피를 짜내 큰 피해를 주고, 맞힌 적 수만큼 체력을 회복합니다.', sub: '반경 400 · 적 1마리당 체력 +2% (최대 15%)' },
   bloodrain: { name: '신성한 피의 비', desc: '[성혈랑 전용] 3초 동안 성스러운 핏빛 기둥이 적들 위로 연달아 내리꽂히며, 명중할 때마다 체력을 조금 회복합니다. 맞은 적은 2초간 느려집니다.', sub: '기둥 16개 · 범위 피해 · 명중 시 회복 · 둔화' },
@@ -524,7 +704,7 @@ const SAVE_KEY = 'hellSurvivorSave1';
 const SAVE_DEF = () => ({
   shards: 0,
   perks: { hp: 0, spd: 0, dmg: 0, exp: 0, magnet: 0, banish: 0, revive: 0, regen: 0, shard: 0, critd: 0, choice: 0 },
-  chars: { wolf: true, snail: true, archer: false, chimera: false, lizard: false, twins: false, ghost: false, octo: false },
+  chars: { wolf: true, snail: true, archer: false, chimera: false, lizard: false, twins: false, ghost: false, octo: false, gun: false },
   dex: { seen: {}, kills: {}, final: {}, goals: 0 },
   diff: { max: 0, sel: 0, fw: false },
   holyBlood: false,   // v6.03: 신성한 피를 먹었다 (성혈랑 최종 진화 해금)
@@ -575,6 +755,7 @@ const CHARS = {
   twins: { role: '기동형 사슬 근접', weak: '멈추면 딜이 안 나온다 (자동 공격 없음)', name: '사슬 악마', price: 0, cond: '벨리아·셀리아 둘 다 처치하면 해금', desc: '부서진 사슬을 쥔 작고 불완전한 악마.<br>직접 공격하지 않고, 움직일수록 사슬 끝 창날이 휘둘리며 적을 친다.', ally: '특징: 자동 공격 없음 · 이속이 곧 공격력 · Lv.10 사슬 두 가닥 + 스킬' },
   ghost: { role: '부채꼴 다발 사격', weak: '구슬 하나하나가 약하고 멀면 약하다', name: '연보라 구슬 유령', price: 0, cond: '지하 2~6층 마왕을 쓰러뜨리면 10% 확률로 떨어지는 [보라구슬]을 먹는다', desc: '저승의 기운이 맺힌 연보라 구슬을 앞쪽으로 흩뿌리는 유령.<br>구슬 하나는 약하지만 여러 개가 한꺼번에 날아간다.<br>Lv.10 연보라 총령 (큰 구슬 · 차지 샷) → Lv.20 수호령의 총령 (대신 맞고 터지는 수호령)', ally: '특징: 부채꼴 다발 사격 · 가까울수록 많이 맞힌다 · (진화는 아직 없음)' },
   octo: { role: '직선 마법 · 구체 성장형', weak: '직선 탄이라 빗나가기 쉽고 초반이 약하다', name: '문어 마법사', price: 0, hidden: true, cond: '지하 3층 이상에서 나오는 히든 마물 [문어 마법사]를 쓰러뜨리면 해금', desc: '책과 등불을 든 어린 문어 마법사.<br>곧게 날아가는 마법탄을 쏘고, 증강(스킬 카드)을 고를 때마다 몸 주위를 도는 마력 구체가 하나씩 늘어난다.', ally: '특징: 구체가 점점 늘어남 · Lv.10 진화 + 스킬 [코끼리 돌진] · Lv.20 스킬이 [문어의 심연]으로 바뀜' },
+  gun: { role: '한 발이 강한 리볼버 (보스에 강함)', weak: '느리고 체력이 낮다 · 몹 무리에 약하다', name: '악마 총잡이', price: 0, cond: '지하 6층 마왕을 쓰러뜨리면 해금', desc: '아무것도 기억하지 못하는 어린 악마. 리볼버 6발을 한 발씩 쏘고, 다 쓰면 1초 동안 재장전한다.<br>재장전할 때마다 탄 6발이 무작위로 정해진다: 일반탄 55% · 도탄 25%(튕김) · 불씨탄 15%(2배 · 관통 · 화상) · 공포탄 5%(꽝).<br>Lv.10 지옥의 무법자 → Lv.20 악마처형자 (스킬 [구르기])', ally: '특징: 한 발이 강한 원거리 · 탄 운 · Lv.20 스킬 구르기 3회' },
 };
 
 /* ---------- 소리 (파일 없이 WebAudio로 합성) ---------- */
@@ -800,7 +981,7 @@ function bmapS() {   // 제단 맵: 한 번만 1.25배로 키워 둔다 (2배 �
 function startTrans(cb) { if (!trans) trans = { t: 0, dur: 1.0, cb, done: false }; }
 function placeAllies() { allies.forEach((a, i) => { a.x = P.x + (i - 1.5) * 40; a.y = P.y + 30; }); if (P.pet) { P.pet.x = P.x - 56; P.pet.y = P.y + 24; P.pet.act = null; } }
 function clearField() {   // 마왕전 입장처럼 맵을 옮길 때: 필드의 적 · 탄 · 장판 · 진행 중인 스킬 · 보스 이펙트를 모두 비운다
-  mini = null; mdeath = null; enemies = []; orbs = []; items = []; zones = []; shards = []; globs = []; beam = null; meteorQ = null; cerbQ = null; rainQ = null; bigQ = null; dashQ = null; ebul = []; airs = []; diveQ = null; breathQ = null; rushQ = null; bombQ = null; holyQ = null; afx = []; bombT = []; slots = []; lasers = []; udeath = []; bsig = null; cutSaws = []; fwFx = []; fwd = null; anOrbs = []; anFx = [];
+  mini = null; mdeath = null; enemies = []; orbs = []; items = []; zones = []; shards = []; globs = []; beam = null; meteorQ = null; cerbQ = null; rainQ = null; bigQ = null; dashQ = null; ebul = []; airs = []; diveQ = null; breathQ = null; rushQ = null; bombQ = null; holyQ = null; afx = []; bombT = []; slots = []; lasers = []; udeath = []; bsig = null; cutSaws = []; fwFx = []; fwd = null; anOrbs = []; anFx = []; gunFx = []; rollQ = null;
 }
 function enterArena() {
   if (trans) return;
@@ -2375,6 +2556,7 @@ function bossDefeated() {
   banner = { txt: '마왕을 쓰러뜨렸다!', t: 6 };
   const refund = P.fee || 0; P.earned = calcShards() + Math.round(150 * tierMul()) + refund; SAVE.shards += P.earned;   // 클리어 보너스 +150 (단계 배율) + 참가비 반환
   P.unlocked = 0; if (P.tier === SAVE.diff.max && SAVE.diff.max < 5) { SAVE.diff.max = P.tier + 1; P.unlocked = SAVE.diff.max; }
+  P.gunOpen = false; if (P.tier >= 5 && !SAVE.chars.gun) { SAVE.chars.gun = true; P.gunOpen = true; }   // v6.40: 악마 총잡이 해금
   P.chOpen = false; if (P.tier >= 5) { const was = chOpen(); SAVE.ch.open = true; P.chOpen = !was; }   // v6.20: 5단계 클리어 → 챌린지 모드
   SAVE.fw.snap = snapP();   // 숨은 난이도용: 마지막으로 마왕을 쓰러뜨린 스펙
   if (P.char === 'wolf' && P.route === 'crimson' && (P.fin === 'blood' || P.fin === 'holy')) SAVE.fw.wins[P.fin] = 1;
@@ -2816,6 +2998,7 @@ function newPlayer(char) {
   if (char === 'chimera') { p.max = p.hp = 105; p.spd = 205; p.dmg = 17; p.cd = 0.85; p.rng = 98; p.pickup = 90; }
   if (char === 'twins') { p.max = p.hp = 108; p.spd = 212; p.dmg = 17.5; p.cd = 1.0; p.rng = 100; p.pickup = 90; p.knock += 0.1; p.tw = { x: -70, y: 10, vx: 0, vy: 0, dir: 1, spd: 0, ang: 0 }; }   // 사슬 악마: 빠르고 약하다, 사슬 끝 창날(tw)은 본체 기준 상대 위치로 시작
   if (char === 'octo') { p.max = p.hp = 105; p.spd = 195; p.dmg = 20; p.cd = 1.15; p.rng = 100; p.pickup = 92; p.orbsN = 1; p.orbD = 0.40; }   // v5.17: 느리고 큰 마력탄 · 구체 피해 소폭 하향 (45% → 40%)   // 문어 마법사: 직선 마법탄 + 늘어나는 구체
+  if (char === 'gun') { p.max = p.hp = 100; p.spd = 185; p.dmg = 30; p.cd = 0.34; p.rng = 100; p.pickup = 92; p.mag = null; p.magI = 0; p.reloadT = 0; p.reloadMax = 1; p.gShot = 0; p.bountyN = 0; p.bountyT = 0; }   // 악마 총잡이: 체력 낮음 · 느림 · 한 발이 강하다 (6발마다 재장전 1초)
   if (char === 'ghost') { p.max = p.hp = 100; p.spd = 210; p.dmg = 15; p.cd = 0.65; p.rng = 100; p.pickup = 95; p.gOrbs = 5; }   // 구슬 유령: 약한 구슬 여러 개
   if (char === 'lizard') { p.max = p.hp = 112; p.spd = 163; p.dmg = 21; p.cd = 1.12; p.rng = 92; p.pickup = 90; p.armor = 0.85; p.knock += 0.15; }   // 느리고 단단하지만 한 방이 강하다
   const pk = SAVE.perks;   // 상점에서 산 영구 강화 적용
@@ -2833,7 +3016,7 @@ function reset(char) {
   { const n = rand() < 0.5 ? 2 : 3; slotPlan = []; let t0 = 75 + rand() * 40; for (let i = 0; i < n; i++) { slotPlan.push(t0); t0 += 120 + rand() * 60; } }   // 잭팟 머신: 판당 2~3번
   embers = Array.from({ length: 70 }, () => ({ x: rand() * W, y: rand() * H, v: 12 + rand() * 30, d: rand() * 6.28, s: 1 + ((rand() * 2) | 0) }));
   fwd = null; fwFx = []; bsig = null; chal = null; cutSaws = [];
-  gt = 0; darkT = 0; smokes = []; mini = null; mdeath = null; mfx = []; skDead = []; skp = []; skSp = []; skDeath = null; anOrbs = []; anFx = []; anDeath = null; spawnT = 0.4; deadT = 0; overShown = false; shake = 0; castle = null; arena = null; trans = null; banner = null; boss = null; winT = 0;
+  gt = 0; darkT = 0; smokes = []; mini = null; mdeath = null; mfx = []; skDead = []; skp = []; skSp = []; skDeath = null; anOrbs = []; anFx = []; anDeath = null; gunFx = []; rollQ = null; spawnT = 0.4; deadT = 0; overShown = false; shake = 0; castle = null; arena = null; trans = null; banner = null; boss = null; winT = 0;
   cam.x = 0; cam.y = 0;
   nextGoal();
 }
@@ -2965,7 +3148,7 @@ function hurtEnemy(e, dmg, kx, ky, kn, quiet) {
   else if (!quiet || rand() < 0.15) floatNum(e.x, e.y - e.r * 2, Math.round(dmg), crit ? '#ff2a2a' : '#ffe0a0');   // v5.11: 치명타는 빨간색
   if (!quiet) burst(e.x, e.y - e.r, 4, ['#8a0f1c', '#c8283a', '#ff6a1c'], 140, 0.45);
   if (e.hp <= 0) {
-    P.kills++;
+    P.kills++; if (P.up.gBounty) gunBounty();
     if (SAVE.ch.tr.rat && P.kills % 100 === 0) { P.max += 1; P.hp = Math.min(P.max, P.hp + 1); floatNum(P.x, P.y - 100, '쥐 이빨 목걸이  최대 체력 +1', '#ffd0a0'); }   // 보물
     dexKill(e.kind === 'boss' ? dexBoss(e) : e.kind === 'mini' ? (e.bk === 'eye' ? 'mini2' : e.bk === 'cut' ? 'cut' : e.sk ? 'skw' : 'mini') : e.kind === 'abm' ? 'abm' : e.kind === 'bug' ? 'bug' : e.kind === 'uniq' ? 'uq:' + e.uk : (e.kind === 'skh' || e.kind === 'skm') ? 'skx' : 'm' + e.spec.idx);
     if (e.kind === 'boss') { markDex(dexBoss(e), 1); if (e.bk === 'fw') fwBossDefeated(e); else bossDefeated(); return; }
@@ -3293,16 +3476,16 @@ const AU = n => ({ R: 95 + 22 * n, dm: 0.45 + 0.13 * n });   // v4.13 대폭 상
 // txt(n): n레벨이 되었을 때의 효과 한 줄 / alt: 캐릭터별 [이름, 효과]
 const UPGRADES = [
   { id: 'claw',   name: '날카로운 발톱', txt: () => '공격력 +16%',      apply: p => { p.dmg *= 1.16; },
-    alt: { octo: ['마력 증폭', '마력탄 · 구체 피해 +16%'], lava: ['용암 강화', '공격력 +16% (용암탄 · 흔적 모두)'], snail: ['맹독 강화', '공격력 +16% (독 침 · 독 자국 모두)'], archer: ['화살 강화', '화살 피해 +16%'], lizard: ['대검 단련', '공격력 +16%'], twins: ['악마의 분노', '공격력 +16%'], ghost: ['진한 저승 기운', '구슬 피해 +16%'] } },
+    alt: { gun: ['강화 화약', '탄환 피해 +16%'], octo: ['마력 증폭', '마력탄 · 구체 피해 +16%'], lava: ['용암 강화', '공격력 +16% (용암탄 · 흔적 모두)'], snail: ['맹독 강화', '공격력 +16% (독 침 · 독 자국 모두)'], archer: ['화살 강화', '화살 피해 +16%'], lizard: ['대검 단련', '공격력 +16%'], twins: ['악마의 분노', '공격력 +16%'], ghost: ['진한 저승 기운', '구슬 피해 +16%'] } },
   { id: 'speed',  name: '날렵한 발톱',   txt: () => '공속 +12%',        apply: p => { p.aspd += 0.12; },
-    alt: { octo: ['고속 영창', '공속 +12%'], snail: ['빠른 분비', '공속 +12%'], archer: ['속사', '공속 +12%'], lizard: ['가벼운 휘두르기', '공속 +12%'], twins: ['빠른 손놀림', '타격 간격 -11%'], ghost: ['빠른 손짓', '공속 +12%'] } },
+    alt: { gun: ['빠른 방아쇠', '사격 속도 +12% (재장전은 그대로)'], octo: ['고속 영창', '공속 +12%'], snail: ['빠른 분비', '공속 +12%'], archer: ['속사', '공속 +12%'], lizard: ['가벼운 휘두르기', '공속 +12%'], twins: ['빠른 손놀림', '타격 간격 -11%'], ghost: ['빠른 손짓', '공속 +12%'] } },
   { id: 'move',   name: '질주',          txt: () => '이속 +7.5%',       apply: p => { p.spd *= 1.075; },
     alt: { octo: ['물결 걸음', '이속 +7.5%'], snail: ['미끄러운 점액', '이속 +7%'], archer: ['바람의 걸음', '이속 +7%'] } },
   { id: 'heart',  name: '지옥의 심장',   txt: () => '최대 체력 +16',    apply: p => { p.max += 16; p.hp = Math.min(p.max, p.hp + 24); },
     alt: { octo: ['두꺼운 먹물막', '최대 체력 +16'], snail: ['단단한 껍질', '최대 체력 +16'], archer: ['엘프의 끈기', '최대 체력 +16'] } },
   { id: 'magnet', name: '영혼 자석',     txt: () => '흡수 범위 +60% · 끌어당기는 속도 +60%',   apply: p => { p.pickup *= 1.6; p.magPull = (p.magPull || 1) + 0.6; }, alt: { octo: ['마력 끌림', '흡수 범위 +60% · 끌어당기는 속도 +60%'] } },
   { id: 'range',  name: '넓은 발톱',     txt: () => '범위 +12%',        apply: p => { p.rng *= 1.12; },
-    alt: { octo: ['먼 마법진', '마력탄 사거리 +12%'], lava: ['넓은 용암탄', '용암탄이 터지는 범위 +12%'], bomb: ['큰 화약', '폭탄 폭발 범위 +12%'], snail: ['넓은 독 침', '독 침이 터지는 범위 +12%'], archer: ['먼 곳 조준', '사거리 +12%'], lizard: ['넓은 휘두르기', '범위 +12%'], twins: ['긴 사슬', '사슬 길이 +12%'], ghost: ['멀리 뿌리기', '사거리 +12%'] } },
+    alt: { gun: ['긴 총열', '사거리 +12%'], octo: ['먼 마법진', '마력탄 사거리 +12%'], lava: ['넓은 용암탄', '용암탄이 터지는 범위 +12%'], bomb: ['큰 화약', '폭탄 폭발 범위 +12%'], snail: ['넓은 독 침', '독 침이 터지는 범위 +12%'], archer: ['먼 곳 조준', '사거리 +12%'], lizard: ['넓은 휘두르기', '범위 +12%'], twins: ['긴 사슬', '사슬 길이 +12%'], ghost: ['멀리 뿌리기', '사거리 +12%'] } },
   { id: 'orb',    noChar: 'octo', name: '지옥불 구슬',   txt: () => '불꽃 구슬 +1 (공격력의 55%)', apply: p => { p.orbsN++; } },
   { id: 'shard',  name: '뼈 투사체',     txt: () => '뼈 투사체 +1발 (공격력의 88%) · 적에게 1회 튕김', apply: p => { p.shardN++; },
     alt: { octo: ['먹물 탄', '먹물 탄 +1발 (공격력의 88%) · 적에게 1회 튕김'], lava: ['용암 파편', '용암 파편 +1발 (공격력의 88%) · 적에게 1회 튕김'], snail: ['독가시', '독가시 +1발 (공격력의 88%) · 적에게 1회 튕김'], archer: ['추적 화살', '추적 화살 +1발 (공격력의 70%) · 적에게 1회 튕김'] } },
@@ -3340,6 +3523,12 @@ const UNIQUE = {
     { id: 'rageUp', name: '끝없는 광란', form: 2, fin: 'rage', needSkill: 'rage', max: 3, txt: () => '광란 지속 +1초 · 광란 중 공속 +8%', apply: () => {} },
     { id: 'shellUp', name: '갑주 단련', form: 2, fin: 'guard', needSkill: 'shell', max: 2, txt: () => '반격의 갑주 +0.5초 · 반사 피해 +0.25배 (보스에게는 추가로 최대 체력 비례 피해)', apply: () => {} },
     { id: 'tideUp', name: '깊은 물결', form: 2, fin: 'water', needSkill: 'tide', max: 3, txt: () => '물의 주술 회복량 +5%p', apply: () => {} },
+  ],
+  gun: [
+    { id: 'gReload', name: '빠른 장전', max: 3, txt: n => `재장전 시간 -15% (1초 → ${(1 - 0.15 * n).toFixed(2)}초)`, apply: () => {} },
+    { id: 'gSpec', name: '특수탄 강화', max: 3, txt: n => `불씨탄 · 도탄 피해 +15% (합계 +${15 * n}%)`, apply: () => {} },
+    { id: 'gEmber', name: '불씨 각인', max: 3, txt: n => `불씨탄 확률 +5%p (${15 + 5 * n}% · 일반탄 ${55 - 5 * n}%)`, apply: () => {} },
+    { id: 'gBounty', name: '현상금 사냥', max: 3, txt: n => `처치할 때마다 1.5초 동안 이속 +2% (최대 ${1 + 2 * n}중첩)`, apply: () => {} },
   ],
   ghost: [
     { id: 'gmore', name: '구슬 늘리기', max: 3, txt: () => '한 번에 뿌리는 구슬 +1개 · 구슬 피해 +5%', apply: () => {} },
@@ -3486,6 +3675,9 @@ function levelUp() {
   } else if (P.char === 'octo') {   // Lv.10 진화(코끼리 돌진) · Lv.20 최종(모습 그대로 · 문어의 심연)
     if (P.lvl >= 10 && P.form === 0) { startEvolve(1); return; }
     if (P.lvl >= 20 && P.form === 1) { startEvolve(2); return; }
+  } else if (P.char === 'gun') {   // Lv.10 지옥의 무법자 · Lv.20 악마처형자 (스킬 구르기)
+    if (P.lvl >= 10 && P.form === 0) { startEvolve(1); return; }
+    if (P.lvl >= 20 && P.form === 1) { startEvolve(2); return; }
   } else if (P.char === 'ghost') {   // Lv.10 연보라 총령 · Lv.20 수호령의 총령
     if (P.lvl >= 10 && P.form === 0) { startEvolve(1); return; }
     if (P.lvl >= 20 && P.form === 1) { startEvolve(2); return; }
@@ -3583,12 +3775,12 @@ function hq(img, k = (img === IMG.liz0 || img === IMG.liz1 || img === IMG.liz2 |
   return c;
 }
 const formImg = (route, form) => { const rf = ROUTE_FORMS[rk(route, form)] && ROUTE_FORMS[rk(route, form)][form]; return form === 0 ? IMG.base : rf ? IMG[rf.src] : form === 1 ? IMG.pup : IMG.dark; };
-const wolfImg = () => (P.char === 'archer' || P.char === 'snail' || P.char === 'chimera' || P.char === 'lizard' || P.char === 'twins' || P.char === 'ghost' || P.char === 'octo') ? IMG[FD().src] : formImg(P.route, P.form);
+const wolfImg = () => (P.char === 'gun' || P.char === 'archer' || P.char === 'snail' || P.char === 'chimera' || P.char === 'lizard' || P.char === 'twins' || P.char === 'ghost' || P.char === 'octo') ? IMG[FD().src] : formImg(P.route, P.form);
 function ensureTint(form) {
   if (P.char === 'chimera') return;
   if (P.char === 'lizard') { hq(IMG[lizForm(P.route, form).src]); return; }
   if (P.char === 'twins') { hq(IMG[TWIN_FORMS[form].src]); return; }
-  if (P.char === 'ghost' || P.char === 'octo') return;
+  if (P.char === 'ghost' || P.char === 'octo' || P.char === 'gun') return;
   hq(P.char === 'archer' ? IMG[archerForm(P.route, form).src] : formImg(P.route, form));   // 진화 직전에 미리 만들어 두어 끊김을 막는다
 }
 function drawPreview(c, k) {
@@ -3636,6 +3828,9 @@ function milestone() {   // 진화·스킬·마왕전을 미리 알려 준다
   if (P.char === 'octo' && L === 19) { banner = { txt: '다음 레벨(Lv.20)에 최종 진화!  스킬이 [문어의 심연]으로 바뀝니다', t: 6 }; return; }
   if (P.char === 'octo' && L === 15) return;
   if (P.char === 'octo' && L === 2) { banner = { txt: '문어 마법사는 증강(스킬 카드)을 고를 때마다 몸 주위를 도는 마력 구체가 하나씩 늘어나요', t: 7 }; return; }
+  if (P.char === 'gun' && L === 9) { banner = { txt: '다음 레벨(Lv.10)에 [지옥의 무법자]로 진화!  체력·공격력·이속 상승', t: 6 }; return; }
+  if (P.char === 'gun' && L === 19) { banner = { txt: '다음 레벨(Lv.20)에 최종 진화 [악마처형자]!  특수 스킬 [구르기]', t: 6 }; return; }
+  if (P.char === 'gun' && L === 2) { banner = { txt: '악마 총잡이는 6발을 쏘면 재장전해요 — 머리 위 탄창 색: 주황 일반탄 · 파랑 도탄 · 빨강 불씨탄 · 보라 공포탄', t: 6 }; return; }
   if (P.char === 'ghost' && L === 9) { banner = { txt: '다음 레벨(Lv.10)에 [연보라 총령]으로 진화!  구슬이 커지고 특수 스킬 [차지 샷]', t: 6 }; return; }
   if (P.char === 'ghost' && L === 19) { banner = { txt: '다음 레벨(Lv.20)에 최종 진화 [수호령의 총령]!  수호령이 대신 맞아 주고 터집니다', t: 6 }; return; }
   if (P.char === 'ghost' && L === 15) return;
@@ -3740,6 +3935,12 @@ function openRoute() {
 }
 
 function applyEvo(to) {
+  if (P.char === 'gun') {
+    if (to === 1) { P.max += 34; P.dmg *= 1.22; P.spd *= 1.03; }   // 지옥의 무법자
+    else { P.max += 48; P.dmg *= 1.16; P.spd *= 1.04; P.rng *= 1.05; P.taken *= 0.92; }   // 악마처형자 (+ 스킬 구르기 · 받는 피해 -8%)
+    P.hp = P.max; markDex('gun:' + to);
+    return;
+  }
   if (P.char === 'octo') {
     if (to === 1) { P.max += 35; P.dmg *= 1.25; }
     else { P.max += 45; P.dmg *= 1.15; }
@@ -3875,9 +4076,11 @@ function openSkill() {
 
 /* ---------- 특수 스킬 ---------- */
 function castSkill() {
+  if (rollQ) { gunRoll(); return; }   // 구르기 창이 열려 있는 동안은 한 번 더 구른다
   if (holyQ) { if (holyQ.t >= 0.3) fireHoly(); return; }   // 모으는 중 한 번 더 누르면 발사
   if (state !== 'play' || !P.skill || P.skT > 0 || P.stunT > 0) return;
   P.skT = skillCd(); shake = 8; sfx('skill');
+  if (P.skill === 'roll') { gunRollStart(); return; }
   if (P.char === 'snail') {   // 시전 동작: 가까운 적을 보며 공격 모션 + 발밑 분출
     const tn = nearestEnemy(600); if (tn && Math.abs(tn.x - P.x) > 6) P.face = tn.x > P.x ? 1 : -1;
     P.atkTimer = 0; P.atkHitN = 99; P.anim = 'attack'; P.animT = 0;
@@ -5434,11 +5637,11 @@ function update(dt) {
   let iy = (keys.has('KeyS') || keys.has('ArrowDown') ? 1 : 0) - (keys.has('KeyW') || keys.has('ArrowUp') ? 1 : 0);
   if (joy.on && (joy.x || joy.y)) { ix = joy.x; iy = joy.y; }
   if (holyQ) { holyQ.ix = ix; holyQ.iy = iy; }   // 신성화살: 적이 없을 때만 가는 방향으로 조준
-  if (diveQ || rushQ || bombQ || whipQ || P.stunT > 0) { ix = 0; iy = 0; }   // 천공 강하 중에는 움직일 수 없다 (v6.06: 신성화살은 움직이며 모은다)
+  if (diveQ || rushQ || bombQ || whipQ || P.stunT > 0 || (rollQ && rollQ.d)) { ix = 0; iy = 0; }   // 천공 강하 중에는 움직일 수 없다 (v6.06: 신성화살은 움직이며 모은다)
   const len = Math.hypot(ix, iy), moving = len > 0, ox0 = P.x, oy0 = P.y;
   if (moving) {
     ix /= len; iy /= len;
-    const spd = P.spd * (P.boost > 0 ? 1.5 : 1) * (bigQ ? 0.35 : 1) * (breathQ ? 0.4 : 1) * (P.slowT > 0 ? 0.65 : 1) * (P.rage > 0 ? 1.12 : 1) * (P.tideT > 0 ? 0.3 : 1) * (holyQ ? 0.65 : 1);   // 신성화살 차징 중 이동 -35%
+    const spd = P.spd * (P.char === 'gun' ? gunSpdMul() : 1) * (P.boost > 0 ? 1.5 : 1) * (bigQ ? 0.35 : 1) * (breathQ ? 0.4 : 1) * (P.slowT > 0 ? 0.65 : 1) * (P.rage > 0 ? 1.12 : 1) * (P.tideT > 0 ? 0.3 : 1) * (holyQ ? 0.65 : 1);   // 신성화살 차징 중 이동 -35%
     P.x += ix * spd * dt; P.y += iy * spd * dt; P.lastX = ix; P.lastY = iy; P.vx = ix * spd; P.vy = iy * spd;
     if (P.char === 'snail') {   // 지나간 길에 독 자국을 남긴다
       P.trailAcc += spd * dt;
@@ -5455,7 +5658,7 @@ function update(dt) {
   if (P.char === 'twins') updateTwins(dt);
   updateBsig(dt);
   P.still = moving ? 0 : P.still + dt;
-  stepDash(dt); if (bombQ) stepBomb(dt); if (holyQ) stepHoly(dt); if (diveQ) stepDive(dt); if (breathQ) stepBreath(dt); if (rushQ) stepRush(dt); updateBurn(dt); updateAirs(dt); updateEbul(dt); if (anOrbs.length) updateAnOrbs(dt);
+  stepDash(dt); if (P.char === 'gun') gunStep(dt); if (bombQ) stepBomb(dt); if (holyQ) stepHoly(dt); if (diveQ) stepDive(dt); if (breathQ) stepBreath(dt); if (rushQ) stepRush(dt); updateBurn(dt); updateAirs(dt); updateEbul(dt); if (anOrbs.length) updateAnOrbs(dt);
   updateCastle(dt, ox0, oy0);
   P.inv = Math.max(0, P.inv - dt); P.hitT = Math.max(0, P.hitT - dt);
   if (P.regen) P.hp = Math.min(P.max, P.hp + P.regen * dt * (P.still > 1.2 ? 0.25 : 1));
@@ -5471,10 +5674,10 @@ function update(dt) {
   if (P.atkTimer >= 0) {
     P.atkTimer += dt * (P.rage > 0 ? 2.8 : 1);
     const FDn = FD(), at = FDn.anim.attack, f = P.atkTimer * at.fps, hs = (P.char === 'wolf' && FDn.hits) || [FDn.hitF];
-    while (P.atkHitN < hs.length && f >= hs[P.atkHitN]) { const hi = P.atkHitN++; DSRC = 'basic'; if (P.char === 'snail') snailSpit(); else if (P.char === 'ghost') ghostSpray(); else if (P.char === 'octo') octoBolt(); else if (P.char === 'archer') arrowShot(); else { claw(hi, hs.length); if (P.char === 'chimera' && P.form >= 1 && P.route === 'wind') airSlash(); } DSRC = null; }
+    while (P.atkHitN < hs.length && f >= hs[P.atkHitN]) { const hi = P.atkHitN++; DSRC = 'basic'; if (P.char === 'snail') snailSpit(); else if (P.char === 'ghost') ghostSpray(); else if (P.char === 'octo') octoBolt(); else if (P.char === 'archer') arrowShot(); else if (P.char === 'gun') gunShot(); else { claw(hi, hs.length); if (P.char === 'chimera' && P.form >= 1 && P.route === 'wind') airSlash(); } DSRC = null; }
     if (f >= at.n) P.atkTimer = -1;
-  } else if (P.char !== 'twins' && !(P.shellT > 0) && P.atkCd <= 0 && P.hitT <= 0 && !(P.stunT > 0) && !bigQ && !dashQ && !diveQ && !breathQ && !rushQ && !bombQ && !holyQ && !(P.tideT > 0)) {
-    const t = nearestEnemy(P.char === 'octo' ? octoRange() : P.char === 'ghost' ? ghostRange() + 30 : P.char === 'snail' ? 340 : P.char === 'archer' ? arrowRange() : P.rng * 1.6 + 50);
+  } else if (P.char !== 'twins' && !(P.char === 'gun' && (P.reloadT > 0 || rollQ && rollQ.d)) && !(P.shellT > 0) && P.atkCd <= 0 && P.hitT <= 0 && !(P.stunT > 0) && !bigQ && !dashQ && !diveQ && !breathQ && !rushQ && !bombQ && !holyQ && !(P.tideT > 0)) {
+    const t = nearestEnemy(P.char === 'gun' ? gunRange() : P.char === 'octo' ? octoRange() : P.char === 'ghost' ? ghostRange() + 30 : P.char === 'snail' ? 340 : P.char === 'archer' ? arrowRange() : P.rng * 1.6 + 50);
     if (t) {
       P.tx = t.x; P.ty = t.y;
       const dx = t.x - P.x, dy = t.y - t.r - (P.y - 18), d = Math.hypot(dx, dy) || 1;
@@ -5484,7 +5687,7 @@ function update(dt) {
   }
 
   // --- 동작 선택 ---
-  const want = whipQ ? (whipQ.ph === 'lash' ? 'lash' : 'combo') : (P.tideT > 0 && FD().anim.skill) ? 'skill' : (P.shellT > 0 && FD().anim.skill) ? 'skill' : (P.sigCast > 0 && FD().anim.skill) ? 'skill' : (P.rageCast > 0 && FD().anim.skill) ? 'skill' : (P.mbCast > 0 && FD().anim.skill) ? 'skill' : bombQ ? 'skill' : holyQ ? 'charge' : (P.hitT > 0 || P.stunT > 0) ? 'hit' : P.atkTimer >= 0 ? (moving && FD().anim.atkMove ? 'atkMove' : 'attack') : (moving || dashQ) ? 'walk' : 'idle';
+  const want = (P.char === 'gun' && rollQ && rollQ.d) ? 'roll' : (P.char === 'gun' && P.reloadT > 0 && P.atkTimer < 0 && !moving && !(P.hitT > 0) && FD().anim.reload) ? 'reload' : whipQ ? (whipQ.ph === 'lash' ? 'lash' : 'combo') : (P.tideT > 0 && FD().anim.skill) ? 'skill' : (P.shellT > 0 && FD().anim.skill) ? 'skill' : (P.sigCast > 0 && FD().anim.skill) ? 'skill' : (P.rageCast > 0 && FD().anim.skill) ? 'skill' : (P.mbCast > 0 && FD().anim.skill) ? 'skill' : bombQ ? 'skill' : holyQ ? 'charge' : (P.hitT > 0 || P.stunT > 0) ? 'hit' : P.atkTimer >= 0 ? (moving && FD().anim.atkMove ? 'atkMove' : 'attack') : (moving || dashQ) ? 'walk' : 'idle';
   const atkA = want === 'attack' || want === 'atkMove';
   if (want !== P.anim) { P.anim = want; P.animT = atkA ? P.atkTimer : 0; }
   P.animT = (P.anim === 'attack' || P.anim === 'atkMove') ? P.atkTimer : P.animT + dt;
@@ -5518,6 +5721,7 @@ function update(dt) {
   }
   for (const s of shards) {
     s.x += s.vx * dt; s.y += s.vy * dt; s.life -= dt;
+    if (s.gun === 'R') gunEdge(s);
     if (s.bomb) { stepBombShard(s); continue; }
     if (s.big && fx.length < 600) { const th = theme(); fx.push({ x: s.x - s.vx * 0.02, y: s.y + (rand() - 0.5) * 24, vx: -s.vx * 0.05, vy: (rand() - 0.5) * 60, life: 0.3, max: 0.3, c: rand() < 0.5 ? th.c1 : th.c2, s: 4 }); }
     for (const e of enemies) {
@@ -5549,6 +5753,7 @@ function update(dt) {
           for (const o of enemies) { if (o.hp <= 0 || s.hit.has(o)) continue; const dd = (o.x - s.x) ** 2 + (o.y - s.y) ** 2; if (dd < bd) { bd = dd; t2 = o; } }
           if (t2) { const dx = t2.x - s.x, dy = t2.y - t2.r - s.y, dl = Math.hypot(dx, dy) || 1, sp = Math.hypot(s.vx, s.vy); s.vx = dx / dl * sp; s.vy = dy / dl * sp; s.life = Math.max(s.life, 0.6); }
         }
+        if (s.gun) gunHit(s, e);
         if (--s.pierce <= 0) { s.life = 0; break; }
       }
     }
@@ -5688,7 +5893,7 @@ function update(dt) {
   }
 }
 function updateFx(dt) {
-  darkT = Math.max(0, darkT - dt); updateFwFx(dt); updateSkFx(dt); updateAnFx(dt);
+  darkT = Math.max(0, darkT - dt); updateFwFx(dt); updateSkFx(dt); updateAnFx(dt); updateGunFx(dt);
   for (const q of smokes) { q.x += q.vx * dt; q.y += q.vy * dt; q.life -= dt; }
   smokes = smokes.filter(q => q.life > 0);
   if (P && P.contractN > 0 && state === 'play' && smokes.length < 40 && rand() < dt * (3 + 2 * P.contractN)) smokes.push({ x: P.x + (rand() - 0.5) * 40, y: P.y - 8 - rand() * 20, vx: (rand() - 0.5) * 16, vy: -22 - rand() * 18, r: 14 + rand() * 10, life: 1.2, max: 1.2 });   // 계약 오라: 검은 연기가 피어오른다
@@ -5907,7 +6112,7 @@ function updateBurn(dt) {
   for (const e of enemies) {
     if (!(e.burnT > 0) || e.hp <= 0) continue;
     e.burnT -= dt; e.burnAcc = (e.burnAcc || 0) + dt;
-    if (e.burnAcc >= 0.5) { e.burnAcc -= 0.5; hurtEnemy(e, e.burnD, 0, 0, 0, true); }
+    if (e.burnAcc >= 0.5) { e.burnAcc -= 0.5; if (e.burnSrc) withSrc(e.burnSrc, () => hurtEnemy(e, e.burnD, 0, 0, 0, true)); else hurtEnemy(e, e.burnD, 0, 0, 0, true); }
     if (fx.length < 500 && rand() < dt * 12) fx.push({ x: e.x + (rand() - 0.5) * e.r, y: e.y - e.r * (0.6 + rand()), vx: (rand() - 0.5) * 24, vy: -50 - rand() * 40, life: 0.5, max: 0.5, c: rand() < 0.5 ? '#ff8a2a' : '#ffd27a', s: 3 });
   }
 }
@@ -6270,7 +6475,7 @@ function render() {
       ctx.fillStyle = 'rgba(0,0,0,0.38)'; ctx.beginPath(); ctx.ellipse(x, y - 2, P.char === 'snail' && !FD().src ? 44 : FD().sh, P.char === 'snail' ? 9 : 8 + P.form * 2, 0, 0, 6.283); ctx.fill();
       if (P.up.aura) drawAura(x, y);
       if (P.char === 'ghost') drawPals(wx, wy, false);
-      if (P.char === 'snail') drawSnail(x, y); else if (diveQ && diveQ.ph !== 'land') drawDive(x, y); else if (breathQ) drawBreath(x, y); else if (rushQ) drawRush(x, y); else if (P.char === 'chimera') drawChim(x, y); else { drawWolf(x, y); if (P.char === 'lizard') drawLizAura(x, y); if (P.syn.vortex && P.tw && P.tw.spd > 420) { ctx.strokeStyle = `rgba(${theme().rgb},${0.3 + 0.15 * Math.sin(wallT * 12)})`; ctx.lineWidth = 2; ctx.beginPath(); ctx.ellipse(x, y - 26, 44, 34, 0, 0, 6.283); ctx.stroke(); } }
+      if (P.char === 'gun') drawGun(x, y); else if (P.char === 'snail') drawSnail(x, y); else if (diveQ && diveQ.ph !== 'land') drawDive(x, y); else if (breathQ) drawBreath(x, y); else if (rushQ) drawRush(x, y); else if (P.char === 'chimera') drawChim(x, y); else { drawWolf(x, y); if (P.char === 'lizard') drawLizAura(x, y); if (P.syn.vortex && P.tw && P.tw.spd > 420) { ctx.strokeStyle = `rgba(${theme().rgb},${0.3 + 0.15 * Math.sin(wallT * 12)})`; ctx.lineWidth = 2; ctx.beginPath(); ctx.ellipse(x, y - 26, 44, 34, 0, 0, 6.283); ctx.stroke(); } }
       if (P.char === 'ghost') drawPals(wx, wy, true);
       if (P.shellT > 0) { const pu = 0.5 + 0.5 * Math.sin(wallT * 14); ctx.strokeStyle = `rgba(90,230,220,${0.55 + 0.35 * pu})`; ctx.lineWidth = 4; ctx.beginPath(); ctx.ellipse(x, y - 30, 96, 58, 0, Math.PI, 2 * Math.PI); ctx.stroke(); ctx.fillStyle = `rgba(90,230,220,${0.08 + 0.06 * pu})`; ctx.fill(); }   // 반격의 갑주
       if (P.up.guard && P.guardT <= 0) { ctx.strokeStyle = `rgba(150,220,255,${0.35 + 0.15 * Math.sin(wallT * 5)})`; ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(x, y - 38, 52, 0, 6.283); ctx.stroke(); }   // 방어막 준비됨
@@ -6315,7 +6520,7 @@ function render() {
 
   drawZonesTop(wx, wy);
   drawUniqFx(wx, wy); drawOctoFx(wx, wy); drawLasers(wx, wy);
-  drawLights(wx, wy); drawBlades(wx, wy); drawChimFx(wx, wy); drawAfx(wx, wy); drawHolyCharge(wx, wy); drawEbul(wx, wy); drawSkTop(wx, wy); drawAnTop(wx, wy); drawChTop(wx, wy);
+  drawLights(wx, wy); drawBlades(wx, wy); drawChimFx(wx, wy); drawAfx(wx, wy); drawHolyCharge(wx, wy); drawEbul(wx, wy); drawSkTop(wx, wy); drawAnTop(wx, wy); drawGunFx(wx, wy); drawChTop(wx, wy);
   for (const q of mfx) miniFrame('D9', wx(q.x), wy(q.y), 1, 0.95, false, Math.max(0, 1 - q.t / q.life));   // 내려찍기 충격파
   drawBeam(wx, wy); drawBigQ(wx, wy);
   for (const g of globs) {   // 날아가는 독 침 / 용암탄
@@ -6368,7 +6573,8 @@ function render() {
   // 뼈 투사체
   for (const s of shards) {
     ctx.save(); ctx.translate(wx(s.x), wy(s.y)); ctx.rotate(Math.atan2(s.vy, s.vx));
-    if (s.bomb) { const r = ARFX.bombarrow; ctx.globalCompositeOperation = 'lighter'; ctx.imageSmoothingEnabled = true; ctx.drawImage(IMG.arfx, r[0], r[1], r[2], r[3], -r[2] * 0.8, -r[3] * 0.45, r[2] * 0.9, r[3] * 0.9); }
+    if (s.gun) drawGunBullet(s);
+    else if (s.bomb) { const r = ARFX.bombarrow; ctx.globalCompositeOperation = 'lighter'; ctx.imageSmoothingEnabled = true; ctx.drawImage(IMG.arfx, r[0], r[1], r[2], r[3], -r[2] * 0.8, -r[3] * 0.45, r[2] * 0.9, r[3] * 0.9); }
     else if (s.ink) {   // v5.19: 문어 마법사 먹물 탄 — 검은 먹물 덩어리 + 흩날리는 방울
       for (let q = 1; q <= 3; q++) { ctx.fillStyle = `rgba(10,6,14,${0.5 - q * 0.12})`; ctx.beginPath(); ctx.arc(-q * 9, Math.sin(wallT * 20 + q) * 2, 6 - q, 0, 6.283); ctx.fill(); }
       ctx.fillStyle = '#2a1636'; ctx.beginPath(); ctx.ellipse(0, 0, 13, 9.5, 0, 0, 6.283); ctx.fill();
@@ -6450,7 +6656,7 @@ function render() {
 }
 let skillBtn = { x: 0, y: 0, w: 0, h: 0 };
 const hudCards = { t: 0, L: [] };
-const dmName = k => k === 'basic' ? '기본 공격' : String(k).startsWith('sk:') ? '【스킬】' + (SKILLS[k.slice(3)] ? SKILLS[k.slice(3)].name : k.slice(3)) : k === 'trail' ? '이동 자국 (장판)' : (SYNERGIES.find(x => x.id === k) ? '★' + (a => a ? a[0] : SYNERGIES.find(x => x.id === k).name)(altOf(SYNERGIES.find(x => x.id === k))) : upName(k));
+const dmName = k => String(k).startsWith('g:') ? GUN_AMMO[k.slice(2)].name + (k === 'g:F' ? ' (화상 포함)' : '') : k === 'basic' ? '기본 공격' : String(k).startsWith('sk:') ? '【스킬】' + (SKILLS[k.slice(3)] ? SKILLS[k.slice(3)].name : k.slice(3)) : k === 'trail' ? '이동 자국 (장판)' : (SYNERGIES.find(x => x.id === k) ? '★' + (a => a ? a[0] : SYNERGIES.find(x => x.id === k).name)(altOf(SYNERGIES.find(x => x.id === k))) : upName(k));
 function drawDmeter() {   // v5.11: 딜 미터기 (설정에서 켜기) — 기본 공격과 스킬 카드별 누적 피해
   const L = Object.entries(DMETER).sort((a, b) => b[1] - a[1]).slice(0, 8), tot = L.reduce((a, b) => a + b[1], 0); if (!tot) return;
   const w = 230, x = W - w - 10, y0 = chal ? 124 : 90; let y = y0;
@@ -7229,6 +7435,7 @@ function showOver(win) {
   if (chal) { $('overTitle').textContent = '∞ 챌린지 종료'; $('overStats').innerHTML += `<br>강적 ${chal.evN} · 마왕 ${chal.bossN} · 황금 도망자 ${chal.goldGot}/${chal.goldN} · 최고 기록 ${Math.floor((SAVE.ch.best | 0) / 60)}분 ${(SAVE.ch.best | 0) % 60}초`
     + `<br><span style="color:#d6a8ff">◆ 룬 조각 +${chal.frag}  (모은 조각 ${SAVE.ch.frag | 0}/${RUNE_COST})` + (chal.runes.length ? `  ·  새 룬: ${chal.runes.join(', ')}` : '') + '</span>'
     + (chal.tr ? `<br><span style="color:#ffe28a">🎁 보물 획득: ${chal.tr.name} — ${chal.tr.desc}</span>` : `<br><span style="color:#b49484">보물: ${TREASURES.filter(t => !SAVE.ch.tr[t.k]).map(t => `${t.name} ${t.need / 60}분`).join(' · ') || '모두 모음'}</span>`); }
+  if (win && P.gunOpen) $('overStats').innerHTML += `<br><span style="color:#ff9aa8">🔓 새 캐릭터 [악마 총잡이] 해금!</span>`;
   if (win && P.fwUnlock) $('overStats').innerHTML += `<br><span style="color:#ff8a9a">🔓 혈랑 루트 Lv.20 최종 진화에 [타락한 혈랑] 추가!</span>`;
   show('overBox', true);
 }
@@ -7267,10 +7474,12 @@ function drawPreviews() {
   drawLizPrev(PV.lizard, 0);
   if (PV.twins) drawTwinPrev(PV.twins, 0);
   if (PV.octo) { const g = PV.octo.getContext('2d'), r = OCTO_FORMS[0].pv, f = Math.min(126 / r[2], 100 / r[3]); g.imageSmoothingEnabled = true; g.imageSmoothingQuality = 'high'; g.drawImage(IMG.oc, r[0], r[1], r[2], r[3], (130 - r[2] * f) / 2, 102 - r[3] * f, r[2] * f, r[3] * f); }
+  if (PV.gun && IMG.gun) { const g = PV.gun.getContext('2d'), r = GUNA.i0[0], f = Math.min(126 / r[2], 100 / r[3]); g.imageSmoothingEnabled = true; g.imageSmoothingQuality = 'high'; g.drawImage(IMG.gun, r[0], r[1], r[2], r[3], (130 - r[2] * f) / 2, 102 - r[3] * f, r[2] * f, r[3] * f); }
   if (PV.ghost) { const g = PV.ghost.getContext('2d'), r = GHOST_FORMS[0].pv, f = Math.min(126 / r[2], 100 / r[3]); g.imageSmoothingEnabled = true; g.imageSmoothingQuality = 'high'; g.drawImage(IMG.gh, r[0], r[1], r[2], r[3], (130 - r[2] * f) / 2, 102 - r[3] * f, r[2] * f, r[3] * f); }
   g3.drawImage(H0, d0.pv[0] * K0, 0, d0.pv[1] * K0, d0.ch * K0, (130 - d0.pv[1] * f0) / 2, 104 - d0.ch * f0, d0.pv[1] * f0, d0.ch * f0);
 }
 function buildCards() {
+  if (!SAVE.chars.gun && chOpen()) { SAVE.chars.gun = true; saveSave(); }   // v6.40: 예전에 지하 6층을 이미 깬 기록이 있으면 바로 열린다
   if (!SAVE.chars.twins && twinsReady()) { SAVE.chars.twins = true; saveSave(); }   // 예전에 이미 둘 다 잡았다면 바로 열린다
   const box = $('charCards'); box.innerHTML = '';
   Object.keys(CHARS).filter(id => !CHARS[id].hidden || SAVE.chars[id]).forEach((id, i) => {
@@ -7367,6 +7576,8 @@ function openDex() {
   if (SAVE.chars.octo) { gr = sec('문어 마법사 계열');
   [['octo:0', OCTO_FORMS[0], '시작', '<br>조건: 히든 마물 문어 마법사 처치'], ['octo:1', OCTO_FORMS[1], '진화 · 코끼리 돌진', '<br>Lv.10 진화'], ['octo:2', OCTO_FORMS[2], '최종 진화 · 문어의 심연', '<br>Lv.20 진화', 1]].forEach(([key, D, sub, hint, tr]) => add(gr, { on: d.seen[key], trophy: !!tr, name: D.name, sub, hint, draw: (g, w, h, l) => dexSprite(g, w, h, IMG[D.src], D.pv[0], D.pv[1], D.pv[2], D.pv[3], false, l, true) }));
   }
+  gr = sec('악마 총잡이 계열');
+  [['gun:0', 'i0', GUN_FORMS[0].name, '시작', '<br>조건: 지하 6층 마왕 처치'], ['gun:1', 'i1', GUN_FORMS[1].name, '진화', '<br>Lv.10 진화'], ['gun:2', 'i2', GUN_FORMS[2].name, '최종 진화 · 구르기', '<br>Lv.20 진화', 1]].forEach(([key, k, name, sub, hint, tr]) => add(gr, { on: d.seen[key], trophy: !!tr, name, sub, hint, draw: (g, w, h, l) => { const r = GUNA[k][0]; dexSprite(g, w, h, IMG.gun, r[0], r[1], r[2], r[3], false, l, true); } }));
   gr = sec('구슬 유령 계열');
   [['ghost:0', GHOST_FORMS[0], '시작', ''], ['ghost:1', GHOST_FORMS[1], '진화 · 큰 구슬 · 차지 샷', '<br>Lv.10 진화'], ['ghost:2', GHOST_FORMS[2], '최종 진화 · 수호령 소환', '<br>Lv.20 진화', 1]].forEach(([key, D, sub, hint, tr]) => add(gr, { on: d.seen[key], trophy: !!tr, name: D.name, sub, hint, draw: (g, w, h, l) => dexSprite(g, w, h, IMG[D.src], D.pv[0], D.pv[1], D.pv[2], D.pv[3], false, l, true) }));
   gr = sec('사슬 악마 계열');
@@ -7511,6 +7722,7 @@ window.addEventListener('keydown', e => {
   else if (state === 'menu' && e.code === 'Digit6') selectChar('twins');
   else if (state === 'menu' && e.code === 'Digit7') selectChar('ghost');
   else if (state === 'menu' && e.code === 'Digit8' && SAVE.chars.octo) selectChar('octo');
+  else if (state === 'menu' && e.code === 'Digit9' && SAVE.chars.gun) selectChar('gun');
   else if ((state === 'dead' || state === 'win') && overShown && (e.code === 'KeyR' || e.code === 'Enter')) startGame(curChar);
   else if (state === 'slot') slotKey(e.code);
   else if (state === 'play' && e.code === 'KeyE' && !e.repeat) useTeleport();
@@ -7570,6 +7782,7 @@ window.__G = {
   get SAVE() { return SAVE; }, render, get boss() { return boss; }, get mini() { return mini; }, get skp() { return skp; }, SK_PH, SKB, get mdeath() { return mdeath; }, spawnMini, miniDefeated, spawnBoss, raiseCastle, enterArena, exitArena, get castle() { return castle; }, get arena() { return arena; }, get trans() { return trans; }, openChest, openShop, buildCards, get joy() { return joy; }, get gt() { return gt; }, get allies() { return allies; }, get items() { return items; }, spawnItem, get globs() { return globs; }, recruit, keys, tick, needFor, pick: pickChoice, cast: castSkill, spawnBug,
   get slots() { return slots; }, get slotUI() { return slotUI; }, get udeath() { return udeath; }, get lasers() { return lasers; }, get eyeF() { return eyeF; }, get uniqCd() { return uniqCd; }, spawnSlot, spawnUniq, gainRelic, useTeleport, closeSlot, slotSpin, slotKey, updateSlotUI, SLOT_FX, SLOT_APPLY, UNIQ, RELICS, trySpawnUniq, UNIQ_P, setState(v) { state = v; }, spawnEnemy,
   get DMETER() { return DMETER; }, dmName, get eleQ() { return eleQ; }, fwStart, setT(v) { gt = v; }, calcShards, FD, LIZ_FORMS, TWIN_FORMS, startFw, snapP, get fwFx() { return fwFx; }, get bsig() { return bsig; }, BMAP, inBlood, twLen, availSyn, SYNERGIES, inPoly, hurtEnemy, startGame, addExp, hurt: hurtPlayer, rebuild: buildSpecies,
+  get rollQ() { return rollQ; }, get gunFx() { return gunFx; }, GUN, GUN_AMMO, GUNA, gunLoad, gunRange,
   get anOrbs() { return anOrbs; }, get anFx() { return anFx; }, AMAP, ANB, ANX, AN, anStart, anTrans, pickBossK, floorName, arenaExit,
   get chal() { return chal; }, startChallenge, chEvent, chEnterBoss, chFrag, chGoldSpawn, chShelter, inCh, CHM, spawnCut, spawnAb, abStart, RUNES, TREASURES, get cutSaws() { return cutSaws; }, setChMode(v) { chMode = v; }, get W() { return W; }, get H() { return H; }, get species() { return SPECIES; },
 };

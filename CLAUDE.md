@@ -4,7 +4,7 @@
 **이 문서를 먼저 다 읽고 작업할 것.** 답변은 한국어로 짧고 간결하게.
 
 ## 꼭 지킬 규칙 (사용자 지시)
-1. **파일 이름:** 매 빌드 `hell survive v.N.NN.html`, 버전은 매번 올린다. 마지막 배포 = **v6.30** → 다음은 v6.31. (v6.01부터 번호 체계가 6대로 바뀜)
+1. **파일 이름:** 매 빌드 `hell survive v.N.NN.html`, 버전은 매번 올린다. 마지막 배포 = **v6.40** → 다음은 v6.41. (v6.01부터 번호 체계가 6대로 바뀜)
    - 끝자리: 작은 수정 · 가운데 자리: 캐릭터·보스 추가 같은 큰 변화.
 2. **도트는 절대 수정·재색칠 금지.** 자르기·배경 제거·마스크·배율 조정만 허용.
 3. 기능은 **단순하게**. 서로 복사한 듯한 중복 스킬/카드 금지.
@@ -25,13 +25,13 @@ src/build.py            템플릿 + src/assets 이미지 → build/hell_survive.
 src/assets/             모든 도트 아틀라스(webp/png). 경로는 build.py 표 참고
 tools/check.py          문법 확인 (node --check)
 tools/smoke.py          진화 경로 15개 자동 테스트 (정상이면 15줄 모두 끝이 [] )
-tools/tests/*.py        유령 · 문어 · 수호 리저드 · 챌린지(chal.py) · 타락천사(angel.py) · 오류 찾기(fuzz.py: 전 캐릭터 무작위로 오래 돌려 콘솔 오류 수집)
+tools/tests/*.py        유령 · 문어 · 수호 리저드 · 챌린지(chal.py) · 타락천사(angel.py) · 악마 총잡이(gun.py) · 오류 찾기(fuzz.py: 전 캐릭터 무작위로 오래 돌려 콘솔 오류 수집)
 tools/h301.py           playwright 공용 헬퍼 (__lv, __run, __s 등 테스트용 전역 함수 주입)
 tools/sim600.py         봇 시뮬레이터 (B=보스전, L=필드) · tools/bal_run30.sh <빌드> <폴더> <단계> <N> [보스...] → tools/bal_cmp30.py <폴더> <단계> (보스별 승률·깎은 체력)
 tools/perf.py           프레임 측정 (실제 루프 + CPU 프로파일, 장면 field·boss·angel·dream·chal)
 tools/tier_run.sh       새 캐릭터 티어 측정 / tools/tier_an.py 결과 분석
 tools/atlas/*_build.py  각 캐릭터 시트 → 아틀라스 만들 때 썼던 스크립트 (참고용, 원본 시트는 사용자가 다시 첨부)
-                        ch_build.py = 챌린지 맵 · 절단안의 짐승(cm) · 심연의 촉수마왕(ab) · an_build.py = 타락천사(an·anfx·amap)
+                        ch_build.py = 챌린지 맵 · 절단안의 짐승(cm) · 심연의 촉수마왕(ab) · an_build.py = 타락천사(an·anfx·amap) · gun_build.py = 악마 총잡이(gun)
 data/tier_v501.json     기준 티어표 (s0/s1/s2), data/tier_additions.json 이후 추가분
 docs/                   규격표 · 티어표 · 기획서 PDF
 build/                  (git 무시) 빌드 결과·스크린샷
@@ -54,11 +54,12 @@ git add -A && git commit -m "v6.10: 변경점 한 줄" && git push origin main
 - 테스트 훅: 게임은 `window.__G` 로 내부 노출 (startGame, tick, addExp, spawnEnemy, enterArena, raiseCastle, cast, pick, hurt, DMETER, fwStart …). 새 기능 테스트에 필요하면 `__G`에 추가.
 
 ## 게임 구조 요약 (src/game_template.html, 약 6,500줄)
-- **캐릭터** `CHARS`: wolf, snail, archer, chimera, lizard, twins(사슬 악마, 벨리아·셀리아 처치 해금), ghost(연보라 구슬 유령), octo(문어 마법사, 히든: 난이도 2+ 유니크 몹 처치 해금). 각 `role`/`weak` 필드 = 카드 앞면 문구.
+- **캐릭터** `CHARS`: wolf, snail, archer, chimera, lizard, twins(사슬 악마, 벨리아·셀리아 처치 해금), ghost(연보라 구슬 유령), octo(문어 마법사, 히든: 난이도 2+ 유니크 몹 처치 해금), gun(악마 총잡이, 지하 6층 마왕 처치 해금 · 예전에 깬 기록 `chOpen()`도 인정). 각 `role`/`weak` 필드 = 카드 앞면 문구.
 - **진화:** Lv.10 루트 선택 → Lv.20 최종 (용암 달팽이는 Lv.25 3단계). `applyEvo(to)` 에 캐릭터별 스탯. 폼 데이터: `ROUTE_FORMS`, `SNAIL_FORMS/VENOM_FORMS/LAVA_FORMS/BOMB_FORMS`, `ARCHER_*`, `CHIM_FORMS`, `LIZ_FORMS`, `TWIN_FORMS`, `GHOST_FORMS`, `OCTO_FORMS`. 프레임별 사각형 `anim.X.fr=[[x,y,w,h,ax,ay]…]`.
   - 달팽이 루트: venom(맹독) / lava(용암) / **bomb(폭탄, v5.13 추가)**: 기본 공격 폭탄 1→4번째 점점 커짐, 폭발 자리 불웅덩이, 최종 스킬 megabomb.
   - 리자드 루트: sword(→ rage/water) / guard(수호의 길 → 수호의 리저드, 스킬 shell 반격의 갑주).
   - 늑대 혈랑 최종: blood / holy / fallen(타락한 혈랑, 숨은 보스 처치 시 열림, 스킬 bsigil 혈왕의 진).
+- **악마 총잡이** (템플릿 'v6.40 악마 총잡이' 블록, `GUN_FORMS` · 아틀라스 `GUNA`, 그리기는 `drawGun`): 0진화 악마 총잡이 → Lv.10 지옥의 무법자 → Lv.20 악마처형자(스킬 `roll` 구르기). 리볼버 6발(`P.mag`/`P.magI`) — 평타 한 번 = 한 발(`gunShot`), 6발을 다 쓰면 재장전 `gunReload()`(1초, 빠른 장전 카드 −15%씩). 재장전할 때 6발이 하나씩 무작위(`GUN_AMMO`): 일반탄 55% 100% · 도탄 25% 100%(적에게 최대 3번 · 화면 끝 2번 튕김 `gunEdge`) · 불씨탄 15% 200% + 관통 + 화상 3초(`burnSrc`) · 공포탄 5% 10%. 고유 카드 `UNIQUE.gun`: 빠른 장전(gReload) · 특수탄 강화(gSpec, 불씨·도탄 +15%) · 불씨 각인(gEmber, 불씨 +5%p / 일반 −5%p) · 현상금 사냥(gBounty, 처치마다 1.5초 이속 +2% 중첩, 최대 3/5/7). 구르기(`rollQ`): 4초 안에 SPACE로 3번 짧게(약 210px, 무적), 첫 구르기 때 남은 탄을 가까운 적들에게 전부 쏘고 재장전(`gunDump`), 시간이 지나면 남은 횟수 증발. 0·1진화는 스킬 없음. 머리 위 탄창 표시(`drawGunMag`). 딜미터기 키 `g:N/R/F/B`.
 - **스킬:** `SKILLS`, `SKILL_CD`(쿨타임 초), `uniqueSkill(s)()`, `castSkill()`.
 - **카드:** `UPGRADES`(공용, `alt: {캐릭터/루트: [이름, 문구]}`로 캐릭터별 이름), `UNIQUE`(캐릭터 전용), `SYNERGIES`(★조합, 재료 2장 Lv.3, `only:` 전용). `cardView`, `openChoice`(카드 앞면=효과, 누르면 뒷면=조합 / 진화 갈림길이면 이후 최종 진화), `openUpgrade`(기본 3장, 상점 '넓어진 선택지'면 4장).
 - **강화 상점** `PERKS` (캐릭터 상점과 분리): hp/spd/dmg/exp/magnet 각 10, banish 5, regen 3(초당 +0.1), shard 5(+5%), critd 5(+10%p), choice 1(5000), revive 1.
@@ -87,7 +88,7 @@ git add -A && git commit -m "v6.10: 변경점 한 줄" && git push origin main
 - 점수 = 보스 평균 깎은 체력 75% + Lv.24 필드 처치 25%, 기존 1등 = 100. S≥92 · A≥80 · B≥64 · C≥56 · D.
 - 보고서: 보스별(원숭이/마안/스켈레톤/혈랑왕) 깎은 체력·승리·평균 대비 상성 + s2/s1 JSON → PDF.
 
-## 최근 변경 (v5.11 ~ v6.30)
+## 최근 변경 (v5.11 ~ v6.40)
 - 5.11 카드 앞뒷면 UI, 카드 칩, 머리 위 체력바, 딜 미터기, 사슬의 폭군 진 강화, 보스맵 확대, 혈랑왕 통로, 상점 분리 등 23개
 - 5.12 캐릭터 카드 앞면(역할·약점·획득조건)/뒷면, 상자 자동 흡수 + 드롭률 -30%
 - 5.13 폭탄 달팽이 루트 · 5.14 스킬카드 앞=효과/뒤=조합 · 5.15 유니크 난이도3+ 2마리
@@ -114,5 +115,7 @@ git add -A && git commit -m "v6.10: 변경점 한 줄" && git push origin main
   - 시뮬 도구: `tools/bal_cmp22.py`(전후 비교, v6.30부터 결과는 `bal_run30.sh`로). 봇은 갑주 타이밍을 못 맞춰 수호 리저드 '안 닳음'이 시뮬에 안 나타남 → 코드 기준으로 조정.
 - 6.30 **신규 보스 타락천사** (지하 4층 70% · 5·6층 25%, 전용 보스맵, 패턴은 위 '보스' 참고) · 보스 등장 확률표 `BOSS_TBL` · 난이도 이름 '지하 N층' · **프레임 드랍 수정**(큰 그림 첫 표시 끊김 20~40ms·최대 217ms → ImageBitmap 0.2ms, 바닥 덩어리 캐시 −80%, 비네트 캐시 −72%, 4096px 넘는 확대 캔버스 6종 제한, 화면 밖 몹 생략, 성 내부 그림 미리 만들기) · 버그: 보라구슬 드랍 그림이 주석에 묻혀 안 불러와짐(아이템 시트 전체가 찌그러져 보였음), 천안 난무·브레스 스킬 감싸기가 주석에 묻혀 딜미터기에서 빠짐, 도감 스켈레톤 등장 층 표기 · 정리: 꺼 둔 마안 기둥 충돌 코드·안 쓰는 함수 삭제, 맵 이동 초기화 3곳 → `clearField()`, 도감 키 `dexBoss()`, 이미지 63개 자리 순서 받기 → 이름 그대로, 옛 시뮬 스크립트·GPT용 인수인계서 삭제
   - 타락천사 밸런스(봇 시뮬, 20변형×3판): 지하 4층 깎은 체력 45%(원숭이 50 · 스켈레톤 43 · 마안 40), 지하 6층 32%(스켈레톤 29 · 마안 27 · 원숭이 49) — 원숭이보다 어렵고 다른 보스와 비슷, 강한 빌드(사슬·수호령·문어)는 봇도 처치. 봇은 흰 구체 85%를 먹고 예고를 잘 피하므로 사람은 체감상 더 어려울 수 있다 → 체감 보고 시 `AN.hp`(1.2)·`AN.dm`(1.15)부터
+- 6.40 **신규 캐릭터 악마 총잡이** (위 '악마 총잡이' 참고, 지하 6층 마왕 처치 해금). 도트는 사용자 시트 3장(0진화 · 1진화 · 최종)에서 자르기 · 배경 제거만. 스탯: 체력 100 · 이속 185 · 공격력 30 · 사격 간격 0.34초 · 사거리 약 360 / Lv.10 체력 +34 · 공격력 ×1.22 · 이속 ×1.03 / Lv.20 체력 +48 · 공격력 ×1.16 · 이속 ×1.04 · 사거리 ×1.05 · 받는 피해 −8%. 봇 시뮬(9판): 보스 깎은 체력 지하 4층 평균 대비 +7% · 지하 6층 +9%, 필드 처치는 Lv.22 기준 185마리(궁수 455 · 문어 487 · 구슬 유령 79) — '보스에 강하고 몹 무리에 약한' 역할
+  - 테스트 `tools/tests/gun.py` · smoke 16경로(총잡이 추가) · `tools/bal_run30.sh`는 `VSJ='["gun"]'`로 변형을 골라 잴 수 있다. 타락천사 테스트는 출구 봉인(테스트가 출구 칸에 서면 성 밖으로 나가 버렸다)
 - 패턴 기획서: `docs/hell survive 보스 패턴 추가 기획서.pdf` (하데스·엘든링·세키로·건전·메이플 110개 표본, 신규 패턴 15개 안, 구현 전 — E4 안식처는 규칙 9 경계 사례라 허락 필요). 생성 스크립트 `tools/pattern_plan.py·pattern_data.py·pattern_html.py`
 - 밸런스 시뮬: `python3 tools/bal_make.py` → `tools/sim_bal.py` → `tools/bal_an.py` → `tools/bal_report.py`

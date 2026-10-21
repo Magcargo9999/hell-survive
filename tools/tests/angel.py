@@ -19,6 +19,7 @@ async def main():
         await pg.evaluate("()=>{const G=__G;G.enemies.length=0;G.raiseCastle();G.enterArena();for(let i=0;i<40;i++)G.tick(1/30)}")
         R['arena'] = await pg.evaluate("()=>{const G=__G,b=G.boss;return {k:G.arena.k,bk:b.bk,hp:Math.round(b.max),p:[Math.round(G.P.x),Math.round(G.P.y)],inP:G.inPoly(G.P.x,G.P.y),b:[Math.round(b.x),Math.round(b.y)],bin:G.inPoly(b.x,b.y),st:b.st}}")
         await shot(pg, '0_intro')
+        await pg.evaluate("()=>{__G.arena.sealed=true}")   # 패턴 테스트 중 플레이어가 아래 출구 칸에 서도 성 밖으로 나가지 않게
         await pg.evaluate("()=>{window.__run1=n=>{const G=__G;for(let i=0;i<n;i++){G.P.inv=99;G.P.hp=G.P.max;if(G.boss&&G.boss.ph===1)G.boss.hp=G.boss.max;G.tick(1/30)}}}")
         await pg.evaluate("__run1(60)")
         # 각 패턴: 플레이어는 보스 앞 200에 세워 두고 무적 해제, 맞은 피해를 센다
@@ -43,7 +44,7 @@ async def main():
           P.x=b.x+150;P.y=b.y;G.hurtEnemy(b,500,0,0,0);const front=h0-b.hp;P.x=b.x-150;P.y=b.y;G.hurtEnemy(b,500,0,0,0);const back=h0-front-b.hp;b.shT=0;b.st='recover';b.stT=0.5;return {front:Math.round(front),back:Math.round(back)}}""")
         await pg.evaluate("__run(60)")
         # 흑화
-        await pg.evaluate("()=>{window.__run2=n=>{const G=__G;for(let i=0;i<n;i++){G.P.inv=99;G.P.hp=G.P.max;if(G.boss)G.boss.hp=Math.max(G.boss.hp,G.boss.max*0.55);G.tick(1/30)}}}")
+        await pg.evaluate("()=>{window.__run2=n=>{const G=__G;for(let i=0;i<n;i++){G.P.inv=99;G.P.hp=G.P.max;if(G.boss&&G.boss.ph===2)G.boss.hp=G.boss.max;G.tick(1/30)}}}")
         await pg.evaluate("()=>{const G=__G,b=G.boss;b.hp=b.max*0.69;G.P.x=b.x+420;G.P.y=b.y;__run2(30)}")
         await shot(pg, '2_trans_a')
         await pg.evaluate("__run2(30)"); await shot(pg, '2_trans_b')
@@ -55,16 +56,16 @@ async def main():
         await shot(pg, '3_orbs')
         R['orbs'] = await pg.evaluate("()=>({n:__G.anOrbs.length,w:__G.anOrbs.filter(o=>o.white).length})")
         R['white_miss'] = await pg.evaluate("""()=>{const G=__G,P=G.P,b=G.boss;b.st='recover';b.stT=99;let hurt=0;const W=G.anOrbs.filter(o=>o.white).length;
-          P.dodge=0;b.ex=[];const A=G.AMAP;let X=A.cx+620;if(!G.inPoly(X,A.cy))X=A.cx-620;for(let i=0;i<260;i++){P.x=X;P.y=A.cy;P.inv=0;P.hp=P.max;b.hp=Math.max(b.hp,b.max*0.55);G.tick(1/30);hurt+=P.max-P.hp;}return {whites:W,hurt:Math.round(hurt),left:G.anOrbs.length}}""")
+          P.dodge=0;b.ex=[];const A=G.AMAP;let X=A.cx+620;if(!G.inPoly(X,A.cy))X=A.cx-620;for(let i=0;i<260;i++){P.x=X;P.y=A.cy;P.inv=0;P.hp=P.max;b.hp=b.max;G.tick(1/30);hurt+=P.max-P.hp;}return {whites:W,hurt:Math.round(hurt),left:G.anOrbs.length}}""")
         R['white_touch'] = await pg.evaluate("""()=>{const G=__G,P=G.P,b=G.boss;b.tele=[];G.anStart(b,'orbs');__run2(30);b.st='recover';b.stT=99;b.ex=[];let got=0,hurt=0;
-          for(let i=0;i<200;i++){const w=G.anOrbs.find(o=>o.white);if(!w)break;P.x=w.x;P.y=w.y;P.inv=0;P.hp=P.max;b.hp=Math.max(b.hp,b.max*0.55);const n=G.anOrbs.length;G.tick(1/30);hurt+=P.max-P.hp;if(G.anOrbs.length<n)got++;}return {got,hurt:Math.round(hurt)}}""")
+          for(let i=0;i<200;i++){const w=G.anOrbs.find(o=>o.white);if(!w)break;P.x=w.x;P.y=w.y;P.inv=0;P.hp=P.max;b.hp=b.max;const n=G.anOrbs.length;G.tick(1/30);hurt+=P.max-P.hp;if(G.anOrbs.length<n)got++;}return {got,hurt:Math.round(hurt)}}""")
         for k, s in [('bolt', 18), ('pillars', 30), ('rhythm', 40)]:
             await pg.evaluate("(k)=>{const G=__G,b=G.boss;b.tele=[];G.anOrbs.length=0;b.stT=0;G.P.x=b.x;G.P.y=b.y+360;G.anStart(b,k)}", k)
             await pg.evaluate(f"__run2({s})"); await shot(pg, f'4_ph2_{k}')
             await pg.evaluate("__run2(120)")
         # 순간이동: 가까이 붙어 있으면 멀리 사라진다
         R['blink'] = await pg.evaluate("""()=>{const G=__G,P=G.P,b=G.boss;b.tele=[];b.st='chase';b.stT=99;b.blCd=0;const x0=b.x,y0=b.y;
-          for(let i=0;i<100;i++){P.x=b.x+60;P.y=b.y+40;P.inv=99;b.hp=Math.max(b.hp,b.max*0.55);G.tick(1/30);}return {moved:Math.round(Math.hypot(b.x-x0,b.y-y0)),st:b.st,inP:G.inPoly(b.x,b.y)}}""")
+          for(let i=0;i<100;i++){P.x=b.x+60;P.y=b.y+40;P.inv=99;b.hp=b.max;G.tick(1/30);}return {moved:Math.round(Math.hypot(b.x-x0,b.y-y0)),st:b.st,inP:G.inPoly(b.x,b.y)}}""")
         await shot(pg, '5_blink')
         # 처치
         await pg.evaluate("()=>{const G=__G,b=G.boss;b.invul=false;b.shT=0;G.hurtEnemy(b,1e9,0,0,0);for(let i=0;i<20;i++)G.tick(1/30)}")

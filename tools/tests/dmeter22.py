@@ -3,6 +3,6 @@ import asyncio, sys, os, json, re
 ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 os.environ.setdefault('SIMURL', 'file://' + os.path.join(ROOT, 'build', 'hell_survive.html'))
 os.environ.update(RANDPICK='1', RAW='1', PAR='2', SEED='5')
-sys.argv = ['sim600.py', 'L', json.dumps(sys.argv[1:] or ["wolf:blood","wolf:twin","snail:venom","snail:lava","archer:red","chimera:wind","chimera:flame","chimera:dream","lizard:guard","octo","ghost","twins"]), '1', 'std', '0']
+sys.argv = ['sim600.py', 'L', json.dumps(sys.argv[1:] or ["wolf:blood","wolf:twin","snail:venom","snail:lava","archer:red","chimera:wind","chimera:flame","chimera:dream","lizard:guard","octo","ghost","twins","gun"]), '1', 'std', '0']
 os.environ['STAGES'] = '[[24,600]]'
 exec(open(os.path.join(ROOT, 'tools', 'sim600.py'), encoding='utf8').read())

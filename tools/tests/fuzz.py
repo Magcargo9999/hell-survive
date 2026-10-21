@@ -5,9 +5,9 @@ import asyncio, sys, os, json
 from playwright.async_api import async_playwright
 from h301 import newpage
 CASES = [('wolf', 0, 0), ('wolf', 1, 1), ('wolf', 2, 0), ('wolf', 1, 2), ('snail', 0, 0), ('snail', 1, 0), ('snail', 2, 0), ('archer', 0, 0), ('archer', 0, 1), ('archer', 1, 0),
-         ('chimera', 0, 0), ('chimera', 1, 0), ('chimera', 2, 0), ('lizard', 0, 0), ('lizard', 0, 1), ('lizard', 1, 0), ('twins', 0, 0), ('ghost', 0, 0), ('octo', 0, 0)]
+         ('chimera', 0, 0), ('chimera', 1, 0), ('chimera', 2, 0), ('lizard', 0, 0), ('lizard', 0, 1), ('lizard', 1, 0), ('twins', 0, 0), ('ghost', 0, 0), ('octo', 0, 0), ('gun', 0, 0)]
 BOSSES = ['monkey', 'eye', 'skel', 'angel']
-JS = """([ch,rt,fin,secs,tier,bk])=>{const G=__G;G.SAVE.holyBlood=true;Object.assign(G.SAVE.chars,{wolf:true,snail:true,archer:true,chimera:true,lizard:true,twins:true,ghost:true,octo:true});
+JS = """([ch,rt,fin,secs,tier,bk])=>{const G=__G;G.SAVE.holyBlood=true;Object.assign(G.SAVE.chars,{wolf:true,snail:true,archer:true,chimera:true,lizard:true,twins:true,ghost:true,octo:true,gun:true});
  G.SAVE.diff.max=5;G.SAVE.shards=99999;G.SAVE.diff.sel=tier;G.SAVE.set.speed=0;G.startGame(ch);G.P.bossK=bk;window.__rt=rt;window.__fin=fin;
  const P=G.P;let s=7;const rnd=()=>{s=(s*1103515245+12345)&0x7fffffff;return s/0x7fffffff};
  const pick=()=>{const t=document.getElementById('levelTitle').textContent,c=G.choices;let i;if(t.indexOf('갈림길')>=0)i=rt;else if(t.indexOf('최종')>=0)i=fin;else i=Math.floor(rnd()*c.length);if(!c[i]||c[i].locked)i=c.findIndex(u=>!u.locked);G.pick(Math.max(0,i))};
