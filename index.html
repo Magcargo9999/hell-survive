@@ -1072,7 +1072,7 @@ function spawnBoss() {
 const bossPlayerHit = (x, y, r) => Math.hypot(P.x - x, P.y - y) < r + 10 + PR();
 const PR = () => [0, 5, 9, 10][P.form | 0] || 0;   // v5.00: 진화해서 몸집이 커지면 피격 범위도 커진다 (0단계 기준 +0 · 1진화 +5 · 최종 +9)
 const bossAoE = (x, y, r, d) => { petAoE(x, y, r, d); if (bossPlayerHit(x, y, r)) bossHit(d); };   // 플레이어와 동료 모두에게 피해
-function bossTele(o) { boss.tele.push(Object.assign({ t: 0, dur: 1, done: false }, o)); }
+function bossTele(o) { if (!boss) return; boss.tele.push(Object.assign({ t: 0, dur: 1, done: false }, o)); }
 /* v5.00: 난이도 단계마다 마왕에게 '추가 패턴'이 무작위로 하나씩 붙는다 (1단계 1개 ... 5단계 5개). 원래 패턴 사이사이에 따로 쓴다 */
 const TIER_EX = ['rain', 'cross', 'ring', 'grid', 'nova'];
 const TIER_EX_NAME = { rain: '낙석', cross: '십자 균열', ring: '고리 충격파', grid: '세 줄 균열', nova: '마력 폭발' };
