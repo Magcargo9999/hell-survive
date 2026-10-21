@@ -526,6 +526,7 @@ const SAVE_DEF = () => ({
   chars: { wolf: true, snail: true, archer: false, chimera: false, lizard: false, twins: false, ghost: false, octo: false },
   dex: { seen: {}, kills: {}, final: {}, goals: 0 },
   diff: { max: 0, sel: 0, fw: false },
+  holyBlood: false,   // v6.03: 신성한 피를 먹었다 (성혈랑 최종 진화 해금)
   fw: { wins: {}, open: false, cleared: false, snap: null },   // 숨은 보스: 혈랑/성혈랑 클리어 기록 · 마지막 클리어 스펙
   set: { nums: true, calm: false, sfx: 0.7, bgm: 0.35, speed: 1, joy: ('ontouchstart' in window) },
 });
@@ -534,7 +535,7 @@ function loadSave() {
   try {
     const j = JSON.parse(localStorage.getItem(SAVE_KEY) || 'null'), d = SAVE_DEF();
     if (j && j.chars && j.chars.mage && !('archer' in j.chars)) j.chars.archer = true;   // 예전 뼈 마법사를 샀다면 궁수로 이어받는다
-    if (j) SAVE = { shards: +j.shards || 0, perks: Object.assign(d.perks, j.perks), chars: Object.assign(d.chars, j.chars), dex: { seen: Object.assign({}, j.dex && j.dex.seen), kills: Object.assign({}, j.dex && j.dex.kills), final: Object.assign({}, j.dex && j.dex.final), goals: +(j.dex && j.dex.goals) || 0 }, diff: Object.assign(d.diff, j.diff), fw: Object.assign(d.fw, j.fw), set: Object.assign(d.set, j.set) };
+    if (j) SAVE = { shards: +j.shards || 0, perks: Object.assign(d.perks, j.perks), chars: Object.assign(d.chars, j.chars), dex: { seen: Object.assign({}, j.dex && j.dex.seen), kills: Object.assign({}, j.dex && j.dex.kills), final: Object.assign({}, j.dex && j.dex.final), goals: +(j.dex && j.dex.goals) || 0 }, diff: Object.assign(d.diff, j.diff), holyBlood: !!j.holyBlood, fw: Object.assign(d.fw, j.fw), set: Object.assign(d.set, j.set) };
     delete SAVE.chars.mage;
   } catch (e) { /* 저장소를 못 쓰는 환경이면 기본값으로 진행 */ }
 }
@@ -570,7 +571,7 @@ const CHARS = {
   chimera: { role: '진화 루트형 근접 딜러', weak: '진화 전 화력이 약하다', name: '키메라', price: 300, desc: '날렵한 짐승형 근접 캐릭터.<br>Lv.10 진화 루트 선택: 바람(관통 에어슬래시 · Lv.20 천공 강하) / 화염(넓은 화상 발톱 · Lv.20 화염 브레스) / 몽환(촉수 · Lv.20 천안 난무, 0단계에서 이공벌레를 잡아야 열림).', ally: '특징: 진화 루트 3개 (바람 · 화염 · 몽환)' },
   lizard: { role: '단단한 대검 브루저', weak: '가장 느린 이동·공격 속도', name: '리자드', price: 260, desc: '느리지만 단단하고 한 방이 묵직한 대검 전사.<br>Lv.10 리자드 검사 · Lv.20 버서커(광란) / 물의 전사(자힐) 중 선택.', ally: '특징: 이속 느림 · 받는 피해 -15% · 강한 기본 공격' },
   twins: { role: '기동형 사슬 근접', weak: '멈추면 딜이 안 나온다 (자동 공격 없음)', name: '사슬 악마', price: 0, cond: '벨리아·셀리아 둘 다 처치하면 해금', desc: '부서진 사슬을 쥔 작고 불완전한 악마.<br>직접 공격하지 않고, 움직일수록 사슬 끝 창날이 휘둘리며 적을 친다.', ally: '특징: 자동 공격 없음 · 이속이 곧 공격력 · Lv.10 사슬 두 가닥 + 스킬' },
-  ghost: { role: '부채꼴 다발 사격', weak: '구슬 하나하나가 약하고 멀면 약하다', name: '연보라 구슬 유령', price: 240, desc: '저승의 기운이 맺힌 연보라 구슬을 앞쪽으로 흩뿌리는 유령.<br>구슬 하나는 약하지만 여러 개가 한꺼번에 날아간다.<br>Lv.10 연보라 총령 (큰 구슬 · 차지 샷) → Lv.20 수호령의 총령 (대신 맞고 터지는 수호령)', ally: '특징: 부채꼴 다발 사격 · 가까울수록 많이 맞힌다 · (진화는 아직 없음)' },
+  ghost: { role: '부채꼴 다발 사격', weak: '구슬 하나하나가 약하고 멀면 약하다', name: '연보라 구슬 유령', price: 0, cond: '난이도 1~5단계 마왕을 쓰러뜨리면 10% 확률로 떨어지는 [보라구슬]을 먹는다', desc: '저승의 기운이 맺힌 연보라 구슬을 앞쪽으로 흩뿌리는 유령.<br>구슬 하나는 약하지만 여러 개가 한꺼번에 날아간다.<br>Lv.10 연보라 총령 (큰 구슬 · 차지 샷) → Lv.20 수호령의 총령 (대신 맞고 터지는 수호령)', ally: '특징: 부채꼴 다발 사격 · 가까울수록 많이 맞힌다 · (진화는 아직 없음)' },
   octo: { role: '직선 마법 · 구체 성장형', weak: '직선 탄이라 빗나가기 쉽고 초반이 약하다', name: '문어 마법사', price: 0, hidden: true, cond: '난이도 2단계 이상에서 나오는 히든 마물 [문어 마법사]를 쓰러뜨리면 해금', desc: '책과 등불을 든 어린 문어 마법사.<br>곧게 날아가는 마법탄을 쏘고, 증강(스킬 카드)을 고를 때마다 몸 주위를 도는 마력 구체가 하나씩 늘어난다.', ally: '특징: 구체가 점점 늘어남 · Lv.10 진화 + 스킬 [코끼리 돌진] · Lv.20 스킬이 [문어의 심연]으로 바뀜' },
 };
 
@@ -2023,6 +2024,10 @@ function bossDefeated() {
   SAVE.fw.snap = snapP();   // 숨은 난이도용: 마지막으로 마왕을 쓰러뜨린 스펙
   if (P.char === 'wolf' && P.route === 'crimson' && (P.fin === 'blood' || P.fin === 'holy')) SAVE.fw.wins[P.fin] = 1;
   P.fwOpen = false; if (!SAVE.fw.open && SAVE.fw.wins.blood && SAVE.fw.wins.holy) { SAVE.fw.open = true; P.fwOpen = true; banner = { txt: '마왕을 쓰러뜨렸다!\n☠ 혈랑과 성혈랑의 피가 모였다 — 새 난이도 [타락한 혈랑]이 추가되었다!', t: 8, c: '#ff8a9a' }; }
+  P.dropMsg = '';
+  if (!SAVE.holyBlood && rand() < 0.10) { items.push({ type: 'holyblood', x: e.x - 30, y: e.y + 10, t: 0 }); P.dropMsg += '신성한 피가 떨어졌다!'; }   // v6.03: 난이도 0~5단계 마왕 10%
+  if (P.tier >= 1 && !SAVE.chars.ghost && rand() < 0.10) { items.push({ type: 'purpleorb', x: e.x + 30, y: e.y + 10, t: 0 }); P.dropMsg += (P.dropMsg ? ' · ' : '') + '보라구슬이 떨어졌다!'; }   // 난이도 1~5단계 마왕 10%
+  if (P.dropMsg) banner = { txt: '마왕을 쓰러뜨렸다!\n✨ ' + P.dropMsg, t: 6, c: '#ffe28a' };
   saveSave();
   state = 'win'; winT = 0;
 }
@@ -3224,7 +3229,7 @@ function drawArcherPreview(c, k) {
 const ROUTE_COND = {
   wolf:    { crimson: { txt: '피의 갈증(피흡) 카드를 얻는다', ok: () => (P.up.thirst || 0) >= 1, prog: () => `피의 갈증 Lv.${P.up.thirst || 0}` },
              twin:    { txt: '날렵한 발톱(공속) 카드 Lv.2 이상', ok: () => (P.up.speed || 0) >= 2, prog: () => `날렵한 발톱 Lv.${P.up.speed || 0}` } },
-  wolfFin: { holy:    { txt: '지옥의 심장(체력) 카드 Lv.2 이상', ok: () => (P.up.heart || 0) >= 2, prog: () => `지옥의 심장 Lv.${P.up.heart || 0}` } },
+  wolfFin: { holy:    { txt: '[신성한 피]를 먹고(마왕 10% 드랍) 지옥의 심장(체력) 카드 Lv.2 이상', ok: () => !!SAVE.holyBlood && (P.up.heart || 0) >= 2, prog: () => `신성한 피 ${SAVE.holyBlood ? '✔' : '✖'} · 지옥의 심장 Lv.${P.up.heart || 0}` } },
   snail:   { lava:    { txt: '용암 지대에서 누적 4초 버티기', ok: () => P.lavaT >= 4, prog: () => `${Math.min(4, P.lavaT).toFixed(1)} / 4초` } },
   chimera: { dream:   { txt: '진화 전(0단계)에 이공벌레를 직접 처치한다 (폭발 반경 밖에서 때려야 함)', ok: () => !!P.bugF0, prog: () => P.bugF0 ? '달성!' : '아직 못 잡음' } },
   archerFin: { holy:  { txt: `체력 회복 포션을 ${POTION_N}개 마신다 (게임 시작부터 누적 · 체력이 가득해도 마시면 센다)`, ok: () => P.potions >= POTION_N, prog: () => `포션 ${Math.min(P.potions, POTION_N)} / ${POTION_N}개` } },
@@ -4739,7 +4744,19 @@ function spawnItem(type, x, y) {
   if (x === undefined) { const a = rand() * 6.283, d = 220 + rand() * 330; x = P.x + Math.cos(a) * d; y = P.y + Math.sin(a) * d; }
   items.push({ type, x, y, t: 0 });
 }
+const isDropItem = it => it.type === 'holyblood' || it.type === 'purpleorb';
+function stepDropItems(dt) {   // v6.03: 마왕이 떨군 신성한 피 · 보라구슬은 잠시 떠 있다가 플레이어에게 날아와 먹힌다
+  for (const it of items) {
+    if (!isDropItem(it)) continue;
+    it.t += dt;
+    if (it.t > 0.9) { const dx = P.x - it.x, dy = P.y - 10 - it.y, d = Math.hypot(dx, dy) || 1, sp = 300 + 900 * (it.t - 0.9); it.x += dx / d * Math.min(d, sp * dt); it.y += dy / d * Math.min(d, sp * dt); }
+    if (Math.hypot(it.x - P.x, it.y - P.y + 10) < 34) { it.got = true; collectItem(it); }
+  }
+  items = items.filter(it => !it.got);
+}
 function collectItem(it) {
+  if (it.type === 'holyblood') { SAVE.holyBlood = true; P.dropGot = (P.dropGot || '') + '신성한 피를 먹었다!  늑대 혈랑 루트 Lv.20 최종 진화에 [성혈랑]이 열렸다'; saveSave(); sfx('evolve'); burst(P.x, P.y - 30, 40, ['#ff3a4a', '#ffe28a', '#ffffff'], 300, 0.9); addRing(P.x, P.y - 30, 10, 200, 0.6, '255,200,120', 10); return; }
+  if (it.type === 'purpleorb') { SAVE.chars.ghost = true; P.dropGot = (P.dropGot ? P.dropGot + '<br>' : '') + '보라구슬을 먹었다!  연보라 구슬 유령이 해금되었다'; saveSave(); sfx('evolve'); burst(P.x, P.y - 30, 40, ['#c8a8ff', '#ffffff', '#8a5aff'], 300, 0.9); addRing(P.x, P.y - 30, 10, 200, 0.6, '190,150,255', 10); return; }
   const I = ITEMS[it.type];
   if (it.type === 'relic') { gainRelic(it.rk); return; }
   if (it.type === 'chest') { sfx('chest'); burst(P.x, P.y - 24, 20, ['#ffc247', '#ffffff'], 240, 0.7); openChest(); return; }
@@ -4758,6 +4775,15 @@ function collectItem(it) {
 const ITEM_RECTS = [[0, 8, 355, 359], [359, 20, 347, 347], [710, 23, 376, 344], [1086, 0, 412, 367], [1498, 5, 440, 362]];   // 받은 아이템 아이콘 5종 (체력·자석·가속·무적·상자)
 function drawItem(it, x, y) {
   if (it.type === 'relic') { drawRelicDrop(it, x, y); return; }
+  if (isDropItem(it)) {   // v6.03: 신성한 피(붉은 물방울) · 보라구슬(연보라 구슬) — 코드로 그린 간단한 그림
+    const b = Math.sin(it.t * 4) * 4, pulse = 0.75 + 0.25 * Math.sin(it.t * 6), holy = it.type === 'holyblood';
+    ctx.save(); ctx.translate(x, y - 30 + b);
+    const g = ctx.createRadialGradient(0, 0, 2, 0, 0, 42 * pulse); g.addColorStop(0, holy ? 'rgba(255,220,140,0.85)' : 'rgba(215,190,255,0.85)'); g.addColorStop(1, 'rgba(255,255,255,0)');
+    ctx.fillStyle = g; ctx.beginPath(); ctx.arc(0, 0, 42 * pulse, 0, 6.283); ctx.fill();
+    if (holy) { ctx.fillStyle = '#d3122a'; ctx.beginPath(); ctx.moveTo(0, -17); ctx.bezierCurveTo(14, 0, 12, 14, 0, 14); ctx.bezierCurveTo(-12, 14, -14, 0, 0, -17); ctx.fill(); ctx.strokeStyle = '#ffe28a'; ctx.lineWidth = 2; ctx.stroke(); ctx.fillStyle = 'rgba(255,255,255,0.8)'; ctx.beginPath(); ctx.ellipse(-4, 2, 2.5, 5, 0.3, 0, 6.283); ctx.fill(); }
+    else { const o = ctx.createRadialGradient(-4, -5, 2, 0, 0, 15); o.addColorStop(0, '#f4eaff'); o.addColorStop(0.55, '#b894ff'); o.addColorStop(1, '#6a3fc8'); ctx.fillStyle = o; ctx.beginPath(); ctx.arc(0, 0, 15, 0, 6.283); ctx.fill(); ctx.strokeStyle = '#efe2ff'; ctx.lineWidth = 1.5; ctx.stroke(); }
+    ctx.restore(); return;
+  }
   const I = ITEMS[it.type], b = Math.sin(it.t * 4) * 3, fade = it.t > (it.type === 'chest' ? 53 : 38) ? (Math.floor(it.t * 6) % 2 ? 0.35 : 1) : 1;
   ctx.save(); ctx.translate(x, y - 22 + b); ctx.globalAlpha = fade;
   ctx.fillStyle = 'rgba(0,0,0,0.3)'; ctx.beginPath(); ctx.ellipse(0, 22 - b, 12, 4, 0, 0, 6.283); ctx.fill();
@@ -6171,6 +6197,7 @@ function showOver(win) {
   $('overStats').innerHTML = `생존 시간 ${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')} · 레벨 ${P.lvl} · 처치 ${P.kills}`;
   $('overShards').textContent = `영혼 조각 +${P.earned}  (보유 ${SAVE.shards})` + (P.goalDone ? `  ·  런 목표 ${P.goalDone}개 (+${P.goalShards})` : '') + (win && P.fee ? `  ·  참가비 ${P.fee} 반환 포함` : '');
   if (win && P.unlocked) $('overStats').innerHTML += `<br><span style="color:var(--gold)">🔓 난이도 ${P.unlocked}단계 해금!</span>`;
+  if (win && P.dropGot) $('overStats').innerHTML += `<br><span style="color:#ffe28a">✨ ${P.dropGot}</span>`;
   if (win && P.fwOpen) $('overStats').innerHTML += `<br><span style="color:#ff8a9a">☠ 새 난이도 [타락한 혈랑] 추가! (시작 화면 난이도 ▶ 끝)</span>`;
   if (win && P.fwUnlock) $('overStats').innerHTML += `<br><span style="color:#ff8a9a">🔓 혈랑 루트 Lv.20 최종 진화에 [타락한 혈랑] 추가!</span>`;
   show('overBox', true);
@@ -6210,7 +6237,7 @@ function buildCards() {
   Object.keys(CHARS).filter(id => !CHARS[id].hidden || SAVE.chars[id]).forEach((id, i) => {
     const C = CHARS[id], owned = SAVE.chars[id], b = document.createElement('button');
     b.className = 'card' + (owned ? '' : ' locked'); b.dataset.c = id;
-    const get = owned ? '✔ 보유 중' : C.cond ? `🔒 ${C.cond}${id === 'octo' ? '' : ` (벨리아 ${(SAVE.dex.kills['uq:belia'] || 0) > 0 ? '✔' : '✖'} · 셀리아 ${(SAVE.dex.kills['uq:celia'] || 0) > 0 ? '✔' : '✖'})`}` : C.price ? `🔒 캐릭터 상점 ${C.price} 영혼 조각` : '기본 제공';
+    const get = owned ? '✔ 보유 중' : C.cond ? `🔒 ${C.cond}${id !== 'twins' ? '' : ` (벨리아 ${(SAVE.dex.kills['uq:belia'] || 0) > 0 ? '✔' : '✖'} · 셀리아 ${(SAVE.dex.kills['uq:celia'] || 0) > 0 ? '✔' : '✖'})`}` : C.price ? `🔒 캐릭터 상점 ${C.price} 영혼 조각` : '기본 제공';
     b.innerHTML = `<div class="fr"><canvas width="130" height="104"></canvas><b>${i + 1}. ${C.name}${owned ? '' : ' 🔒'}</b>`
       + `<span class="crole">역할 · ${C.role}</span><span class="cweak">약점 · ${C.weak}</span><span class="cget">${get}</span><span class="flh">한 번 더 누르면 상세 설명</span></div>`
       + `<div class="bk"><b>${C.name}</b><small>${C.desc}<br>${C.ally}</small><span class="flh">다시 누르면 앞면</span></div>`;   // v5.12: 앞면은 역할·약점·획득 조건만, 상세는 뒷면
@@ -6237,7 +6264,7 @@ function updateDiff() {
   $('diffDesc').textContent = m <= 0 ? '' : t ? `몹 체력 +${10 * t}% · 몹 공격 +${10 * t}% · 보스 체력 +${30 * t}% · 보스 패턴 강화 · 영혼 조각 ×${(1 + 0.3 * t).toFixed(1)} · 참가비 ${25 * t} (클리어하면 반환)` : '마왕을 다시 쓰러뜨리면 다음 단계가 열립니다 (최대 5단계)';
 }
 function selectChar(c) {
-  if (!SAVE.chars[c]) { $('hint').textContent = CHARS[c].cond ? `🔒 ${CHARS[c].name}: ${CHARS[c].cond} (유니크 마물은 한 판에 한 번씩 등장)` : `🔒 ${CHARS[c].name}: 영혼 상점에서 영혼 조각 ${CHARS[c].price}개로 구매할 수 있어요.`; return; }
+  if (!SAVE.chars[c]) { $('hint').textContent = CHARS[c].cond ? `🔒 ${CHARS[c].name}: ${CHARS[c].cond}${c === 'ghost' ? '' : ' (유니크 마물은 한 판에 한 번씩 등장)'}` : `🔒 ${CHARS[c].name}: 영혼 상점에서 영혼 조각 ${CHARS[c].price}개로 구매할 수 있어요.`; return; }
   $('hint').textContent = ''; selChar = c;
   document.querySelectorAll('#charCards .card').forEach(b => b.classList.toggle('sel', b.dataset.c === c));
 }
@@ -6467,7 +6494,7 @@ function tick(dt) {
   else if (state === 'evolve') updateEvolve(dt);
   else if (state === 'levelup' || state === 'menu') updateFx(dt);
   else if (state === 'slot') { updateSlotUI(dt); updateFx(dt); }
-  else if (state === 'win') { updateFx(dt); winT += dt; if (winT > 2.4 && !overShown) showOver(true); }
+  else if (state === 'win') { updateFx(dt); winT += dt; stepDropItems(dt); if (winT > 2.4 && !overShown && (!items.some(isDropItem) || winT > 9)) showOver(true); }
 }
 let last = performance.now();
 function loop(now) {
@@ -6479,6 +6506,7 @@ function loop(now) {
 
 // 테스트용 접근점
 window.__G = {
+  bossDefeated,
   get ready() { return !!IMG.floorD; }, get state() { return state; }, get P() { return P; }, get enemies() { return enemies; }, get orbs() { return orbs; },
   get zones() { return zones; }, get ebul() { return ebul; }, get EYE() { return EYE; }, get shards() { return shards; }, get bigQ() { return bigQ; }, get bombQ() { return bombQ; }, get holyQ() { return holyQ; }, get afx() { return afx; }, get dashQ() { return dashQ; }, get beam() { return beam; }, get evo() { return evo; }, get choices() { return choices; },
   get SAVE() { return SAVE; }, render, get boss() { return boss; }, get mini() { return mini; }, get skp() { return skp; }, SK_PH, SKB, get mdeath() { return mdeath; }, spawnMini, miniDefeated, spawnBoss, raiseCastle, enterArena, exitArena, get castle() { return castle; }, get arena() { return arena; }, get trans() { return trans; }, openChest, openShop, buildCards, get joy() { return joy; }, get gt() { return gt; }, get allies() { return allies; }, get items() { return items; }, spawnItem, get globs() { return globs; }, recruit, keys, tick, needFor, pick: pickChoice, cast: castSkill, spawnBug,
