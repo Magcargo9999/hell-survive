@@ -20,6 +20,8 @@ ASSETS = {
     '__BLOOD2__': 'final/blood2.webp',
     '__HOLY__': 'opt/holy.webp',
     '__ITEMS__': 'final/items.webp',
+    '__DROPHB__': 'final/drop_hb.webp',
+    '__DROPPO__': 'final/drop_po.webp',
     '__ELF0__': 'opt/elf0.webp',
     '__ELF1__': 'v401/n_elf.webp',
     '__SKEL__': 'v401/n_skel.webp',
