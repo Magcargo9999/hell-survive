@@ -478,7 +478,7 @@ const SKILLS = {
   bigarrow: { name: '혼신의 큰 화살', desc: '[궁수 전용] 기를 모아(0.5초) 거대한 화살을 쏩니다. 일직선의 모든 적을 꿰뚫고 크게 밀어냅니다. (해골 궁수는 더 크고 강력)', sub: '충전 0.5초 · 무한 관통 · 큰 피해 · 충전 중 이동 느려짐' },
   backdash: { name: '후방 도약 사격', desc: '[궁수 전용] 적에게서 멀어지는 방향으로 무적 도약 후, 부채꼴 화살 9발을 쏘고 주변 적을 밀쳐냅니다.', sub: '무적 도약 · 9발 부채꼴 · 착지 충격파' },
   bombshot: { name: '폭발 화살', desc: '[진화한 지옥엘프 전용] 적·탄환·경고 장판이 없는 빈 공간을 자동으로 찾아 무적 백스텝을 하며 적이 가장 많이 모인 곳으로 폭발 화살을 쏩니다. 쿨타임이 짧습니다. 맞은 자리가 크게 폭발하고, 잠시 뒤 두 번 더 여진이 터집니다.', sub: '무적 백스텝 · 폭발 범위 피해 · 여진 2회' },
-  holyshot: { name: '신성화살', desc: '[성화된 지옥엘프 전용] 스페이스를 누른 채 빛을 모으고 떼면 발사합니다 (방향키로 조준). 오래 모을수록 화살이 커지고 훨씬 강해지지만, 모으는 동안은 움직일 수 없습니다. 풀차지로 명중하면 남은 쿨타임이 절반 줄어듭니다.', sub: '최대 1.8초 차징 · 무한 관통 · 최대 16배 · 풀차지 명중 시 쿨타임 -50%' },
+  holyshot: { name: '신성화살', desc: '[성화된 지옥엘프 전용] 스페이스를 누른 채 빛을 모으고 떼면 발사합니다 (가장 가까운 적을 자동 조준). 오래 모을수록 화살이 커지고 훨씬 강해지며, 모으는 동안에도 움직일 수 있지만 이동 속도가 느려집니다. 풀차지로 명중하면 남은 쿨타임이 절반 줄어듭니다.', sub: '최대 1.8초 차징 · 무한 관통 · 최대 16배 · 풀차지 명중 시 쿨타임 -50%' },
   rage:   { name: '광란', desc: '[버서커 리자드 전용] 이성을 잃고 5초 동안 공격 속도가 3배로 치솟습니다 (이속 +12%). 체력이 낮을수록 광폭 피해가 크게 붙어, 위기일수록 더 위험해집니다.', sub: '5초 · 공속 ×3 · 이속 +12% · 붉은 광기' },
   tide:   { name: '물의 주술', desc: '[물의 도마뱀 전사 전용] 누르면 물의 주술로 체력을 즉시 회복합니다. 시전하는 짧은 순간 무적이고, 주변 적을 물결로 밀어내며 둔화시킵니다.', sub: '체력 22% 즉시 회복 · 0.9초 무적 · 주변 밀쳐냄 + 둔화' },
   whip:   { name: '사슬 휘두르기', desc: '[사슬 악마 전용] 사슬을 앞으로 길게 내던져 일직선의 적을 꿰뚫은 뒤, 몸 주위로 크게 휘둘러 4번 베고 마지막에 사슬 폭발을 일으킵니다. 최종 진화(사슬의 폭군)에서는 쓰는 동안과 쓰고 나서 10초 동안 사슬 길이 2배 · 회전 속도 2배 · 체력 재생이 크게 늘어납니다. 쓰는 동안 무적이에요. 쓰기 직전 사슬이 빨리 돌고 있을수록 강하고, 최종 진화(사슬의 폭군)에서 범위와 폭발이 커집니다.', sub: '일직선 관통 → 회전 4연타 → 사슬 폭발 · 시전 중 무적' },
@@ -3906,19 +3906,19 @@ function boomAt(x, y, R, dm, main) {
   addRing(x, y + 20, 10, R, 0.35, '255,90,60', 8); burst(x, y, main ? 18 : 8, ['#ff5a3a', '#ffb070', '#ffffff'], main ? 360 : 240, 0.5);
   shake = Math.max(shake, main ? 12 : 6); sfx('boom');
 }
-// --- 신성화살: 가만히 서서 빛을 모으고(방향키로 조준) 떼면 발사
+// --- 신성화살: 움직이면서 빛을 모으고(자동 조준 · v6.06 이동 가능) 떼면 발사
 function holyStage(t) { return t >= HOLY_T ? 3 : t >= 0.92 ? 2 : t >= 0.42 ? 1 : 0; }
 function startHoly() {
   holyQ = { t: 0, held: true, tap: false, ang: P.face > 0 ? 0 : Math.PI, st: 0, ix: 0, iy: 0 };
   P.atkTimer = -1; P.atkHitN = 99; P.atkCd = Math.max(P.atkCd, 0.4);
   addRing(P.x, P.y - 10, 120, 10, 0.45, '190,220,255', 6);
-  if (!P.holyTip) { P.holyTip = true; banner = { txt: '신성화살: 스페이스를 누른 채 모으고, 떼면 발사!  (방향키로 조준 · 모으는 동안 이동 불가 · 받는 피해 -40%)', t: 6 }; }
+  if (!P.holyTip) { P.holyTip = true; banner = { txt: '신성화살: 스페이스를 누른 채 모으고, 떼면 발사!  (가까운 적 자동 조준 · 모으는 동안 이동 가능(느려짐) · 받는 피해 -40%)', t: 6 }; }
 }
 function stepHoly(dt) {
   const q = holyQ; q.t += dt;
   const [ox, oy] = arrowOrigin(), len = Math.hypot(q.ix, q.iy);
-  if (len > 0.25) q.ang = Math.atan2(q.iy, q.ix);
-  else { const t = nearestEnemy(900); if (t) q.ang = Math.atan2(t.y - t.r - oy, t.x - ox); }
+  const t = nearestEnemy(900);   // v6.06: 움직이면서 모으므로 가장 가까운 적을 자동 조준 (적이 없으면 가는 방향)
+  if (t) q.ang = Math.atan2(t.y - t.r - oy, t.x - ox); else if (len > 0.25) q.ang = Math.atan2(q.iy, q.ix);
   if (Math.cos(q.ang) > 0.1) P.face = 1; else if (Math.cos(q.ang) < -0.1) P.face = -1;
   const k = Math.min(1, q.t / HOLY_T), st = holyStage(q.t);
   if (st > q.st) { q.st = st; addRing(P.x, P.y - 40, 20, 90 + 40 * st, 0.4, '190,220,255', 6); sfx('item'); if (st === 3) { shake = Math.max(shake, 8); burst(ox, oy, 16, ['#bcd8ff', '#ffe9a8', '#ffffff'], 280, 0.5); } }
@@ -5047,12 +5047,12 @@ function update(dt) {
   let ix = (keys.has('KeyD') || keys.has('ArrowRight') ? 1 : 0) - (keys.has('KeyA') || keys.has('ArrowLeft') ? 1 : 0);
   let iy = (keys.has('KeyS') || keys.has('ArrowDown') ? 1 : 0) - (keys.has('KeyW') || keys.has('ArrowUp') ? 1 : 0);
   if (joy.on && (joy.x || joy.y)) { ix = joy.x; iy = joy.y; }
-  if (holyQ) { holyQ.ix = ix; holyQ.iy = iy; }   // 신성화살: 방향키는 조준에 쓴다
-  if (diveQ || rushQ || bombQ || holyQ || whipQ || P.stunT > 0) { ix = 0; iy = 0; }   // 천공 강하·신성화살 중에는 움직일 수 없다
+  if (holyQ) { holyQ.ix = ix; holyQ.iy = iy; }   // 신성화살: 적이 없을 때만 가는 방향으로 조준
+  if (diveQ || rushQ || bombQ || whipQ || P.stunT > 0) { ix = 0; iy = 0; }   // 천공 강하 중에는 움직일 수 없다 (v6.06: 신성화살은 움직이며 모은다)
   const len = Math.hypot(ix, iy), moving = len > 0, ox0 = P.x, oy0 = P.y;
   if (moving) {
     ix /= len; iy /= len;
-    const spd = P.spd * (P.boost > 0 ? 1.5 : 1) * (bigQ ? 0.35 : 1) * (breathQ ? 0.4 : 1) * (P.slowT > 0 ? 0.65 : 1) * (P.rage > 0 ? 1.12 : 1) * (P.tideT > 0 ? 0.3 : 1);
+    const spd = P.spd * (P.boost > 0 ? 1.5 : 1) * (bigQ ? 0.35 : 1) * (breathQ ? 0.4 : 1) * (P.slowT > 0 ? 0.65 : 1) * (P.rage > 0 ? 1.12 : 1) * (P.tideT > 0 ? 0.3 : 1) * (holyQ ? 0.65 : 1);   // 신성화살 차징 중 이동 -35%
     P.x += ix * spd * dt; P.y += iy * spd * dt; P.lastX = ix; P.lastY = iy; P.vx = ix * spd; P.vy = iy * spd;
     if (P.char === 'snail') {   // 지나간 길에 독 자국을 남긴다
       P.trailAcc += spd * dt;
