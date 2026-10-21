@@ -67,7 +67,10 @@ ASSETS = {
     '__OS__': 'os/os.webp',
     '__BS__': 'bs/bs.webp',
     '__SKB__': 'sk/skb.webp',
-    '__SKW__': 'sk/skw.webp'
+    '__SKW__': 'sk/skw.webp',
+    '__CHMAP__': 'ch/chmap.webp',
+    '__CM__': 'ch/cm.webp',
+    '__AB__': 'ch/ab.webp'
 }
 def b64(p): return 'data:image/' + ('webp' if p.endswith('.webp') else 'png') + ';base64,' + base64.b64encode(open(os.path.join(HERE, 'assets', p), 'rb').read()).decode()
 s = open(os.path.join(HERE, 'game_template.html'), encoding='utf8').read()
