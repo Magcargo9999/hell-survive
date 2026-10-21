@@ -2,7 +2,7 @@ import asyncio,sys,json,os,statistics as st
 from playwright.async_api import async_playwright
 URL=os.environ.get('SIMURL','file://'+os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))),'build','hell_survive.html'))
 JS="""([ch,route,fin,prof,L,gt0,win,boss,seed,tier,god,bk])=>{
- const G=__G; G.SAVE.holyBlood=true; Object.assign(G.SAVE.chars,{wolf:true,snail:true,archer:true,chimera:true,lizard:true,twins:true,ghost:true,octo:true}); G.SAVE.diff.sel=tier||0; G.startGame(ch); let P=G.P; const keys=G.keys; if(window.__TW&&ch==='lizard'){ P.dmg*=window.__TW.dmg||1; P.cd*=window.__TW.cd||1; P.armor*=window.__TW.armor||1; P.spd*=window.__TW.spd||1; P.spd0=P.spd; P.max=Math.round(P.max*(window.__TW.hp||1)); P.hp=P.max; } const dt=1/30; P.uniqSeen={belia:true,celia:true};
+ const G=__G; G.SAVE.holyBlood=true; Object.assign(G.SAVE.chars,{wolf:true,snail:true,archer:true,chimera:true,lizard:true,twins:true,ghost:true,octo:true}); G.SAVE.diff.max=5; G.SAVE.shards=Math.max(G.SAVE.shards,99999); G.SAVE.diff.sel=tier||0; G.startGame(ch);   /* v6.30: 해금·참가비가 없으면 startGame이 0단계로 낮춰서 tier 인자가 무시되던 것 수정 */ let P=G.P; const keys=G.keys; if(window.__TW&&ch==='lizard'){ P.dmg*=window.__TW.dmg||1; P.cd*=window.__TW.cd||1; P.armor*=window.__TW.armor||1; P.spd*=window.__TW.spd||1; P.spd0=P.spd; P.max=Math.round(P.max*(window.__TW.hp||1)); P.hp=P.max; } const dt=1/30; P.uniqSeen={belia:true,celia:true};
  let s=seed*7919+13; const rnd=()=>{s=(s*1103515245+12345)&0x7fffffff;return s/0x7fffffff;};
  const PROF={
   std:['★','날카로운 발톱','날렵한 발톱','지옥의 심장','피의 갈증','끈적한 독','번지는 독','다발 사격','관통 화살','질주','넓은 발톱','카이팅 사격','지옥 낙뢰','회전 칼날','충격파','불길 오라','단단한 피부','영혼 자석','배움의 눈','급소 노리기','저격 시선','지옥불 구슬','뼈 투사체','밀치기'],
@@ -15,7 +15,7 @@ JS="""([ch,route,fin,prof,L,gt0,win,boss,seed,tier,god,bk])=>{
  if(ch==='chimera') PRI=['★','날 선 바람','날카로운 발톱','날렵한 발톱','쌍날 바람','멀리 나는 바람','더 높은 하늘','불씨 강화','넓은 불길','끓는 숨결','늘어난 촉수','뜬 눈','끝없는 난무',...PRI];
  if(ch==='ghost') PRI=['★','구슬 늘리기','진한 저승 기운','빠른 손짓','넓게 흩뿌리기','멀리 뿌리기',...PRI];
  if(ch==='twins') PRI=['★','무거운 동생','무거운 창날','원심력','달군 사슬','쌍둥이의 호흡','폭군의 사슬','쌍둥이의 분노','악마의 분노','빠른 손놀림','긴 사슬',...PRI];
- if(bk) P.bossK=bk; if(window.__EYE) Object.assign(G.EYE,window.__EYE);
+ if(bk) P.bossK=bk; if(window.__EYE) Object.assign(G.EYE,window.__EYE); if(window.__AN) Object.assign(G.AN,window.__AN);
  if(route==='crimson') PRI=['★','피의 갈증',...PRI]; if(route==='twin') PRI=['★','날렵한 발톱',...PRI]; if(fin==='holy') PRI=['★',(ch==='archer'?'저격 시선':'지옥의 심장'),...PRI];
  function choose(){ const c=G.choices, title=document.getElementById('levelTitle').textContent;
    if(title.indexOf('갈림길')>=0||title.indexOf('최종')>=0){ const want=title.indexOf('최종')>=0?fin:route; let i=c.findIndex(u=>u.key===want&&!u.locked); if(i<0)i=c.findIndex(u=>!u.locked); return i<0?0:i; }
@@ -74,23 +74,26 @@ JS="""([ch,route,fin,prof,L,gt0,win,boss,seed,tier,god,bk])=>{
  function esc(b){ let fx=0,fy=0; const M=30;
    const TLs=b.tele.slice(); for(const m of G.enemies) if((m.kind==='skm'||m.kind==='mini')&&m.hp>0&&m.tele) for(const t of m.tele) TLs.push(t);
    for(const q of TLs){ if(q.done||q.t<REACT)continue; const dx=P.x-q.x,dy=P.y-q.y;
-     if(q.k==='circle'){const d=Math.hypot(dx,dy); if(d<q.r+M){const u=d>1?[dx/d,dy/d]:[1,0]; fx+=u[0];fy+=u[1];}}
+     if(q.k==='circle'){const sy=q.r/(q.ry||q.r),d=Math.hypot(dx,dy*sy); if(d<q.r+M){const u=d>1?[dx/d,dy*sy/d]:[1,0]; fx+=u[0];fy+=u[1];}}
      else if(q.k==='donut'){const d=Math.hypot(dx,dy)||1; if(d>q.r-M&&d<q.r2+M){const sg=d<(q.r+q.r2)/2?-1:1; fx+=sg*dx/d;fy+=sg*dy/d;}}
      else if(q.k==='fan'){const d=Math.hypot(dx,dy)||1; let da=Math.atan2(dy,dx)-q.ang; da=Math.atan2(Math.sin(da),Math.cos(da)); if(d<q.len+M&&Math.abs(da)<q.half+0.3){ const sg=da>=0?1:-1, ta=q.ang+sg*(q.half+0.5); fx+=Math.cos(ta)*1.2+dx/d*0.5; fy+=Math.sin(ta)*1.2+dy/d*0.5; }}
      else if(q.k==='rect'){const c=Math.cos(q.ang),s=Math.sin(q.ang),lx=dx*c+dy*s,ly=-dx*s+dy*c; if(lx>-M&&lx<q.len+M&&Math.abs(ly)<q.w/2+M){const sg=ly>=0?1:-1; fx+=-s*sg; fy+=c*sg;}} }
-   const EB=(G.ebul||[]).concat((G.skp||[]).map(w=>{ if(w._p===undefined) w._p={r:40,get x(){return w.x},get y(){return w.y},vx:Math.cos(w.ang)*w.sp,vy:Math.sin(w.ang)*w.sp}; return w._p; }));
+   const EB=(G.ebul||[]).concat((G.skp||[]).map(w=>{ if(w._p===undefined) w._p={r:40,get x(){return w.x},get y(){return w.y},vx:Math.cos(w.ang)*w.sp,vy:Math.sin(w.ang)*w.sp}; return w._p; })).concat((G.anOrbs||[]).filter(o=>!o.white).map(o=>{ if(o._p===undefined) o._p={r:o.r,get x(){return o.x},get y(){return o.y},vx:Math.cos(o.a)*o.sp,vy:Math.sin(o.a)*o.sp}; return o._p; }));
    for(const q of EB){ if(q._ig===undefined) q._ig=rnd()<(+window.__IGN||0.25); if(q._ig) continue; const dx=P.x-q.x,dy=P.y-q.y,d=Math.hypot(dx,dy); const R0=q.r+75; if(d<R0){ const sp=Math.hypot(q.vx,q.vy)||1,ux=q.vx/sp,uy=q.vy/sp; const along=dx*ux+dy*uy; if(along>-25){ const side=dx*(-uy)+dy*ux, sg=side>=0?1:-1, w=(R0-d)/R0; fx+=-uy*sg*w*2.4; fy+=ux*sg*w*2.4; fx+=dx/(d||1)*w*0.8; fy+=dy/(d||1)*w*0.8; } } }
    if(b.st==='dash'||b.st==='air'||b.st==='rDash'||b.st==='gcharge'||b.st==='pAir'){ const d=Math.hypot(P.x-b.x,P.y-b.y); if(d<b.r+120){fx+=(P.x-b.x)/(d||1);fy+=(P.y-b.y)/(d||1);} }
    return [fx,fy]; }
- const HL={}; const hp0=P.hp; let bcasts=0, deadAt=null; const SMART0=false; const DUR=window.__DUR||(god?400:300); if(window.__BIGHP&&G.boss){G.boss.hp=G.boss.max=1e7;}
+ const HL={}; const hp0=P.hp; let bcasts=0, deadAt=null; const SMART0=false; const DUR=window.__DUR||(god?400:300); if(window.__BIGHP&&G.boss){G.boss.hp=G.boss.max=1e7;} if(window.__NOEX&&G.boss){G.boss.ex=[];} if(window.__TANK){P.max=P.hp=1e6;}   // TANK: 죽지 않게 체력만 크게 (받은 피해를 그대로 잰다)
  while(bt<DUR && G.boss && G.state==='play'){
    const b=G.boss; if(pump())continue; let TG=b; if(b.shield){ let bd=1e9; for(const q of G.enemies) if(q.kind==='skh'&&q.hp>0){ const dd=Math.hypot(q.x-P.x,q.y-P.y); if(dd<bd){bd=dd;TG=q;} } }
    let dx=TG.x-P.x,dy=TG.y-P.y,d=Math.hypot(dx,dy)||1; if(d<30){ const a=(Math.floor(bt*2)%8)*0.785; dx=-Math.cos(a)*30; dy=-Math.sin(a)*30; d=30; }
    keys.delete('KeyW');keys.delete('KeyA');keys.delete('KeyS');keys.delete('KeyD');
    let [fx,fy]=esc(b); let vx=0,vy=0; const st=TG===b?b.st:'-';
-   const danger=(st==='rWind'||st==='rDash'||st==='gcWind'||st==='gcharge'||st==='frenzy'||st==='frenzyEnd'||st==='bite'||st==='gsweep'||st==='pAir'||st==='combo'||st==='tailWind'||st==='dashWind'||st==='dash'||st==='waveWind'||st==='sweepWind'||st==='jumpWind'||st==='air'||st==='roar'||st==='slamUp'||st==='slamDrop'||st==='wave'||st==='spikes'||st==='souls');
+   const danger=(st==='slash'||st==='rWind'||st==='rDash'||st==='gcWind'||st==='gcharge'||st==='frenzy'||st==='frenzyEnd'||st==='bite'||st==='gsweep'||st==='pAir'||st==='combo'||st==='tailWind'||st==='dashWind'||st==='dash'||st==='waveWind'||st==='sweepWind'||st==='jumpWind'||st==='air'||st==='roar'||st==='slamUp'||st==='slamDrop'||st==='wave'||st==='spikes'||st==='souls');
    const reach=P.rng+TG.r*0.8;   // 이 거리 안이면 보스를 칠 수 있다
+   let wo=null; if(b.bk==='angel'){ let wd=1e9; for(const o of (G.anOrbs||[])){ if(!o.white)continue; if(o._ig===undefined)o._ig=rnd()<(+window.__WIGN||0.15); if(o._ig)continue; const dd=Math.hypot(o.x-P.x,o.y-P.y); if(dd<wd){wd=dd;wo=o;} } }   // 타락천사: 흰 구체는 직접 닿아야 한다 (가끔 놓친다)
    if(fx||fy){ vx=fx; vy=fy; }
+   else if(wo){ const dd=Math.hypot(wo.x-P.x,wo.y-P.y)||1; vx=(wo.x-P.x)/dd; vy=(wo.y-P.y)/dd; }
+   else if(b.bk==='angel'&&b.shT>0){ const bx=b.x-Math.cos(b.sAng)*150,by=b.y-Math.sin(b.sAng)*110,dd=Math.hypot(bx-P.x,by-P.y)||1; if(dd>30){vx=(bx-P.x)/dd;vy=(by-P.y)/dd;} }   // 방패: 등 뒤로 돌아간다
    else if(danger && !SMART0){ const safe=(st==='combo'||st==='tailWind')?((ch==='wolf'||ch==='chimera'||ch==='lizard')?Math.max(reach-10,238):262):270; if(d<safe){vx=-dx/d;vy=-dy/d;} else { vx=-(dy/d)*0.6; vy=(dx/d)*0.6; } }
    else if(ch==='twins'){ const want=Math.max(95,G.twLen?G.twLen()*0.85+TG.r*0.4:120); if(d>want+30){vx=dx/d;vy=dy/d;} else if(d<want-30){vx=-dx/d;vy=-dy/d;} else { vx=-(dy/d); vy=(dx/d); } }
    else { const ML=(ch==='wolf'||ch==='chimera'||ch==='lizard'); const want=ML?Math.max(70,reach*0.85):250; if(d>want+25){vx=dx/d;vy=dy/d;} else if(!ML&&d<want-60){vx=-dx/d;vy=-dy/d;} else if(ML&&d<want-30){vx=-dx/d*0.3;vy=-dy/d*0.3;} else { vx=-(dy/d)*0.4; vy=(dx/d)*0.4; } }
@@ -99,7 +102,7 @@ JS="""([ch,route,fin,prof,L,gt0,win,boss,seed,tier,god,bk])=>{
    if(P.skill&&P.skT<=0&&d<420&&!window.__NOCAST){G.cast();bcasts++;}
    if(god){P.hp=9999;} const hb=P.hp, st0=G.boss?G.boss.st:'-'; G.tick(dt); bt+=dt; if(P.hp<hb){bloss+=hb-P.hp; HL[st0]=(HL[st0]||0)+Math.round(hb-P.hp);}
    if(G.state==='dead'){deadAt=bt;break;}
-   if(P.y>1055)P.y=1055;
+   if(!G.arena||!G.arena.k){ if(P.y>1055)P.y=1055; } else if(G.arena.k==='angel'&&P.y>1740)P.y=1740;
  }
  rec.dm=Object.fromEntries(Object.entries(G.DMETER).map(([k,v])=>[G.dmName?G.dmName(k):k,Math.round(v)]));
  rec.boss={bdmg:G.boss?Math.round(G.boss.max-G.boss.hp):0,mx:G.boss?Math.round(G.boss.max):0,t:Math.round(bt),dead:G.state==='dead',left:G.boss?Math.round(G.boss.hp):0,loss:Math.round(bloss),hp0:Math.round(hp0),casts:bcasts,hl:HL};
@@ -121,6 +124,9 @@ async def run(b,cfg):
         if os.environ.get('DUR'): await pg.evaluate('(d)=>{window.__DUR=d}',float(os.environ['DUR']))
         if os.environ.get('SKCD'): await pg.evaluate('(j)=>{window.__SKCD=JSON.parse(j)}',os.environ['SKCD'])
         if os.environ.get('EYEJ'): await pg.evaluate('(j)=>{window.__EYE=JSON.parse(j)}',os.environ['EYEJ'])
+        if os.environ.get('ANJ'): await pg.evaluate('(j)=>{window.__AN=JSON.parse(j)}',os.environ['ANJ'])
+        if os.environ.get('NOEX'): await pg.evaluate('()=>{window.__NOEX=1}')
+        if os.environ.get('TANK'): await pg.evaluate('()=>{window.__TANK=1}')
         try: r=await pg.evaluate(JS,cfg)
         except Exception as e: r={'err':str(e)[:1500]}
         await pg.close();return r

@@ -16,7 +16,6 @@ async def main():
         # 잠김 → 해금
         R['locked'] = await pg.evaluate("()=>{const G=__G;G.SAVE.ch.open=false;G.SAVE.fw.snap=null;return document.getElementById('chBtn').textContent}")
         await pg.evaluate("()=>{const G=__G;G.SAVE.ch.open=true;G.SAVE.ch.rune={dmg:2,hp:1};G.SAVE.ch.frag=13;}")
-        await pg.click('#menuBtn', force=True) if False else None
         await pg.evaluate("()=>{document.getElementById('dexBtn').click();document.getElementById('dexClose').click();}")
         await pg.evaluate("()=>{const G=__G; G.setChMode(true); G.startGame('wolf');}")
         R['start'] = await pg.evaluate("()=>{const G=__G;return {chal:!!G.chal,x:Math.round(G.P.x),y:Math.round(G.P.y),tier:G.P.tier,inCh:G.inCh(G.P.x,G.P.y),dmg:+G.P.dmg.toFixed(2),max:G.P.max}}")

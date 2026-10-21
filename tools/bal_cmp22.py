@@ -7,7 +7,7 @@ NAMES = {'wolf:abyss': '심연의 늑대', 'wolf:twin': '삼두 늑대', 'wolf:b
          'chimera:wind': '조류형 키메라', 'chimera:flame': '맹수형 키메라', 'chimera:dream': '천안의 군주',
          'lizard:rage': '버서커 리자드', 'lizard:water': '물의 도마뱀 전사', 'lizard:guard': '수호의 리저드',
          'twins': '사슬의 폭군', 'ghost': '수호령의 총령', 'octo': '문어 마법사'}
-BH = {'monkey': 20000, 'eye': 22000, 'skel': 20000, 'fw': 23500}
+BH = {'monkey': 20000, 'eye': 22000, 'skel': 20000, 'fw': 23500, 'angel': 24000}
 def load(d):
     out = collections.defaultdict(list)   # (tier, boss, variant) -> [boss rec]
     for fn in glob.glob(os.path.join(d, 't*_*.txt')):
