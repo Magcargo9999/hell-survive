@@ -6234,16 +6234,21 @@ function drawHud() {
 
 /* ============================================================
  * v6.20 ∞ 챌린지 모드 — 난이도 5단계 마왕을 쓰러뜨리면 열린다
- *  · 전용 맵(받은 그림을 3.5배로 키워 한 판 크기로 사용 · 가장자리 용암·벽은 막힘)
+ *  · 전용 맵(받은 그림을 정수 2배로 쓰고 가운데 띠를 복사해 이어 넓힘 · 가장자리 용암·벽은 막힘)
  *  · 5레벨마다 강적 1마리: Lv.5 미니보스/히든/유니크 · Lv.10 미니보스/히든 · Lv.15 마왕(기믹 약화) → 15레벨마다 반복(사이클마다 강해짐)
  *  · 시간이 갈수록 잡몹 체력·생성량이 천천히 오른다 (10분 이후 기울기 절반)
  *  · 룬 조각(챌린지 전용 영구 스탯) · 보물(사망 시 버틴 시간으로 지급, 모든 모드에서 효과)
  *  · 황금 도망자 · 엘리트 접두사(20분~) · 쉼터(마왕 처치 후 10초 + 안식/어둠의 계약) · 심연 추격자(25분~)
  * ============================================================ */
-const CHM = { s: 3.5, iw: 1672, ih: 941 };
-CHM.w = Math.round(CHM.iw * CHM.s); CHM.h = Math.round(CHM.ih * CHM.s);
-CHM.poly = [[240, 170], [330, 125], [560, 105], [830, 120], [1100, 108], [1380, 150], [1540, 250], [1545, 560], [1480, 720], [1260, 790], [420, 790], [200, 720], [140, 560], [150, 270]].map(([x, y]) => [x * CHM.s, y * CHM.s]);
-CHM.cx = 840 * CHM.s; CHM.cy = 450 * CHM.s; CHM.start = [830 * CHM.s, 480 * CHM.s];
+// v6.21: 그림을 키우지 않고(정수 2배, 도트 그대로) 가운데 띠(가로 a~b · 세로 c~d)를 복사해 이어 붙여 맵 공간을 넓힌다
+const CHM = { s: 2, iw: 1672, ih: 941, a: 596, b: 908, c: 318, d: 596, nx: 3, ny: 3 };
+CHM.bw = CHM.b - CHM.a; CHM.bh = CHM.d - CHM.c;
+const CHX = CHM.nx * CHM.bw, CHY = CHM.ny * CHM.bh;   // 늘어난 가로·세로 (그림 픽셀)
+CHM.w = (CHM.iw + CHX) * CHM.s; CHM.h = (CHM.ih + CHY) * CHM.s;
+CHM.cols = [[0, CHM.a]]; for (let i = 0; i < CHM.nx; i++) CHM.cols.push([CHM.a, CHM.b]); CHM.cols.push([CHM.b, CHM.iw]);
+CHM.rows = [[0, CHM.c]]; for (let i = 0; i < CHM.ny; i++) CHM.rows.push([CHM.c, CHM.d]); CHM.rows.push([CHM.d, CHM.ih]);
+CHM.poly = [[240, 170], [330, 125], [560, 105], [1100 + CHX, 108], [1380 + CHX, 150], [1540 + CHX, 250], [1545 + CHX, 596 + CHY], [1480 + CHX, 720 + CHY], [1260 + CHX, 790 + CHY], [420, 790 + CHY], [200, 720 + CHY], [140, 596 + CHY], [150, 270]].map(([x, y]) => [x * CHM.s, y * CHM.s]);
+CHM.cx = (840 + CHX / 2) * CHM.s; CHM.cy = (450 + CHY / 2) * CHM.s; CHM.start = [CHM.cx - 10 * CHM.s, CHM.cy + 30 * CHM.s];
 let chal = null, chMode = false;
 const chOpen = () => !!(SAVE.ch.open || (SAVE.fw.snap && (SAVE.fw.snap.tier | 0) >= 5));   // 예전에 5단계를 깬 기록(마지막 클리어 스펙)도 인정
 function inCh(x, y) {
@@ -6745,12 +6750,21 @@ function drawAbDeath(m, wx, wy) {
 }
 
 /* ---------- 그리기 ---------- */
-function drawChMap(cx, cy) {   // 받은 맵 그림 그대로 (보이는 부분만 3.5배로)
+function drawChMap(cx, cy) {   // 받은 맵 그림을 정수 2배로(번짐 없이), 가운데 띠를 복사해 이은 큰 맵
   if (!IMG.chm) return;
-  const H2 = hq(IMG.chm, 2), k = CHM.s / 2, sx = (cx - W / 2) / k, sy = (cy - H / 2) / k;
-  const x0 = Math.max(0, sx), y0 = Math.max(0, sy), x1 = Math.min(H2.width, sx + W / k), y1 = Math.min(H2.height, sy + H / k);
-  ctx.imageSmoothingEnabled = true;
-  if (x1 > x0 && y1 > y0) ctx.drawImage(H2, x0, y0, x1 - x0, y1 - y0, (x0 - sx) * k, (y0 - sy) * k, (x1 - x0) * k, (y1 - y0) * k);
+  const k = CHM.s, ox = Math.round(cx - W / 2), oy = Math.round(cy - H / 2);
+  ctx.imageSmoothingEnabled = false;
+  let y = 0;
+  for (const [r0, r1] of CHM.rows) {
+    const dh = (r1 - r0) * k, dy = y * k - oy; y += r1 - r0;
+    if (dy + dh <= 0 || dy >= H) continue;
+    let x = 0;
+    for (const [c0, c1] of CHM.cols) {
+      const dw = (c1 - c0) * k, dx = x * k - ox; x += c1 - c0;
+      if (dx + dw <= 0 || dx >= W) continue;
+      ctx.drawImage(IMG.chm, c0, r0, c1 - c0, r1 - r0, dx, dy, dw, dh);
+    }
+  }
 }
 function drawChFloor(wx, wy) {   // 바닥: 쉼터 · 저주 영역
   if (!chal) return;
