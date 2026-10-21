@@ -2575,6 +2575,16 @@ function drawHealFx(x, y) {
 }
 let critAdd = 0, blazeBusy = false;
 let DSRC = null, DMETER = {};   // v5.11: 딜 미터기 — 지금 피해를 주는 출처 (기본 공격 · 스킬 카드)
+const skSrc = k => 'sk:' + k;   // v6.08: 스킬 피해는 딜 미터기에 '【스킬】이름'으로 집계
+function skWrap(fn, key) {
+  return function (...a) {
+    if (DSRC) return fn.apply(this, a);
+    const k = skSrc(key || P.skill || '?'), n1 = shards.length, n2 = globs.length, n3 = zones.length;
+    DSRC = k;
+    try { return fn.apply(this, a); }
+    finally { DSRC = null; for (let i = n1; i < shards.length; i++) if (!shards[i].src) shards[i].src = k; for (let i = n2; i < globs.length; i++) if (!globs[i].src) globs[i].src = k; for (let i = n3; i < zones.length; i++) if (!zones[i].src) zones[i].src = k; }
+  };
+}
 const withSrc = (k, f) => { const o = DSRC; DSRC = k; try { return f(); } finally { DSRC = o; } };
 function hurtEnemy(e, dmg, kx, ky, kn, quiet) {
   if (e.hp <= 0 || e.invul) return;
@@ -3973,7 +3983,7 @@ function drawHolyCharge(wx, wy) {
   ctx.fillStyle = full ? (Math.floor(wallT * 10) % 2 ? '#ffe9a8' : '#ffffff') : st >= 2 ? '#8fb8ff' : '#5f88e8'; ctx.fillRect(bx, by, bw * k, 6);
   ctx.fillStyle = 'rgba(255,255,255,0.6)'; ctx.fillRect(bx + bw * 0.27, by - 2, 1, 10); ctx.fillRect(bx + bw * 0.58, by - 2, 1, 10);
 }
-function fireBoneBlast(src) { return withSrc('fireBone', () => fireBoneBlast0(src)); }
+function fireBoneBlast(src, key) { return withSrc(key || 'fireBone', () => fireBoneBlast0(src)); }
 function fireBoneBlast0(src) {
   addRing(src.x, src.y - src.r, 6, 70, 0.3, '255,140,40', 5);
   burst(src.x, src.y - src.r, 6, ['#ff6a1c', '#ffb030'], 180, 0.4);
@@ -4922,7 +4932,7 @@ function updateSkills(dt) {
         if (e.hp <= 0) continue;
         const rx = e.x - beam.ox, ry = (e.y - e.r) - beam.oy;
         const along = rx * cs + ry * sn, perp = Math.abs(-rx * sn + ry * cs);
-        if (along > -20 && along < beam.len && perp < 34 + e.r * 0.7) hurtEnemy(e, P.dmg * 0.85, cs, sn, 60);
+        if (along > -20 && along < beam.len && perp < 34 + e.r * 0.7) withSrc(skSrc('laser'), () => hurtEnemy(e, P.dmg * 0.85, cs, sn, 60));
       }
     }
     shake = Math.max(shake, 2.5);
@@ -4938,7 +4948,7 @@ function updateSkills(dt) {
       for (const e of enemies) {
         if (e.hp <= 0) continue;
         const dx = e.x - x, dy = (e.y - e.r * 0.5) - y, d = Math.hypot(dx, dy) || 1;
-        if (d < R2 + e.r) { hurtEnemy(e, P.dmg * 2.6, dx / d, dy / d, 520); e.slowT = 1.2; }
+        if (d < R2 + e.r) { withSrc(skSrc('cerb'), () => hurtEnemy(e, P.dmg * 2.6, dx / d, dy / d, 520)); e.slowT = 1.2; }
       }
       arcs.push({ x: x - 30, y, ang: -0.5, r: 90, t: 0, life: 0.3, rgb: th.rgb }); arcs.push({ x: x + 30, y, ang: Math.PI + 0.5, r: 90, t: 0, life: 0.3, rgb: th.rgb });
       addRing(x, y, 8, R2, 0.35, th.rgb, 7); burst(x, y - 10, 14, [th.c1, th.c2, '#ffffff'], 300, 0.5); sfx('hit'); shake = Math.max(shake, 8);
@@ -4978,7 +4988,7 @@ function updateSkills(dt) {
       z.tick -= dt; const tk = z.tick <= 0; if (tk) z.tick = 0.3;
       for (const e of enemies) {
         if (e.hp <= 0) continue;
-        if (Math.hypot(e.x - z.x, e.y - z.y) < z.r + e.r * 0.5) { e.slowT = 0.25; if (tk) hurtEnemy(e, P.dmg * 0.55, 0, 0, 0); }
+        if (Math.hypot(e.x - z.x, e.y - z.y) < z.r + e.r * 0.5) { e.slowT = 0.25; if (tk) withSrc(z.src || skSrc('zone'), () => hurtEnemy(e, P.dmg * 0.55, 0, 0, 0)); }
       }
       for (let i = 0; i < 3; i++) {
         const a = rand() * 6.283, d = Math.sqrt(rand()) * z.r;
@@ -5014,7 +5024,7 @@ function updateSkills(dt) {
           if (e.hp <= 0) continue;
           if (Math.hypot(e.x - z.x, e.y - z.y) < z.r + e.r) {
             const dx = e.x - z.x, dy = e.y - z.y, d = Math.hypot(dx, dy) || 1;
-            hurtEnemy(e, P.dmg * (z.holy ? 2.3 : 4), dx / d, dy / d, z.holy ? 260 : 520); z.hit = (z.hit || 0) + 1;
+            withSrc(skSrc(z.holy ? 'bloodrain' : 'meteor'), () => hurtEnemy(e, P.dmg * (z.holy ? 2.3 : 4), dx / d, dy / d, z.holy ? 260 : 520)); z.hit = (z.hit || 0) + 1;
           }
         }
         if (z.holy) {
@@ -5157,7 +5167,7 @@ function update(dt) {
           for (const o of enemies) { if (o.hp <= 0 || o === e) continue; const dd = (o.x - e.x) ** 2 + (o.y - e.y) ** 2; if (dd < bd) { bd = dd; t2 = o; } }
           if (t2) { const dx = t2.x - e.x, dy = t2.y - t2.r - (e.y - e.r), dl = Math.hypot(dx, dy) || 1; shards.push({ src: 'ricochet', x: e.x, y: e.y - e.r, vx: dx / dl * 640, vy: dy / dl * 640, life: 0.7, pierce: 1, hit: new Set([e]), dmg: (s.dmg || 14) * 0.6, arrow: true, auto: true, ric: true, sz: 0.8 }); addRing(e.x, e.y - e.r, 4, 34, 0.25, '184,246,255', 4); }
         }
-        if (s.arrow && !s.auto ? P.fireArrow > 0 : P.syn.fireBone) for (let q = 0; q < (s.arrow && !s.auto ? P.fireArrow : 1); q++) fireBoneBlast(e);
+        if (s.arrow && !s.auto ? P.fireArrow > 0 : P.syn.fireBone) for (let q = 0; q < (s.arrow && !s.auto ? P.fireArrow : 1); q++) fireBoneBlast(e, s.arrow && !s.auto ? 'fireArrow' : 'fireBone');
         if (--s.pierce <= 0) { s.life = 0; break; }
       }
     }
@@ -6032,14 +6042,14 @@ function render() {
 }
 let skillBtn = { x: 0, y: 0, w: 0, h: 0 };
 const hudCards = { t: 0, L: [] };
-const dmName = k => k === 'basic' ? '기본 공격' : k === 'trail' ? '이동 자국 (장판)' : (SYNERGIES.find(x => x.id === k) ? '★' + (a => a ? a[0] : SYNERGIES.find(x => x.id === k).name)(altOf(SYNERGIES.find(x => x.id === k))) : upName(k));
+const dmName = k => k === 'basic' ? '기본 공격' : String(k).startsWith('sk:') ? '【스킬】' + (SKILLS[k.slice(3)] ? SKILLS[k.slice(3)].name : k.slice(3)) : k === 'trail' ? '이동 자국 (장판)' : (SYNERGIES.find(x => x.id === k) ? '★' + (a => a ? a[0] : SYNERGIES.find(x => x.id === k).name)(altOf(SYNERGIES.find(x => x.id === k))) : upName(k));
 function drawDmeter() {   // v5.11: 딜 미터기 (설정에서 켜기) — 기본 공격과 스킬 카드별 누적 피해
   const L = Object.entries(DMETER).sort((a, b) => b[1] - a[1]).slice(0, 8), tot = L.reduce((a, b) => a + b[1], 0); if (!tot) return;
   const w = 230, x = W - w - 10, y0 = 90; let y = y0;
   ctx.save(); ctx.fillStyle = 'rgba(10,4,12,0.72)'; ctx.fillRect(x - 6, y0 - 4, w + 12, 24 + L.length * 22);
   ctx.textAlign = 'left'; ctx.font = 'bold 13px "Malgun Gothic", monospace'; ctx.fillStyle = '#ffd36a'; ctx.fillText('딜 미터기', x, y0 + 12); y += 22;
   for (const [k, v] of L) { const r = v / tot, mx = L[0][1];
-    ctx.fillStyle = 'rgba(255,255,255,0.08)'; ctx.fillRect(x, y, w, 18); ctx.fillStyle = k === 'basic' ? 'rgba(120,200,255,0.55)' : 'rgba(255,130,60,0.55)'; ctx.fillRect(x, y, w * v / mx, 18);
+    ctx.fillStyle = 'rgba(255,255,255,0.08)'; ctx.fillRect(x, y, w, 18); ctx.fillStyle = k === 'basic' ? 'rgba(120,200,255,0.55)' : String(k).startsWith('sk:') ? 'rgba(190,120,255,0.6)' : 'rgba(255,130,60,0.55)'; ctx.fillRect(x, y, w * v / mx, 18);
     ctx.fillStyle = '#fff'; ctx.font = 'bold 12px "Malgun Gothic", monospace'; ctx.textAlign = 'left'; ctx.fillText(dmName(k), x + 4, y + 13);
     ctx.textAlign = 'right'; ctx.fillText(`${v >= 10000 ? (v / 1000).toFixed(1) + 'k' : Math.round(v)}  ${Math.round(r * 100)}%`, x + w - 4, y + 13); y += 22; }
   ctx.restore();
@@ -6504,6 +6514,13 @@ function loop(now) {
 }
 
 // 테스트용 접근점
+/* v6.08: 스킬 피해 집계 — 스킬 함수를 감싸 딜 미터기에 '【스킬】이름'으로 올린다 */
+castSkill = skWrap(castSkill); updateWhip = skWrap(updateWhip, 'whip'); stepPals = skWrap(stepPals, 'gsummon'); updateAllies = skWrap(updateAllies, 'gsummon'); palPop = skWrap(palPop, 'gsummon');
+backdashVolley = skWrap(backdashVolley, 'backdash'); stepDash = skWrap(stepDash, 'backdash'); stepBigArrow = skWrap(stepBigArrow, 'bigarrow');
+stepBomb = skWrap(stepBomb, 'bombshot'); stepBombShard = skWrap(stepBombShard, 'bombshot'); boomAt = skWrap(boomAt, 'bombshot');
+stepHoly = skWrap(stepHoly, 'holyshot'); fireHoly = skWrap(fireHoly, 'holyshot'); startEle = skWrap(startEle); stepOcto = skWrap(stepOcto);
+stepDive = skWrap(stepDive, 'dive'); updateAirs = skWrap(updateAirs); stepRush = skWrap(stepRush, 'rush'); rushStrike = skWrap(rushStrike, 'rush'); stepBreath = skWrap(stepBreath, 'breath');
+shellReflect = skWrap(shellReflect, 'shell'); updateBsig = skWrap(updateBsig, 'bsigil');
 window.__G = {
   bossDefeated, get IMG() { return IMG; },
   get ready() { return !!IMG.floorD; }, get state() { return state; }, get P() { return P; }, get enemies() { return enemies; }, get orbs() { return orbs; },
