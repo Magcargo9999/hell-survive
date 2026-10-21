@@ -2935,8 +2935,8 @@ const UPGRADES = [
   { id: 'range',  name: '넓은 발톱',     txt: () => '범위 +12%',        apply: p => { p.rng *= 1.12; },
     alt: { octo: ['먼 마법진', '마력탄 사거리 +12%'], lava: ['넓은 용암탄', '용암탄이 터지는 범위 +12%'], bomb: ['큰 화약', '폭탄 폭발 범위 +12%'], snail: ['넓은 독 침', '독 침이 터지는 범위 +12%'], archer: ['먼 곳 조준', '사거리 +12%'], lizard: ['넓은 휘두르기', '범위 +12%'], twins: ['긴 사슬', '사슬 길이 +12%'], ghost: ['멀리 뿌리기', '사거리 +12%'] } },
   { id: 'orb',    noChar: 'octo', name: '지옥불 구슬',   txt: () => '불꽃 구슬 +1 (공격력의 55%)', apply: p => { p.orbsN++; } },
-  { id: 'shard',  name: '뼈 투사체',     txt: () => '뼈 투사체 +1발 (공격력의 81%)', apply: p => { p.shardN++; },
-    alt: { octo: ['먹물 탄', '먹물 탄 +1발 (공격력의 81%)'], lava: ['용암 파편', '용암 파편 +1발 (공격력의 81%)'], snail: ['독가시', '독가시 +1발 (공격력의 81%)'], archer: ['추적 화살', '추적 화살 +1발 (공격력의 65%)'] } },
+  { id: 'shard',  name: '뼈 투사체',     txt: () => '뼈 투사체 +1발 (공격력의 88%) · 적에게 1회 튕김', apply: p => { p.shardN++; },
+    alt: { octo: ['먹물 탄', '먹물 탄 +1발 (공격력의 88%) · 적에게 1회 튕김'], lava: ['용암 파편', '용암 파편 +1발 (공격력의 88%) · 적에게 1회 튕김'], snail: ['독가시', '독가시 +1발 (공격력의 88%) · 적에게 1회 튕김'], archer: ['추적 화살', '추적 화살 +1발 (공격력의 70%) · 적에게 1회 튕김'] } },
   { id: 'knock',  name: '밀치기',        txt: () => '넉백 +25%p (기본 70%)', apply: p => { p.knock += 0.25; }, alt: { octo: ['마력 충격', '넉백 +25%p (기본 70%)'] } },
   { id: 'crit',   name: '급소 노리기',   txt: () => '치명타 +6.5%',     apply: p => { p.crit += 0.065; }, alt: { octo: ['약점 간파', '치명타 +6.5%'] } },
   { id: 'guard',  name: '수호의 방어막', txt: n => `피격 1회 무효 · ${GD(n)}초마다 재충전`, apply: p => { if (!p.up.guard) p.guardT = 0; } },
@@ -5136,7 +5136,7 @@ function update(dt) {
       const t = nearestEnemy(520, used); if (!t) break;
       used.push(t);
       const dx = t.x - P.x, dy = t.y - t.r - (P.y - 22), d = Math.hypot(dx, dy) || 1;
-      shards.push(Object.assign({ x: P.x, y: P.y - 22, vx: dx / d * 460, vy: dy / d * 460, life: 1.3, pierce: 2, hit: new Set(), src: 'shard', ink: P.char === 'octo' }, P.char === 'archer' ? { dmg: P.dmg * 0.65, arrow: true, auto: true, sz: 0.8, ox: P.x, oy: P.y - 22 } : { dmg: P.dmg * 0.81 }));   // 보조 투사체 (v5.02: 75 -> 81%): 공격력 비례 (궁수 60% · 나머지 75%)
+      shards.push(Object.assign({ x: P.x, y: P.y - 22, vx: dx / d * 460, vy: dy / d * 460, life: 1.3, pierce: 2, hit: new Set(), src: 'shard', ink: P.char === 'octo' }, P.char === 'archer' ? { dmg: P.dmg * 0.70, arrow: true, auto: true, sz: 0.8, ox: P.x, oy: P.y - 22 } : { dmg: P.dmg * 0.88 }));   // 보조 투사체 (v5.02: 75 -> 81%): 공격력 비례 (궁수 60% · 나머지 75%)
     }
     if (used.length) P.shardCd = 1.2;
   }
@@ -5168,6 +5168,11 @@ function update(dt) {
           if (t2) { const dx = t2.x - e.x, dy = t2.y - t2.r - (e.y - e.r), dl = Math.hypot(dx, dy) || 1; shards.push({ src: 'ricochet', x: e.x, y: e.y - e.r, vx: dx / dl * 640, vy: dy / dl * 640, life: 0.7, pierce: 1, hit: new Set([e]), dmg: (s.dmg || 14) * 0.6, arrow: true, auto: true, ric: true, sz: 0.8 }); addRing(e.x, e.y - e.r, 4, 34, 0.25, '184,246,255', 4); }
         }
         if (s.arrow && !s.auto ? P.fireArrow > 0 : P.syn.fireBone) for (let q = 0; q < (s.arrow && !s.auto ? P.fireArrow : 1); q++) fireBoneBlast(e, s.arrow && !s.auto ? 'fireArrow' : 'fireBone');
+        if (s.src === 'shard' && !s.bn) {   // 뼈 투사체: 맞힌 뒤 가까운 다른 적에게 한 번 튕긴다
+          s.bn = 1; let t2 = null, bd = 340 * 340;
+          for (const o of enemies) { if (o.hp <= 0 || s.hit.has(o)) continue; const dd = (o.x - s.x) ** 2 + (o.y - s.y) ** 2; if (dd < bd) { bd = dd; t2 = o; } }
+          if (t2) { const dx = t2.x - s.x, dy = t2.y - t2.r - s.y, dl = Math.hypot(dx, dy) || 1, sp = Math.hypot(s.vx, s.vy); s.vx = dx / dl * sp; s.vy = dy / dl * sp; s.life = Math.max(s.life, 0.6); }
+        }
         if (--s.pierce <= 0) { s.life = 0; break; }
       }
     }
