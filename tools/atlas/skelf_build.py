@@ -75,5 +75,5 @@ def cut(x0, x1, y0, y1, name, mask):
     if mask: mm = nd.binary_fill_holes(nd.binary_closing(mm, structure=np.ones((3, 3)), iterations=2)) & nd.binary_dilation(mm, iterations=2)
     t[:, :, 3] = mm * 255 if mask else 255
     Image.fromarray(t).save(os.path.join(OUT, name + '.webp'), lossless=True); print(name, t.shape)
-cut(1040, 1300, 866, 952, 'skelF_arrow', False)
+cut(1040, 1300, 836, 982, 'skelF_arrow', False)
 

@@ -116,3 +116,8 @@ CLAUDE.md에서 분리. 필요할 때만 `grep -n "키워드" docs/CHANGELOG.md`
 - 해골 궁수 **Lv.20 최종 진화**(저주받은 해골 궁수 최종 진화형, 능력치는 그대로·체력 30% 회복): 새 시트 도트(대기6·이동8·공격6·피격4·죽음6·스킬4) → `SKEL_FIN`/`SKELF_FR`(프레임 사각형 `fr`), `archerForm(skel, 2)`. 진화 연출 뒤 스킬 선택(칠흑의 대궁). 칠흑의 대궁을 쓰는 동안 시트 '스킬' 동작.
 - **칠흑의 대궁 화살**: 손으로 그린 벡터 화살 → 시트 '스킬' 줄의 거대한 저주 화살(`IMG.skelFa`, 'lighter'). 아틀라스 `tools/atlas/skelf_build.py` → `src/assets/skin/skelF.{webp,json}`·`skelF_arrow.webp` (자르기·배경 제거만). 그림은 lazy(`LAZY_IMG`) — 늦으면 옛 도트로 보였다가 불러오면 바뀜.
 - 해골 궁수 소개(`ARCHER_ROUTES.skel.later`)·Lv.19 안내 문구·도감(최종 진화 칸) 갱신. `__G.FD` 추가. 테스트 `tools/tests/skelfin816.py`.
+
+## v8.17
+- **사슬의 폭군 · 돌쇠 스킨**(에픽, `twS`, 사슬 악마 최종 진화에만): 대기11·이동11·기본 공격(`lash`)8·사슬 휘두르기(`combo`)7·피격10·죽음6. 기준점은 머리카락 위치 기준(`tools/atlas/twskin_build.py`). 가챠 풀·도감·조합(에픽 15조각)에 자동 포함. 테스트 `tools/tests/twskin816.py`.
+- 해골 궁수 스킬은 **칠흑의 대궁 하나만**: Lv.20 스킬 선택지에서 후방 도약 사격 제거(`uniqueSkills`).
+- 칠흑의 대궁 화살 그림 위·아래가 잘리던 것 수정(잘라내는 높이 86→146px).
