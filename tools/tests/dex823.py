@@ -1,0 +1,19 @@
+import asyncio, sys; sys.path.insert(0,'tools')
+from playwright.async_api import async_playwright
+async def main():
+    async with async_playwright() as pw:
+        b=await pw.chromium.launch(); pg=await b.new_page(viewport={'width':1000,'height':700})
+        errs=[]; pg.on('pageerror',lambda e:errs.append(str(e)))
+        await pg.goto('file:///home/claude/hell-survive/build/hell_survive.html'); await pg.wait_for_function('window.__G&&__G.ready',timeout=90000)
+        r=await pg.evaluate('''()=>{const G=__G; G.SAVE.dex.kills.rig=2; G.SAVE.dex.kills.nerk=1; return 1}''')
+        await pg.evaluate("document.getElementById('gachaBtn').click()"); await pg.wait_for_timeout(300)
+        await pg.keyboard.press('Enter'); await pg.wait_for_timeout(500)
+        print('gacha open after Enter', await pg.evaluate("document.getElementById('gachaBox').classList.contains('show')"), await pg.evaluate("__G.state"))
+        await pg.keyboard.press('Escape'); print('closed', not await pg.evaluate("document.getElementById('gachaBox').classList.contains('show')"))
+        await pg.evaluate("document.getElementById('heartBtn').click()"); await pg.keyboard.press('Enter'); await pg.wait_for_timeout(300)
+        print('heart open', await pg.evaluate("document.getElementById('heartBox').classList.contains('show')"), await pg.evaluate("__G.state"))
+        await pg.keyboard.press('Escape')
+        txt=await pg.evaluate("(()=>{const f=[...document.querySelectorAll('button')].find(x=>x.id==='dexBtn');f&&f.click();return document.getElementById('dexBox').innerText})()")
+        print('rig' , '혈혼마 리고르' in txt, '네르칸' in txt, errs)
+        await b.close()
+asyncio.run(main())

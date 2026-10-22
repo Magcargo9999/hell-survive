@@ -3924,7 +3924,7 @@ function hurtEnemy(e, dmg, kx, ky, kn, quiet) {
   if (e.hp <= 0) {
     P.kills++; if (P.up.gBounty) gunBounty();
     if (SAVE.ch.tr.rat && P.kills % 100 === 0) { P.max += 1; P.hp = Math.min(P.max, P.hp + 1); floatNum(P.x, P.y - 100, '쥐 이빨 목걸이  최대 체력 +1', '#ffd0a0'); }   // 보물
-    dexKill(e.kind === 'boss' ? dexBoss(e) : e.kind === 'mini' ? (e.bk === 'eye' ? 'mini2' : e.bk === 'cut' ? 'cut' : e.bk === 'stat' ? 'stat' : e.sk ? 'skw' : 'mini') : e.kind === 'abm' ? 'abm' : e.kind === 'toxm' ? 'toxm' : e.kind === 'bug' ? 'bug' : e.kind === 'uniq' ? 'uq:' + e.uk : e.kind === 'mimic' ? 'mimic' : (e.kind === 'skh' || e.kind === 'skm') ? 'skx' : 'm' + e.spec.idx);
+    dexKill(e.kind === 'boss' ? dexBoss(e) : e.kind === 'mini' ? (e.bk === 'rig' ? 'rig' : e.bk === 'nerk' ? 'nerk' : e.bk === 'eye' ? 'mini2' : e.bk === 'cut' ? 'cut' : e.bk === 'stat' ? 'stat' : e.sk ? 'skw' : 'mini') : e.kind === 'abm' ? 'abm' : e.kind === 'toxm' ? 'toxm' : e.kind === 'bug' ? 'bug' : e.kind === 'uniq' ? 'uq:' + e.uk : e.kind === 'mimic' ? 'mimic' : (e.kind === 'skh' || e.kind === 'skm') ? 'skx' : 'm' + e.spec.idx);
     if (e.kind === 'boss') { markDex(dexBoss(e), 1); if (e.bk === 'fw') fwBossDefeated(e); else bossDefeated(); return; }
     if (e.kind === 'skh' || e.kind === 'skm') { skMinorDead(e); return; }
     fangGain(e);
@@ -8946,6 +8946,7 @@ function openDex() {
     add(gr, { on: d.kills.boss8, trophy: true, name: '이독버섯 마왕', sub: (d.kills.boss8 || 0) + '회 처치', hint: '<br>보스 (지하 8층부터 등장 · 8·9층에서 자주)', draw: (g, w, h, l) => IMG.tox && dexSprite(g, w, h, IMG.tox, a0[0], a0[1], a0[2], a0[3], false, l, false) }); }
   { const c0 = CMF.idle[0], a0 = ABF.body[0];
     add(gr, { on: d.kills.cut, name: '절단안의 짐승', sub: (d.kills.cut || 0) + '회 처치', hint: '<br>미니 보스 (∞ 챌린지)', draw: (g, w, h, l) => dexSprite(g, w, h, IMG.cm, c0[0], c0[1], c0[2], c0[3], false, l, true) });
+    for (const hk of ['rig', 'nerk']) { const f0 = HRF[hk].idle[0]; add(gr, { on: d.kills[hk], name: HORSE[hk].name, sub: (d.kills[hk] || 0) + '회 처치', hint: '<br>미니 보스 (말 · 판마다 15%씩 등장)', draw: (g, w, h, l) => IMG.horse && dexSprite(g, w, h, IMG.horse, f0[0], f0[1], f0[2], f0[3], false, l, true) }); }
     { const s0 = STF.idle[2]; add(gr, { on: d.kills.stat, name: '부패한 성상', sub: (d.kills.stat || 0) + '회 처치', hint: '<br>미니 보스 (타락천사 판)', draw: (g, w, h, l) => IMG.statue && dexSprite(g, w, h, IMG.statue, s0[0], s0[1], s0[2], s0[3], false, l) }); }
     add(gr, { on: d.kills.boss5, trophy: true, name: '심연의 촉수마왕', sub: (d.kills.boss5 || 0) + '회 처치', hint: '<br>보스 (∞ 챌린지)', draw: (g, w, h, l) => dexSprite(g, w, h, IMG.ab, a0[0], a0[1], a0[2], a0[3], false, l, true) }); }
   add(gr, { on: d.kills.boss, trophy: true, name: '원숭이 마왕', sub: d.kills.boss + '회 처치', hint: '<br>보스 (지하 1층부터 등장)', draw: (g, w, h, l) => dexSprite(g, w, h, IMG.boss, 88, 138, 100, 94, false, l) });
@@ -9336,7 +9337,9 @@ window.addEventListener('keydown', e => {
   if (e.code === 'Escape' && isOpen('setBox')) show('setBox', false);
   else if (e.code === 'Escape' && isOpen('shopBox')) show('shopBox', false);
   else if (e.code === 'Escape' && isOpen('dexBox')) show('dexBox', false);
-  else if (isOpen('setBox') || isOpen('shopBox') || isOpen('dexBox')) return;
+  else if (e.code === 'Escape' && isOpen('gachaBox')) show('gachaBox', false);
+  else if (e.code === 'Escape' && isOpen('heartBox')) show('heartBox', false);
+  else if (isOpen('setBox') || isOpen('shopBox') || isOpen('dexBox') || isOpen('gachaBox') || isOpen('heartBox')) return;
   else if (state === 'menu' && (e.code === 'Enter' || e.code === 'Space')) { chMode = false; startGame(selChar); }
   else if (state === 'menu' && e.code === 'Digit1') selectChar('wolf');
   else if (state === 'menu' && e.code === 'Digit2') selectChar('snail');
