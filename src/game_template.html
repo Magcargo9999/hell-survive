@@ -3386,7 +3386,7 @@ function updateTwins(dt) {
   const T = P.tw; if (!T) return;
   if (!T.init) { T.x = P.x - 70; T.y = P.y + 10; T.init = true; }   // 시작 위치: 왼쪽 뒤
   if (whipQ) { updateWhip(dt); T.x = P.x - P.face * twLen() * 0.6; T.y = P.y + 6; T.vx = P.vx; T.vy = P.vy; return; }
-  const L = twLen(), h = dt / 2, pv = P.moving ? Math.hypot(P.vx, P.vy) : 0, spin = ((2.4 + 0.6 * (P.up.whirl | 0)) * L + 0.9 * pv) * (P.chain4 > 0 ? 2 : 1);   // 빨리 움직일수록 사슬이 빨리 돈다
+  const L = twLen(), h = dt / 2, pv = P.moving ? Math.hypot(P.vx, P.vy) : 0, spin = ((2.4 + 0.6 * (P.up.whirl | 0)) * L + 0.9 * pv) * (P.chain4 > 0 ? 2 : 1) * (1 + 0.5 * Math.max(0, P.aspd - 1));   /* v7.04: 공속 +X% → 사슬 회전 +X/2% */   // 빨리 움직일수록 사슬이 빨리 돈다
   for (let k = 0; k < 2; k++) {
     const dmp = Math.exp(-0.7 * h); T.vx = P.vx + (T.vx - P.vx) * dmp; T.vy = P.vy + (T.vy - P.vy) * dmp;   // 본체를 따라 끌려간다
     let rx = T.x - P.x, ry = T.y - P.y, d = Math.hypot(rx, ry) || 1, nx = rx / d, ny = ry / d;
@@ -3414,7 +3414,7 @@ function twinHits() {
     for (const e of enemies) {
       if (e.hp <= 0 || e.invul) continue;
       if (!(e[kB] > gt) && Math.hypot(e.x - tx, e.y - ty) < rB + e.r) {   // 창날 타격
-        e[kB] = gt + cd; withSrc('twTip', () => hurtEnemy(e, dB * mul, ux, uy, kb));
+        e[kB] = gt + cd; { const big = e.kind === 'boss' || e.kind === 'mini' || e.kind === 'uniq', pc = Math.min(dB * 2.5, e.max * (big ? 0.004 : 0.015)); withSrc('twTip', () => hurtEnemy(e, (dB + pc) * mul, ux, uy, kb)); }   /* v7.04: 창날 현재 체력이 아닌 최대 체력 비례 추가 피해 (일반 1.5% · 보스급 0.4% · 상한 창날 피해의 2.5배) */
         if (P.syn.pendulum && !(P.pendCd > gt)) { P.pendCd = gt + 0.22; pendulumBoom(e); }
         continue;
       }
