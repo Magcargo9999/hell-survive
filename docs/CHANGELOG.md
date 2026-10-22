@@ -111,3 +111,8 @@ CLAUDE.md에서 분리. 필요할 때만 `grep -n "키워드" docs/CHANGELOG.md`
 
 ## v8.15
 - 해골 궁수 스킬 교체: 혼신의 큰 화살(해골판) → **칠흑의 대궁**(`darkarrow`, 쿨 10초): 적이 가장 많이 모인 쪽으로 거대한 검은 화살 4발(0.3초 간격, 무한 관통, 피해 약함 ×1.5, 넉백 1500) — 몹을 통째로 밀어냄. 엘프 루트는 기존 큰 화살 그대로. 해골 궁수 평타 넉백 430→650(+50%). 소개 문구 갱신. 테스트 `tools/tests/darkarrow815.py`
+
+## v8.16
+- 해골 궁수 **Lv.20 최종 진화**(저주받은 해골 궁수 최종 진화형, 능력치는 그대로·체력 30% 회복): 새 시트 도트(대기6·이동8·공격6·피격4·죽음6·스킬4) → `SKEL_FIN`/`SKELF_FR`(프레임 사각형 `fr`), `archerForm(skel, 2)`. 진화 연출 뒤 스킬 선택(칠흑의 대궁). 칠흑의 대궁을 쓰는 동안 시트 '스킬' 동작.
+- **칠흑의 대궁 화살**: 손으로 그린 벡터 화살 → 시트 '스킬' 줄의 거대한 저주 화살(`IMG.skelFa`, 'lighter'). 아틀라스 `tools/atlas/skelf_build.py` → `src/assets/skin/skelF.{webp,json}`·`skelF_arrow.webp` (자르기·배경 제거만). 그림은 lazy(`LAZY_IMG`) — 늦으면 옛 도트로 보였다가 불러오면 바뀜.
+- 해골 궁수 소개(`ARCHER_ROUTES.skel.later`)·Lv.19 안내 문구·도감(최종 진화 칸) 갱신. `__G.FD` 추가. 테스트 `tools/tests/skelfin816.py`.
