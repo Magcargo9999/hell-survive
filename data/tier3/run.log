@@ -179,3 +179,99 @@ B ghost 24 1 182 False
 B octo 24 1 430 False
 B wolf 8 2 39 False
 B snail 8 2 103 False
+B archer 8 2 58 False
+B chimera 8 2 110 False
+B lizard 8 2 81 False
+B twins 8 2 61 False
+B ghost 8 2 38 False
+B octo 8 2 109 False
+B wolf:crimson 15 2 147 False
+B wolf:abyss 15 2 232 False
+B wolf:twin 15 2 156 False
+B snail:venom 15 2 93 False
+B snail:lava 15 2 99 False
+B snail:bomb 15 2 150 False
+B archer:elf 15 2 75 False
+B archer:skel 15 2 165 True
+B chimera 15 2 23 True
+B chimera:flame 15 2 26 True
+B chimera:dream 15 2 236 False
+B lizard:rage 15 2 71 False
+B lizard:guard 15 2 158 False
+B twins 15 2 124 False
+B ghost 15 2 97 False
+B octo 15 2 58 True
+B wolf:crimson 24 2 352 False
+B wolf:holy 24 2 486 False
+B wolf:fallen 24 2 535 False
+B wolf:abyss 24 2 449 False
+B wolf:twin 24 2 468 False
+B snail:venom 24 2 1468 False
+B snail:lava 24 2 727 False
+B snail:bomb 24 2 1879 False
+B archer:red 24 2 259 False
+B archer:holy 24 2 230 False
+B archer:skel 24 2 592 False
+B chimera 24 2 525 False
+B chimera:flame 24 2 557 False
+B chimera:dream 24 2 378 False
+B lizard:rage 24 2 409 False
+B lizard:water 24 2 213 False
+B lizard:guard 24 2 273 False
+B twins 24 2 459 False
+B ghost 24 2 74 False
+B octo 24 2 462 False
+B gun 8 2 138 False
+B gun 15 2 87 False
+B gun 24 2 174 False
+ALLDONE
+[05:19:37] NE=1 python3 tools/tier3.py E
+jobs 20 bot_ver 34bef5df commit 363b78f
+E wolf:crimson 1 dead 158.1
+E wolf:fallen 1 dead 289.2
+E wolf:holy 1 dead 731.3
+E wolf:abyss 1 dead 123.4
+E wolf:twin 1 dead 136.2
+E snail:lava 1 dead 155.6
+E snail:venom 1 dead 476.2
+E snail:bomb 1 dead 208.5
+E archer:holy 1 lv24 576.2
+E archer:red 1 lv24 896.2
+E chimera 1 dead 146.7
+E archer:skel 1 dead 333.5
+E chimera:flame 1 dead 269.1
+E chimera:dream 1 lv24 545.8
+E lizard:rage 1 dead 334.9
+E lizard:guard 1 dead 117.2
+E lizard:water 1 dead 151.1
+E ghost 1 dead 273.6
+E twins 1 dead 232.5
+E octo 1 dead 397
+ALLDONE
+[05:23:59] SEEDS=1 BOSSES=monkey python3 tools/card3.py
+cells 181
+seed 1 jobs 181
+snail:bomb syn:soulStorm monkey 1 W 100.0
+snail:lava syn:iron monkey 1 W 100.0
+archer:red skill:aura monkey 1 W 100.0
+wolf:crimson syn:bstorm monkey 1 W 100.0
+lizard:rage skill:aura monkey 1 D 76.28
+chimera:flame ctrl monkey 1 T 86.59
+wolf:crimson syn:dnova monkey 1 D 71.81
+ghost syn:harvest monkey 1 W 100.0
+snail:venom syn:dnova monkey 1 D 93.59
+snail:bomb skill:blade monkey 1 W 100.0
+ghost syn:dnova monkey 1 W 100.0
+snail:bomb syn:fireBone monkey 1 W 100.0
+chimera syn:fireBone monkey 1 D 75.23
+snail:venom skill:aura monkey 1 D 77.43
+wolf:crimson syn:lifeOrb monkey 1 W 100.0
+octo syn:harvest monkey 1 W 100.0
+snail:lava ctrl monkey 1 D 85.48
+lizard:rage skill:thunder monkey 1 D 47.35
+snail:lava skill:aura monkey 1 D 77.94
+wolf:crimson syn:inferno monkey 1 W 100.0
+snail:venom syn:corpse monkey 1 T 89.38
+archer:red syn:fireBone monkey 1 D 99.1
+snail:lava syn:lifeOrb monkey 1 W 100.0
+octo ctrl monkey 1 W 100.0
