@@ -80,7 +80,8 @@ ASSETS = {
     '__MMOB__': 'mush/mmob.webp',
     '__MMAP__': 'mush/mmap.webp',
     '__SH__': 'mush/sh.webp',
-    '__MIMIC__': 'mimic/mimic.webp'
+    '__MIMIC__': 'mimic/mimic.webp',
+    '__SKTW__': 'sk/sktower.webp'
 }
 def b64(p): return 'data:image/' + ('webp' if p.endswith('.webp') else 'png') + ';base64,' + base64.b64encode(open(os.path.join(HERE, 'assets', p), 'rb').read()).decode()
 s = open(os.path.join(HERE, 'game_template.html'), encoding='utf8').read()

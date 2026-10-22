@@ -227,7 +227,7 @@
 /* ============================================================
  * 0. 기본 설정
  * ============================================================ */
-const SRC = { mimic: '__MIMIC__', sh: '__SH__', mfloor: '__MFLOOR__', mprops: '__MPROPS__', mmob: '__MMOB__', mmap: '__MMAP__', mini: '__MINI__', snail: '__SNAIL__', base: '__ATLAS__', pup: '__PUP__', dark: '__DARK__', bug: '__BUG__', floor: '__FLOOR__', props: '__PROPS__', castle: '__CASTLE__', arena: '__ARENA__', boss: '__BOSS__', mobs: '__MOBS__', blood: '__BLOOD__', twin: '__TWIN__', triple: '__TRIPLE__', items: '__ITEMS__', drophb: '__DROPHB__', droppo: '__DROPPO__', blood2: '__BLOOD2__', holy: '__HOLY__', lavasn: '__LAVASN__', lavafx: '__LAVAFX__', venom2: '__VENOM2__', venom3: '__VENOM3__', venomfx: '__VENOMFX__', elf0: '__ELF0__', elf1: '__ELF1__', skel: '__SKEL__', chim0: '__CHIM0__', chim1: '__CHIM1__', chim2: '__CHIM2__', chimfx: '__CHIMFX__', flm1: '__FLM1__', flm2: '__FLM2__', flmfx: '__FLMFX__', drm1: '__DRM1__', drm2: '__DRM2__', drfx: '__DRFX__', arcr: '__ARCR__', arch: '__ARCH__', arfx: '__ARFX__', hlfx: '__HLFX__', slot: '__SLOT__', uniq: '__UNIQ__', eyem: '__EYEM__', relic: '__RELIC__', liz0: '__LIZ0__', liz1: '__LIZ1__', liz2: '__LIZ2__', liz3: '__LIZ3__', gh: '__GH__', gg: '__GG__', oc: '__OC__', lg: '__LG__', os: '__OS__', bs: '__BS__', tw0: '__TW0__', tw1: '__TW1__', tw2: '__TW2__', fwb: '__FWB__', fwp: '__FWP__', fwfx: '__FWFX__', bmap: '__BMAP__', skb: '__SKB__', skw: '__SKW__', chm: '__CHMAP__', cm: '__CM__', ab: '__AB__', an: '__AN__', anfx: '__ANFX__', amap: '__AMAP__', gun: '__GUN__' };
+const SRC = { sktw: '__SKTW__', mimic: '__MIMIC__', sh: '__SH__', mfloor: '__MFLOOR__', mprops: '__MPROPS__', mmob: '__MMOB__', mmap: '__MMAP__', mini: '__MINI__', snail: '__SNAIL__', base: '__ATLAS__', pup: '__PUP__', dark: '__DARK__', bug: '__BUG__', floor: '__FLOOR__', props: '__PROPS__', castle: '__CASTLE__', arena: '__ARENA__', boss: '__BOSS__', mobs: '__MOBS__', blood: '__BLOOD__', twin: '__TWIN__', triple: '__TRIPLE__', items: '__ITEMS__', drophb: '__DROPHB__', droppo: '__DROPPO__', blood2: '__BLOOD2__', holy: '__HOLY__', lavasn: '__LAVASN__', lavafx: '__LAVAFX__', venom2: '__VENOM2__', venom3: '__VENOM3__', venomfx: '__VENOMFX__', elf0: '__ELF0__', elf1: '__ELF1__', skel: '__SKEL__', chim0: '__CHIM0__', chim1: '__CHIM1__', chim2: '__CHIM2__', chimfx: '__CHIMFX__', flm1: '__FLM1__', flm2: '__FLM2__', flmfx: '__FLMFX__', drm1: '__DRM1__', drm2: '__DRM2__', drfx: '__DRFX__', arcr: '__ARCR__', arch: '__ARCH__', arfx: '__ARFX__', hlfx: '__HLFX__', slot: '__SLOT__', uniq: '__UNIQ__', eyem: '__EYEM__', relic: '__RELIC__', liz0: '__LIZ0__', liz1: '__LIZ1__', liz2: '__LIZ2__', liz3: '__LIZ3__', gh: '__GH__', gg: '__GG__', oc: '__OC__', lg: '__LG__', os: '__OS__', bs: '__BS__', tw0: '__TW0__', tw1: '__TW1__', tw2: '__TW2__', fwb: '__FWB__', fwp: '__FWP__', fwfx: '__FWFX__', bmap: '__BMAP__', skb: '__SKB__', skw: '__SKW__', chm: '__CHMAP__', cm: '__CM__', ab: '__AB__', an: '__AN__', anfx: '__ANFX__', amap: '__AMAP__', gun: '__GUN__' };
 const SNAIL_RECTS = [[0, 0, 216, 146], [220, 0, 273, 208], [497, 0, 276, 208], [777, 0, 289, 214]];
 const PROP_RECTS = [[0, 0, 38, 48], [40, 0, 22, 49], [64, 0, 34, 48], [100, 0, 26, 44], [128, 0, 29, 44], [159, 0, 56, 44], [217, 0, 64, 59], [283, 0, 42, 44], [327, 0, 20, 48], [349, 0, 62, 62], [413, 0, 47, 64], [462, 0, 44, 56], [0, 66, 33, 62], [35, 66, 36, 56], [73, 66, 28, 57], [103, 66, 19, 29], [124, 66, 20, 46], [146, 66, 18, 28], [166, 66, 18, 23], [186, 66, 19, 31], [207, 66, 21, 31], [230, 66, 22, 30], [254, 66, 21, 18], [277, 66, 20, 19], [299, 66, 32, 50], [333, 66, 32, 49], [367, 66, 40, 46], [409, 66, 39, 46], [450, 66, 33, 45], [0, 130, 37, 45], [39, 130, 19, 29], [60, 130, 18, 29], [80, 130, 17, 18], [99, 130, 20, 19], [121, 130, 20, 20], [143, 130, 58, 60], [203, 130, 31, 54], [236, 130, 30, 54], [268, 130, 30, 54], [300, 130, 47, 53], [349, 130, 28, 53], [379, 130, 31, 53], [412, 130, 43, 41], [457, 130, 44, 40], [0, 192, 36, 11], [38, 192, 25, 16], [65, 192, 48, 11], [115, 192, 76, 57], [193, 192, 43, 49], [238, 192, 21, 21], [261, 192, 35, 45], [298, 192, 50, 38], [350, 192, 67, 77], [419, 192, 53, 57], [0, 271, 45, 79], [47, 271, 53, 24], [102, 271, 32, 36], [136, 271, 59, 53]];
 // 늑대 형태별 스프라이트 설정: 한 칸 크기, 배율, 원본이 바라보는 방향(flip), 공격이 맞는 프레임(hitF), 동작별 (줄, 프레임 수, 초당 프레임)
@@ -1886,7 +1886,7 @@ function skPhase(e) {   // 결계: 무적 + 맵 외곽 3곳에 해골 첨탑, �
   e.ph++; e.hp = Math.max(e.hp, e.max * (SK_PH[e.ph - 1] - 0.01));
   e.st = 'summon'; e.stT = 2.2; e.an = 'summon'; e.fr = 0; e.tele = []; e.jh = 0; e.air = null; e.spawned = false;
   addRing(e.x, e.y - 60, 20, 520, 0.9, '255,60,180', 16); shake = 16; sfx('evolve');
-  banner = { txt: `스켈레톤 마왕이 결계를 쳤다! (무적)\n맵 가장자리의 해골 첨탑 3개를 모두 부수면 결계가 깨진다`, t: 4.5, c: '#ff9ad8' };
+  banner = { txt: `스켈레톤 마왕이 결계를 쳤다! (무적)\n해골 첨탑 3개를 모두 부수면 결계가 깨진다 — 해골 전사 2마리도 나타난다\n⚠ 20초 동안 첨탑이 안 부서지면 마왕이 체력 15%를 회복한다`, t: 6, c: '#ff9ad8' };
 }
 function skSpawnAdds(e) {
   const hp = e.max * 0.025;
@@ -1898,7 +1898,16 @@ function skSpawnAdds(e) {
       skMinion(mx, my);
     }
   });
-  e.shield = true; e.tow = 3;
+  e.shield = true; e.tow = 3; e.shT = 0; e.shWarn = false;
+  skSpawnPair(e);
+}
+function skSpawnPair(e) {   /* v7.07: 결계 단계마다 보스방에 해골 전사(검사 · 창병) 2마리 · 결계가 깨지면 사라진다 */
+  const hp = MINI_HP * (1 + 0.3 * P.tier) * SKMINI_HP * 0.6, pts = skpPts();
+  const mk = (bk, i) => { let x = (e.x + pts[i][0]) / 2, y = (e.y + pts[i][1]) / 2; if (!inPoly(x, y)) { x = e.x; y = e.y + 90; }
+    return { kind: 'mini', bk, sk: true, adds: true, x, y, kx: 0, ky: 0, sp: 0, spec: null, sc: 1, r: 28, hp, max: hp, dmg: 0, exp: 0, elite: false, flash: 0, t: rand(), orbCd: 0, slowT: 0,
+      kres: 0.3, face: x < P.x ? 1 : -1, st: 'chase', cd: 2.2 + (bk === 'skB' ? 0.6 : 0), at: null, tele: [], jh: 0, invul: false, rage: false, n: 0 }; };
+  const A = mk('skA', 0), B = mk('skB', 1); A.pair = B; B.pair = A; enemies.push(A, B);
+  for (const q of [A, B]) { addRing(q.x, q.y, 10, 120, 0.6, '255,70,50', 10); burst(q.x, q.y - 40, 18, ['#d9ccb2', '#8a7a66', '#ff3a3a'], 260, 0.7); }
 }
 function skMinion(x, y) {   // 해골병: 휘두르기 하나만 쓰는 하급 해골
   const hp = 230 * (1 + 0.3 * P.tier);
@@ -1925,11 +1934,17 @@ function updateSkBoss(e, dt) {
   e.tele = e.tele.filter(t => !(t.done && t.t >= t.dur + 0.15));
   e.stT -= dt;
   if (e.shield) {   // 첨탑이 모두 부서지면 결계가 깨지고 잠깐 쓰러져 있다
-    e.tow = enemies.filter(q => q.kind === 'skh' && q.hp > 0).length;
+    const tw0 = e.tow; e.tow = enemies.filter(q => q.kind === 'skh' && q.hp > 0).length;
+    if (e.tow < tw0) { e.shT = 0; e.shWarn = false; }   /* 첨탑이 하나 부서지면 20초를 다시 센다 */
+    else if (e.st !== 'summon' && e.tow > 0) {
+      e.shT = (e.shT || 0) + dt;
+      if (e.shT >= 15 && !e.shWarn) { e.shWarn = true; floatNum(e.x, e.y - 190, '⚠ 5초 뒤 마왕 체력 회복!', '#ff9a9a'); }
+      if (e.shT >= 20) { e.shT = 0; e.shWarn = false; const add = e.max * 0.15; e.hp = Math.min(e.max, e.hp + add); addRing(e.x, e.y - 60, 14, 300, 0.7, '90,255,140', 12); burst(e.x, e.y - 90, 22, ['#7dff9a', '#ffffff'], 260, 0.8); floatNum(e.x, e.y - 190, '마왕 체력 +15% 회복!', '#7dff9a'); sfx('item'); }
+    }
     if (e.tow === 0) {
       e.shield = false; if (e.ph >= 2) e.rage = true;
       e.st = 'stun'; e.stT = 2.4; e.an = 'hit'; e.fr = 0; e.tele = []; e.jh = 0; e.air = null;
-      for (const q of enemies) if (q.kind === 'skm' && q.hp > 0) { q.hp = 0; burst(q.x, q.y - 30, 12, ['#cbbfa8', '#ff4ab4'], 200, 0.6); }
+      for (const q of enemies) if ((q.kind === 'skm' || q.adds) && q.hp > 0) { q.hp = 0; burst(q.x, q.y - 30, 12, ['#cbbfa8', '#ff4ab4'], 200, 0.6); }
       addRing(e.x, e.y - 80, 20, 460, 0.8, '255,200,240', 14); shake = 18; sfx('evolve');
       banner = { txt: e.rage ? '결계가 깨졌다!  마왕이 쓰러졌다가 분노하여 일어난다 — 지금 공격!' : '결계가 깨졌다!  마왕이 휘청거린다 — 지금 공격!', t: 3.5, c: '#ffd0ee' };
     }
@@ -2065,28 +2080,19 @@ function drawSkBoss(e, x, y) {
     ctx.strokeStyle = `rgba(255,150,225,${0.35 + 0.25 * pu})`; ctx.lineWidth = 2; ctx.beginPath(); ctx.ellipse(x, y - 120, 160, 170, 0, 0, 6.283); ctx.stroke(); ctx.restore();
   }
 }
-function drawSkTower(e, x, y) {   // 해골 첨탑 (서브 헤드): 검은 뼈 탑 위에 떠 있는 분홍 해골불
-  const r = Math.min(1, e.t / 0.9), h = 118 * r, pu = 0.5 + 0.5 * Math.sin(wallT * 5 + e.idx * 2);
-  ctx.save();
-  ctx.fillStyle = 'rgba(0,0,0,0.45)'; ctx.beginPath(); ctx.ellipse(x, y - 2, 46, 13, 0, 0, 6.283); ctx.fill();
-  ctx.fillStyle = '#17121b'; ctx.beginPath(); ctx.ellipse(x, y - 6, 40, 12, 0, 0, 6.283); ctx.fill();
-  ctx.fillStyle = '#2a2230'; ctx.beginPath(); ctx.moveTo(x - 30, y - 8); ctx.lineTo(x - 13, y - 8 - h); ctx.lineTo(x, y - 18 - h); ctx.lineTo(x + 13, y - 8 - h); ctx.lineTo(x + 30, y - 8); ctx.closePath(); ctx.fill();
-  ctx.fillStyle = '#1b1520'; ctx.beginPath(); ctx.moveTo(x, y - 8); ctx.lineTo(x, y - 18 - h); ctx.lineTo(x + 13, y - 8 - h); ctx.lineTo(x + 30, y - 8); ctx.closePath(); ctx.fill();
-  ctx.strokeStyle = '#cbbfa8'; ctx.lineWidth = 3;   // 갈비뼈 장식
-  for (let i = 1; i <= 4; i++) { const yy = y - 8 - h * i / 5, w = 30 - 17 * i / 5; ctx.beginPath(); ctx.moveTo(x - w - 4, yy + 4); ctx.quadraticCurveTo(x, yy - 6, x + w + 4, yy + 4); ctx.stroke(); }
-  ctx.globalCompositeOperation = 'lighter'; ctx.strokeStyle = `rgba(255,70,180,${0.45 + 0.4 * pu})`; ctx.lineWidth = 2;   // 룬
-  ctx.beginPath(); ctx.moveTo(x, y - 14); ctx.lineTo(x, y - 14 - h * 0.9); ctx.stroke();
-  const oy = y - 40 - h - 6 * Math.sin(wallT * 3 + e.idx), g = ctx.createRadialGradient(x, oy, 4, x, oy, 46);
-  g.addColorStop(0, `rgba(255,170,230,${0.85 * r})`); g.addColorStop(0.4, `rgba(255,50,170,${0.5 * r})`); g.addColorStop(1, 'rgba(255,40,160,0)');
-  ctx.fillStyle = g; ctx.fillRect(x - 46, oy - 46, 92, 92);
-  ctx.globalCompositeOperation = 'source-over';
-  if (r > 0.6) {   // 작은 해골
-    ctx.fillStyle = '#e8dcc4'; ctx.beginPath(); ctx.arc(x, oy - 2, 11, 0, 6.283); ctx.fill(); ctx.fillRect(x - 6, oy + 5, 12, 7);
-    ctx.fillStyle = '#ff2a8a'; ctx.beginPath(); ctx.arc(x - 4, oy - 2, 3, 0, 6.283); ctx.arc(x + 4, oy - 2, 3, 0, 6.283); ctx.fill();
+function drawSkTower(e, x, y) {   // 해골 첨탑 (서브 헤드): v7.07 사용자 도트 (붉은 용암 뿔 탑)
+  const r = Math.min(1, e.t / 0.9), img = IMG.sktw, K = 0.5, pu = 0.5 + 0.5 * Math.sin(wallT * 5 + e.idx * 2);
+  ctx.fillStyle = 'rgba(0,0,0,0.45)'; ctx.beginPath(); ctx.ellipse(x, y - 2, 52, 14, 0, 0, 6.283); ctx.fill();
+  const w = img ? img.width * K : 115, h = img ? img.height * K : 190;
+  if (img) {
+    ctx.save(); ctx.translate(Math.round(x), Math.round(y) + 4); ctx.imageSmoothingEnabled = true; ctx.imageSmoothingQuality = 'high';
+    if (r < 1) { ctx.beginPath(); ctx.rect(-w, -h - 40, w * 2, h + 42); ctx.clip(); ctx.translate(0, (1 - r) * h); }   // 땅에서 솟아오른다
+    ctx.drawImage(img, -w / 2, -h, w, h);
+    ctx.globalCompositeOperation = 'lighter'; ctx.globalAlpha = 0.12 + 0.1 * pu; ctx.drawImage(img, -w / 2, -h, w, h);   // 붉은 맥동
+    if (e.flash > 0) { ctx.globalAlpha = 0.55; ctx.drawImage(img, -w / 2, -h, w, h); }
+    ctx.restore();
   }
-  if (e.flash > 0) { ctx.globalCompositeOperation = 'lighter'; ctx.fillStyle = 'rgba(255,255,255,0.35)'; ctx.fillRect(x - 32, y - 60 - h, 64, h + 56); }
-  ctx.restore();
-  if (r >= 1) { const w = 60; ctx.fillStyle = '#1a0610'; ctx.fillRect(x - w / 2 - 2, y - 92 - h, w + 4, 8); ctx.fillStyle = '#ff4ab4'; ctx.fillRect(x - w / 2, y - 90 - h, w * Math.max(0, e.hp / e.max), 4); }
+  if (r >= 1) { const bw = 60; ctx.fillStyle = '#1a0610'; ctx.fillRect(x - bw / 2 - 2, y - h - 14, bw + 4, 8); ctx.fillStyle = '#ff4a3a'; ctx.fillRect(x - bw / 2, y - h - 12, bw * Math.max(0, e.hp / e.max), 4); }
 }
 const SKMN = { k: 0.82, walk: [3, 4, 5, 6], wind: [8, 9], swing: 10 };
 function drawSkMinion(e, x, y) {
@@ -2223,12 +2229,14 @@ function skMiniDefeated(e) {
   burst(e.x, e.y - 50, 24, ['#d9ccb2', '#8a7a66', '#ff3a3a'], 280, 0.8); shake = Math.max(shake, 10);
   const o = e.pair && e.pair.hp > 0 ? e.pair : null;
   if (o) {   // 하나가 쓰러지면 남은 하나가 분노한다
-    mini = o; o.rage = true; floatNum(o.x, o.y - 170, '분노!', '#ff5a3a'); addRing(o.x, o.y - 30, 14, 220, 0.6, '255,70,50', 10); sfx('skill');
+    if (!e.adds) mini = o; o.rage = true; floatNum(o.x, o.y - 170, '분노!', '#ff5a3a'); addRing(o.x, o.y - 30, 14, 220, 0.6, '255,70,50', 10); sfx('skill');
     orbs.push({ x: e.x, y: e.y, val: Math.round(P.need * 0.3), t: rand() * 6 });
     banner = { txt: (e.bk === 'skA' ? '해골 검사' : '해골 창병') + '를 쓰러뜨렸다!  남은 ' + (o.bk === 'skA' ? '해골 검사' : '해골 창병') + '가 분노한다', t: 3 };
     return;
   }
-  mini = null; dexKill('mini3');
+  dexKill('mini3');
+  if (e.adds) { orbs.push({ x: e.x, y: e.y, val: Math.round(P.need * 0.3), t: rand() * 6 }); P.named += 1; return; }   /* 보스방 해골 전사: 상자·성유물 없음 */
+  mini = null;
   orbs.push({ x: e.x, y: e.y, val: Math.round(P.need * 0.6), t: rand() * 6 });
   dropChest(e.x + 30, e.y + 10);
   if (Object.keys(RELICS).some(k => !P.rel[k])) dropRelic(e.x - 34, e.y + 12);
@@ -2616,7 +2624,7 @@ function startFw() {
 }
 function bossDefeated() {
   const e = boss; boss = null; ebul = [];
-  if (e.bk === 'skel') { skDeath = { x: e.x, y: e.y, face: e.face, t: 0 }; enemies = enemies.filter(q => q.kind !== 'skh' && q.kind !== 'skm'); skp = []; }
+  if (e.bk === 'skel') { skDeath = { x: e.x, y: e.y, face: e.face, t: 0 }; enemies = enemies.filter(q => q.kind !== 'skh' && q.kind !== 'skm' && !q.adds); skp = []; }
   if (e.bk === 'angel') { anDeath = { x: e.x, y: e.y, face: e.face, t: 0 }; anOrbs = []; }
   if (arena) arena.cleared = true;
   addRing(e.x, e.y - 40, 20, 600, 1.0, '255,200,90', 16); addRing(e.x, e.y - 40, 10, 360, 0.7, '255,80,50', 12);
@@ -8131,7 +8139,7 @@ function silhouette(img, color) {
   g.drawImage(img, 0, 0); g.globalCompositeOperation = 'source-atop'; g.fillStyle = color; g.fillRect(0, 0, c.width, c.height);
   return c;
 }
-const LAZY_IMG = ['drophb', 'droppo', 'chm', 'cm', 'ab', 'an', 'anfx', 'amap', 'mmap', 'sh', 'mimic'];   // 시작하자마자 쓰지 않는 그림은 따로 (시작 화면이 빨리 뜨게): 드랍 아이템 · 챌린지 · 타락천사
+const LAZY_IMG = ['drophb', 'droppo', 'chm', 'cm', 'ab', 'an', 'anfx', 'amap', 'mmap', 'sh', 'mimic', 'sktw'];   // 시작하자마자 쓰지 않는 그림은 따로 (시작 화면이 빨리 뜨게): 드랍 아이템 · 챌린지 · 타락천사
 for (const k of LAZY_IMG) loadImg(SRC[k]).then(i => { IMG[k] = i; if (k === 'cm' || k === 'ab') IMG[k + 'W'] = silhouette(i, '#ffffff'); }).catch(() => {});
 Promise.all(Object.keys(SRC).filter(k => !LAZY_IMG.includes(k)).map(k => loadImg(SRC[k]).then(i => { IMG[k] = i; }))).then(() => {   // IMG.이름 = SRC.이름
   IMG.miniW = silhouette(IMG.mini, '#ffffff'); IMG.floorD = toneFloor(IMG.floor); try { buildMushSpecies(); } catch (_) {}
