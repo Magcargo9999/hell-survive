@@ -7007,9 +7007,12 @@ function drawZones(wx, wy) {
     if (z.type === 'spool') {   // v7.20 거대 버섯마귀의 독 장판
       if (x < -150 || x > W + 150 || y < -150 || y > H + 150) continue;
       const a = Math.min(1, z.life * 1.4, (z.max - z.life) * 5 + 0.25), g = ctx.createRadialGradient(x, y, 4, x, y, z.r);
-      g.addColorStop(0, `rgba(255,40,110,${0.55 * a})`); g.addColorStop(0.7, `rgba(150,10,70,${0.42 * a})`); g.addColorStop(1, 'rgba(90,0,40,0)');
+      g.addColorStop(0, `rgba(190,255,60,${0.55 * a})`); g.addColorStop(0.75, `rgba(90,220,40,${0.5 * a})`); g.addColorStop(1, `rgba(40,150,30,${0.38 * a})`);   // 형광 연두: 보라·붉은 바닥과 대비
       ctx.fillStyle = g; ctx.beginPath(); ctx.ellipse(x, y, z.r, z.r / 1.5, 0, 0, 6.283); ctx.fill();
-      ctx.strokeStyle = `rgba(255,90,150,${0.35 * a})`; ctx.lineWidth = 2; ctx.stroke(); continue;
+      ctx.strokeStyle = `rgba(10,30,10,${0.7 * a})`; ctx.lineWidth = 6; ctx.stroke();   // 어두운 바깥 선
+      ctx.strokeStyle = `rgba(210,255,90,${(0.85 + 0.15 * Math.sin(wallT * 6)) * a})`; ctx.lineWidth = 3; ctx.stroke();   // 밝은 테두리
+      ctx.strokeStyle = `rgba(230,255,140,${0.55 * a})`; ctx.lineWidth = 2; ctx.setLineDash([10, 8]); ctx.lineDashOffset = -wallT * 30;
+      ctx.beginPath(); ctx.ellipse(x, y, z.r * 0.72, z.r * 0.72 / 1.5, 0, 0, 6.283); ctx.stroke(); ctx.setLineDash([]); continue;
     }
     if (z.type === 'mpool') {   // 받은 '독 웅덩이 생성' 그림 (고리 부분이 바닥 자리)
       if (x < -150 || x > W + 150 || y < -150 || y > H + 150 || !IMG.sh) continue;
