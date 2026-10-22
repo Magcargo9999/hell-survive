@@ -79,6 +79,10 @@ ASSETS = {
     '__MPROPS__': 'mush/mprops.webp',
     '__MMOB__': 'mush/mmob.webp',
     '__MMAP__': 'mush/mmap.webp',
+    '__SFLOOR__': 'sea/sfloor.webp',
+    '__SPROPS__': 'sea/sprops.webp',
+    '__SMOB__': 'sea/smob.webp',
+    '__SMAP__': 'sea/smap.webp',
     '__SH__': 'mush/sh.webp',
     '__MIMIC__': 'mimic/mimic.webp',
     '__SKTW__': 'sk/sktower.webp'
