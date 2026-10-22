@@ -3977,7 +3977,7 @@ function addExp(v) {
  * ============================================================ */
 const MAXLV = 5;
 const TH = n => ({ n: 2 + Math.ceil(n / 2), cd: +((2.9 - 0.3 * n) * 4).toFixed(1), dm: (1.6 + 0.3 * n) * 0.85 });   // v6.22: 피해 -15%   // v4.13 상향          // 낙뢰: 발 수 · 주기 · 피해 배율
-const BL = n => ({ n: 1 + (n >= 3 ? 1 : 0) + (n >= 5 ? 1 : 0), cd: +(2.6 - 0.2 * n).toFixed(1), dm: 0.8 + 0.12 * n });   // 회전 칼날
+const BL = n => ({ n: 1 + (n >= 3 ? 1 : 0) + (n >= 5 ? 1 : 0), cd: +(2.6 - 0.2 * n).toFixed(1), dm: (0.8 + 0.12 * n) * 0.85 });   // 회전 칼날 (v8.10: 피해 중폭 -15%)
 const NV = n => ({ R: 130 + 28 * n, cd: +(5.4 - 0.6 * n).toFixed(1), dm: 1.3 + 0.18 * n });                // 충격파
 const GD = n => 16 - 2 * n;   // 방어막: 레벨별 재충전 시간(초) Lv1 14 → Lv5 6
 const AU = n => ({ R: 95 + 22 * n, dm: 0.45 + 0.13 * n });   // v4.13 대폭 상향 (반경 70→117 · 피해 ×2 이상)                                                 // 불길 오라
@@ -4543,7 +4543,7 @@ function applyEvo(to) {
   } else {
     P.max += 30; P.dmg *= 1.15;
     if (r === 'crimson') { P.dmg *= 1.15; if (P.fin === 'holy') { P.max += 30; P.rng *= 1.1; P.regen += 0.65; P.dmg *= 0.86; } else if (P.fin === 'fallen') { P.max += 45; P.dmg *= 1.22; P.rng *= 1.25; P.aspd += 0.1; P.killHeal += 0.2; } else { P.max += 20; P.dmg *= 1.06 * 1.12; P.syn.vamp = true; P.killHeal += 0.2; } }   // v6.22: 피의 혈랑 공격력 +12%
-    if (r === 'abyss')   { P.spd *= 1.11; P.aspd += 0.24; P.max += 30; P.dmg *= 1.07; P.dodge = 0.16; }   // v5.00: 공격 +7% · 공속 +6% · 체력 +15 · 이속 +3%
+    if (r === 'abyss')   { P.spd *= 1.11; P.aspd += 0.24; P.max += 30; P.dmg *= 1.23; P.dodge = 0.16; }   // v8.10: 공격 +7% → +23% (중폭 +15%) // v5.00: 공격 +7% · 공속 +6% · 체력 +15 · 이속 +3%
     if (r === 'twin')    { P.max += 30; P.spd *= 1.04; P.dmg *= 1.12; P.aspd *= 2; }   // v6.46: 삼두 늑대 최종 공속 ×2 핫픽스   // 3연타 · v6.22: 삼두 늑대 공격력 +12%
   }
   P.hp = P.max;
@@ -6352,7 +6352,7 @@ function update(dt) {
     while (P.atkHitN < hs.length && f >= hs[P.atkHitN]) { const hi = P.atkHitN++; DSRC = 'basic'; if (P.char === 'snail') snailSpit(); else if (P.char === 'ghost') ghostSpray(); else if (P.char === 'octo') octoBolt(); else if (P.char === 'archer') arrowShot(); else if (P.char === 'gun') gunShot(); else { claw(hi, hs.length); if (P.char === 'chimera' && P.form >= 1 && P.route === 'wind') airSlash(); } DSRC = null; }
     if (f >= at.n) P.atkTimer = -1;
   } else if (P.char !== 'twins' && !(P.char === 'gun' && (P.reloadT > 0 || rollQ && rollQ.d)) && !(P.shellT > 0) && P.atkCd <= 0 && P.hitT <= 0 && !(P.stunT > 0) && !bigQ && !dashQ && !diveQ && !breathQ && !rushQ && !bombQ && !holyQ && !(P.tideT > 0)) {
-    const t = nearestEnemy(P.char === 'gun' ? gunRange() : P.char === 'octo' ? octoRange() : P.char === 'ghost' ? ghostRange() + 30 : P.char === 'snail' ? 340 : P.char === 'archer' ? arrowRange() : P.rng * 1.6 + 50);
+    const t = nearestEnemy(P.char === 'gun' ? gunRange() : P.char === 'octo' ? octoRange() : P.char === 'ghost' ? ghostRange() + 30 : P.char === 'snail' ? 340 : P.char === 'archer' ? arrowRange() : (P.char === 'chimera' && P.route === 'wind' && P.form >= 1) ? Math.max(P.rng * 1.6 + 50, 370) : P.rng * 1.6 + 50);   // v8.10: 바람 키메라는 에어슬래시가 닿는 거리(약 400)까지 공격 — 멀리서 맴도는 마안군주 등을 안 때리던 버그
     if (t) {
       P.tx = t.x; P.ty = t.y;
       const dx = t.x - P.x, dy = t.y - t.r - (P.y - 18), d = Math.hypot(dx, dy) || 1;
