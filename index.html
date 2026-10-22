@@ -4118,7 +4118,8 @@ function cardView(u) {
     sub: (cur ? `Lv.${cur} → ${n}` : `Lv.1`) + (n === mx ? ' (최대)' : '') + hint };
 }
 const restCard = () => ({ id: '_rest', name: '잠깐의 휴식', desc: '체력 25% 회복', eff: true, noLv: true, sub: '', tag: '', apply: p => { p.hp = Math.min(p.max, p.hp + p.max * 0.25); } });
-const shardCard = () => ({ id: '_shard', name: '영혼 조각 주머니', desc: '영혼 조각 +10', eff: true, noLv: true, sub: '', tag: '', apply: () => { SAVE.shards += 10; saveSave(); } });
+const shardBag = () => chal ? 10 + Math.floor(P.lvl / 2) : 10;   // v8.11: 챌린지는 레벨에 비례 (2레벨마다 +1)
+const shardCard = () => { const n = shardBag(); return { id: '_shard', name: '영혼 조각 주머니', desc: `영혼 조각 +${n}` + (chal ? ' (레벨이 오를수록 늘어남)' : ''), eff: true, noLv: true, sub: '', tag: '', apply: () => { SAVE.shards += n; saveSave(); } }; };
 function cardDefs() {
   return UPGRADES.concat(UNIQUE[P.char] || []).filter(u => (u.noChar !== P.char) && (!u.noRoute || u.noRoute !== P.route) && (!u.route || u.route === P.route) && (!u.fin || u.fin === P.fin) && (!u.form || P.form >= u.form) && (!u.needSkill || P.skill === u.needSkill) && !P.banned[u.id] && (P.up[u.id] || 0) < (u.max || MAXLV));
 }
