@@ -9,9 +9,19 @@ from PIL import Image
 from scipy import ndimage as nd
 ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 OUT = os.path.join(ROOT, 'src/assets/skin'); os.makedirs(OUT, exist_ok=True)
-def build(src, name, rows, art, thr=34, close=0):   # thr: 배경으로 볼 최대 밝기(어두운 옷이 잘리지 않게 낮게 · v8.04부터 16~22)
+def build(src, name, rows, art, thr=34, close=0, valley=0):   # thr: 배경으로 볼 최대 밝기(어두운 옷이 잘리지 않게 낮게 · v8.04부터 16~22)
     A = np.array(Image.open(src).convert('RGBA')); RGB = A[:, :, :3].astype(int)
     tiles, frames = [], {}
+    if valley:   # v8.04: 칸 경계를 '그림이 가장 비어 있는 세로줄'로 옮긴다 — 이웃 칸과 붙은 몸·꼬리·이펙트가 잘리지 않게 (경계 ±valley px 안에서)
+        for k, (ry0, y1, cells) in list(rows.items()):
+            occ = (RGB[ry0:y1].max(axis=2) > thr).sum(axis=0); cs = [list(c) for c in cells]
+            for i in range(len(cs) - 1):
+                a, b = cs[i][1], cs[i + 1][0]
+                if abs(a - b) > 60: continue   # 멀리 떨어진 칸은 그대로
+                lo, hi = min(a, b) - valley, max(a, b) + valley
+                seg = occ[lo:hi]; m = seg.min(); xs = np.where(seg == m)[0]; v = lo + int(xs[len(xs) // 2]); cs[i][1] = cs[i + 1][0] = v
+            cs[-1][1] += valley // 2   # 맨 왼쪽 칸은 패널 테두리가 들어올 수 있어 넓히지 않는다
+            rows[k] = (ry0, y1, [tuple(c) for c in cs])
     for k, (ry0, y1, cells) in rows.items():
         frames[k] = []
         for cell in cells:
@@ -55,11 +65,11 @@ build(hunter, 'gunH', {
 # 지옥늑대 (지옥 늑대 스킨): 이동·공격 줄은 오른쪽, 피격·사망 줄은 왼쪽을 본다 · 대기는 정면 3칸
 build(wolf, 'wolfE', {
     'idle': (15, 148, [(145, 228), (246, 332), (826, 909)]),
-    'walk': (160, 292, [(128, 232), (232, 352), (352, 475), (475, 595), (595, 715), (715, 838), (838, 960), (960, 1080)]),
-    'attack': (305, 462, [(129, 250), (250, 405), (405, 575), (584, 750), (752, 945), (950, 1120)]),
-    'hit': (465, 598, [(145, 283), (318, 450), (476, 622), (640, 800)]),
-    'death': (615, 722, [(138, 280), (296, 450), (459, 602), (612, 749), (760, 895), (895, 1045)]),
-}, (1118, 280, 1526, 738), thr=20, close=1)
+    'walk': (156, 296, [(128, 232), (232, 352), (352, 475), (475, 595), (595, 715), (715, 838), (838, 960), (960, 1080)]),
+    'attack': (300, 466, [(129, 250), (250, 405), (405, 575), (584, 750), (752, 945), (950, 1120)]),
+    'hit': (462, 602, [(145, 283), (318, 450), (476, 622), (640, 800)]),
+    'death': (612, 726, [(138, 280), (296, 450), (459, 602), (612, 749), (760, 895), (895, 1045)]),
+}, (1118, 280, 1526, 738), thr=20, close=1, valley=40)
 # 악마 사냥꾼 에픽 (청염): 시트 1448x1086, 원본은 오른쪽을 본다 · 롤 6칸(오른쪽 끝 사망 롤 패널은 안 쓴다)
 build(hunterE, 'gunE', {
     'i2': (42, 150, [(752, 870)]),

@@ -4,7 +4,7 @@
 **이 문서를 먼저 다 읽고 작업할 것.** 답변은 한국어로 짧고 간결하게.
 
 ## 꼭 지킬 규칙 (사용자 지시)
-1. **파일 이름:** 매 빌드 `hell survive v.N.NN.html`, 버전은 매번 올린다. 마지막 배포 = **v8.04** → 다음은 v8.05. (v6.01부터 6대 · v7.01부터 7대: 지하 10층·버섯 맵 개편 · **v8.01부터 8대: 보스 심장 시스템 기준, 사용자 지시**)
+1. **파일 이름:** 매 빌드 `hell survive v.N.NN.html`, 버전은 매번 올린다. 마지막 배포 = **v8.05** → 다음은 v8.06. (v6.01부터 6대 · v7.01부터 7대: 지하 10층·버섯 맵 개편 · **v8.01부터 8대: 보스 심장 시스템 기준, 사용자 지시**)
    - 끝자리: 작은 수정 · 가운데 자리: 캐릭터·보스 추가 같은 큰 변화.
 2. **도트는 절대 수정·재색칠 금지.** 자르기·배경 제거·마스크·배율 조정만 허용.
 3. 기능은 **단순하게**. 서로 복사한 듯한 중복 스킬/카드 금지.
@@ -37,7 +37,7 @@ tools/tier_run.sh       새 캐릭터 티어 측정 / tools/tier_an.py 결과 �
 tools/atlas/*_build.py  각 캐릭터 시트 → 아틀라스 만들 때 썼던 스크립트 (참고용, 원본 시트는 사용자가 다시 첨부)
                         shroom_build.py = 히든 마물 대형 버섯 괴물(sh, 시트 알파 그대로)
                         mush_build.py = 지하 6~10층 버섯 세트(바닥·소품·버섯형 악마·보스맵, 소품 좌표 mprops.json)
-                        skin_build.py = 스킨(악마 사냥꾼 레어 gunH · 청염 악마 사냥꾼 에픽 gunE · 지옥늑대 wolfE) 아틀라스·일러스트 (배경 판정 thr를 낮게 — 어두운 옷이 투명해지지 않게, 새 스킨도 16~20 + close 1로 시작해 보라색 배경 위 미리보기로 구멍 확인) · shk_build.py = 거대 버섯마귀
+                        skin_build.py = 스킨(칸 경계를 가장 빈 세로줄로 옮기는 `valley` 옵션: 몸·꼬리·이펙트가 칸에서 잘리지 않게 · 악마 사냥꾼 레어 gunH · 청염 악마 사냥꾼 에픽 gunE · 지옥늑대 wolfE) 아틀라스·일러스트 (배경 판정 thr를 낮게 — 어두운 옷이 투명해지지 않게, 새 스킨도 16~20 + close 1로 시작해 보라색 배경 위 미리보기로 구멍 확인) · shk_build.py = 거대 버섯마귀
                         ch_build.py = 챌린지 맵 · 절단안의 짐승(cm) · 심연의 촉수마왕(ab) · an_build.py = 타락천사(an·anfx·amap) · gun_build.py = 악마 총잡이(gun)
 data/tier_v501.json     기준 티어표 (s0/s1/s2), data/tier_additions.json 이후 추가분
 docs/                   규격표 · 티어표 · 기획서 PDF
@@ -87,7 +87,7 @@ git add -A && git commit -m "v6.10: 변경점 한 줄" && git push origin main
   - 룬 조각 `chFrag`(**3개=룬 1개**, v6.41 · 강적/황금 도망자 1개·마왕 2개 기본, `chRew` 최대 ×2.1, 8종 스탯 각 5단계, 챌린지에서만 적용, `SAVE.ch.rune/frag`). 보물 `TREASURES`(사망 시 버틴 시간 10/15/20분, 모든 모드에서 효과, `SAVE.ch.tr`): 쥐 이빨 목걸이 · 도깨비 주머니(`dropChest`) · 깨진 거울.
   - 황금 도망자(`chGoldSpawn`, v6.41: 체력 ×8.1(+35%) · 이속 플레이어의 0.6배) · 엘리트 접두사 20분~(`chPrefix` 빠름/분열/보호막 `e.shd`) · 심연 추격자 25분~(`chal.chaser`, 이속 100, 불사).
   - 신규 미니보스 절단안의 짐승(`mini.bk='cut'`, 원본 대기·이동은 왼쪽/공격 줄은 오른쪽을 봄) · 신규 마왕 심연의 촉수마왕(`boss.bk='ab'`, 하수인 kind `abm`, 추종하는 눈 = ebul k `abeye`). 둘 다 챌린지 전용.
-- **스킨 가챠 · 스킨 도감 (v7.30, 템플릿 'v7.30 스킨 가챠' 블록):** 시작 화면 `#gachaBtn` → `openGacha` (`#gachaBox` 탭 뽑기/스킨 도감, 결과 연출 `#gRes`). 데이터 `SKINS`(id·name·grade epic/rare·char·forms·where·ws·face) + 아틀라스 `SKINF[id]`(키 = 게임 동작 이름) + 그림 `IMG['sk_'+id]` · 일러스트 `SRC['skA_'+id]`(`tools/atlas/skin_build.py`, 자르기·배경 제거만). 세이브 `SAVE.skin = {own, frag, on, pity, pulls}`. 뽑기 `gachaRoll`: 가중치 58 = 에픽 완성 1 · 레어 완성 2 · 조각 55(대상 스킨 무작위, 레어 1~2개 · 에픽 1개), **가진 스킨·그 조각·다 모은 조각은 제외**(나올 수 없는 결과는 빼고 재정규화), 천장 `GACHA.pity` 25(완성 스킨 없이 25번째 → 에픽 20% · 레어 80%). 비용 1회 1000 · 10회 9000(영혼 조각). 조합 `skinCraft`(레어 10 · 에픽 15). 장착 `skinToggle` — 캐릭터마다 독립 ON/OFF(`SAVE.skin.on = {캐릭터: id}`, 같은 캐릭터 스킨끼리만 서로 꺼짐 · 옛 문자열 세이브는 `skinMap()`이 변환), 그 캐릭터 첫 스킨은 자동 ON. 게임 적용: 총잡이는 `gunSk()`(착용한 스킨 id) → `gA(k)`/`gI(k)`로 아틀라스 교체(최종 진화만, 레어 gunH · 에픽 gunE), 늑대는 `drawSkinChar`(모든 진화 단계, `ws` 단계별 크기). 새 스킨 추가 = 시트 → skin_build.py에 한 줄 → `SKINS`에 한 줄 + 해당 캐릭터 그리기에 훅. 테스트 `tools/tests/gacha730.py`
+- **스킨 가챠 · 스킨 도감 (v7.30, 템플릿 'v7.30 스킨 가챠' 블록):** 시작 화면 `#gachaBtn` → `openGacha` (`#gachaBox` 탭 뽑기/스킨 도감, 결과 연출 `#gRes`). 데이터 `SKINS`(id·name·grade epic/rare·char·forms·where·ws·face) + 아틀라스 `SKINF[id]`(키 = 게임 동작 이름) + 그림 `IMG['sk_'+id]` · 일러스트 `SRC['skA_'+id]`(`tools/atlas/skin_build.py`, 자르기·배경 제거만). 세이브 `SAVE.skin = {own, frag, on, pity, pulls}`. 뽑기 `gachaRoll`: 가중치 58 = 에픽 완성 1 · 레어 완성 2 · 조각 55(대상 스킨 무작위, 레어 1~2개 · 에픽 1개), **가진 스킨·그 조각·다 모은 조각은 제외**(나올 수 없는 결과는 빼고 재정규화), 천장 `GACHA.pity` 25(완성 스킨 없이 25번째 → 에픽 20% · 레어 80%). 비용 1회 1000 · 10회 9000(영혼 조각). 조합 `skinCraft`(레어 10 · 에픽 15). 장착 `skinToggle` — 캐릭터마다 독립 ON/OFF(`SAVE.skin.on = {캐릭터: id}`, 같은 캐릭터 스킨끼리만 서로 꺼짐 · 옛 문자열 세이브는 `skinMap()`이 변환), 그 캐릭터 첫 스킨은 자동 ON. 게임 적용: 총잡이는 `gunSk()`(착용한 스킨 id) → `gA(k)`/`gI(k)`로 아틀라스 교체(최종 진화만, 레어 gunH · 에픽 gunE), 늑대는 `drawSkinChar`. **스킨은 `SKINS`의 `forms`(진화 단계) + 선택 `route`(루트)로 지정한 형태에만 적용된다** — 지옥군주늑대 `wolfE` = 심연(기본) 루트 최종 진화(`route:'abyss', forms:[2]`)만, 혈랑·쌍두·1진화·시작 형태에는 안 나옴. 새 스킨은 반드시 대상 형태를 `forms`/`route`로 정해 `skinOn()`이 걸러내게 한다. 새 스킨 추가 = 시트 → skin_build.py에 한 줄 → `SKINS`에 한 줄 + 해당 캐릭터 그리기에 훅. 테스트 `tools/tests/gacha730.py`
 - **보스 심장 (v8.01, 템플릿 'v8.01 보스 심장' 블록):** 시작 화면 `#heartBtn` → `openHeart` (`#heartBox`: 5칸 장착 슬롯 · 인벤토리 · 가운데 재련 패널(심장 오브·등급 화살표·전→후 옵션·비용)). 세이브 `SAVE.heart = {inv:[{id,g,st,v}], eq:[id…≤5], n}`. 등급 `HG` rare 회색 1~3% · epic 보라 4~6% · unique 노랑 7~9% · legend 초록 15~20%, 옵션 `HSTAT` atk/hp/aspd(각 1/3). 드랍 `rollHeartDrop` — 마왕 처치(`bossDefeated`, 챌린지 포함) 20% → 레어, 그중 1% 레전더리(대형 연출) · 아이템 type 'bheart'(날아와서 먹힘, `heartGain` → 빈 슬롯이면 자동 장착). 재설정 `rerollHeart(id)` 영혼 조각 500(`HEART.cost`): 등급업 30/20/5% 후 옵션·수치 재배정. `equipHeart` 최대 5 · `unequipHeart` · 분해 `disHeart`(50/150/400/1500 조각). 효과는 `newPlayer`에서 `heartBonus()`(공격력 ×, 기본 최대 체력 ×, 공속 +). 연출 `playUpgradeEffect(grade, text)`: `#hfx` 위 섬광·파티클·광선·충격파·글자 확대(등급 색, 레전더리 가장 큼). 테스트 `tools/tests/heart801.py`
 - **쿠폰:** 설정에서 `ai소프트웨어학과` 입력 → 문어 마법사 최종 스킨 (접속마다 재입력).
 
