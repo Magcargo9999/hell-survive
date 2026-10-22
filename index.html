@@ -1283,11 +1283,11 @@ function bossTele(o) { if (!boss) return; boss.tele.push(Object.assign({ t: 0, d
 /* v5.00: 난이도 단계마다 마왕에게 '추가 패턴'이 무작위로 하나씩 붙는다 (1단계 1개 ... 5단계 5개). 원래 패턴 사이사이에 따로 쓴다 */
 const TIER_EX = ['rain', 'cross', 'ring', 'grid', 'nova'];
 const TIER_EX_NAME = { rain: '낙석', cross: '십자 균열', ring: '고리 충격파', grid: '세 줄 균열', nova: '마력 폭발' };
-function tierExInit(e) { const a = TIER_EX.slice().sort(() => rand() - 0.5); e.ex = a.slice(0, Math.min(a.length, P.tier | 0)); e.exT = 7; }
+function tierExInit(e) { const a = TIER_EX.slice().sort(() => rand() - 0.5); e.ex = a.slice(0, Math.min(a.length, TP())); e.exT = 7; }
 function tierEx(e, dt) {
   if (!e.ex || !e.ex.length || state !== 'play' || trans || e.invul || e.shield || e.hp <= 0 || e.st === 'intro' || e.st === 'roar' || e.st === 'grow') return;
   if ((e.exT -= dt) > 0) return;
-  e.exT = 10 - 0.6 * P.tier + rand() * 2;
+  e.exT = 10 - 0.6 * TP() + rand() * 2;
   const k = e.ex[(rand() * e.ex.length) | 0], T = o => e.tele.push(Object.assign({ t: 0, dur: 1, done: false }, o));
   const boom = (t, d) => { bossAoE(t.x, t.y, t.r, d); addRing(t.x, t.y, 8, t.r, 0.35, '255,90,60', 7); burst(t.x, t.y - 6, 10, ['#3a2a2a', '#ff5a3a', '#ffb05a'], 220, 0.6); shake = Math.max(shake, 6); };
   const line = d => t => { const c = Math.cos(t.ang), sn = Math.sin(t.ang); addRing(t.x + c * t.len / 2, t.y + sn * t.len / 2, 8, 70, 0.3, '255,110,50', 6); sfx('hit'); shake = Math.max(shake, 5); if (inRectT(P.x, P.y, t, 10)) bossHit(d); };
@@ -1316,7 +1316,7 @@ function bossPick(e, d) {
   e.last = pick; bossStart(e, pick);
 }
 function bossStart(e, k) {
-  const tp = bossTempo(), m = (e.rage ? 0.8 : 1) * (1 - 0.06 * P.tier) / tp * (P.tier >= 5 ? 1 / 0.9 : 1);   // v6.22: 5단계 원숭이 마왕 패턴 속도 -10% (예고·간격이 길어진다)
+  const tp = bossTempo(), m = (e.rage ? 0.8 : 1) * (1 - 0.06 * TP()) / tp * (P.tier >= 5 ? 1 / 0.9 : 1);   // v6.22: 5단계 원숭이 마왕 패턴 속도 -10% (예고·간격이 길어진다)
   if (k === 'combo') { e.st = 'combo'; e.combo = 0; e.stT = 0; }
   else if (k === 'jump') {   // 점프 후 내려찍기: 빨간 원이 플레이어를 따라오다가 고정된다
     e.st = 'jumpWind'; e.stT = 0.55 * m;
@@ -1397,7 +1397,7 @@ function updateBoss(e, dt) {
   }
   e.tele = e.tele.filter(t => !(t.done && t.t >= t.dur + 0.15));
   e.stT -= dt;
-  const tpo = bossTempo(), dx = P.x - e.x, dy = P.y - e.y, d = Math.hypot(dx, dy) || 1, m = (e.rage ? 0.8 : 1) * (1 - 0.06 * P.tier) / tpo * (P.tier >= 5 ? 1 / 0.9 : 1);   // v6.22: 5단계 원숭이 마왕 패턴 속도 -10% (예고·간격이 길어진다)
+  const tpo = bossTempo(), dx = P.x - e.x, dy = P.y - e.y, d = Math.hypot(dx, dy) || 1, m = (e.rage ? 0.8 : 1) * (1 - 0.06 * TP()) / tpo * (P.tier >= 5 ? 1 / 0.9 : 1);   // v6.22: 5단계 원숭이 마왕 패턴 속도 -10% (예고·간격이 길어진다)
   if (Math.abs(dx) > 6 && e.st !== 'dash') e.face = dx > 0 ? 1 : -1;
   e.ghost = e.ghost.filter(g => (g.t += dt) < 0.25);
   switch (e.st) {
@@ -1493,7 +1493,7 @@ function spawnFw() {
     noKB: true, invul: true, face: -1, st: 'intro', stT: 2.6, rage: false, last: '', tele: [], jh: 0, an: 'drain', fr: -1, giant: 0, gT: 0, gCd: 0, n: 0, legs: 0, leg: null, ghost: [], touchCd: 0, poolAcc: 0, dv: null, dashHit: false };
   chBossHp(boss); if (chal && !arena) chFieldPlace(boss); enemies.push(boss);
 }
-const fwM = e => (e.rage ? 0.8 : 1) * (1 - 0.05 * P.tier) / bossTempo();
+const fwM = e => (e.rage ? 0.8 : 1) * (1 - 0.05 * TP()) / bossTempo();
 const fwDm = d => d * 0.8 * (1 + 0.04 * P.tier);   // 피해 배율 (시뮬 기준 원숭이 마왕보다 확실히 어렵게, 그래도 깰 수 있게)
 const TGAP = 62;   // 통로 반폭 (px)
 function inTeleGap(t, x, y, pad) { if (!t.gaps) return false; const dx = x - t.x, dy = y - t.y; return t.gaps.some(a => dx * Math.cos(a) + dy * Math.sin(a) > 0 && Math.abs(-dx * Math.sin(a) + dy * Math.cos(a)) < TGAP - pad); }
@@ -1753,7 +1753,7 @@ function skpPts() {   // v6.41: 챌린지 필드 마왕전은 마왕이 처음 �
   return [[-584, 62], [585, 62], [0, -228]].map(([dx, dy]) => { for (let k = 1; k > 0; k -= 0.1) { const x = c.x + dx * k, y = c.y + dy * k; if (inCh(x, y)) return [x, y]; } return [c.x, c.y]; });
 }   // 해골 첨탑(서브 헤드)이 솟는 자리: 맵 외곽 3곳
 let skp = [], skSp = [], skDeath = null;  // 참격파 · 가시/불기둥 이펙트 · 쓰러지는 모습
-const skM = e => (e.rage ? 0.82 : 1) * (1 - 0.05 * P.tier) / bossTempo();
+const skM = e => (e.rage ? 0.82 : 1) * (1 - 0.05 * TP()) / bossTempo();
 function skTele(e, o) { e.tele.push(Object.assign({ t: 0, dur: 1, done: false }, o)); }
 function skFront(e) { const dx = P.x - e.x, dy = P.y - e.y; return dx * e.face > -30 && Math.hypot(dx, dy) < 640; }   // 플레이어가 마왕 정면(등 뒤가 아닌 쪽)에 있는가
 function skAim(e) { if (Math.abs(P.x - e.x) > 8) e.face = P.x > e.x ? 1 : -1; e.turnT = 0; }
@@ -2220,7 +2220,7 @@ const AMAP = { s: 2, w: 3344, h: 1882, cx: 1660, cy: 860, start: [1652, 1716], e
 const AN = { hp: 1.2, dm: 1.15, ph: 0.7 }, AN_S = 2, AN_RY = 0.62;   // 체력(BOSS_HP 기준) · 피해 배율 (시뮬 ANJ로 바꿔 볼 수 있다) · 그리기 배율 · 흑화 체력 · 바닥 원은 비스듬히 본 타원(세로 = 가로 × 0.62)
 const anHit = d => bossHit(d * AN.dm);
 let anFx = [], anOrbs = [], anDeath = null;
-const anM = () => (1 - 0.05 * P.tier) / bossTempo();
+const anM = () => (1 - 0.05 * TP()) / bossTempo();
 const anIn = (t, x, y, pad) => { const dx = (x - t.x) / (t.r + pad), dy = (y - t.y) / (t.r * AN_RY + pad * 0.7); return dx * dx + dy * dy < 1; };
 function anAoE(t, d) { const p = P.pet; if (p && !p.down && anIn(t, p.x, p.y, 8)) petHurt(p, d); if (anIn(t, P.x, P.y, 10 + PR())) anHit(d); }
 function anTele(e, o) { e.tele.push(Object.assign({ t: 0, dur: 1, done: false }, o)); }
@@ -2304,7 +2304,7 @@ function anOrbCast(e) {   // 흑백의 구체: 검은 구체는 닿으면 아프
   const hi = P.tier >= 4, n = hi ? 9 : 7, a0 = Math.atan2(P.y - e.y, P.x - e.x), arc = 2.2;
   for (let i = 0; i < n; i++) {   // 흰 구체는 0.7초씩 엇갈려 터진다 (한꺼번에 터지면 무적 시간에 묻혀 한 번만 아프다)
     const a = a0 - arc / 2 + arc * i / (n - 1), white = i % 2 === 1;
-    anOrbs.push({ x: e.x + Math.cos(a) * 60, y: e.y + Math.sin(a) * 40, a, white, sp: white ? 150 : 76 + 5 * Math.max(0, P.tier - 3), t: 0, life: white ? 6.2 - 0.3 * Math.max(0, P.tier - 3) + 0.7 * ((i - 1) / 2) : 8, r: white ? 26 : 24 });
+    anOrbs.push({ x: e.x + Math.cos(a) * 60, y: e.y + Math.sin(a) * 40, a, white, sp: white ? 150 : 76 + 5 * Math.max(0, TP() - 3), t: 0, life: white ? 6.2 - 0.3 * Math.max(0, TP() - 3) + 0.7 * ((i - 1) / 2) : 8, r: white ? 26 : 24 });
   }
   e.orbCd = 7; e.halo = 0.6; sfx('skill'); addRing(e.x, e.y - 120, 10, 150, 0.4, '255,80,110', 8);
   if (!e.orbTold) { e.orbTold = true; banner = { txt: '흑백의 구체!  검은 구체는 피하고, 흰 구체는 터지기 전에 직접 닿아라', t: 3.5, c: '#ffd0e0' }; }
@@ -2362,7 +2362,7 @@ function updateAnBoss(e, dt) {
     if (b.t > (b.N + 2) * b.B + 0.6) e.beat = null;
   }
   if (e.shT > 0) {   // 방패를 든 동안: 방패는 천천히 플레이어 쪽으로 돈다 · 천천히 다가오며 가끔 정면을 찌른다
-    e.shT -= dt; const want = Math.atan2(dy, dx), turn = (0.8 + 0.05 * Math.max(0, P.tier - 3)) * dt;
+    e.shT -= dt; const want = Math.atan2(dy, dx), turn = (0.8 + 0.05 * Math.max(0, TP() - 3)) * dt;
     e.sAng += clamp(angDiff(want, e.sAng), -turn, turn); e.face = Math.cos(e.sAng) >= 0 ? 1 : -1;
     if (d > 150) bossMove(e, e.x + dx / d * 70 * dt, e.y + dy / d * 70 * dt);
     e.thT -= dt; if (e.thT <= 0 && e.st === 'shield') { e.thT = 1.3; anThrust(e); }
@@ -2389,7 +2389,7 @@ function updateAnBoss(e, dt) {
     case 'slash': if (e.stT <= 0) { if (e.n >= 3) anRecover(e, 0.8); else anSlash(e); } break;
     case 'rhythm': if (e.ph === 2) drift(0.4); if (e.stT <= 0) anRecover(e, 0.6); break;
     case 'pillars': if (e.ph === 2) drift(0.5); if (e.stT <= 0) anRecover(e, 0.6); break;
-    case 'shUp': if (e.stT <= 0) { e.st = 'shield'; e.shT = 5 + 0.3 * Math.max(0, P.tier - 3); e.stT = e.shT + 1; } break;
+    case 'shUp': if (e.stT <= 0) { e.st = 'shield'; e.shT = 5 + 0.3 * Math.max(0, TP() - 3); e.stT = e.shT + 1; } break;
     case 'shield': break;   // 방패가 깨질 때까지 (위에서 처리)
     case 'shBreak': if (e.stT <= 0) anChase(e); break;   // 방패가 깨진 직후: 잠깐 휘청인다 (공격 기회)
     case 'orbs': drift(0.2); if (!e.cast && e.stT <= 0.4) { e.cast = true; anOrbCast(e); } if (e.stT <= 0) anRecover(e, 1.0); break;
@@ -2567,7 +2567,7 @@ function bossDefeated() {
   if (chal) { chBossWin(e); return; }   // v6.20: 챌린지는 계속된다
   banner = { txt: '마왕을 쓰러뜨렸다!', t: 6 };
   const refund = P.fee || 0; P.earned = calcShards() + Math.round(150 * tierMul()) + refund; SAVE.shards += P.earned;   // 클리어 보너스 +150 (단계 배율) + 참가비 반환
-  P.unlocked = 0; if (P.tier === SAVE.diff.max && SAVE.diff.max < 5) { SAVE.diff.max = P.tier + 1; P.unlocked = SAVE.diff.max; }
+  P.unlocked = 0; if (P.tier === SAVE.diff.max && SAVE.diff.max < MAX_TIER) { SAVE.diff.max = P.tier + 1; P.unlocked = SAVE.diff.max; }
   P.gunOpen = false; if (P.tier >= 5 && !SAVE.chars.gun) { SAVE.chars.gun = true; P.gunOpen = true; }   // v6.40: 악마 총잡이 해금
   P.chOpen = false; if (P.tier >= 5) { const was = chOpen(); SAVE.ch.open = true; P.chOpen = !was; }   // v6.20: 5단계 클리어 → 챌린지 모드
   SAVE.fw.snap = snapP();   // 숨은 난이도용: 마지막으로 마왕을 쓰러뜨린 스펙
@@ -2803,7 +2803,7 @@ function eyeTent(t) {
   const d = Math.hypot(P.x - t.x, P.y - t.y); if (d > t.r - 10 - PR() && d < t.r2 + 10 + PR()) bossHit(28);
 }
 function eyeStart(e, k) {
-  const tp = bossTempo(), m = (e.rage ? 0.8 : 1) * (1 - 0.06 * P.tier) / tp, r = e.rage;
+  const tp = bossTempo(), m = (e.rage ? 0.8 : 1) * (1 - 0.06 * TP()) / tp, r = e.rage;
   e.n = 0; e.glow = 1;
   if (k === 'fan') { e.st = 'fan'; e.stT = 0.65 * m; }
   else if (k === 'spiral') { e.st = 'spiral'; e.stT = 0.5 * m; e.emT = (r ? 2.8 : 2.4); e.ang = rand() * 6.283; e.n = 0; }
@@ -2840,7 +2840,7 @@ function updateEyeBoss(e, dt) {
   }
   e.tele = e.tele.filter(t => !(t.done && t.t >= t.dur + 0.15));
   e.stT -= dt; e.sideT -= dt; if (e.sideT <= 0) { e.sideT = 3 + rand() * 2.5; e.side = -e.side; }
-  const tpo = bossTempo(), dx = P.x - e.x, dy = P.y - e.y, d = Math.hypot(dx, dy) || 1, m = (e.rage ? 0.8 : 1) * (1 - 0.06 * P.tier) / tpo, r = e.rage;
+  const tpo = bossTempo(), dx = P.x - e.x, dy = P.y - e.y, d = Math.hypot(dx, dy) || 1, m = (e.rage ? 0.8 : 1) * (1 - 0.06 * TP()) / tpo, r = e.rage;
   e.face = dx > 0 ? 1 : -1;
   const drift = k => {   // 플레이어와 일정한 거리를 유지하며 떠다닌다 (가까워지면 물러난다)
     const sp = EYE.spd * (r ? 1.3 : 1) * k * (1 + (tpo - 1) * 0.5);
@@ -3234,7 +3234,13 @@ function hurtPlayer(dmg) {
   if (P.hp <= 0) { P.hp = 0; die(); }
 }
 const tierMul = () => 1 + 0.3 * (P.tier || 0);
-const floorName = t => '지하 ' + ((t | 0) + 1) + '층';   // v6.30: 난이도 0~5 = 지하 1~6층
+const MAX_TIER = 9;   // v6.50: 난이도 0~9 = 지하 1~10층
+const floorName = t => '지하 ' + ((t | 0) + 1) + '층';
+/* v6.50 지하 6~10층 준비: 몹 체력·공격·보스 체력·영혼 조각·참가비는 층마다 그대로 늘어난다 (몹 +10% · 보스 +30% · 조각 ×(1+0.3층) · 참가비 25×층).
+   보스 패턴의 속도·횟수·추가 패턴은 5단계(지하 6층) 값에서 멈춘다 → 규칙 9(최고 단계에도 피할 곳이 남아야 함) 보장. 새 패턴은 새 맵·몹 시트가 오면 여기에 단계를 더한다. */
+const TP = () => Math.min(P.tier | 0, 5);
+/* 층별 맵·잡몹 세트: 지하 1~10층 모두 지금은 같은 지옥 맵·몹(자리만 잡아 둠). 지하 6~10층 새 도트 시트가 오면 여기서 갈라 쓴다. */
+const floorSet = t => 'hell';
 function calcShards() { return Math.round((Math.floor(P.kills / 20) + Math.floor(gt / 30) + Math.floor(P.lvl * 1.5) + P.named * 2 + P.goalShards) * tierMul() * (1 + 0.05 * (SAVE.perks.shard | 0))); }   // v4.06: 한 번 더 상향 (판이 짧아진 만큼 + α)   // v4.02: 약 1.5배 상향
 /* ---------- 런 목표: 한 판 안에서 순서대로 나오는 작은 목표. 달성하면 영혼 조각을 추가로 받는다 ---------- */
 const GOAL_TYPES = [
@@ -7550,7 +7556,7 @@ function updateDiff() {
     return;
   }
   $('diffTxt').textContent = floorName(t);
-  $('diffDesc').textContent = m <= 0 ? '' : t ? `몹 체력 +${10 * t}% · 몹 공격 +${10 * t}% · 보스 체력 +${30 * t}% · 보스 패턴 강화 · 영혼 조각 ×${(1 + 0.3 * t).toFixed(1)} · 참가비 ${25 * t} (클리어하면 반환)` : '마왕을 쓰러뜨리면 다음 층이 열립니다 (최대 지하 6층)';
+  $('diffDesc').textContent = m <= 0 ? '' : t ? `몹 체력 +${10 * t}% · 몹 공격 +${10 * t}% · 보스 체력 +${30 * t}% · 보스 패턴 강화 · 영혼 조각 ×${(1 + 0.3 * t).toFixed(1)} · 참가비 ${25 * t} (클리어하면 반환)` : '마왕을 쓰러뜨리면 다음 층이 열립니다 (최대 지하 10층)';
 }
 function selectChar(c) {
   if (!SAVE.chars[c]) { $('hint').textContent = CHARS[c].cond ? `🔒 ${CHARS[c].name}: ${CHARS[c].cond}${c === 'ghost' ? '' : ' (유니크 마물은 한 판에 한 번씩 등장)'}` : `🔒 ${CHARS[c].name}: 영혼 상점에서 영혼 조각 ${CHARS[c].price}개로 구매할 수 있어요.`; return; }
