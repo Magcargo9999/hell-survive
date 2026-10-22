@@ -658,3 +658,133 @@ archer:red syn:iron monkey 2 D 35.17
 twins syn:lifeOrb monkey 2 W 100.0
 twins skill:aura monkey 2 W 100.0
 octo syn:dnova monkey 2 D 60.15
+snail:venom skill:thunder monkey 2 W 100.0
+snail:venom skill:blade monkey 2 D 64.02
+octo syn:harvest monkey 2 D 46.02
+archer:red syn:tstorm monkey 2 W 100.0
+octo syn:oBig monkey 2 W 100.0
+lizard:rage syn:regen monkey 2 D 87.88
+snail:lava skill:aura monkey 2 W 100.0
+lizard:rage syn:rush monkey 2 W 100.0
+twins syn:iron monkey 2 W 100.0
+snail:venom syn:soulStorm monkey 2 D 77.19
+snail:bomb syn:spore monkey 2 D 72.97
+ghost syn:lifeOrb monkey 2 W 100.0
+archer:red skill:aura monkey 2 W 100.0
+ghost skill:blade monkey 2 W 100.0
+octo syn:deadeye monkey 2 D 80.4
+chimera syn:fireBone monkey 2 W 100.0
+octo skill:thunder monkey 2 D 99.92
+ghost syn:inferno monkey 2 W 100.0
+archer:red syn:soulStorm monkey 2 D 76.23
+chimera skill:blade monkey 2 D 94.62
+archer:red syn:ricochet monkey 2 W 100.0
+lizard:rage skill:aura monkey 2 W 100.0
+octo syn:lifeOrb monkey 2 D 89.8
+archer:red syn:deadeye monkey 2 W 100.0
+chimera:dream syn:gaze monkey 2 W 100.0
+archer:red syn:dnova monkey 2 W 100.0
+ghost syn:soulStorm monkey 2 D 92.55
+snail:venom syn:deadeye monkey 2 D 47.53
+archer:red syn:bstorm monkey 2 W 100.0
+snail:venom syn:tstorm monkey 2 D 55.62
+archer:red syn:harvest monkey 2 D 87.25
+octo skill:blade monkey 2 W 100.0
+snail:lava syn:fireBone monkey 2 D 92.22
+lizard:rage syn:inferno monkey 2 D 31.31
+lizard:rage syn:tstorm monkey 2 D 89.64
+twins syn:fireBone monkey 2 W 100.0
+snail:venom skill:aura monkey 2 T 90.27
+snail:lava syn:bstorm monkey 2 W 100.0
+octo syn:inferno monkey 2 D 69.38
+lizard:rage syn:lifeOrb monkey 2 D 75.42
+archer:red syn:gust monkey 2 W 100.0
+twins syn:tstorm monkey 2 T 95.13
+twins skill:blade monkey 2 W 100.0
+snail:bomb syn:tstorm monkey 2 W 100.0
+ghost skill:aura monkey 2 W 100.0
+twins syn:vortex monkey 2 T 75.22
+wolf:crimson syn:frenzy monkey 2 W 100.0
+snail:bomb syn:corpse monkey 2 D 90.22
+snail:venom syn:inferno monkey 2 D 25.14
+snail:bomb syn:rush monkey 2 D 93.71
+chimera skill:thunder monkey 2 W 100.0
+snail:lava syn:rush monkey 2 W 100.0
+twins ctrl monkey 2 W 100.0
+archer:red syn:rush monkey 2 D 71.83
+archer:red syn:lifeOrb monkey 2 D 79.47
+snail:bomb syn:lifeOrb monkey 2 D 91.66
+octo skill:nova monkey 2 D 63.73
+snail:bomb syn:fireBone monkey 2 D 95.8
+octo syn:tstorm monkey 2 D 78.86
+twins syn:dnova monkey 2 W 100.0
+lizard:rage syn:harvest monkey 2 D 48.3
+chimera syn:iron monkey 2 T 81.11
+ghost syn:rush monkey 2 W 100.0
+lizard:rage syn:dnova monkey 2 D 55.03
+ghost ctrl monkey 2 W 100.0
+archer:red syn:mark monkey 2 D 96.81
+archer:red skill:thunder monkey 2 D 80.91
+ghost skill:thunder monkey 2 W 100.0
+twins skill:thunder monkey 2 W 100.0
+octo syn:iron monkey 2 W 100.0
+lizard:rage syn:deadeye monkey 2 D 82.31
+ghost skill:nova monkey 2 W 100.0
+lizard:rage skill:nova monkey 2 D 35.27
+snail:venom syn:spore monkey 2 W 100.0
+twins syn:deadeye monkey 2 W 100.0
+snail:venom skill:nova monkey 2 W 100.0
+snail:lava syn:lifeOrb monkey 2 D 85.84
+snail:lava ctrl monkey 2 W 100.0
+chimera:flame syn:blaze monkey 2 T 95.24
+snail:bomb skill:blade monkey 2 W 100.0
+snail:lava syn:harvest monkey 2 D 84.93
+archer:red syn:inferno monkey 2 W 100.0
+chimera syn:dnova monkey 2 W 100.0
+chimera syn:galeWing monkey 2 W 100.0
+snail:bomb syn:soulStorm monkey 2 D 71.14
+lizard:rage syn:bstorm monkey 2 D 95.34
+wolf:crimson syn:iron monkey 2 T 74.05
+wolf:crimson skill:thunder monkey 2 W 100.0
+wolf:crimson syn:rush monkey 2 W 100.0
+ALLDONE
+[06:22:48] NA=3 python3 tools/tier3.py A
+jobs 126 bot_ver 34bef5df commit 363b78f
+A wolf:crimson monkey 3 timeout 240 1.54
+A wolf:holy monkey 3 boss_dead 184 0.0
+A wolf:abyss monkey 3 boss_dead 227 0.0
+A wolf:fallen monkey 3 player_dead 151 19.71
+A snail:venom monkey 3 timeout 240 8.0
+A wolf:twin monkey 3 boss_dead 140 0.0
+A snail:lava monkey 3 player_dead 171 2.59
+A snail:bomb monkey 3 player_dead 101 17.57
+A archer:red monkey 3 boss_dead 151 0.0
+A archer:holy monkey 3 boss_dead 77 0.0
+A archer:skel monkey 3 player_dead 127 3.21
+A chimera monkey 3 boss_dead 184 0.0
+A chimera:flame monkey 3 timeout 240 4.61
+A chimera:dream monkey 3 boss_dead 116 0.0
+A lizard:rage monkey 3 timeout 240 4.42
+A lizard:water monkey 3 timeout 240 34.17
+A lizard:guard monkey 3 timeout 240 27.05
+A twins monkey 3 boss_dead 219 0.0
+A ghost monkey 3 player_dead 48 11.77
+A octo monkey 3 boss_dead 109 0.0
+A gun monkey 3 player_dead 131 9.07
+A wolf:crimson eye 3 timeout 240 17.72
+A wolf:holy eye 3 boss_dead 212 0.0
+A wolf:fallen eye 3 player_dead 208 16.68
+A wolf:abyss eye 3 player_dead 155 35.1
+A wolf:twin eye 3 boss_dead 173 0.0
+A snail:venom eye 3 player_dead 171 38.62
+A snail:lava eye 3 player_dead 164 11.55
+A snail:bomb eye 3 boss_dead 112 0.0
+A archer:red eye 3 boss_dead 157 0.0
+A archer:holy eye 3 boss_dead 80 0.0
+A archer:skel eye 3 player_dead 107 22.04
+A chimera eye 3 player_dead 199 2.68
+A chimera:flame eye 3 player_dead 221 17.86
+A chimera:dream eye 3 boss_dead 148 0.0
+A lizard:rage eye 3 timeout 240 19.27
+A lizard:water eye 3 timeout 240 44.03
+A lizard:guard eye 3 timeout 240 42.68
