@@ -4,7 +4,7 @@
 **이 문서를 먼저 다 읽고 작업할 것.** 답변은 한국어로 짧고 간결하게.
 
 ## 꼭 지킬 규칙 (사용자 지시)
-1. **파일 이름:** 매 빌드 `hell survive v.N.NN.html`, 버전은 매번 올린다. 마지막 배포 = **v7.16** → 다음은 v7.17. (v6.01부터 번호 체계가 6대로 바뀜 · v7.01부터 7대: 지하 10층·버섯 맵 개편 기준)
+1. **파일 이름:** 매 빌드 `hell survive v.N.NN.html`, 버전은 매번 올린다. 마지막 배포 = **v7.15** → 다음은 v7.16. (v6.01부터 번호 체계가 6대로 바뀜 · v7.01부터 7대: 지하 10층·버섯 맵 개편 기준)
    - 끝자리: 작은 수정 · 가운데 자리: 캐릭터·보스 추가 같은 큰 변화.
 2. **도트는 절대 수정·재색칠 금지.** 자르기·배경 제거·마스크·배율 조정만 허용.
 3. 기능은 **단순하게**. 서로 복사한 듯한 중복 스킬/카드 금지.
@@ -95,6 +95,5 @@ git add -A && git commit -m "v6.10: 변경점 한 줄" && git push origin main
 ## 참고 자료
 - **변경 이력은 `docs/CHANGELOG.md`** (전체를 읽지 말고 grep). 매 버전 거기에 항목을 추가한다.
 - **코드 위치 지도 `docs/MAP.md`** — 작업 전에 이것부터 보고 `grep -n`으로 필요한 부분만 읽는다. 새 기능을 만들면 `tools/mkmap.py`의 ANCHORS에 한 줄 추가하고, 빌드 때마다 `python3 tools/mkmap.py`를 돌린다.
-- **검색·공유 태그:** 템플릿 `<head>`의 title/description/og 태그, 루트의 `robots.txt`·`sitemap.xml`(구글 Search Console 등록은 사용자가 직접). 게임 이름 문구를 바꾸면 같이 고친다.
 - 패턴 기획서: `docs/hell survive 보스 패턴 추가 기획서.pdf` (하데스·엘든링·세키로·건전·메이플 110개 표본, 신규 패턴 15개 안, 구현 전 — E4 안식처는 규칙 9 경계 사례라 허락 필요). 생성 스크립트 `tools/pattern_plan.py·pattern_data.py·pattern_html.py`
 - 밸런스 시뮬: `python3 tools/bal_make.py` → `tools/sim_bal.py` → `tools/bal_an.py` → `tools/bal_report.py`
