@@ -318,7 +318,7 @@
   <div class="gtop"><span id="hShards" style="color:var(--gold);font-weight:bold"></span><button id="hClose" class="sm">닫기</button></div>
   <div class="hslots" id="hSlots"></div><p id="hSum" class="hsum"></p>
   <div class="hmain"><div class="hinv" id="hInv"></div><div class="hcore" id="hCore"></div></div>
-  <p class="gprob">마왕 처치 시 20% 확률로 [보스의 심장] (레어) · 떨어질 때 1% 확률로 레전더리 · 재설정 ◆500부터(할 때마다 +50, 최대 1500): 레어→에픽 30% · 에픽→유니크 20% · 유니크→레전더리 5% 등급 상승, 옵션(공격력 · 최대 체력 · 공격 속도 각 1/3)과 수치를 다시 뽑음<br>등급별 수치: 레어 1~3% · 에픽 4~6% · 유니크 7~9% · 레전더리 15~20% · 최대 5개 장착 (효과는 다음 판 시작부터)</p>
+  <p class="gprob">마왕 5종은 종류마다 심장이 한 번씩만(얻기 전까지 처치 시 20%) 떨어짐 · 챌린지·숨은 보스 제외 · [보스의 심장] (레어) · 떨어질 때 1% 확률로 레전더리 · 재설정 비용은 등급별 레어 ◆500 · 에픽 ◆600 · 유니크 ◆700 · 레전더리 ◆800: 레어→에픽 30% · 에픽→유니크 20% · 유니크→레전더리 5% 등급 상승, 옵션(공격력 · 최대 체력 · 공격 속도 각 1/3)과 수치를 다시 뽑음<br>등급별 수치: 레어 1~3% · 에픽 4~6% · 유니크 7~9% · 레전더리 15~20% · 최대 5개 장착 (효과는 다음 판 시작부터)</p>
 </div>
 <div id="hfx"></div>
 
@@ -336,7 +336,7 @@
 /* ============================================================
  * 0. 기본 설정
  * ============================================================ */
-const SRC = { sktw: '__SKTW__', mimic: '__MIMIC__', sh: '__SH__', mfloor: '__MFLOOR__', mprops: '__MPROPS__', mmob: '__MMOB__', mmap: '__MMAP__', an2: '__AN2__', shk: '__SHK__', statue: '__STATUE__', sk_gunH: '__SKGUNH__', sk_gunE: '__SKGUNE__', sk_wolfE: '__SKWOLFE__', sk_lizG: '__SKLIZG__', skA_lizG: '__SKALIZG__', skA_gunH: '__SKAGUNH__', skA_gunE: '__SKAGUNE__', skA_wolfE: '__SKAWOLFE__', horse: '__HORSE__', sfloor: '__SFLOOR__', sprops: '__SPROPS__', smob: '__SMOB__', smap: '__SMAP__', mini: '__MINI__', snail: '__SNAIL__', base: '__ATLAS__', pup: '__PUP__', dark: '__DARK__', bug: '__BUG__', floor: '__FLOOR__', props: '__PROPS__', castle: '__CASTLE__', arena: '__ARENA__', boss: '__BOSS__', mobs: '__MOBS__', blood: '__BLOOD__', twin: '__TWIN__', triple: '__TRIPLE__', items: '__ITEMS__', drophb: '__DROPHB__', droppo: '__DROPPO__', blood2: '__BLOOD2__', holy: '__HOLY__', lavasn: '__LAVASN__', lavafx: '__LAVAFX__', venom2: '__VENOM2__', venom3: '__VENOM3__', venomfx: '__VENOMFX__', elf0: '__ELF0__', elf1: '__ELF1__', skel: '__SKEL__', chim0: '__CHIM0__', chim1: '__CHIM1__', chim2: '__CHIM2__', chimfx: '__CHIMFX__', flm1: '__FLM1__', flm2: '__FLM2__', flmfx: '__FLMFX__', drm1: '__DRM1__', drm2: '__DRM2__', drfx: '__DRFX__', arcr: '__ARCR__', arch: '__ARCH__', arfx: '__ARFX__', hlfx: '__HLFX__', slot: '__SLOT__', uniq: '__UNIQ__', eyem: '__EYEM__', relic: '__RELIC__', liz0: '__LIZ0__', liz1: '__LIZ1__', liz2: '__LIZ2__', liz3: '__LIZ3__', gh: '__GH__', gg: '__GG__', oc: '__OC__', lg: '__LG__', os: '__OS__', bs: '__BS__', tw0: '__TW0__', tw1: '__TW1__', tw2: '__TW2__', fwb: '__FWB__', fwp: '__FWP__', fwfx: '__FWFX__', bmap: '__BMAP__', skb: '__SKB__', skw: '__SKW__', chm: '__CHMAP__', cm: '__CM__', ab: '__AB__', an: '__AN__', anfx: '__ANFX__', amap: '__AMAP__', gun: '__GUN__' };
+const SRC = { sktw: '__SKTW__', mimic: '__MIMIC__', sh: '__SH__', mfloor: '__MFLOOR__', mprops: '__MPROPS__', mmob: '__MMOB__', mmap: '__MMAP__', an2: '__AN2__', shk: '__SHK__', statue: '__STATUE__', sk_gunH: '__SKGUNH__', sk_gunE: '__SKGUNE__', heart: '__HEART__', sk_wolfE: '__SKWOLFE__', sk_lizG: '__SKLIZG__', skA_lizG: '__SKALIZG__', skA_gunH: '__SKAGUNH__', skA_gunE: '__SKAGUNE__', skA_wolfE: '__SKAWOLFE__', horse: '__HORSE__', sfloor: '__SFLOOR__', sprops: '__SPROPS__', smob: '__SMOB__', smap: '__SMAP__', mini: '__MINI__', snail: '__SNAIL__', base: '__ATLAS__', pup: '__PUP__', dark: '__DARK__', bug: '__BUG__', floor: '__FLOOR__', props: '__PROPS__', castle: '__CASTLE__', arena: '__ARENA__', boss: '__BOSS__', mobs: '__MOBS__', blood: '__BLOOD__', twin: '__TWIN__', triple: '__TRIPLE__', items: '__ITEMS__', drophb: '__DROPHB__', droppo: '__DROPPO__', blood2: '__BLOOD2__', holy: '__HOLY__', lavasn: '__LAVASN__', lavafx: '__LAVAFX__', venom2: '__VENOM2__', venom3: '__VENOM3__', venomfx: '__VENOMFX__', elf0: '__ELF0__', elf1: '__ELF1__', skel: '__SKEL__', chim0: '__CHIM0__', chim1: '__CHIM1__', chim2: '__CHIM2__', chimfx: '__CHIMFX__', flm1: '__FLM1__', flm2: '__FLM2__', flmfx: '__FLMFX__', drm1: '__DRM1__', drm2: '__DRM2__', drfx: '__DRFX__', arcr: '__ARCR__', arch: '__ARCH__', arfx: '__ARFX__', hlfx: '__HLFX__', slot: '__SLOT__', uniq: '__UNIQ__', eyem: '__EYEM__', relic: '__RELIC__', liz0: '__LIZ0__', liz1: '__LIZ1__', liz2: '__LIZ2__', liz3: '__LIZ3__', gh: '__GH__', gg: '__GG__', oc: '__OC__', lg: '__LG__', os: '__OS__', bs: '__BS__', tw0: '__TW0__', tw1: '__TW1__', tw2: '__TW2__', fwb: '__FWB__', fwp: '__FWP__', fwfx: '__FWFX__', bmap: '__BMAP__', skb: '__SKB__', skw: '__SKW__', chm: '__CHMAP__', cm: '__CM__', ab: '__AB__', an: '__AN__', anfx: '__ANFX__', amap: '__AMAP__', gun: '__GUN__' };
 const SNAIL_RECTS = [[0, 0, 216, 146], [220, 0, 273, 208], [497, 0, 276, 208], [777, 0, 289, 214]];
 const PROP_RECTS = [[0, 0, 38, 48], [40, 0, 22, 49], [64, 0, 34, 48], [100, 0, 26, 44], [128, 0, 29, 44], [159, 0, 56, 44], [217, 0, 64, 59], [283, 0, 42, 44], [327, 0, 20, 48], [349, 0, 62, 62], [413, 0, 47, 64], [462, 0, 44, 56], [0, 66, 33, 62], [35, 66, 36, 56], [73, 66, 28, 57], [103, 66, 19, 29], [124, 66, 20, 46], [146, 66, 18, 28], [166, 66, 18, 23], [186, 66, 19, 31], [207, 66, 21, 31], [230, 66, 22, 30], [254, 66, 21, 18], [277, 66, 20, 19], [299, 66, 32, 50], [333, 66, 32, 49], [367, 66, 40, 46], [409, 66, 39, 46], [450, 66, 33, 45], [0, 130, 37, 45], [39, 130, 19, 29], [60, 130, 18, 29], [80, 130, 17, 18], [99, 130, 20, 19], [121, 130, 20, 20], [143, 130, 58, 60], [203, 130, 31, 54], [236, 130, 30, 54], [268, 130, 30, 54], [300, 130, 47, 53], [349, 130, 28, 53], [379, 130, 31, 53], [412, 130, 43, 41], [457, 130, 44, 40], [0, 192, 36, 11], [38, 192, 25, 16], [65, 192, 48, 11], [115, 192, 76, 57], [193, 192, 43, 49], [238, 192, 21, 21], [261, 192, 35, 45], [298, 192, 50, 38], [350, 192, 67, 77], [419, 192, 53, 57], [0, 271, 45, 79], [47, 271, 53, 24], [102, 271, 32, 36], [136, 271, 59, 53]];
 // 늑대 형태별 스프라이트 설정: 한 칸 크기, 배율, 원본이 바라보는 방향(flip), 공격이 맞는 프레임(hitF), 동작별 (줄, 프레임 수, 초당 프레임)
@@ -829,14 +829,14 @@ const SAVE_DEF = () => ({
   ch: { open: false, frag: 0, best: 0, rune: {}, tr: { rat: false, pouch: false, mirror: false } },   // v6.20: 챌린지 모드 (해금 · 룬 조각 · 룬 · 보물)
   set: { nums: true, calm: false, sfx: 0.7, bgm: 0.35, speed: 1, joy: ('ontouchstart' in window) },
   skin: { own: {}, frag: {}, on: {}, pity: 0, pulls: 0 },   // v7.30 스킨 가챠
-  heart: { inv: [], eq: [], n: 0 },   // v8.01 보스 심장 (인벤토리 · 장착 슬롯 · 다음 id)
+  heart: { inv: [], eq: [], n: 0, got: {} },   // v8.01 보스 심장 (인벤토리 · 장착 슬롯 · 다음 id)
 });
 let SAVE = SAVE_DEF();
 function loadSave() {
   try {
     const j = JSON.parse(localStorage.getItem(SAVE_KEY) || 'null'), d = SAVE_DEF();
     if (j && j.chars && j.chars.mage && !('archer' in j.chars)) j.chars.archer = true;   // 예전 뼈 마법사를 샀다면 궁수로 이어받는다
-    if (j) SAVE = { shards: +j.shards || 0, perks: Object.assign(d.perks, j.perks), chars: Object.assign(d.chars, j.chars), dex: { seen: Object.assign({}, j.dex && j.dex.seen), kills: Object.assign({}, j.dex && j.dex.kills), final: Object.assign({}, j.dex && j.dex.final), goals: +(j.dex && j.dex.goals) || 0 }, diff: Object.assign(d.diff, j.diff), holyBlood: !!j.holyBlood, fw: Object.assign(d.fw, j.fw), set: Object.assign(d.set, j.set), ch: Object.assign(d.ch, j.ch, { rune: Object.assign({}, j.ch && j.ch.rune), tr: Object.assign(d.ch.tr, j.ch && j.ch.tr) }), skin: Object.assign(d.skin, j.skin, { own: Object.assign({}, j.skin && j.skin.own), frag: Object.assign({}, j.skin && j.skin.frag) }), heart: { inv: (j.heart && Array.isArray(j.heart.inv)) ? j.heart.inv : [], eq: (j.heart && Array.isArray(j.heart.eq)) ? j.heart.eq.slice(0, 5) : [], n: (j.heart && +j.heart.n) || 0 } };
+    if (j) SAVE = { shards: +j.shards || 0, perks: Object.assign(d.perks, j.perks), chars: Object.assign(d.chars, j.chars), dex: { seen: Object.assign({}, j.dex && j.dex.seen), kills: Object.assign({}, j.dex && j.dex.kills), final: Object.assign({}, j.dex && j.dex.final), goals: +(j.dex && j.dex.goals) || 0 }, diff: Object.assign(d.diff, j.diff), holyBlood: !!j.holyBlood, fw: Object.assign(d.fw, j.fw), set: Object.assign(d.set, j.set), ch: Object.assign(d.ch, j.ch, { rune: Object.assign({}, j.ch && j.ch.rune), tr: Object.assign(d.ch.tr, j.ch && j.ch.tr) }), skin: Object.assign(d.skin, j.skin, { own: Object.assign({}, j.skin && j.skin.own), frag: Object.assign({}, j.skin && j.skin.frag) }), heart: { inv: (j.heart && Array.isArray(j.heart.inv)) ? j.heart.inv : [], eq: (j.heart && Array.isArray(j.heart.eq)) ? j.heart.eq.slice(0, 5) : [], n: (j.heart && +j.heart.n) || 0, got: (j.heart && j.heart.got && typeof j.heart.got === 'object') ? j.heart.got : {} } };
     delete SAVE.chars.mage;
   } catch (e) { /* 저장소를 못 쓰는 환경이면 기본값으로 진행 */ }
 }
@@ -2993,7 +2993,7 @@ function bossDefeated() {
   if (arena) arena.cleared = true;
   addRing(e.x, e.y - 40, 20, 600, 1.0, '255,200,90', 16); addRing(e.x, e.y - 40, 10, 360, 0.7, '255,80,50', 12);
   burst(e.x, e.y - 50, 80, ['#ff3a2a', '#ffb05a', '#ffffff', '#3a2a2a'], 520, 1.2); shake = 24; sfx('evolve');
-  const hg = rollHeartDrop(); if (hg) { items.push({ type: 'bheart', g: hg, x: e.x, y: e.y + 20, t: 0 }); if (hg === 'legend') playUpgradeEffect('legend', '✦ 레전더리 심장 출현! ✦'); }   // v8.01 보스 심장 20% (1% 레전더리)
+  const hbk = chal ? null : bhKey(e), hg = rollHeartDrop(hbk); if (hg) { items.push({ type: 'bheart', g: hg, b: hbk, x: e.x, y: e.y + 20, t: 0 }); if (hg === 'legend') playUpgradeEffect('legend', '✦ 레전더리 심장 출현! ✦'); }   // v8.01 보스 심장 20% (1% 레전더리)
   if (chal) { chBossWin(e); return; }   // v6.20: 챌린지는 계속된다
   banner = { txt: '마왕을 쓰러뜨렸다!', t: 6 };
   const refund = P.fee || 0; P.earned = calcShards() + Math.round(150 * tierMul()) + refund; SAVE.shards += P.earned;   // 클리어 보너스 +150 (단계 배율) + 참가비 반환
@@ -6006,8 +6006,8 @@ function stepDropItems(dt) {   // v6.03: 마왕이 떨군 신성한 피 · 보�
 }
 function collectItem(it) {
   if (it.type === 'bheart') {   // v8.01 보스 심장 획득
-    const h = heartGain(it.g), G = HG[h.g]; P.dropGot = (P.dropGot ? P.dropGot + '<br>' : '') + `보스의 심장 [${G.name}] ${hOpt(h)} 획득!` + (SAVE.heart.eq.includes(h.id) ? ' (자동 장착)' : '');
-    banner = { txt: `💗 보스의 심장 [${G.name}] 획득!  ${hOpt(h)}\n시작 화면 [보스 심장]에서 재설정 · 장착`, t: 5, c: G.col }; burst(P.x, P.y - 30, 40, [G.col, '#ffffff'], 300, 0.9); sfx('evolve');
+    const h = heartGain(it.g, it.b), G = HG[h.g]; P.dropGot = (P.dropGot ? P.dropGot + '<br>' : '') + `${BH[h.b]}의 심장 [${G.name}] ${hOpt(h)} 획득!` + (SAVE.heart.eq.includes(h.id) ? ' (자동 장착)' : '');
+    banner = { txt: `💗 ${BH[h.b]}의 심장 [${G.name}] 획득!  ${hOpt(h)}\n시작 화면 [보스 심장]에서 재설정 · 장착`, t: 5, c: G.col }; burst(P.x, P.y - 30, 40, [G.col, '#ffffff'], 300, 0.9); sfx('evolve');
     if (h.g === 'legend') playUpgradeEffect('legend', '✦ 레전더리 심장 획득! ✦'); return;
   }
   if (it.type === 'holyblood') { SAVE.holyBlood = true; P.dropGot = (P.dropGot || '') + '신성한 피를 먹었다!  늑대 혈랑 루트 Lv.20 최종 진화에 [성혈랑]이 열렸다'; saveSave(); sfx('evolve'); burst(P.x, P.y - 30, 40, ['#ff3a4a', '#ffe28a', '#ffffff'], 300, 0.9); addRing(P.x, P.y - 30, 10, 200, 0.6, '255,200,120', 10); return; }
@@ -6035,7 +6035,7 @@ function drawItem(it, x, y) {
     ctx.save(); ctx.translate(x, y);
     if (lg) { const gr = ctx.createLinearGradient(0, -420, 0, 0); gr.addColorStop(0, `rgba(${G.rgb},0)`); gr.addColorStop(1, `rgba(${G.rgb},0.55)`); ctx.globalCompositeOperation = 'lighter'; ctx.fillStyle = gr; ctx.fillRect(-36 * pu, -420, 72 * pu, 420); ctx.globalCompositeOperation = 'source-over'; }
     const g = ctx.createRadialGradient(0, -40 + b, 4, 0, -40 + b, (lg ? 90 : 52) * pu); g.addColorStop(0, `rgba(${G.rgb},0.6)`); g.addColorStop(1, `rgba(${G.rgb},0)`); ctx.fillStyle = g; ctx.beginPath(); ctx.arc(0, -40 + b, (lg ? 90 : 52) * pu, 0, 6.283); ctx.fill();
-    const S2 = lg ? 84 : 64; ctx.drawImage(heartIcon(it.g, S2), -S2 / 2, -40 + b - S2 / 2); ctx.restore(); return;
+    const S2 = lg ? 84 : 64; ctx.drawImage(heartIcon(it.g, S2, it.b), -S2 / 2, -40 + b - S2 / 2); ctx.restore(); return;
   }
   if (isDropItem(it)) {   // v6.03: 신성한 피(성배) · 보라구슬 — 받은 도트 그대로 (크기만 맞춤)
     const holy = it.type === 'holyblood', im = IMG[holy ? 'drophb' : 'droppo'] || IMG.items, H = holy ? 84 : 60, W = im.width * H / im.height, b = Math.sin(it.t * 4) * 4, pulse = 0.8 + 0.2 * Math.sin(it.t * 6);
@@ -8766,27 +8766,29 @@ function gachaShow(res) {   // 연출: 빛 구슬(가장 높은 등급 색) → 
    재설정 rerollHeart(id): 영혼 조각 500 → 등급업(레어→에픽 30% · 에픽→유니크 20% · 유니크→레전더리 5%) 후 스탯 종류(공격력/체력/공속 각 1/3)와 수치(등급 범위) 다시 뽑기
    장착 equipHeart(id) 최대 5개 · 효과는 다음 판 시작 때 newPlayer에서 heartBonus()로 적용 */
 const HG = {
-  rare:   { name: '레어', col: '#b9b9c8', rgb: '185,185,200', min: 1, max: 3, up: 0.30, next: 'epic', dis: 50 },
-  epic:   { name: '에픽', col: '#b45cff', rgb: '180,92,255', min: 4, max: 6, up: 0.20, next: 'unique', dis: 150 },
-  unique: { name: '유니크', col: '#ffd23a', rgb: '255,210,58', min: 7, max: 9, up: 0.05, next: 'legend', dis: 400 },
-  legend: { name: '레전더리', col: '#3dff7a', rgb: '61,255,122', min: 15, max: 20, up: 0, next: null, dis: 1500 },
+  rare:   { name: '레어', col: '#b9b9c8', rgb: '185,185,200', min: 1, max: 3, up: 0.30, next: 'epic', dis: 50, cost: 500 },
+  epic:   { name: '에픽', col: '#b45cff', rgb: '180,92,255', min: 4, max: 6, up: 0.20, next: 'unique', dis: 150, cost: 600 },
+  unique: { name: '유니크', col: '#ffd23a', rgb: '255,210,58', min: 7, max: 9, up: 0.05, next: 'legend', dis: 400, cost: 700 },
+  legend: { name: '레전더리', col: '#3dff7a', rgb: '61,255,122', min: 15, max: 20, up: 0, next: null, dis: 1500, cost: 800 },
 };
 const HG_ORDER = ['rare', 'epic', 'unique', 'legend'];
 const HSTAT = { atk: '공격력', hp: '최대 체력', aspd: '공격 속도' };
-const HEART = { drop: 0.20, legend: 0.01, cost: 500, step: 50, max: 1500, slots: 5 };
-const heartCost = h => Math.min(HEART.max, HEART.cost + HEART.step * ((h && h.rr) | 0));   // v8.07: 그 심장을 재설정할 때마다 +50 (최대 1500)
+const HEART = { drop: 0.20, legend: 0.01, slots: 5 };
+const heartCost = h => HG[h.g].cost;   // v8.09: 심장 등급(강화 단계)에 따라 레어 500 · 에픽 600 · 유니크 700 · 레전더리 800
+const BH = { angel: '타락천사', shk: '거대 버섯마귀', skel: '스켈레톤 마왕', eye: '마안군주', monkey: '원숭이 마왕' }, BH_ORDER = ['angel', 'shk', 'skel', 'eye', 'monkey'];   // 보스 종류별 심장 (도트 줄 순서)
+const bhKey = e => e.bk === 'angel' || e.bk === 'shk' || e.bk === 'skel' || e.bk === 'eye' ? e.bk : (e.bk ? null : 'monkey');
 const hRand = (a, b) => a + Math.floor(Math.random() * (b - a + 1));
 const hOpt = h => `${HSTAT[h.st]} +${h.v}%`;
-function heartMake(g) { const S = SAVE.heart, G = HG[g]; return { id: ++S.n, g, st: ['atk', 'hp', 'aspd'][(Math.random() * 3) | 0], v: hRand(G.min, G.max) }; }
-function rollHeartDrop() {   // 마왕 처치 시: 20% → 'rare' (그중 1% → 'legend') / 안 나오면 null
-  if (Math.random() >= HEART.drop) return null;
+function heartMake(g, b) { const S = SAVE.heart, G = HG[g]; return { id: ++S.n, g, b: b || 'angel', st: ['atk', 'hp', 'aspd'][(Math.random() * 3) | 0], v: hRand(G.min, G.max) }; }
+function rollHeartDrop(bk) {   // 마왕 처치 시: 그 보스 심장을 아직 못 얻었으면 20% → 'rare' (그중 1% → 'legend') / 아니면 null
+  if (!BH[bk] || SAVE.heart.got[bk] || Math.random() >= HEART.drop) return null;
   return Math.random() < HEART.legend ? 'legend' : 'rare';
 }
-function heartGain(g) { const h = heartMake(g); SAVE.heart.inv.push(h); if (SAVE.heart.eq.length < HEART.slots) SAVE.heart.eq.push(h.id); saveSave(); return h; }   // 빈 슬롯이 있으면 바로 장착
+function heartGain(g, b) { const h = heartMake(g, b); if (b) SAVE.heart.got[b] = true; SAVE.heart.inv.push(h); if (SAVE.heart.eq.length < HEART.slots) SAVE.heart.eq.push(h.id); saveSave(); return h; }   // 빈 슬롯이 있으면 바로 장착
 function rerollHeart(id) {   // 재설정: 조각 500 → 등급업 판정 → 스탯 종류·수치 재배정
   const h = SAVE.heart.inv.find(q => q.id === id); if (!h) return { err: '심장이 없습니다' };
   const cost = heartCost(h); if (SAVE.shards < cost) return { err: '영혼 조각이 부족합니다' };
-  SAVE.shards -= cost; h.rr = (h.rr | 0) + 1;
+  SAVE.shards -= cost;
   const before = { g: h.g, st: h.st, v: h.v }, G = HG[h.g]; let up = false;
   if (G.next && Math.random() < G.up) { h.g = G.next; up = true; }
   const N = HG[h.g]; h.st = ['atk', 'hp', 'aspd'][(Math.random() * 3) | 0]; h.v = hRand(N.min, N.max);
@@ -8804,8 +8806,9 @@ function disHeart(id) {   // 분해: 등급별 영혼 조각으로 돌려받는�
 }
 /* 심장 아이콘: 등급 색 하트 (한 번 그려 캐시) */
 const HICON = {};
-function heartIcon(g, s) {
-  const key = g + s; if (HICON[key]) return HICON[key];
+function heartIcon(g, s, b) {   // v8.09: 보스별 도트 (IMG.heart 4열=등급 × 5줄=보스)
+  const key = g + s + (b || ''); if (HICON[key]) return HICON[key];
+  if (IMG.heart) { const c = mkCanvas(s, s), x = c.getContext('2d'); x.imageSmoothingQuality = 'high'; x.drawImage(IMG.heart, HG_ORDER.indexOf(g) * 256, Math.max(0, BH_ORDER.indexOf(b || 'angel')) * 256, 256, 256, 0, 0, s, s); return (HICON[key] = c); }
   const c = mkCanvas(s, s), x = c.getContext('2d'), G = HG[g], k = s / 100;
   const glow = x.createRadialGradient(50 * k, 52 * k, 4 * k, 50 * k, 52 * k, 50 * k); glow.addColorStop(0, `rgba(${G.rgb},0.55)`); glow.addColorStop(1, `rgba(${G.rgb},0)`);
   x.fillStyle = glow; x.fillRect(0, 0, s, s);
@@ -8818,7 +8821,7 @@ function heartIcon(g, s) {
   if (g === 'legend' || g === 'unique') { x.fillStyle = '#fff'; for (const [px, py] of [[20, 18], [82, 22], [86, 70]]) { x.beginPath(); x.moveTo(px * k, (py - 5) * k); x.lineTo((px + 1.5) * k, (py - 1.5) * k); x.lineTo((px + 5) * k, py * k); x.lineTo((px + 1.5) * k, (py + 1.5) * k); x.lineTo(px * k, (py + 5) * k); x.lineTo((px - 1.5) * k, (py + 1.5) * k); x.lineTo((px - 5) * k, py * k); x.lineTo((px - 1.5) * k, (py - 1.5) * k); x.fill(); } }
   return (HICON[key] = c);
 }
-const heartImg = (g, s) => heartIcon(g, s).toDataURL();
+const heartImg = (g, s, b) => heartIcon(g, s, b).toDataURL();
 /* 도파민 연출: 등급 색 섬광 + 파티클 + 광선 + 글자 확대 (메뉴·게임 어디서나, 화면 위 덧칠) */
 function playUpgradeEffect(grade, text) {
   const G = HG[grade] || HG.rare, power = { rare: 0.4, epic: 1, unique: 1.6, legend: 2.6 }[grade] || 1;
@@ -8854,20 +8857,20 @@ function renderHeart() {
   const sl = $('hSlots'); sl.innerHTML = '';
   for (let i = 0; i < HEART.slots; i++) {
     const q = S.inv.find(z => z.id === S.eq[i]), d = document.createElement('div'); d.className = 'hslot' + (q ? ' ' + q.g : '') + (q && q.id === hSel ? ' sel' : '');
-    d.innerHTML = q ? `<img src="${heartImg(q.g, 64)}"><small>${HSTAT[q.st].replace('최대 ', '')} +${q.v}%</small>` : `<span>빈 슬롯</span><small>${i + 1}</small>`;
+    d.innerHTML = q ? `<img src="${heartImg(q.g, 64, q.b)}"><small>${HSTAT[q.st].replace('최대 ', '')} +${q.v}%</small>` : `<span>빈 슬롯</span><small>${i + 1}</small>`;
     if (q) d.onclick = () => { hSel = q.id; hLast = null; renderHeart(); }; sl.appendChild(d);
   }
   $('hSum').textContent = `장착 효과 합계 (다음 판부터): ${heartSum()}`;
   const inv = $('hInv'); inv.innerHTML = '';
   const L = S.inv.slice().sort((a, b) => HG_ORDER.indexOf(b.g) - HG_ORDER.indexOf(a.g) || b.v - a.v);
-  if (!L.length) inv.innerHTML = '<p class="hnone">아직 심장이 없어요.<br>마왕을 쓰러뜨리면 20% 확률로 [보스의 심장]이 떨어집니다.</p>';
-  for (const q of L) { const d = document.createElement('div'); d.className = `hcell ${q.g}` + (q.id === hSel ? ' sel' : ''); d.innerHTML = `<img src="${heartImg(q.g, 56)}"><small>${HSTAT[q.st].replace('최대 ', '').replace('공격 속도', '공속')} +${q.v}%</small>` + (S.eq.includes(q.id) ? '<b class="heq">E</b>' : ''); d.onclick = () => { hSel = q.id; hLast = null; renderHeart(); }; inv.appendChild(d); }
+  if (!L.length) inv.innerHTML = '<p class="hnone">아직 심장이 없어요.<br>마왕 5종(타락천사·거대 버섯마귀·스켈레톤·마안군주·원숭이)을 처음 쓰러뜨릴 때 종류마다 20% 확률로 그 마왕의 [심장]이 한 번씩 떨어집니다. (챌린지·숨은 보스 제외)</p>';
+  for (const q of L) { const d = document.createElement('div'); d.className = `hcell ${q.g}` + (q.id === hSel ? ' sel' : ''); d.innerHTML = `<img src="${heartImg(q.g, 56, q.b)}"><small>${HSTAT[q.st].replace('최대 ', '').replace('공격 속도', '공속')} +${q.v}%</small>` + (S.eq.includes(q.id) ? '<b class="heq">E</b>' : ''); d.onclick = () => { hSel = q.id; hLast = null; renderHeart(); }; inv.appendChild(d); }
   const core = $('hCore');
   if (!h) { core.innerHTML = '<div class="horb"><p class="hnone">왼쪽 목록에서 심장을 고르세요</p></div>'; return; }
   const G = HG[h.g], nx = G.next && HG[G.next], eq = S.eq.includes(h.id);
-  core.innerHTML = `<div class="hname" style="color:${G.col}">보스의 심장 · ${G.name}</div>
+  core.innerHTML = `<div class="hname" style="color:${G.col}">${BH[h.b || 'angel']}의 심장 · ${G.name}</div>
     <div class="harrow">${nx ? `<b style="color:${G.col}">${G.name}</b> <i>▶▶▶</i> <b style="color:${nx.col}">${nx.name}</b> <span>등급 상승 ${Math.round(G.up * 100)}%</span>` : `<b style="color:${G.col}">최고 등급</b> <span>수치만 다시 뽑아요 (${G.min}~${G.max}%)</span>`}</div>
-    <div class="horb ${h.g}"><div class="hring"></div><img src="${heartImg(h.g, 150)}"></div>
+    <div class="horb ${h.g}"><div class="hring"></div><img src="${heartImg(h.g, 150, h.b)}"></div>
     <div class="hopt">${hOpt(h)} <small>(${G.name} 범위 ${G.min}~${G.max}%)</small></div>
     ${hLast ? `<div class="hcube"><div><small>이전</small><b style="color:${HG[hLast.before.g].col}">[${HG[hLast.before.g].name}] ${hOpt(hLast.before)}</b></div><i>➜</i><div><small>이후</small><b style="color:${HG[hLast.after.g].col}">[${HG[hLast.after.g].name}] ${hOpt(hLast.after)}</b></div></div>` : ''}
     <div class="hcost"><span>재설정 비용</span><b>◆ ${heartCost(h)}</b><span>보유</span><b class="${SAVE.shards < heartCost(h) ? 'lack' : ''}">◆ ${SAVE.shards}</b></div>
@@ -9070,7 +9073,7 @@ window.__G = {
   get zones() { return zones; }, get ebul() { return ebul; }, get EYE() { return EYE; }, get shards() { return shards; }, get bigQ() { return bigQ; }, get bombQ() { return bombQ; }, get holyQ() { return holyQ; }, get afx() { return afx; }, get dashQ() { return dashQ; }, get beam() { return beam; }, get evo() { return evo; }, get choices() { return choices; },
   get SAVE() { return SAVE; }, render, get boss() { return boss; }, get mini() { return mini; }, get skp() { return skp; }, SK_PH, SKB, get mdeath() { return mdeath; }, spawnMini, miniDefeated, spawnBoss, raiseCastle, enterArena, exitArena, get castle() { return castle; }, get arena() { return arena; }, get trans() { return trans; }, openChest, openShop, buildCards, get joy() { return joy; }, get gt() { return gt; }, get allies() { return allies; }, get items() { return items; }, spawnItem, get globs() { return globs; }, recruit, keys, tick, needFor, pick: pickChoice, cast: castSkill, spawnBug,
   get slots() { return slots; }, spawnMimic, slotRoll, get MIM() { return MIM; },  get slotUI() { return slotUI; }, get udeath() { return udeath; }, get lasers() { return lasers; }, get eyeF() { return eyeF; }, get uniqCd() { return uniqCd; }, spawnSlot, spawnUniq, gainRelic, useTeleport, closeSlot, slotSpin, slotKey, updateSlotUI, SLOT_FX, SLOT_APPLY, UNIQ, RELICS, trySpawnUniq, UNIQ_P, setState(v) { state = v; }, spawnEnemy,
-  get DMETER() { return DMETER; }, get DBOSS() { return DBOSS; }, get DUNK() { return DUNK; }, setDbg(v) { DDBG = v; }, dmName, gachaRoll, gachaPools, rollHeartDrop, heartGain, rerollHeart, equipHeart, unequipHeart, disHeart, heartBonus, playUpgradeEffect, openHeart, HG, HEART, bossDefeated, skinCraft, skinToggle, skinOn, SKINS, GACHA, openGacha, gachaPull, UPGRADES, UNIQUE, SYNERGIES, SKILLS, skillName, get eleQ() { return eleQ; }, fwStart, setT(v) { gt = v; }, calcShards, FD, LIZ_FORMS, TWIN_FORMS, startFw, snapP, get fwFx() { return fwFx; }, get bsig() { return bsig; }, BMAP, inBlood, twLen, availSyn, SYNERGIES, UPGRADES, inPoly, hurtEnemy, startGame, addExp, hurt: hurtPlayer, rebuild: buildSpecies,
+  get DMETER() { return DMETER; }, get DBOSS() { return DBOSS; }, get DUNK() { return DUNK; }, setDbg(v) { DDBG = v; }, dmName, gachaRoll, gachaPools, rollHeartDrop, heartGain, rerollHeart, heartCost, equipHeart, unequipHeart, disHeart, heartBonus, playUpgradeEffect, openHeart, HG, HEART, bossDefeated, skinCraft, skinToggle, skinOn, SKINS, GACHA, openGacha, gachaPull, UPGRADES, UNIQUE, SYNERGIES, SKILLS, skillName, get eleQ() { return eleQ; }, fwStart, setT(v) { gt = v; }, calcShards, FD, LIZ_FORMS, TWIN_FORMS, startFw, snapP, get fwFx() { return fwFx; }, get bsig() { return bsig; }, BMAP, inBlood, twLen, availSyn, SYNERGIES, UPGRADES, inPoly, hurtEnemy, startGame, addExp, hurt: hurtPlayer, rebuild: buildSpecies,
   get rollQ() { return rollQ; }, get gunFx() { return gunFx; }, GUN, GUN_AMMO, GUNA, gunLoad, gunRange,
   get anOrbs() { return anOrbs; }, get anFx() { return anFx; }, AMAP, ANB, ANX, AN, anStart, anTrans, pickBossK, floorName, arenaExit, get shkSp() { return shkSp; }, get shkFx() { return shkFx; }, SHK, SHKF, shkStart, shkSummon,
   sizes() { const o = { enemies, orbs, items, shards, fx, nums, arcs, embers, zones, rings, globs, sprFx, blades, lights, ebul, afx, gunFx, cfx, bfx, healFx, allies, slots, cutSaws, airs, octoFx, smokes, skp, mfx }; const r = {}; for (const k in o) if (o[k] && o[k].length != null) r[k] = o[k].length; return r; },
