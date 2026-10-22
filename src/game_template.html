@@ -675,7 +675,8 @@ const SKILLS = {
 };
 // 경험치: L레벨 -> L+1레벨에 필요한 양. 극초반은 쉽게, Lv10부터 조금씩 오르고, Lv30부터는 크게 오른다
 const needMul = L => L < 10 ? 0.58 + 0.036 * L : L < 25 ? 0.96 + 0.012 * (L - 10) : L < 30 ? 1.14 + 0.04 * (L - 25) : 1.46 + 0.12 * (L - 30);   // v4.06: Lv.5~10 구간이 특히 오래 걸려서 완화 · 전체 조금 단축
-const needFor = L => Math.floor((50 + 22 * L + 3 * L * L) * needMul(L));
+const chNeedK = L => L < 20 ? 0.85 : Math.max(0.4, 0.85 - 0.0125 * (L - 20));   // v6.62 챌린지: 경험치통 전체 -15% · 후반일수록 더 낮게 (Lv.56부터 ×0.4)
+const needFor = L => Math.floor((50 + 22 * L + 3 * L * L) * needMul(L) * (chal ? chNeedK(L) : 1));
 const EXPK = 4.0;        // 처치 경험치 기본값 (몬스터 등급 곱)
 const POTION_N = 8;     // 성화된 지옥엘프 해금: 게임 내내 마셔야 하는 체력 포션 개수
 const RECRUIT_P = 0.03;  // 네임드 몹(이공벌레·정예)을 처치했을 때 동료가 될 확률
@@ -3072,6 +3073,7 @@ function newPlayer(char) {
 }
 function reset(char) {
   buildSpecies(); try { buildMushSpecies(); } catch (_) {}
+  chal = null;   // v6.62: 경험치통 계산이 이전 판의 챌린지 상태를 보지 않게
   P = newPlayer(char || curChar);
   DMETER = {}; DBOSS = {}; bfx = []; enemies = []; orbs = []; shards = []; fx = []; nums = []; arcs = []; zones = []; rings = []; beam = null; meteorQ = null; cerbQ = null; rainQ = null; bigQ = null; dashQ = null; evo = null; airs = []; diveQ = null; breathQ = null; rushQ = null; bombQ = null; holyQ = null; afx = []; bombT = []; holyPtr = null; cfx = []; ebul = []; allies = []; items = []; globs = []; sprFx = []; whipQ = null; ambT = 1.5; itemT = 9; blades = []; lights = []; waveT = 80 + rand() * 20;
   eleQ = null; tentQ = null; octoFx = [];
@@ -3112,7 +3114,7 @@ const routeRGB = () => theme().rgb;
 
 /* ---------- 적 ---------- */
 function spawnEnemy(ang, dist, forceElite) {
-  const avail = (isMush() && MSPECIES.length ? MSPECIES : SPECIES).filter(s => s.unlock <= gt);   // v6.52: 지하 6~10층은 버섯형 악마
+  const avail = (isMush() && MSPECIES.length ? MSPECIES : chal && MSPECIES.length ? SPECIES.concat(MSPECIES) : SPECIES).filter(s => s.unlock <= gt);   // v6.62: 챌린지는 기존 마물 + 버섯형 악마   // v6.52: 지하 6~10층은 버섯형 악마
   const pick = avail[Math.min(avail.length - 1, Math.floor(Math.pow(rand(), 1.6) * avail.length * 0.5 + rand() * avail.length * 0.5))];
   const elite = forceElite || (gt > 60 && rand() < 0.02);
   const a = ang === undefined ? rand() * 6.283 : ang, d = dist || Math.hypot(W, H) / 2 + 60;
@@ -4977,7 +4979,8 @@ const UNIQ_P = 0.0011;     // 스폰 틱마다 나올 확률 (틱이 초당 2~3�
 const uniqHp = () => Math.max(1250 + 2 * gt, 585 * (1 + gt / 100)) * (1 + 0.3 * (P.tier || 0));   // 같은 시각 정예의 1.5~2배 · 미니 보스처럼 한 방에 녹지 않게
 function spawnUniq(k) {
   const U = UNIQ[k], a = rand() * 6.283, d = Math.hypot(W, H) / 2 + 100, hp = uniqHp() * U.hpK;
-  P.uniqSeen[k] = true; uniqCd = (P.tier || 0) >= 3 ? 40 : 80;
+  P.uniqSeen[k] = true; if (k === 'shroom') { P.shN = (P.shN | 0) + 1; P.uniqSeen[k] = P.shN >= 2; }   // v6.62: 대형 버섯 괴물은 한 판에 2번까지
+  uniqCd = (P.tier || 0) >= 3 ? 40 : 80;
   enemies.push({ kind: 'uniq', uk: k, x: P.x + Math.cos(a) * d, y: P.y + Math.sin(a) * d, kx: 0, ky: 0, sp: U.spd, spec: null, sc: 1, r: 23, hp, max: hp, dmg: 0, exp: 0, elite: false,
     flash: 0, t: rand() * 4, orbCd: 0, slowT: 0, kres: 0.3, face: -1, st: 'chase', cd: 1.6, at: null, tele: [], rage: false, mv: false });
   if (k === 'shroom') { const e = enemies[enemies.length - 1]; e.r = 46; e.st = 'rest'; e.cd = 1.4; e.kres = 0.15; shroomPick(e); banner = { txt: `히든 마물 ${U.name} 등장!  ${U.sub}\n제멋대로 뛰어다니며 독 웅덩이를 남긴다 — 웅덩이를 밟지 말고, 멈춰 쉴 때 잡으세요`, t: 6, c: '#ff9ae8' }; sfx('skill'); markDex('uq:' + k, 1); return; }
@@ -5024,6 +5027,7 @@ function shroomPool(x, y, big) {
 function updateShroom(e, dt) {
   e.t += dt; e.flash = Math.max(0, e.flash - dt); if (e.slowT > 0) e.slowT -= dt;
   e.x += e.kx * dt; e.y += e.ky * dt; { const kk = Math.exp(-8 * dt); e.kx *= kk; e.ky *= kk; }
+  if (chal && !inCh(e.x, e.y)) chPull(e);
   const dP = Math.hypot(P.x - e.x, P.y - e.y);
   if (dP > 1300) { const a = rand() * 6.283; e.x = P.x + Math.cos(a) * 560; e.y = P.y + Math.sin(a) * 560; e.st = 'rest'; e.cd = 1; shroomPick(e); }
   if (!e.rage && e.hp <= e.max * 0.4) { e.rage = true; floatNum(e.x, e.y - 170, '분노!', '#ff5ad8'); addRing(e.x, e.y - 30, 14, 220, 0.6, '255,110,220', 10); sfx('skill'); }
@@ -7003,7 +7007,7 @@ function chSpot(e, d) {   // 플레이어에게서 d 떨어진 맵 안쪽 자리
   chPull(e);
 }
 const chTime = () => gt <= 600 ? 1 + gt / 115 : (1 + 600 / 115) * Math.pow(1.07, (gt - 600) / 60);   // v6.41 잡몹 체력 배율: 10분까지는 원래 속도, 그 뒤로는 분당 ×1.07 (기하급수 · 20분 약 ×12 · 30분 ×24 · 45분 ×68)
-const chDmgT = () => 1 + 0.12 * Math.floor(Math.max(0, gt - 300) / 60);              // v6.41 잡몹 공격력: 5분부터 1분마다 +12% (10분 ×1.6 · 20분 ×2.8 · 30분 ×4 · 60분 ×7.6)
+const chDmgT = () => 1.25 * (1 + 0.12 * Math.floor(Math.max(0, gt - 300) / 60));   // v6.62 잡몹 공격력 ×1.25 (시작부터)              // v6.41 잡몹 공격력: 5분부터 1분마다 +12% (10분 ×1.6 · 20분 ×2.8 · 30분 ×4 · 60분 ×7.6)
 const chRew = () => 1 + (Math.min(chTime(), 12) - 1) * 0.1;   // v6.41 마물이 강할수록 룬 조각도 많이 (최대 ×2.1 · 체력이 기하급수로 커져도 보상은 더 안 늘어난다)                                      // 마물이 강할수록 룬 조각도 많이
 const chPact = () => 1 + 0.15 * (chal ? chal.pact : 0);                             // 어둠의 계약: 마물·강적·마왕 체력 +15%씩
 
@@ -7046,10 +7050,10 @@ const runeLine = () => RUNES.filter(r => SAVE.ch.rune[r.k]).map(r => `${r.name} 
 const treasureLine = () => TREASURES.map(t => `${SAVE.ch.tr[t.k] ? '✔' : '🔒'} ${t.name}` + (SAVE.ch.tr[t.k] ? ` (${t.desc})` : ` (${t.need / 60}분 생존)`)).join(' · ');
 
 /* ---------- 판 시작 · 강적 이벤트 ---------- */
-const CH_EV_A = ['m:monkey', 'm:eye', 'm:skel', 'm:cut', 'h:octo', 'u:belia', 'u:celia'];   // Lv.5 (+15마다): 미니보스 · 히든 · 유니크
-const CH_EV_B = ['m:monkey', 'm:eye', 'm:skel', 'm:cut', 'h:octo'];                         // Lv.10 (+15마다): 미니보스 · 히든
+const CH_EV_A = ['m:monkey', 'm:eye', 'm:skel', 'm:cut', 'h:octo', 'u:belia', 'u:celia', 'h:shroom'];   // Lv.5 (+15마다): 미니보스 · 히든 · 유니크
+const CH_EV_B = ['m:monkey', 'm:eye', 'm:skel', 'm:cut', 'h:octo', 'h:shroom'];                         // Lv.10 (+15마다): 미니보스 · 히든
 const CH_BOSS = ['monkey', 'eye', 'skel', 'fw', 'ab'];                                       // Lv.15 (+15마다): 마왕 (기믹 약화)
-const CH_NAME = { 'm:monkey': '원숭이 전사', 'm:eye': '마안 감시자', 'm:skel': '해골 전사들', 'm:cut': '절단안의 짐승', 'h:octo': '히든 · 문어 마법사', 'u:belia': '유니크 · 벨리아', 'u:celia': '유니크 · 셀리아',
+const CH_NAME = { 'm:monkey': '원숭이 전사', 'm:eye': '마안 감시자', 'm:skel': '해골 전사들', 'm:cut': '절단안의 짐승', 'h:octo': '히든 · 문어 마법사', 'h:shroom': '히든 · 대형 버섯 괴물', 'u:belia': '유니크 · 벨리아', 'u:celia': '유니크 · 셀리아',
   monkey: '원숭이 마왕', eye: '심연의 마안군주', skel: '스켈레톤 마왕', fw: '타락한 혈랑왕', ab: '심연의 촉수마왕' };
 const chKind = lv => lv % 15 === 0 ? '마왕' : lv % 15 === 5 ? '미니보스·히든·유니크' : '미니보스·히든';
 function chPick(pool, last) { let k = pool[(rand() * pool.length) | 0]; for (let i = 0; i < 6 && k === last; i++) k = pool[(rand() * pool.length) | 0]; return k; }
@@ -7061,6 +7065,8 @@ function startChallenge(char) {
   chal = newChal(); P.tier = 2; P.fset = 'hell'; P.bossK = 'monkey'; P.fee = 0; P.miniDone = true;   // 마왕 패턴은 2단계 기준 (기믹 약화)
   P.x = CHM.start[0]; P.y = CHM.start[1]; cam.x = P.x; cam.y = P.y - 20;
   for (const r of RUNES) for (let i = 0; i < (SAVE.ch.rune[r.k] | 0); i++) r.ap(P);
+  if (['snail', 'archer', 'ghost', 'octo', 'gun'].includes(P.char)) P.regen += 0.5;   // v6.62: 챌린지에서만 재생이 거의 없는 원거리 캐릭터에 초당 +0.5
+  P.need = needFor(P.lvl);
   P.spd0 = P.spd; P.hp = P.max;
   banner = { txt: '∞ 챌린지 모드!  5레벨마다 강적이 하나씩 나타납니다\n시간이 갈수록 마물이 강해지고, 룬 조각 보상도 커집니다', t: 6, c: '#d6a8ff' };
   show('startBox', false); show('overBox', false); show('levelBox', false); show('pauseBox', false);
@@ -7075,7 +7081,8 @@ function chEvent(lv) {
   else if (k[0] === 'm') { mini = null; P.bossK = k.slice(2); spawnMini(); }
   else spawnUniq(k.slice(2));
   const L = enemies.filter(e => !before.has(e)), lf = clamp(P.lvl / 15, 0.4, 1) * (1 + 0.35 * c) * chPact();
-  for (const e of L) { const f = lf * (e.kind === 'uniq' ? 1 : 0.7 + 0.3 * chTime()); e.hp *= f; e.max *= f; chSpot(e, Math.hypot(W, H) / 2 + 90); }   // 유니크 체력은 원래 시간 비례라 시간 배율은 빼고
+  for (const e of L) { const f = lf * (e.kind === 'uniq' ? 1 : (0.7 + 0.3 * chTime()) * (e.kind === 'mini' ? 1.6 : 1)); e.hp *= f; e.max *= f;   // v6.62 미니보스 체력 ×1.6
+     chSpot(e, Math.hypot(W, H) / 2 + 90); }   // 유니크 체력은 원래 시간 비례라 시간 배율은 빼고
   chal.ev = L.length ? L : null;
   banner = { txt: `⚔ Lv.${lv} 강적 출현 — ${CH_NAME[k]}!\n쓰러뜨리면 룬 조각`, t: 4.5, c: '#ffb070' };
 }
