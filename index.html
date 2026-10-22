@@ -3734,14 +3734,14 @@ function openUpgrade() {
   if (P.curseCard > 0) {   // 잭팟 머신의 저주: 카드를 고를 수 없고 무작위 1장이 억지로 적용된다
     P.curseCard--; const u = items[(rand() * items.length) | 0];
     openChoice(`☠ 저주받은 레벨업  Lv.${P.lvl}`, [Object.assign({}, u, { sub: '운명의 저주 : 카드를 고를 수 없다 · 무작위로 정해졌다', tag: ' · 선택 불가', cls: 'contract' })], () => {
-      u.apply(P); if (!u.cls && !u.noLv) P.up[u.id] = (P.up[u.id] || 0) + 1; state = 'play'; if (P.exp >= P.need) levelUp();
+      u.apply(P); if ((!u.cls || u.cls === 'finc') && !u.noLv) P.up[u.id] = (P.up[u.id] || 0) + 1; state = 'play'; if (P.exp >= P.need) levelUp();
     });
     document.getElementById('levelHint').textContent = '☠ 잭팟 머신의 저주 — 이번 레벨업은 카드를 고를 수 없어요 (1 키 또는 클릭)'; return;
   }
   const show1 = () => {
     items.forEach((u, i) => { u.ban = (u.def && P.banish > 0) ? () => banCard(i) : null; });
     openChoice(`레벨 업!  Lv.${P.lvl}`, items, u => {
-      u.apply(P); if (!u.cls && !u.noLv) P.up[u.id] = (P.up[u.id] || 0) + 1;
+      u.apply(P); if ((!u.cls || u.cls === 'finc') && !u.noLv) P.up[u.id] = (P.up[u.id] || 0) + 1;
       if (P.char === 'octo' && !u.cls && !u.noLv && u.def && P.orbsN < OCTO_ORB_MAX) { P.orbsN++; floatNum(P.x, P.y - 100, `마력 구체 ${P.orbsN}개`, '#e0b0ff'); }
       state = 'play';
       if (P.exp >= P.need) levelUp();   // 경험치가 남아 있으면 연속 레벨업
