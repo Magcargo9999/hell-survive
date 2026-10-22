@@ -3,7 +3,7 @@ ROOT=os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 URL=os.environ.get('GAME_URL','file://'+os.path.join(ROOT,'build','hell_survive.html'))
 HELP="""()=>{const G=__G;window.__rt=1;window.__fin=0;
  Object.assign(G.SAVE.chars,{wolf:true,snail:true,archer:true,chimera:true,lizard:true,twins:true});
- const cond=()=>{const P=G.P;if(P.lvl>=3){P.up.thirst=Math.max(1,P.up.thirst||0);P.up.speed=Math.max(2,P.up.speed||0);P.up.heart=Math.max(2,P.up.heart||0);P.lavaT=Math.max(5,P.lavaT);P.poisoned=true;P.bugF0=true;P.low10=true;}};
+ const cond=()=>{const P=G.P;if(P.lvl>=3){P.up.thirst=Math.max(1,P.up.thirst||0);P.up.speed=Math.max(2,P.up.speed||0);P.up.heart=Math.max(2,P.up.heart||0);P.lavaT=Math.max(5,P.lavaT);P.poisoned=true;P.bugF0=true;P.low10=true;P.taken10=Math.max(P.taken10||0,9999);}};
  window.__cond=cond;
  window.__s=()=>{const s=G.state;const t=document.getElementById('levelTitle').textContent;
  if(s==='levelup'){const c=G.choices;let i=t.indexOf('갈림길')>=0?window.__rt:t.indexOf('최종')>=0?window.__fin:0;if(c[i]&&c[i].locked)i=c.findIndex(u=>!u.locked);G.pick(i);return true}if(s==='evolve'){G.tick(1/30);return true}return false};

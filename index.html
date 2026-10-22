@@ -684,7 +684,7 @@ const SKILLS = {
 const needMul = L => L < 10 ? 0.58 + 0.036 * L : L < 25 ? 0.96 + 0.012 * (L - 10) : L < 30 ? 1.14 + 0.04 * (L - 25) : 1.46 + 0.12 * (L - 30);   // v4.06: Lv.5~10 구간이 특히 오래 걸려서 완화 · 전체 조금 단축
 const chNeedK = L => L < 20 ? 0.85 : Math.max(0.4, 0.85 - 0.0125 * (L - 20));   // v6.62 챌린지: 경험치통 전체 -15% · 후반일수록 더 낮게 (Lv.56부터 ×0.4)
 const needFor = L => Math.floor((50 + 22 * L + 3 * L * L) * needMul(L) * (chal ? chNeedK(L) : 1));
-const EXPK = 4.0;        // 처치 경험치 기본값 (몬스터 등급 곱)
+const EXPK = 4.3;        // 처치 경험치 기본값 (몬스터 등급 곱)
 const POTION_N = 8;     // 성화된 지옥엘프 해금: 게임 내내 마셔야 하는 체력 포션 개수
 const RECRUIT_P = 0.03;  // 네임드 몹(이공벌레·정예)을 처치했을 때 동료가 될 확률
 const MAX_ALLY = 4;
@@ -3063,7 +3063,7 @@ function newPlayer(char) {
     exp: 0, need: needFor(1), lvl: 1, kills: 0, up: {},
     form: 0, route: null, skill: null, skT: 0, gmax: 100, lastX: 1, lastY: 0,
     poisonRoll: ar && rand() < 0.65, poisonLv: 5 + ((rand() * 4) | 0), poisoned: false, poisonSpawned: false, poisonObj: null, skillTipT: 0, pet: null, miniDone: false, miniHits: 0, still: 0, healBank: 0, taken: 1, contractN: 0, contracts: [], tier: 0, fee: 0, goal: null, goalDone: 0, goalShards: 0,
-    low10: false, minHp: 1e9, guardT: 0, rage: 0, rageCast: 0, tideT: 0, thornCd: 0, smashN: 0, potions: 0, rel: {}, teleN: 2, fangN: 0, phxUsed: false, stunT: 0, stunImm: 0, dotT: 0, dotD: 0, dotTick: 0, slowT: 0, curseCard: 0, slotN: 0, uniqSeen: {},
+    low10: false, taken10: 0, minHp: 1e9, guardT: 0, rage: 0, rageCast: 0, tideT: 0, thornCd: 0, smashN: 0, potions: 0, rel: {}, teleN: 2, fangN: 0, phxUsed: false, stunT: 0, stunImm: 0, dotT: 0, dotD: 0, dotTick: 0, slowT: 0, curseCard: 0, slotN: 0, uniqSeen: {},
   };
   if (char === 'chimera') { p.max = p.hp = 105; p.spd = 205; p.dmg = 17; p.cd = 0.85; p.rng = 98; p.pickup = 90; }
   if (char === 'twins') { p.max = p.hp = 108; p.spd = 212; p.dmg = 17.5; p.cd = 1.0; p.rng = 100; p.pickup = 90; p.knock += 0.1; p.tw = { x: -70, y: 10, vx: 0, vy: 0, dir: 1, spd: 0, ang: 0 }; }   // 사슬 악마: 빠르고 약하다, 사슬 끝 창날(tw)은 본체 기준 상대 위치로 시작
@@ -3285,6 +3285,7 @@ function hurtPlayer(dmg) {
   dmg *= P.armor * P.taken * (shellOn ? 0.3 : 1) * (holyQ ? 0.6 : 1) * (P.syn.vortex && P.tw && P.tw.spd > 420 ? 0.8 : 1);
   if (SAVE.ch.tr.mirror && !P.trMir) { P.trMir = true; dmg *= 0.5; floatNum(P.x, P.y - 96, '깨진 거울!  피해 -50%', '#bfe9ff'); }   // 보물: 판마다 첫 피격 절반   // 신성화살을 모으는 동안은 단단하다 · 회오리 방벽
   if (P.goal && P.goal.k === 'nohit') P.goal.n = 0;
+  if (P.form === 0) P.taken10 += Math.min(dmg, Math.max(0, P.hp));   /* v7.06: 수호의 길 조건 — 진화 전에 실제로 잃은 체력 누적 */
   P.hp -= dmg; P.inv = shellOn ? 0.2 : P.syn.iron ? 0.9 : 0.6; P.hitT = shellOn ? 0 : 0.28; if (!shellOn) P.atkTimer = -1;
   if ((P.up.scale || (P.char === 'lizard' && P.route === 'guard')) && P.hp > 0) thornBlast();
   lowMark();
@@ -3897,7 +3898,9 @@ function drawArcherPreview(c, k) {
   g.drawImage(H, d.pv[0] * K, 0, d.pv[1] * K, d.ch * K, (c.width - d.pv[1] * f) / 2, c.height - 2 - d.ch * f, d.pv[1] * f, d.ch * f);
 }
 /* ---------- 진화 루트 해금 조건 (조건이 없는 '기본 진화'는 언제든 고를 수 있다) ---------- */
+const LIZ_GUARD_DMG = 400;   // v7.06: 수호의 길 = Lv.10 전에 받은 피해 누적 (아주 어렵게)
 const ROUTE_COND = {
+  lizard:  { guard:   { txt: `Lv.10이 되기 전에 피해를 누적 ${LIZ_GUARD_DMG} 이상 받는다 (실제로 깎인 체력의 합 · 방어막·회피·무적으로 막은 피해는 안 셈 · 죽으면 끝)`, ok: () => P.taken10 >= LIZ_GUARD_DMG || P.form > 0, prog: () => P.form > 0 ? '진화 완료' : `${Math.min(LIZ_GUARD_DMG, Math.floor(P.taken10))} / ${LIZ_GUARD_DMG}` } },
   wolf:    { crimson: { txt: '피의 갈증(피흡) 카드를 얻는다', ok: () => (P.up.thirst || 0) >= 1, prog: () => `피의 갈증 Lv.${P.up.thirst || 0}` },
              twin:    { txt: '날렵한 발톱(공속) 카드 Lv.2 이상', ok: () => (P.up.speed || 0) >= 2, prog: () => `날렵한 발톱 Lv.${P.up.speed || 0}` } },
   wolfFin: { holy:    { txt: '[신성한 피]를 먹고(마왕 10% 드랍) 지옥의 심장(체력) 카드 Lv.2 이상', ok: () => !!SAVE.holyBlood && (P.up.heart || 0) >= 2, prog: () => `신성한 피 ${SAVE.holyBlood ? '✔' : '✖'} · 지옥의 심장 Lv.${P.up.heart || 0}` } },
@@ -3917,7 +3920,7 @@ function pendingConds() {   // 아직 정해지지 않은 진화의 조건 목�
   if (P.char === 'wolf') { if (!P.route) L.push(['혈랑 (Lv.10)', 'wolf', 'crimson'], ['쌍두 (Lv.10)', 'wolf', 'twin']); else if (P.route === 'crimson' && !P.fin) L.push(['성혈랑 (Lv.20)', 'wolfFin', 'holy']); }
   else if (P.char === 'snail') { if (!P.route) L.push(['용암 (Lv.10)', 'snail', 'lava']); }
   else if (P.char === 'chimera' && !P.route) L.push(['몽환 (Lv.10)', 'chimera', 'dream']);
-  else if (P.char === 'lizard' && !P.fin) L.push(['버서커 리자드 (Lv.20)', 'lizardFin', 'rage']);
+  else if (P.char === 'lizard' && !P.fin) { if (!P.route) L.push(['수호의 길 (Lv.10)', 'lizard', 'guard']); L.push(['버서커 리자드 (Lv.20)', 'lizardFin', 'rage']); }
   else if (P.char === 'archer' && !P.route) L.push(['해골 궁수 (Lv.10)', 'archer', 'skel']);
   else if (P.char === 'archer' && P.route === 'elf' && !P.fin) L.push(['성화된 지옥엘프 (Lv.20)', 'archerFin', 'holy']);
   return L.map(([name, g, k]) => ({ name, id: g + ':' + k, c: condFor(g, k) }));
@@ -3938,12 +3941,12 @@ function milestone() {   // 진화·스킬·마왕전을 미리 알려 준다
   if (P.char === 'twins' && L === 2) { banner = { txt: '사슬 악마는 직접 공격하지 않아요 — 움직이고 방향을 틀수록 사슬 끝 창날이 크게 휘둘리며 적을 칩니다', t: 7 }; return; }
   if (P.char === 'twins' && L === 9) { banner = { txt: '다음 레벨(Lv.10)에 진화 + 특수 스킬 [사슬 휘두르기]!  사슬이 두 가닥이 됩니다', t: 6 }; return; }
   if (P.char === 'twins' && L === 19) { banner = { txt: '다음 레벨(Lv.20)에 최종 진화 [사슬의 폭군]!  사슬 휘두르기가 강해집니다', t: 6 }; return; }
-  if (P.char === 'lizard' && L === 9) { banner = { txt: '다음 레벨(Lv.10)에 진화!  대검의 길(리자드 검사) · 수호의 길(가시로 되갚는 방어형) 중 선택', t: 6 }; return; }
+  if (P.char === 'lizard' && L === 9) { banner = { txt: `다음 레벨(Lv.10)에 진화!  대검의 길(리자드 검사) · 수호의 길(가시로 되갚는 방어형: 누적 피해 ${LIZ_GUARD_DMG} 필요 ${P.taken10 >= LIZ_GUARD_DMG ? '✔ 해금' : '✖ ' + Math.floor(P.taken10) + '/' + LIZ_GUARD_DMG}) 중 선택`, t: 6 }; return; }
   if (P.char === 'lizard' && P.route === 'guard' && (L === 15 || L === 19)) { if (L === 19) banner = { txt: '다음 레벨(Lv.20)에 최종 진화 [수호의 리저드]!  스킬 반격의 갑주', t: 6 }; return; }
   if (P.char === 'lizard' && L === 15) { banner = { txt: 'Lv.20 최종 진화:  버서커 리자드 = 체력 10 이하로 떨어져 본 적이 있어야 함 (광란)  /  물의 도마뱀 전사 = 조건 없음 (물의 주술 · 자힐)', t: 7 }; return; }
   if (P.char === 'lizard' && L === 19) { banner = { txt: `다음 레벨(Lv.20)에 최종 진화!  버서커 리자드 ${P.low10 ? '✔ 해금' : '✖ 아직 체력 10 이하를 버텨 본 적 없음'}  (P 키: 조건 확인)`, t: 6 }; return; }
   if (P.char === 'chimera' && L === 9 && !P.route) { banner = { txt: `다음 레벨(Lv.10)에 진화!  바람(관통 에어슬래시) · 화염(화상 발톱) · 몽환(촉수) ${P.bugF0 ? '✔ 해금' : '✖ 이공벌레 미처치'}`, t: 6 }; return; }
-  if (P.char === 'lizard' && L === 5) { banner = { txt: 'Lv.10 진화:  대검의 길(리자드 검사) · 수호의 길(가시로 되갚는 방어형) = 둘 다 조건 없음  /  Lv.20 버서커 = 체력 10 이하 경험', t: 6 }; return; }
+  if (P.char === 'lizard' && L === 5) { banner = { txt: `Lv.10 진화:  대검의 길(리자드 검사) = 기본  /  수호의 길(가시로 되갚는 방어형) = Lv.10 전에 누적 피해 ${LIZ_GUARD_DMG} 필요 (지금 ${Math.floor(P.taken10)})  /  Lv.20 버서커 = 체력 10 이하 경험`, t: 6 }; return; }
   if (L === 5 && cs.length && (P.char === 'chimera' || P.char === 'wolf' || P.char === 'snail' || P.char === 'archer')) {   // v6.45: 리자드 등 다른 캐릭터에 해골 궁수 조건(마지막 else)이 뜨던 것 수정
     const t = P.char === 'chimera' ? 'Lv.10 진화:  바람 · 화염 = 조건 없음  /  몽환 = 지금(0단계) 이공벌레를 처치하면 해금  (붉게 깜빡이면 곧 폭발! 멀리서 때려서 잡기)' : P.char === 'wolf' ? 'Lv.10 진화 조건:  혈랑 = 피의 갈증 카드 · 쌍두 = 날렵한 발톱 Lv.2  (기본 진화는 조건 없음)' : P.char === 'snail' ? 'Lv.10 진화 조건:  용암 = 용암 지대에서 4초 버티기  (기본 진화: 맹독)' : 'Lv.10 진화 조건:  해골 궁수 = Lv.5~8에 맵에 나타나는 저주받은 독약을 마시기 (체력 25% 감소 · 판마다 없을 수도 있음)  (기본: 지옥엘프)' + (P.char === 'archer' ? `\nLv.20 성화된 지옥엘프 = 체력 포션 ${POTION_N}개 마시기 (지금부터가 아니라 게임 내내 누적 · 지금 ${P.potions}개)` : '');
     banner = { txt: t, t: 6 };
@@ -3967,9 +3970,9 @@ const LIZ_ROUTES = { sword: { name: '대검' }, guard: { name: '수호' } };
 function openLizRoute() {   // Lv.10: 대검의 길(리자드 검사) / 수호의 길(리저드 플레이어)
   const L = [['sword', '대검의 길 · 리자드 검사', '체력 +30 · 공격력 +32% · 범위 +10% · 한 방이 무거운 대검', 'Lv.20 : 버서커 리자드(광란) / 물의 도마뱀 전사(물의 주술)', 1],
              ['guard', '수호의 길 · 리저드 플레이어', '체력 +45 · 받는 피해 -12% · 공격력 +12% · 아주 느린 자연 회복 · 가시 비늘 기본 장착 (맞으면 반격)', 'Lv.20 : 수호의 리저드 (스킬 반격의 갑주)', 'g1']];
-  const items = L.map(([k, nm, ds, sb, pk]) => ({ key: k, name: nm, desc: ds, sub: sb, preview: c => drawLizPrev(c, pk), tag: k === 'sword' ? ' · 기본 진화' : '' }));
+  const items = L.map(([k, nm, ds, sb, pk]) => Object.assign({ key: k, name: nm, desc: ds, sub: sb, preview: c => drawLizPrev(c, pk) }, k === 'sword' ? { tag: ' · 기본 진화' } : condItem('lizard', 'guard')));
   openChoice(`진화의 갈림길  Lv.${P.lvl}`, items, u => { P.route = u.key; ensureTint(1); startEvolve(1); }, 'route');
-  document.getElementById('levelHint').textContent = '대검 = 한 방이 강한 공격형 · 수호 = 맞으면서 가시로 되갚는 방어형 (Lv.20에 반격의 갑주)';
+  document.getElementById('levelHint').textContent = '🔒 수호 = Lv.10 전에 피해를 많이 받아야 열림 (맞으면서 가시로 되갚는 방어형) · 대검 = 기본 진화 (한 방이 강한 공격형)';
 }
 function openLizFinal() {
   const L = [['rage', '버서커 리자드', '체력 +55 · 공격력 +25% · 범위 +15% · 체력이 낮을수록 피해 최대 약 2.25배 (광폭)', '전용 스킬 : 광란 (5초간 공속 ×3 · 이속 +12%)'],
@@ -7020,6 +7023,7 @@ function drawHud() {
     if (P.dotT > 0) L.push([`화상 ${P.dotT.toFixed(1)}s`, '#ff9a4a']);
     if (P.slowT > 0) L.push([`둔화 ${Math.ceil(P.slowT)}s (이속 -35%)`, '#8ab8ff']);
     if (P.curseCard > 0) L.push(['☠ 다음 레벨업 카드 선택 불가', '#d6a8ff']);
+    if (P.char === 'lizard' && P.form === 0) L.push([P.taken10 >= LIZ_GUARD_DMG ? '✔ 수호의 길 조건 달성' : `수호의 길 조건: 받은 피해 ${Math.floor(P.taken10)} / ${LIZ_GUARD_DMG}`, P.taken10 >= LIZ_GUARD_DMG ? '#9bffc0' : '#ffc08a']);
     if (P.char === 'lizard' && !P.fin && P.lvl >= 10) L.push([P.low10 ? '✔ 버서커 조건 달성 (체력 10 이하 경험)' : '버서커 조건: 체력 10 이하까지 떨어졌다 버티기', P.low10 ? '#9bffc0' : '#ff9a9a']);
     if (P.up.guard) L.push([P.guardT > 0 ? `방어막 재충전 ${Math.ceil(P.guardT)}s` : '방어막 준비됨', '#9fe3ff']);
     if (P.rage > 0) L.push([`광란 ${P.rage.toFixed(1)}s  (공속 ×3)`, '#ff6a7a']);
