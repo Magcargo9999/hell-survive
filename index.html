@@ -544,7 +544,7 @@ function updateGunFx(dt) { for (const q of gunFx) q.t += dt; gunFx = gunFx.filte
 function gunSpr(k, i, x, y, s, face, alpha, add) {
   const L = GUNA[k], r = L && L[Math.min(L.length - 1, i)], img = IMG.gun; if (!r || !img) return;
   const H = hq(img), K = H.width / img.width;
-  ctx.save(); ctx.translate(Math.round(x), Math.round(y)); if (face < 0) ctx.scale(-1, 1); ctx.imageSmoothingEnabled = true; ctx.imageSmoothingQuality = 'high';
+  ctx.save(); ctx.translate(Math.round(x), Math.round(y)); if (face < 0) ctx.scale(-1, 1); ctx.imageSmoothingEnabled = true; ctx.imageSmoothingQuality = 'medium';
   if (alpha < 1) ctx.globalAlpha = Math.max(0, alpha); if (add) ctx.globalCompositeOperation = 'lighter';
   ctx.drawImage(H, r[0] * K, r[1] * K, r[2] * K, r[3] * K, -r[4] * s, -r[5] * s, r[2] * s, r[3] * s); ctx.restore();
 }
@@ -774,17 +774,22 @@ function audioInit() {
   } catch (e) { AC = null; }
 }
 function applyVol() { if (!AC) return; sfxGain.gain.value = SAVE.set.sfx * 0.5; bgmGain.gain.value = SAVE.set.bgm * 0.35; }
+let sfxLive = 0;   // v6.45: 동시에 울리는 소리 수 상한 (많이 겹치면 오디오 스레드가 밀려 게임이 끊긴다)
 function tone(f0, f1, dur, type, vol, dest, delay) {
+  if (sfxLive > 28 && dest !== bgmGain) return;
+  sfxLive++;
   const t0 = AC.currentTime + (delay || 0), o = AC.createOscillator(), g = AC.createGain();
   o.type = type; o.frequency.setValueAtTime(f0, t0); if (f1 !== f0) o.frequency.exponentialRampToValueAtTime(Math.max(20, f1), t0 + dur);
   g.gain.setValueAtTime(0.0001, t0); g.gain.exponentialRampToValueAtTime(vol, t0 + 0.01); g.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
-  o.connect(g); g.connect(dest || sfxGain); o.start(t0); o.stop(t0 + dur + 0.05);
+  o.connect(g); g.connect(dest || sfxGain); o.onended = () => { sfxLive--; }; o.start(t0); o.stop(t0 + dur + 0.05);
 }
 function noise(dur, vol, fc) {
+  if (sfxLive > 28) return;
+  sfxLive++;
   const t0 = AC.currentTime, s = AC.createBufferSource(), f = AC.createBiquadFilter(), g = AC.createGain();
   s.buffer = noiseBuf; f.type = 'lowpass'; f.frequency.value = fc;
   g.gain.setValueAtTime(vol, t0); g.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
-  s.connect(f); f.connect(g); g.connect(sfxGain); s.start(t0); s.stop(t0 + dur + 0.05);
+  s.connect(f); f.connect(g); g.connect(sfxGain); s.onended = () => { sfxLive--; }; s.start(t0); s.stop(t0 + dur + 0.05);
 }
 function sfx(n) {
   if (!AC || SAVE.set.sfx <= 0) return;
@@ -3036,6 +3041,16 @@ function burst(x, y, n, colors, spd, life) {
     fx.push({ x, y, vx: Math.cos(a) * s, vy: Math.sin(a) * s - 20, life: life * (0.6 + rand() * 0.6), max: life, c: colors[(rand() * colors.length) | 0], s: 2 + ((rand() * 3) | 0) });
   }
 }
+const NUM_C = new Map();
+function numSpr(txt, color) {
+  const key = color + '|' + txt; let c = NUM_C.get(key); if (c) return c;
+  if (NUM_C.size > 400) NUM_C.clear();
+  const g0 = mkCanvas(8, 8).getContext('2d'); g0.font = 'bold 15px "Malgun Gothic", monospace';
+  const w = Math.ceil(g0.measureText(String(txt)).width) + 10; c = mkCanvas(w, 26); const g = c.getContext('2d');
+  g.font = 'bold 15px "Malgun Gothic", monospace'; g.textAlign = 'center'; g.lineWidth = 3; g.strokeStyle = '#1a0508'; g.lineJoin = 'round';
+  g.strokeText(String(txt), w / 2, 19); g.fillStyle = color; g.fillText(String(txt), w / 2, 19);
+  NUM_C.set(key, c); return c;
+}
 function floatNum(x, y, txt, color) { if (typeof txt === 'number' && !SAVE.set.nums) return; if (nums.length < 90) nums.push({ x, y, txt, color, life: 0.8 }); }
 function addRing(x, y, r0, r1, life, rgb, w) { rings.push({ x, y, r0, r1, t: 0, life, rgb, w: w || 6 }); }
 function theme() {
@@ -3774,10 +3789,11 @@ function openChest() {
 /* ---------- 진화 ---------- */
 const HQ = new Map(), HQ_MAX = 4096;
 // 도트를 정수배로 먼저 키워 두고(최근접) 줄여서 그리면 어떤 배율에서도 뭉개지지 않는다
-function hq(img, k = (img === IMG.liz0 || img === IMG.liz1 || img === IMG.liz2 || img === IMG.elf1 || img === IMG.skel || img === IMG.tw0 || img === IMG.tw1 || img === IMG.tw2 || img === IMG.skb || img === IMG.skw || img === IMG.gh || img === IMG.cm || img === IMG.ab) ? 1 : (img === IMG.arcr || img === IMG.arch || img === IMG.liz3 || img === IMG.fwp || img === IMG.elf0) ? 2 : 3) {
+function hq(img, k = (img === IMG.liz0 || img === IMG.liz1 || img === IMG.liz2 || img === IMG.elf1 || img === IMG.skel || img === IMG.tw0 || img === IMG.tw1 || img === IMG.tw2 || img === IMG.skb || img === IMG.skw || img === IMG.gh || img === IMG.cm || img === IMG.ab || img === IMG.gun) ? 1 : (img === IMG.arcr || img === IMG.arch || img === IMG.liz3 || img === IMG.fwp || img === IMG.elf0) ? 2 : 3) {
   k = Math.max(1, Math.min(k, Math.floor(HQ_MAX / Math.max(img.width, img.height))));   // v6.30 프레임 드랍: 4096px를 넘는 확대 캔버스(최대 6000×2340)는 그릴 때 느려지고 메모리도 크다 → 넘지 않는 배율로
   if (k === 1) return img;   // 이미 고해상도인 시트 (v4.01): 그대로 줄여 그린다
   let c = HQ.get(img);
+  if (!c && img.width * k * img.height * k > 8e6) console.warn('hq 확대 캔버스가 800만 픽셀을 넘음 (그리기가 느려진다 — 이미 고해상도 시트면 k=1 목록에 추가):', img.width * k, img.height * k);   // v6.45 재발 방지: 총잡이 4080×2700 확대본이 프레임 절반을 먹었다
   if (!c) { c = mkCanvas(img.width * k, img.height * k); const g = c.getContext('2d'); g.imageSmoothingEnabled = false; g.drawImage(img, 0, 0, c.width, c.height); HQ.set(img, c); }
   return c;
 }
@@ -3850,7 +3866,8 @@ function milestone() {   // 진화·스킬·마왕전을 미리 알려 준다
   if (P.char === 'lizard' && L === 15) { banner = { txt: 'Lv.20 최종 진화:  버서커 리자드 = 체력 10 이하로 떨어져 본 적이 있어야 함 (광란)  /  물의 도마뱀 전사 = 조건 없음 (물의 주술 · 자힐)', t: 7 }; return; }
   if (P.char === 'lizard' && L === 19) { banner = { txt: `다음 레벨(Lv.20)에 최종 진화!  버서커 리자드 ${P.low10 ? '✔ 해금' : '✖ 아직 체력 10 이하를 버텨 본 적 없음'}  (P 키: 조건 확인)`, t: 6 }; return; }
   if (P.char === 'chimera' && L === 9 && !P.route) { banner = { txt: `다음 레벨(Lv.10)에 진화!  바람(관통 에어슬래시) · 화염(화상 발톱) · 몽환(촉수) ${P.bugF0 ? '✔ 해금' : '✖ 이공벌레 미처치'}`, t: 6 }; return; }
-  if (L === 5 && cs.length) {
+  if (P.char === 'lizard' && L === 5) { banner = { txt: 'Lv.10 진화:  대검의 길(리자드 검사) · 수호의 길(가시로 되갚는 방어형) = 둘 다 조건 없음  /  Lv.20 버서커 = 체력 10 이하 경험', t: 6 }; return; }
+  if (L === 5 && cs.length && (P.char === 'chimera' || P.char === 'wolf' || P.char === 'snail' || P.char === 'archer')) {   // v6.45: 리자드 등 다른 캐릭터에 해골 궁수 조건(마지막 else)이 뜨던 것 수정
     const t = P.char === 'chimera' ? 'Lv.10 진화:  바람 · 화염 = 조건 없음  /  몽환 = 지금(0단계) 이공벌레를 처치하면 해금  (붉게 깜빡이면 곧 폭발! 멀리서 때려서 잡기)' : P.char === 'wolf' ? 'Lv.10 진화 조건:  혈랑 = 피의 갈증 카드 · 쌍두 = 날렵한 발톱 Lv.2  (기본 진화는 조건 없음)' : P.char === 'snail' ? 'Lv.10 진화 조건:  용암 = 용암 지대에서 4초 버티기  (기본 진화: 맹독)' : 'Lv.10 진화 조건:  해골 궁수 = Lv.5~8에 맵에 나타나는 저주받은 독약을 마시기 (체력 25% 감소 · 판마다 없을 수도 있음)  (기본: 지옥엘프)' + (P.char === 'archer' ? `\nLv.20 성화된 지옥엘프 = 체력 포션 ${POTION_N}개 마시기 (지금부터가 아니라 게임 내내 누적 · 지금 ${P.potions}개)` : '');
     banner = { txt: t, t: 6 };
   } else if (L === 9 && cs.length) banner = { txt: '다음 레벨 진화!  ' + cs.map(x => `${x.name.split(' ')[0]} ${x.c.ok() ? '✔' : '✖'}`).join('  ·  ') + '   (P 키: 조건 확인)', t: 6 };
@@ -6116,11 +6133,13 @@ function blazeBoom0(e) {   // 업화 연쇄: 화상 입은 적이 죽으며 터�
 }
 function igniteE(e) { e.burnT = 3 + 0.5 * (P.up.flameA || 0); e.burnD = P.dmg * 0.2 * (1 + 0.3 * (P.up.flameA || 0)); }
 function updateBurn(dt) {
+  let bn = 0; for (const e of enemies) if (e.burnT > 0) bn++;
+  const pr = bn > 40 ? 3 : bn > 15 ? 7 : 12;   // v6.45: 불씨탄이 관통으로 수십 마리를 태울 때 불꽃 입자가 폭증하지 않게
   for (const e of enemies) {
     if (!(e.burnT > 0) || e.hp <= 0) continue;
     e.burnT -= dt; e.burnAcc = (e.burnAcc || 0) + dt;
     if (e.burnAcc >= 0.5) { e.burnAcc -= 0.5; if (e.burnSrc) withSrc(e.burnSrc, () => hurtEnemy(e, e.burnD, 0, 0, 0, true)); else hurtEnemy(e, e.burnD, 0, 0, 0, true); }
-    if (fx.length < 500 && rand() < dt * 12) fx.push({ x: e.x + (rand() - 0.5) * e.r, y: e.y - e.r * (0.6 + rand()), vx: (rand() - 0.5) * 24, vy: -50 - rand() * 40, life: 0.5, max: 0.5, c: rand() < 0.5 ? '#ff8a2a' : '#ffd27a', s: 3 });
+    if (fx.length < 500 && rand() < dt * pr) fx.push({ x: e.x + (rand() - 0.5) * e.r, y: e.y - e.r * (0.6 + rand()), vx: (rand() - 0.5) * 24, vy: -50 - rand() * 40, life: 0.5, max: 0.5, c: rand() < 0.5 ? '#ff8a2a' : '#ffd27a', s: 3 });
   }
 }
 const BREATH_DUR = 2.4;
@@ -6253,7 +6272,7 @@ const sprTopC = new Map();
 function sprTop(img, sx, sy, w, h) {   // v5.11: 프레임에서 처음 보이는 픽셀 줄 (머리 위 체력바 위치용) · 한 번 계산해 저장
   let m = sprTopC.get(img); if (!m) { m = {}; sprTopC.set(img, m); }
   const k = sx + ',' + sy + ',' + w + ',' + h; if (m[k] !== undefined) return m[k];
-  let t = 0; try { const c = document.createElement('canvas'); c.width = w; c.height = h; const g = c.getContext('2d'); g.drawImage(img, sx, sy, w, h, 0, 0, w, h);
+  let t = 0; try { const c = document.createElement('canvas'); c.width = w; c.height = h; const g = c.getContext('2d', { willReadFrequently: true }); g.drawImage(img, sx, sy, w, h, 0, 0, w, h);
     const d = g.getImageData(0, 0, w, h).data; t = h; outer: for (let yy = 0; yy < h; yy++) for (let xx = 0; xx < w; xx++) if (d[(yy * w + xx) * 4 + 3] > 40) { t = yy; break outer; } } catch (e) { t = 0; }
   return (m[k] = t);
 }
@@ -6626,15 +6645,15 @@ function render() {
   ctx.globalAlpha = 1;
   // 데미지 숫자
   ctx.font = 'bold 15px "Malgun Gothic", monospace'; ctx.textAlign = 'center'; ctx.lineWidth = 3; ctx.strokeStyle = '#1a0508';
-  for (const n of nums) {
+  for (const n of nums) {   // v6.45: 글자 테두리(strokeText)는 비싸서 한 번만 그려 둔 그림을 재사용한다
     ctx.globalAlpha = clamp(n.life * 2, 0, 1);
-    ctx.strokeText(n.txt, wx(n.x), wy(n.y)); ctx.fillStyle = n.color; ctx.fillText(n.txt, wx(n.x), wy(n.y));
+    const c = numSpr(n.txt, n.color); ctx.drawImage(c, Math.round(wx(n.x) - c.width / 2), Math.round(wy(n.y) - c.height * 0.72));
   }
   ctx.globalAlpha = 1;
 
   // 분위기: 늑대 주변의 붉은 빛, 어두운 가장자리, 떠다니는 불씨
   drawVignette(wx(P.x), wy(P.y) - 20);
-  for (const e of embers) {
+  if (perfLv < 2) for (const e of embers) {
     ctx.globalAlpha = 0.55 + Math.sin(wallT * 5 + e.d) * 0.3;
     ctx.fillStyle = e.s > 1 ? '#ffb030' : '#ff6a1c'; ctx.fillRect(Math.round(e.x), Math.round(e.y), e.s, e.s);
   }
@@ -6827,8 +6846,9 @@ const CHM = { s: 2, iw: 1672, ih: 941, a: 596, b: 908, c: 318, d: 596, nx: 3, ny
 CHM.bw = CHM.b - CHM.a; CHM.bh = CHM.d - CHM.c;
 const CHX = CHM.nx * CHM.bw, CHY = CHM.ny * CHM.bh;   // 늘어난 가로·세로 (그림 픽셀)
 CHM.w = (CHM.iw + CHX) * CHM.s; CHM.h = (CHM.ih + CHY) * CHM.s;
-CHM.cols = [[0, CHM.a]]; for (let i = 0; i < CHM.nx; i++) CHM.cols.push([CHM.a, CHM.b]); CHM.cols.push([CHM.b, CHM.iw]);
-CHM.rows = [[0, CHM.c]]; for (let i = 0; i < CHM.ny; i++) CHM.rows.push([CHM.c, CHM.d]); CHM.rows.push([CHM.d, CHM.ih]);
+CHM.cols = [[0, CHM.a]]; for (let i = 0; i <= CHM.nx; i++) CHM.cols.push([CHM.a, CHM.b]); CHM.cols.push([CHM.b, CHM.iw]);   // v6.45: 띠는 원본 1번 + nx번 더 = nx+1번 (예전엔 nx번이라 그림이 CHM.w보다 624px 짧아 오른쪽·아래가 허공이었다)
+CHM.rows = [[0, CHM.c]]; for (let i = 0; i <= CHM.ny; i++) CHM.rows.push([CHM.c, CHM.d]); CHM.rows.push([CHM.d, CHM.ih]);
+{ const sw = CHM.cols.reduce((a, [c0, c1]) => a + c1 - c0, 0) * CHM.s, sh = CHM.rows.reduce((a, [r0, r1]) => a + r1 - r0, 0) * CHM.s; if (sw !== CHM.w || sh !== CHM.h) console.error('챌린지 맵 그림 크기 불일치', sw, sh, CHM.w, CHM.h); }   // 재발 방지: 그림 크기 = 맵 크기
 CHM.poly = [[240, 170], [330, 125], [560, 105], [1100 + CHX, 108], [1380 + CHX, 150], [1540 + CHX, 250], [1545 + CHX, 596 + CHY], [1480 + CHX, 720 + CHY], [1260 + CHX, 790 + CHY], [420, 790 + CHY], [200, 720 + CHY], [140, 596 + CHY], [150, 270]].map(([x, y]) => [x * CHM.s, y * CHM.s]);
 CHM.cx = (840 + CHX / 2) * CHM.s; CHM.cy = (450 + CHY / 2) * CHM.s; CHM.start = [CHM.cx - 10 * CHM.s, CHM.cy + 30 * CHM.s];
 let chal = null, chMode = false;
@@ -7767,8 +7787,17 @@ function tick(dt) {
   else if (state === 'win') { updateFx(dt); winT += dt; stepDropItems(dt); if (winT > 2.4 && !overShown && (!items.some(isDropItem) || winT > 9)) showOver(true); }
 }
 let last = performance.now();
+let perfLv = 0, perfEma = 16.7, perfHold = 0;   // v6.45: 프레임이 느려지면 장식(입자·숫자)부터 자동으로 줄인다 (0 정상 · 1 · 2)
+function perfWatch(ms) {
+  if (ms > 250) return;   // 탭 전환 등 한 번 크게 멈춘 것은 무시
+  perfEma += (ms - perfEma) * 0.06; perfHold -= ms;
+  if (perfHold > 0) return;
+  const nl = perfEma > 38 ? 2 : perfEma > 27 ? 1 : perfEma < 22 ? 0 : perfLv;
+  if (nl !== perfLv) { perfLv = nl; perfHold = 2500; }
+  if (perfLv) { const fc = perfLv === 1 ? 220 : 90, nc = perfLv === 1 ? 45 : 22; if (fx.length > fc) fx.splice(0, fx.length - fc); if (nums.length > nc) nums.splice(0, nums.length - nc); }
+}
 function loop(now) {
-  const dt = Math.min(0.05, (now - last) / 1000); last = now; wallT = now / 1000;
+  const dt = Math.min(0.05, (now - last) / 1000); perfWatch(now - last); last = now; wallT = now / 1000;
   requestAnimationFrame(loop);   // 한 프레임에서 오류가 나도 다음 프레임은 이어진다 (화면이 멈추지 않게)
   try { tick(dt * SAVE.set.speed); } catch (e) { if (!window.__errT || now - window.__errT > 3000) { window.__errT = now; console.error(e); } }
   try { render(); } catch (e) { if (!window.__errT || now - window.__errT > 3000) { window.__errT = now; console.error(e); } }
@@ -7793,7 +7822,8 @@ window.__G = {
   get DMETER() { return DMETER; }, dmName, get eleQ() { return eleQ; }, fwStart, setT(v) { gt = v; }, calcShards, FD, LIZ_FORMS, TWIN_FORMS, startFw, snapP, get fwFx() { return fwFx; }, get bsig() { return bsig; }, BMAP, inBlood, twLen, availSyn, SYNERGIES, inPoly, hurtEnemy, startGame, addExp, hurt: hurtPlayer, rebuild: buildSpecies,
   get rollQ() { return rollQ; }, get gunFx() { return gunFx; }, GUN, GUN_AMMO, GUNA, gunLoad, gunRange,
   get anOrbs() { return anOrbs; }, get anFx() { return anFx; }, AMAP, ANB, ANX, AN, anStart, anTrans, pickBossK, floorName, arenaExit,
-  get chal() { return chal; }, chTime, chDmgT, startChallenge, chEvent, chEnterBoss, chFrag, chGoldSpawn, chShelter, inCh, CHM, spawnCut, spawnAb, abStart, RUNES, TREASURES, get cutSaws() { return cutSaws; }, setChMode(v) { chMode = v; }, get W() { return W; }, get H() { return H; }, get species() { return SPECIES; },
+  sizes() { const o = { enemies, orbs, items, shards, fx, nums, arcs, embers, zones, rings, globs, sprFx, blades, lights, ebul, afx, gunFx, cfx, bfx, healFx, allies, slots, cutSaws, airs, octoFx, smokes, skp, mfx }; const r = {}; for (const k in o) if (o[k] && o[k].length != null) r[k] = o[k].length; return r; },
+  get banner() { return banner; }, get perfLv() { return perfLv; }, get NUM_C() { return NUM_C; }, get chal() { return chal; }, chTime, chDmgT, startChallenge, chEvent, chEnterBoss, chFrag, chGoldSpawn, chShelter, inCh, CHM, spawnCut, spawnAb, abStart, RUNES, TREASURES, get cutSaws() { return cutSaws; }, setChMode(v) { chMode = v; }, get W() { return W; }, get H() { return H; }, get species() { return SPECIES; },
 };
 
 function loadImg(src) {   // v6.30 프레임 드랍: 미리 해독한 ImageBitmap으로 바꿔 둔다 (Image는 처음 그릴 때 해독·업로드로 큰 시트마다 20~40ms씩 멈췄다)
