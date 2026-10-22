@@ -61,7 +61,7 @@ async def one(b, v, cfg, boss, seed):
         if time.time() > STOP: return
         t0 = time.time()
         try:
-            pg = await T2.newpage(b, seed, {'__DUR': 420, '__POL': p})
+            pg = await T2.newpage(b, seed, {'__DUR': int(os.environ.get('DUR', 240)), '__POL': p})
             r = await pg.evaluate(T2.wrap(JS, seed), [ch, rt, fin, 'std', 25, 0, 0, True, seed, 0, False, boss])
             await pg.close()
         except Exception as e:

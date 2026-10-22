@@ -142,7 +142,7 @@ def common(exp, t, seed, policy):
 async def run_boss(b, exp, t, boss, seed, policy, fn):
     ch, rt, fin = rt_of(t)
     pol = policy_of(t['variant']); fw = boss == 'fw'
-    extra = {'__DUR': 420, '__POL': pol}
+    extra = {'__DUR': int(os.environ.get('DUR', 240)), '__POL': pol}
     if policy == 'random': extra['__RANDPICK'] = 1
     if fw: extra['__FW'] = 1
     t0 = time.time()
