@@ -1034,7 +1034,8 @@ const MMAP = { s: 1.5, iw: 1448, ih: 1086,
 { const k = MMAP.s; MMAP.w = Math.round(MMAP.iw * k); MMAP.h = Math.round(MMAP.ih * k); MMAP.poly = MMAP.poly.map(([x, y]) => [x * k, y * k]); MMAP.skp = MMAP.skp.map(([x, y]) => [x * k, y * k]);
   for (const f of ['cx', 'cy', 'bx', 'by', 'exitY', 'itemY']) MMAP[f] *= k; MMAP.start = MMAP.start.map(v => v * k); }
 /* v7.10 지하 11~15층 보스맵 (어인섬 제단): 받은 예시 보스맵(612×779)을 3배 · 마왕 4종 모두 여기서. 가운데 제단 + 위 계단(마왕 자리) + 아래 다리(출발·출구) */
-const SMAP = { s: 3, iw: 612, ih: 779,
+const SMAP = { s: 6, iw: 612, ih: 779,   // v7.16: 보스방 3배 → 6배 (가로·세로 2배 = 넓이 4배)
+
   poly: [[268, 165], [332, 165], [336, 235], [372, 242], [430, 262], [478, 300], [492, 345], [470, 388], [420, 415], [338, 428], [338, 770], [262, 770], [262, 428], [182, 415], [132, 388], [110, 345], [124, 300], [172, 262], [230, 242], [264, 235]],
   start: [300, 600], cx: 300, cy: 330, bx: 300, by: 210, exitY: 700, itemY: 650, skp: [[160, 335], [440, 335], [300, 245]] };
 { const k = SMAP.s; SMAP.w = Math.round(SMAP.iw * k); SMAP.h = Math.round(SMAP.ih * k); SMAP.poly = SMAP.poly.map(([x, y]) => [x * k, y * k]); SMAP.skp = SMAP.skp.map(([x, y]) => [x * k, y * k]);
@@ -1066,7 +1067,7 @@ function raiseCastle() {
   P.exitLeft = 1;   // 성 안에서 밖으로 나갈 수 있는 기회는 딱 1번
   banner = { txt: '대지가 갈라지며 마왕성이 솟아오른다!\n성이 완성되면 강제로 끌려 들어갑니다', t: 4, c: '#ff9a8a' };
   shake = Math.max(shake, 12); sfx('boom');
-  if (P.fset === 'sea' && IMG.smap) setTimeout(() => { try { smapS(); } catch (_) {} }, 400); else if (P.fset === 'mush' && IMG.mmap) setTimeout(() => { try { mmapS(); } catch (_) {} }, 400);   // v6.52
+  if (P.fset === 'mush' && IMG.mmap) setTimeout(() => { try { mmapS(); } catch (_) {} }, 400);   // v6.52
   else if (P.bossK !== 'angel') setTimeout(() => { try { arenaS(); } catch (_) {} }, 400);   // v6.30: 성 내부 확대 그림을 입장 전에 미리 만든다 (입장 순간 끊김 방지)
 }
 let ARS = null;
@@ -3385,7 +3386,6 @@ function warmSea() {
     const c = mkCanvas(8, 8), g = c.getContext('2d');
     g.drawImage(IMG.sfloor, 0, 0, 42, 42, 0, 0, 8, 8); g.drawImage(IMG.sprops, 0, 0, 64, 64, 0, 0, 8, 8);
     for (const sp of SSPECIES) for (const f of sp.frames) { g.drawImage(f.img, 0, 0, 8, 8); g.drawImage(f.white, 0, 0, 8, 8); }
-    if (IMG.smap) smapS();
   } catch (_) {}
 }
 const isSea = () => !!(P && P.fset === 'sea');   // v7.10 어인섬 (지하 11~15층)
@@ -6781,7 +6781,10 @@ function render() {
   if (arena) {
     ctx.imageSmoothingEnabled = true;
     if (arena.k === 'blood') ctx.drawImage(bmapS(), Math.round(W / 2 - cx), Math.round(H / 2 - cy));   // 혈랑왕의 제단
-    else if (arena.sea || arena.mush) { const M = arena.sea ? smapS() : mmapS(), ox = Math.round(W / 2 - cx), oy = Math.round(H / 2 - cy), sx = Math.max(0, -ox), sy = Math.max(0, -oy), sw = Math.min(M.width - sx, W - Math.max(0, ox)), sh = Math.min(M.height - sy, H - Math.max(0, oy));   // v7.13: 보이는 조각만 그린다 (큰 보스맵 전체를 매 프레임 넘기지 않음)
+    else if (arena.sea) {   // v7.16: 어인섬 보스맵은 원본 그림에서 보이는 조각만 정수 배율(nearest)로 그린다 (6배 확대 캔버스를 만들지 않음)
+      const k = SMAP.s, ox = Math.round(W / 2 - cx), oy = Math.round(H / 2 - cy), sx = Math.max(0, Math.floor(-ox / k)), sy = Math.max(0, Math.floor(-oy / k)), ex = Math.min(SMAP.iw, Math.ceil((W - ox) / k)), ey = Math.min(SMAP.ih, Math.ceil((H - oy) / k));
+      if (ex > sx && ey > sy && IMG.smap) { const sm = ctx.imageSmoothingEnabled; ctx.imageSmoothingEnabled = false; ctx.drawImage(IMG.smap, sx, sy, ex - sx, ey - sy, ox + sx * k, oy + sy * k, (ex - sx) * k, (ey - sy) * k); ctx.imageSmoothingEnabled = sm; } }
+    else if (arena.mush) { const M = mmapS(), ox = Math.round(W / 2 - cx), oy = Math.round(H / 2 - cy), sx = Math.max(0, -ox), sy = Math.max(0, -oy), sw = Math.min(M.width - sx, W - Math.max(0, ox)), sh = Math.min(M.height - sy, H - Math.max(0, oy));   // v7.13: 보이는 조각만 그린다 (큰 보스맵 전체를 매 프레임 넘기지 않음)
       if (sw > 0 && sh > 0) ctx.drawImage(M, sx, sy, sw, sh, Math.max(0, ox), Math.max(0, oy), sw, sh); }   // v6.52 버섯 보스맵
     else if (arena.k === 'angel') drawAmap(cx, cy);   // v6.30: 타락천사 보스맵
     else ctx.drawImage(arenaS(), Math.round(W / 2 - cx), Math.round(H / 2 - cy));   // 성 내부: 받은 도트 그림 그대로
