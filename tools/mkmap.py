@@ -21,6 +21,7 @@ ANCHORS = [
  ('보스 등장 확률', r'^function pickBossK|^const BOSS_TBL'), ('미니보스 생성', r'^function spawnMini|^function spawnCut|^function spawnHorse|^function spawnMiniPick'),
  ('미니보스 갱신·그리기', r'^function updateMini|^function drawMini\b|^function updateHorse|^function drawHorse\b'),
  ('유니크 몹', r'^const UNIQ = '), ('스켈레톤 첨탑 결계', r'skSpawnPair|function skpPts'), ('타락천사', r'^const AN = |v6\.30 타락천사'),
+ ('거대 버섯마귀', r'v7\.20 거대 버섯마귀|^function updateShkBoss|^function shkStart|^function shkSummon'),
  ('● 층·맵', None),
  ('층 세트(지옥/버섯/어인섬)', r'^function floorSet|^const isSea|^const isMush'), ('버섯 세트', r'^const MSPECIES|^const MMAP'), ('어인섬 세트', r'^const SSPECIES|^const SMAP|^function warmSea'),
  ('챌린지 모드', r'v6\.20 ∞ 챌린지|^function startChallenge'),

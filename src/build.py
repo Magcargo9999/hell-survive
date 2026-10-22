@@ -85,6 +85,7 @@ ASSETS = {
     '__SMAP__': 'sea/smap.webp',
     '__HORSE__': 'horse/horse.webp',
     '__AN2__': 'an/an2.webp',
+    '__SHK__': 'shk/shk.webp',
     '__SH__': 'mush/sh.webp',
     '__MIMIC__': 'mimic/mimic.webp',
     '__SKTW__': 'sk/sktower.webp'
