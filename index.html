@@ -318,7 +318,7 @@
   <div class="gtop"><span id="hShards" style="color:var(--gold);font-weight:bold"></span><button id="hClose" class="sm">닫기</button></div>
   <div class="hslots" id="hSlots"></div><p id="hSum" class="hsum"></p>
   <div class="hmain"><div class="hinv" id="hInv"></div><div class="hcore" id="hCore"></div></div>
-  <p class="gprob">마왕 처치 시 20% 확률로 [보스의 심장] (레어) · 떨어질 때 1% 확률로 레전더리 · 재설정 ◆500: 레어→에픽 30% · 에픽→유니크 20% · 유니크→레전더리 5% 등급 상승, 옵션(공격력 · 최대 체력 · 공격 속도 각 1/3)과 수치를 다시 뽑음<br>등급별 수치: 레어 1~3% · 에픽 4~6% · 유니크 7~9% · 레전더리 15~20% · 최대 5개 장착 (효과는 다음 판 시작부터)</p>
+  <p class="gprob">마왕 처치 시 20% 확률로 [보스의 심장] (레어) · 떨어질 때 1% 확률로 레전더리 · 재설정 ◆500부터(할 때마다 +50, 최대 1500): 레어→에픽 30% · 에픽→유니크 20% · 유니크→레전더리 5% 등급 상승, 옵션(공격력 · 최대 체력 · 공격 속도 각 1/3)과 수치를 다시 뽑음<br>등급별 수치: 레어 1~3% · 에픽 4~6% · 유니크 7~9% · 레전더리 15~20% · 최대 5개 장착 (효과는 다음 판 시작부터)</p>
 </div>
 <div id="hfx"></div>
 
@@ -8773,7 +8773,8 @@ const HG = {
 };
 const HG_ORDER = ['rare', 'epic', 'unique', 'legend'];
 const HSTAT = { atk: '공격력', hp: '최대 체력', aspd: '공격 속도' };
-const HEART = { drop: 0.20, legend: 0.01, cost: 500, slots: 5 };
+const HEART = { drop: 0.20, legend: 0.01, cost: 500, step: 50, max: 1500, slots: 5 };
+const heartCost = h => Math.min(HEART.max, HEART.cost + HEART.step * ((h && h.rr) | 0));   // v8.07: 그 심장을 재설정할 때마다 +50 (최대 1500)
 const hRand = (a, b) => a + Math.floor(Math.random() * (b - a + 1));
 const hOpt = h => `${HSTAT[h.st]} +${h.v}%`;
 function heartMake(g) { const S = SAVE.heart, G = HG[g]; return { id: ++S.n, g, st: ['atk', 'hp', 'aspd'][(Math.random() * 3) | 0], v: hRand(G.min, G.max) }; }
@@ -8784,8 +8785,8 @@ function rollHeartDrop() {   // 마왕 처치 시: 20% → 'rare' (그중 1% →
 function heartGain(g) { const h = heartMake(g); SAVE.heart.inv.push(h); if (SAVE.heart.eq.length < HEART.slots) SAVE.heart.eq.push(h.id); saveSave(); return h; }   // 빈 슬롯이 있으면 바로 장착
 function rerollHeart(id) {   // 재설정: 조각 500 → 등급업 판정 → 스탯 종류·수치 재배정
   const h = SAVE.heart.inv.find(q => q.id === id); if (!h) return { err: '심장이 없습니다' };
-  if (SAVE.shards < HEART.cost) return { err: '영혼 조각이 부족합니다' };
-  SAVE.shards -= HEART.cost;
+  const cost = heartCost(h); if (SAVE.shards < cost) return { err: '영혼 조각이 부족합니다' };
+  SAVE.shards -= cost; h.rr = (h.rr | 0) + 1;
   const before = { g: h.g, st: h.st, v: h.v }, G = HG[h.g]; let up = false;
   if (G.next && Math.random() < G.up) { h.g = G.next; up = true; }
   const N = HG[h.g]; h.st = ['atk', 'hp', 'aspd'][(Math.random() * 3) | 0]; h.v = hRand(N.min, N.max);
@@ -8869,8 +8870,8 @@ function renderHeart() {
     <div class="horb ${h.g}"><div class="hring"></div><img src="${heartImg(h.g, 150)}"></div>
     <div class="hopt">${hOpt(h)} <small>(${G.name} 범위 ${G.min}~${G.max}%)</small></div>
     ${hLast ? `<div class="hcube"><div><small>이전</small><b style="color:${HG[hLast.before.g].col}">[${HG[hLast.before.g].name}] ${hOpt(hLast.before)}</b></div><i>➜</i><div><small>이후</small><b style="color:${HG[hLast.after.g].col}">[${HG[hLast.after.g].name}] ${hOpt(hLast.after)}</b></div></div>` : ''}
-    <div class="hcost"><span>재설정 비용</span><b>◆ ${HEART.cost}</b><span>보유</span><b class="${SAVE.shards < HEART.cost ? 'lack' : ''}">◆ ${SAVE.shards}</b></div>
-    <div class="row"><button id="hReroll" ${SAVE.shards < HEART.cost ? 'disabled' : ''}>재설정</button><button class="sm" id="hEquip">${eq ? '장착 해제' : '장착'}</button><button class="sm" id="hDis">분해 (+${G.dis})</button></div>`;
+    <div class="hcost"><span>재설정 비용</span><b>◆ ${heartCost(h)}</b><span>보유</span><b class="${SAVE.shards < heartCost(h) ? 'lack' : ''}">◆ ${SAVE.shards}</b></div>
+    <div class="row"><button id="hReroll" ${SAVE.shards < heartCost(h) ? 'disabled' : ''}>재설정</button><button class="sm" id="hEquip">${eq ? '장착 해제' : '장착'}</button><button class="sm" id="hDis">분해 (+${G.dis})</button></div>`;
   $('hReroll').onclick = () => {
     const r = rerollHeart(h.id); if (r.err) return;
     hLast = r; renderHeart();
