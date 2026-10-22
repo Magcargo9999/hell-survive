@@ -2792,11 +2792,12 @@ function eyeHit(b) { if (b.mob) { hurtPlayer(b.dmg); return; } if (b.mini) miniH
 function updateEliteShots(dt) {
   for (const e of enemies) {
     if (!e.elite || e.kind !== 'mob' || e.hp <= 0) continue;
+    if (!chal && P.tier < 3) continue;   // v7.15: 초보자 배려 — 지하 1~3층(챌린지 제외)에서는 정예가 구슬을 쏘지 않는다
     if (e.shotT === undefined) e.shotT = 2 + rand() * 3;
     e.shotT -= dt; if (e.shotT > 0) continue;
     const d = Math.hypot(P.x - e.x, P.y - e.y); if (d > 640 || d < 90) { e.shotT = 0.5; continue; }
     e.shotT = 4.5 + rand() * 1.5; e.flash = 0.18;
-    eyeBul(e.x, e.y - 20, Math.atan2(P.y - e.y, P.x - e.x), 220, { mob: true, dmg: e.dmg * 0.8, r: 8, life: 3.4 });
+    eyeBul(e.x, e.y - 20, Math.atan2(P.y - e.y, P.x - e.x), 180, { mob: true, dmg: e.dmg * 0.8, r: 8, life: 4.0 });
   }
 }
 function updateEbul(dt) {
@@ -3474,7 +3475,7 @@ function updateTwins(dt) {
   const T = P.tw; if (!T) return;
   if (!T.init) { T.x = P.x - 70; T.y = P.y + 10; T.init = true; }   // 시작 위치: 왼쪽 뒤
   if (whipQ) { updateWhip(dt); T.x = P.x - P.face * twLen() * 0.6; T.y = P.y + 6; T.vx = P.vx; T.vy = P.vy; return; }
-  const L = twLen(), h = dt / 2, pv = P.moving ? Math.hypot(P.vx, P.vy) : 0, spin = ((2.4 + 0.6 * (P.up.whirl | 0)) * L + 0.9 * pv) * (P.chain4 > 0 ? 2 : 1) * (1 + 0.5 * Math.max(0, P.aspd - 1)) * (1 + 0.04 * (P.up.whirl | 0) * (1 - (P.twSt || 0)));   /* v7.12 원심력: 움직일 때 회전 +4%/단계 · v7.04: 공속 +X% → 사슬 회전 +X/2% */   // 빨리 움직일수록 사슬이 빨리 돈다
+  const L = twLen(), h = dt / 2, pv = P.moving ? Math.hypot(P.vx, P.vy) : 0, spin = ((2.4 + 0.6 * (P.up.whirl | 0)) * L + 0.9 * pv * Math.pow(Math.max(1, L / (P.chain4 > 0 ? 2 : 1) / TW.L[P.form]), 0.6)) * (P.chain4 > 0 ? 2 : 1) * (1 + 0.5 * Math.max(0, P.aspd - 1)) * (1 + 0.04 * (P.up.whirl | 0) * (1 - (P.twSt || 0)));   /* v7.12 원심력: 움직일 때 회전 +4%/단계 · v7.04: 공속 +X% → 사슬 회전 +X/2% */   // 빨리 움직일수록 사슬이 빨리 돈다
   for (let k = 0; k < 2; k++) {
     const dmp = Math.exp(-0.7 * h); T.vx = P.vx + (T.vx - P.vx) * dmp; T.vy = P.vy + (T.vy - P.vy) * dmp;   // 본체를 따라 끌려간다
     let rx = T.x - P.x, ry = T.y - P.y, d = Math.hypot(rx, ry) || 1, nx = rx / d, ny = ry / d;
@@ -7052,7 +7053,7 @@ function render() {
 }
 let skillBtn = { x: 0, y: 0, w: 0, h: 0 };
 const hudCards = { t: 0, L: [] };
-const dmName = k => k === '?' ? '기타 (출처 없음)' : k === 'bugBoom' ? '이공벌레 폭발' : k === 'burn' ? '화상 (불꽃 지속 피해)' : k === 'ignite' ? '점화 (지속 피해)' : k === 'twTip' ? '창날 타격' : k === 'twChain' ? '사슬 휘두르기' : String(k).startsWith('g:') ? GUN_AMMO[k.slice(2)].name + (k === 'g:F' ? ' (화상 포함)' : '') : k === 'basic' ? '기본 공격' : String(k).startsWith('sk:') ? '【스킬】' + (SKILLS[k.slice(3)] ? SKILLS[k.slice(3)].name : k.slice(3)) : k === 'trail' ? '이동 자국 (장판)' : (SYNERGIES.find(x => x.id === k) ? '★' + (a => a ? a[0] : SYNERGIES.find(x => x.id === k).name)(altOf(SYNERGIES.find(x => x.id === k))) : upName(k));
+const dmName = k => k === '?' ? '기타 (출처 없음)' : k === 'bugBoom' ? '이공벌레 폭발' : k === 'burn' ? '화상 (불꽃 지속 피해)' : k === 'ignite' ? '점화 (지속 피해)' : k === 'twTip' ? '창날 타격' : k === 'twChain' ? '사슬 몸통 타격' : String(k).startsWith('g:') ? GUN_AMMO[k.slice(2)].name + (k === 'g:F' ? ' (화상 포함)' : '') : k === 'basic' ? '기본 공격' : String(k).startsWith('sk:') ? '【스킬】' + (SKILLS[k.slice(3)] ? skillName(k.slice(3)) : k.slice(3)) : k === 'trail' ? (P.route === 'lava' ? '용암 흔적 (장판)' : P.route === 'bomb' ? '불웅덩이 (장판)' : '독 자국 (장판)') : (SYNERGIES.find(x => x.id === k) ? '★' + (a => a ? a[0] : SYNERGIES.find(x => x.id === k).name)(altOf(SYNERGIES.find(x => x.id === k))) : upName(k));
 function drawDmeter() { dmeterBox(DMETER, '딜 미터기', chal ? 124 : 90); if (DBOSS && boss && boss.hp > 0 && Object.keys(DBOSS).length) dmeterBox(DBOSS, '보스 딜 미터기', Math.min(H - 220, (chal ? 124 : 90) + 24 + Math.min(8, Object.keys(DMETER).length) * 22 + 14), 6); }
 function dmeterBox(M, title, y0, maxN) {   // v5.11: 딜 미터기 (설정에서 켜기) — 기본 공격과 스킬 카드별 누적 피해
   const L = Object.entries(M).sort((a, b) => b[1] - a[1]).slice(0, maxN || 8), tot = L.reduce((a, b) => a + b[1], 0); if (!tot) return;
@@ -8334,7 +8335,7 @@ window.__G = {
   get zones() { return zones; }, get ebul() { return ebul; }, get EYE() { return EYE; }, get shards() { return shards; }, get bigQ() { return bigQ; }, get bombQ() { return bombQ; }, get holyQ() { return holyQ; }, get afx() { return afx; }, get dashQ() { return dashQ; }, get beam() { return beam; }, get evo() { return evo; }, get choices() { return choices; },
   get SAVE() { return SAVE; }, render, get boss() { return boss; }, get mini() { return mini; }, get skp() { return skp; }, SK_PH, SKB, get mdeath() { return mdeath; }, spawnMini, miniDefeated, spawnBoss, raiseCastle, enterArena, exitArena, get castle() { return castle; }, get arena() { return arena; }, get trans() { return trans; }, openChest, openShop, buildCards, get joy() { return joy; }, get gt() { return gt; }, get allies() { return allies; }, get items() { return items; }, spawnItem, get globs() { return globs; }, recruit, keys, tick, needFor, pick: pickChoice, cast: castSkill, spawnBug,
   get slots() { return slots; }, spawnMimic, slotRoll, get MIM() { return MIM; },  get slotUI() { return slotUI; }, get udeath() { return udeath; }, get lasers() { return lasers; }, get eyeF() { return eyeF; }, get uniqCd() { return uniqCd; }, spawnSlot, spawnUniq, gainRelic, useTeleport, closeSlot, slotSpin, slotKey, updateSlotUI, SLOT_FX, SLOT_APPLY, UNIQ, RELICS, trySpawnUniq, UNIQ_P, setState(v) { state = v; }, spawnEnemy,
-  get DMETER() { return DMETER; }, get DBOSS() { return DBOSS; }, get DUNK() { return DUNK; }, setDbg(v) { DDBG = v; }, dmName, get eleQ() { return eleQ; }, fwStart, setT(v) { gt = v; }, calcShards, FD, LIZ_FORMS, TWIN_FORMS, startFw, snapP, get fwFx() { return fwFx; }, get bsig() { return bsig; }, BMAP, inBlood, twLen, availSyn, SYNERGIES, UPGRADES, inPoly, hurtEnemy, startGame, addExp, hurt: hurtPlayer, rebuild: buildSpecies,
+  get DMETER() { return DMETER; }, get DBOSS() { return DBOSS; }, get DUNK() { return DUNK; }, setDbg(v) { DDBG = v; }, dmName, UPGRADES, UNIQUE, SYNERGIES, SKILLS, skillName, get eleQ() { return eleQ; }, fwStart, setT(v) { gt = v; }, calcShards, FD, LIZ_FORMS, TWIN_FORMS, startFw, snapP, get fwFx() { return fwFx; }, get bsig() { return bsig; }, BMAP, inBlood, twLen, availSyn, SYNERGIES, UPGRADES, inPoly, hurtEnemy, startGame, addExp, hurt: hurtPlayer, rebuild: buildSpecies,
   get rollQ() { return rollQ; }, get gunFx() { return gunFx; }, GUN, GUN_AMMO, GUNA, gunLoad, gunRange,
   get anOrbs() { return anOrbs; }, get anFx() { return anFx; }, AMAP, ANB, ANX, AN, anStart, anTrans, pickBossK, floorName, arenaExit,
   sizes() { const o = { enemies, orbs, items, shards, fx, nums, arcs, embers, zones, rings, globs, sprFx, blades, lights, ebul, afx, gunFx, cfx, bfx, healFx, allies, slots, cutSaws, airs, octoFx, smokes, skp, mfx }; const r = {}; for (const k in o) if (o[k] && o[k].length != null) r[k] = o[k].length; return r; },
