@@ -437,7 +437,7 @@ const GUNA = {"i0":[[0,0,52,92,18.0,90],[54,0,61,91,33.0,89],[117,0,53,91,31.0,8
 // 탄환: 재장전할 때 6발이 하나씩 무작위로 정해진다 (불씨 각인 카드만큼 일반탄 → 불씨탄)
 const GUN_AMMO = {
   N: { name: '일반탄', p: 0.55, dm: 1.0, rgb: '255,170,80', spr: 'bN', hit: 'xN' },
-  R: { name: '도탄', p: 0.25, dm: 1.0, rgb: '90,140,255', spr: 'bR', hit: 'xR', bounce: 3 },   // 적이나 화면 끝에 맞으면 튕긴다 (최대 3번)
+  R: { name: '도탄', p: 0.25, dm: 0.8, rgb: '90,140,255', spr: 'bR', hit: 'xR', bounce: 3 },   // 적이나 화면 끝에 맞으면 튕긴다 (최대 3번)
   F: { name: '불씨탄', p: 0.15, dm: 2.0, rgb: '255,60,50', spr: 'bF', hit: 'xF', burn: 3 },    // 2배 피해 · 관통 · 3초 지속 피해
   B: { name: '공포탄', p: 0.05, dm: 0.1, rgb: '190,90,255', spr: 'bB', hit: 'xB' },          // 꽝 (10%)
 };
@@ -4851,6 +4851,7 @@ const SLOT_FX = [
   { id: 'heal',  good: true,  name: '완전 회복',    desc: '체력 100% 회복 + 3초 무적' },
   { id: 'lvl',   good: true,  name: '레벨 +1',      desc: '지금 바로 레벨이 1 오른다 (카드 선택)' },
   { id: 'boom',  good: true,  name: '지옥 폭죽',    desc: '화면 안의 마물이 전부 터진다 (정예·이공벌레는 체력의 절반 이상, 보스급은 약간)' },
+  { id: 'chest', good: true,  name: '보물 상자',    desc: '내 발밑에 보물 상자가 떨어진다' },
   { id: 'curse', good: false, name: '운명의 저주',  desc: '다음 레벨업 카드를 고를 수 없다 (무작위 1장이 억지로 적용)' },
   { id: 'half',  good: false, name: '피의 대가',    desc: '현재 체력이 절반이 된다' },
   { id: 'slow',  good: false, name: '굳어붙은 발',  desc: '30~60초 동안 이동 속도 -35%' },
@@ -4922,6 +4923,7 @@ const SLOT_APPLY = {
   heal()  { P.hp = P.max; P.shield = Math.max(P.shield, 3); },
   lvl(u)  { P.exp += P.need; u.after = () => { if (P.exp >= P.need) levelUp(); }; },
   boom(u) { u.after = slotBoom; },
+  chest() { dropChest(P.x + 30, P.y + 10); },
   curse() { P.curseCard = 1; },
   half()  { P.hp = Math.max(1, Math.ceil(P.hp / 2)); P.healBank = Math.min(P.healBank, P.max * 0.04); },
   slow()  { P.slowT = 30 + Math.floor(rand() * 31); },
