@@ -1,0 +1,583 @@
+{
+ "note": "§4 사람형 시너지 정책은 시간 부족으로 단순화: 재료카드 3장 우선→목표 시너지 선택. 아래는 사용한 정책(기존 build_defs 기반).",
+ "game_ver": "8.20",
+ "builds": [
+  {
+   "variant": "wolf:crimson",
+   "진화조건": [
+    "thirst>=1 (루트 혈랑)"
+   ],
+   "목표시너지": "vamp",
+   "재료카드": [
+    "claw",
+    "heart"
+   ],
+   "보조카드우선순위": [
+    "thirst",
+    "armor",
+    "speed",
+    "thunder",
+    "guard",
+    "blade"
+   ],
+   "비추천카드": [
+    "exp",
+    "magnet",
+    "knock",
+    "orb",
+    "shard",
+    "crit",
+    "move"
+   ],
+   "근거": "흡혈 발톱(공격 적중 시 회복) · 혈랑 전용 A티어, 처치 회복 계열과 맞음"
+  },
+  {
+   "variant": "wolf:holy",
+   "진화조건": [
+    "thirst>=1 (루트 혈랑)",
+    "heart>=2 (최종 성혈랑 조건)"
+   ],
+   "목표시너지": "vamp",
+   "재료카드": [
+    "claw",
+    "heart"
+   ],
+   "보조카드우선순위": [
+    "thirst",
+    "armor",
+    "speed",
+    "thunder",
+    "guard",
+    "blade"
+   ],
+   "비추천카드": [
+    "exp",
+    "magnet",
+    "knock",
+    "orb",
+    "shard",
+    "crit",
+    "move"
+   ],
+   "근거": "지옥의 심장은 재료와 최종 조건을 같이 충족"
+  },
+  {
+   "variant": "wolf:fallen",
+   "진화조건": [
+    "thirst>=1 (루트 혈랑)",
+    "숨은 진화 해금 상태로 측정"
+   ],
+   "목표시너지": "vamp",
+   "재료카드": [
+    "claw",
+    "heart"
+   ],
+   "보조카드우선순위": [
+    "thirst",
+    "speed",
+    "armor",
+    "guard",
+    "thunder",
+    "blade"
+   ],
+   "비추천카드": [
+    "exp",
+    "magnet",
+    "knock",
+    "orb",
+    "shard",
+    "crit",
+    "move"
+   ],
+   "근거": "혈랑 계열 동일 정책"
+  },
+  {
+   "variant": "wolf:abyss",
+   "진화조건": [],
+   "목표시너지": "deadeye",
+   "재료카드": [
+    "crit",
+    "claw"
+   ],
+   "보조카드우선순위": [
+    "claw",
+    "speed",
+    "thunder",
+    "armor",
+    "guard",
+    "blade"
+   ],
+   "비추천카드": [
+    "exp",
+    "magnet",
+    "knock",
+    "orb",
+    "shard",
+    "move"
+   ],
+   "근거": "공속 높은 연타형 → 치명타 ×2.3 (공용 S, 지난 데이터 보스 +)"
+  },
+  {
+   "variant": "wolf:twin",
+   "진화조건": [
+    "speed>=2 (루트 쌍두)"
+   ],
+   "목표시너지": "vamp",
+   "재료카드": [
+    "claw",
+    "heart"
+   ],
+   "보조카드우선순위": [
+    "speed",
+    "armor",
+    "thunder",
+    "guard",
+    "blade"
+   ],
+   "비추천카드": [
+    "exp",
+    "magnet",
+    "knock",
+    "orb",
+    "shard",
+    "crit",
+    "move"
+   ],
+   "근거": "다단 타격에 적중 시 회복이 잘 맞음. 날렵한 발톱은 진화 조건이라 먼저"
+  },
+  {
+   "variant": "snail:venom",
+   "진화조건": [],
+   "목표시너지": "corpse",
+   "재료카드": [
+    "range",
+    "claw"
+   ],
+   "보조카드우선순위": [
+    "sticky",
+    "spread",
+    "armor",
+    "guard",
+    "heart",
+    "thunder"
+   ],
+   "비추천카드": [
+    "exp",
+    "magnet",
+    "knock",
+    "orb",
+    "shard",
+    "crit",
+    "move"
+   ],
+   "근거": "독 자국 위 처치 폭발 · 달팽이 전용. 독 전용 카드(끈적한 독·번지는 독) 먼저"
+  },
+  {
+   "variant": "snail:lava",
+   "진화조건": [
+    "용암 4초 체류 (시뮬이 플래그로 충족)"
+   ],
+   "목표시너지": "corpse",
+   "재료카드": [
+    "range",
+    "claw"
+   ],
+   "보조카드우선순위": [
+    "sticky",
+    "spread",
+    "magma",
+    "armor",
+    "guard",
+    "heart"
+   ],
+   "비추천카드": [
+    "exp",
+    "magnet",
+    "knock",
+    "orb",
+    "shard",
+    "crit",
+    "move"
+   ],
+   "근거": "용암 폭발(알트 이름). 용암 전용 카드 우선"
+  },
+  {
+   "variant": "snail:bomb",
+   "진화조건": [],
+   "목표시너지": "tstorm",
+   "재료카드": [
+    "thunder",
+    "speed"
+   ],
+   "보조카드우선순위": [
+    "claw",
+    "range",
+    "armor",
+    "guard",
+    "heart",
+    "blade"
+   ],
+   "비추천카드": [
+    "exp",
+    "magnet",
+    "knock",
+    "orb",
+    "shard",
+    "crit",
+    "move"
+   ],
+   "근거": "폭탄은 자국이 없어 corpse 부적합 → 공용 낙뢰 조합. 느린 공속 보완"
+  },
+  {
+   "variant": "archer:red",
+   "진화조건": [],
+   "목표시너지": "gust",
+   "재료카드": [
+    "kite",
+    "move"
+   ],
+   "보조카드우선순위": [
+    "multi",
+    "pierceA",
+    "claw",
+    "armor",
+    "guard",
+    "speed"
+   ],
+   "비추천카드": [
+    "exp",
+    "magnet",
+    "knock",
+    "orb",
+    "shard",
+    "crit"
+   ],
+   "근거": "이동 중 사격 피해 +20% 계열과 맞는 전용 조합(둔화·넉백). 다발 사격 우선"
+  },
+  {
+   "variant": "archer:holy",
+   "진화조건": [
+    "포션 6개 (시뮬이 플래그로 충족)",
+    "snipe>=1"
+   ],
+   "목표시너지": "mark",
+   "재료카드": [
+    "snipe",
+    "crit"
+   ],
+   "보조카드우선순위": [
+    "multi",
+    "claw",
+    "pierceA",
+    "armor",
+    "guard",
+    "speed"
+   ],
+   "비추천카드": [
+    "exp",
+    "magnet",
+    "knock",
+    "orb",
+    "shard",
+    "move"
+   ],
+   "근거": "먼 거리 치명타 +30% · 성화 엔딩(먼 거리 +25%)과 맞음"
+  },
+  {
+   "variant": "archer:skel",
+   "진화조건": [
+    "저주받은 독약 (시뮬이 플래그로 충족)"
+   ],
+   "목표시너지": "deadeye",
+   "재료카드": [
+    "crit",
+    "claw"
+   ],
+   "보조카드우선순위": [
+    "pierceA",
+    "multi",
+    "armor",
+    "guard",
+    "speed",
+    "thunder"
+   ],
+   "비추천카드": [
+    "exp",
+    "magnet",
+    "knock",
+    "orb",
+    "shard",
+    "move"
+   ],
+   "근거": "느리고 한 방이 큰 저주 루트 → 치명타 ×2.3"
+  },
+  {
+   "variant": "chimera",
+   "진화조건": [],
+   "목표시너지": "galeWing",
+   "재료카드": [
+    "airA",
+    "airB"
+   ],
+   "보조카드우선순위": [
+    "airC",
+    "claw",
+    "speed",
+    "armor",
+    "guard",
+    "diveUp"
+   ],
+   "비추천카드": [
+    "exp",
+    "magnet",
+    "knock",
+    "orb",
+    "shard",
+    "crit",
+    "move"
+   ],
+   "근거": "바람 전용 조합(에어슬래시 +1갈래·피해 +30%), 쌍날 바람 우선"
+  },
+  {
+   "variant": "chimera:flame",
+   "진화조건": [],
+   "목표시너지": "blaze",
+   "재료카드": [
+    "flameA",
+    "flameB"
+   ],
+   "보조카드우선순위": [
+    "breathUp",
+    "claw",
+    "armor",
+    "guard",
+    "speed",
+    "diveUp"
+   ],
+   "비추천카드": [
+    "exp",
+    "magnet",
+    "knock",
+    "orb",
+    "shard",
+    "crit",
+    "move"
+   ],
+   "근거": "화염 전용 조합. 끓는 숨결은 Lv.20 이후(스킬 보유 시) 열림"
+  },
+  {
+   "variant": "chimera:dream",
+   "진화조건": [
+    "이공벌레 처치 (시뮬이 플래그로 충족)"
+   ],
+   "목표시너지": "gaze",
+   "재료카드": [
+    "dreamA",
+    "dreamB"
+   ],
+   "보조카드우선순위": [
+    "rushUp",
+    "claw",
+    "armor",
+    "guard",
+    "speed",
+    "diveUp"
+   ],
+   "비추천카드": [
+    "exp",
+    "magnet",
+    "knock",
+    "orb",
+    "shard",
+    "crit",
+    "move"
+   ],
+   "근거": "광기의 시선(받는 피해 +20%) · 몽환 전용 A"
+  },
+  {
+   "variant": "lizard:rage",
+   "진화조건": [
+    "체력 10 이하 경험 (시뮬이 플래그로 충족)"
+   ],
+   "목표시너지": "regen",
+   "재료카드": [
+    "scale",
+    "heart"
+   ],
+   "보조카드우선순위": [
+    "smash",
+    "bloodlust",
+    "rageUp",
+    "claw",
+    "armor",
+    "speed"
+   ],
+   "비추천카드": [
+    "exp",
+    "magnet",
+    "knock",
+    "orb",
+    "shard",
+    "crit",
+    "move"
+   ],
+   "근거": "재생 비늘(리자드 전용 S)"
+  },
+  {
+   "variant": "lizard:water",
+   "진화조건": [],
+   "목표시너지": "regen",
+   "재료카드": [
+    "scale",
+    "heart"
+   ],
+   "보조카드우선순위": [
+    "tideUp",
+    "smash",
+    "claw",
+    "armor",
+    "speed",
+    "guard"
+   ],
+   "비추천카드": [
+    "exp",
+    "magnet",
+    "knock",
+    "orb",
+    "shard",
+    "crit",
+    "move"
+   ],
+   "근거": "재생 비늘 + 깊은 물결"
+  },
+  {
+   "variant": "lizard:guard",
+   "진화조건": [],
+   "목표시너지": "regen",
+   "재료카드": [
+    "scale",
+    "heart"
+   ],
+   "보조카드우선순위": [
+    "shellUp",
+    "claw",
+    "armor",
+    "speed",
+    "guard"
+   ],
+   "비추천카드": [
+    "exp",
+    "magnet",
+    "knock",
+    "orb",
+    "shard",
+    "crit",
+    "move"
+   ],
+   "근거": "수호 루트는 내려찍기(smash) 없음(noRoute guard)"
+  },
+  {
+   "variant": "twins",
+   "진화조건": [],
+   "목표시너지": "vortex",
+   "재료카드": [
+    "whirl",
+    "move"
+   ],
+   "보조카드우선순위": [
+    "heavy",
+    "chainUp",
+    "whipUp",
+    "claw",
+    "speed",
+    "armor"
+   ],
+   "비추천카드": [
+    "exp",
+    "magnet",
+    "knock",
+    "orb",
+    "shard",
+    "crit"
+   ],
+   "근거": "회오리 방벽(큰 휘두르기 중 받는 피해 -20%) · 이속이 곧 공격력이라 질주도 이득"
+  },
+  {
+   "variant": "ghost",
+   "진화조건": [],
+   "목표시너지": "deadeye",
+   "재료카드": [
+    "crit",
+    "claw"
+   ],
+   "보조카드우선순위": [
+    "gmore",
+    "gwide",
+    "speed",
+    "armor",
+    "guard",
+    "thunder"
+   ],
+   "비추천카드": [
+    "exp",
+    "magnet",
+    "knock",
+    "orb",
+    "shard",
+    "move"
+   ],
+   "근거": "구슬 유령 전용 조합이 없어 공용 중 지난 데이터 good 목록에 있는 급소 사냥꾼"
+  },
+  {
+   "variant": "octo",
+   "진화조건": [],
+   "목표시너지": "oBig",
+   "재료카드": [
+    "range",
+    "claw"
+   ],
+   "보조카드우선순위": [
+    "speed",
+    "armor",
+    "guard",
+    "thunder",
+    "blade",
+    "heart"
+   ],
+   "비추천카드": [
+    "exp",
+    "magnet",
+    "knock",
+    "orb",
+    "shard",
+    "crit",
+    "move"
+   ],
+   "근거": "거대 마력탄 (문어 전용). 알트 이름 사용: 먼 마법진·마력 증폭"
+  },
+  {
+   "variant": "gun",
+   "진화조건": [],
+   "목표시너지": "__none__",
+   "재료카드": [
+    "gReload",
+    "gSpec"
+   ],
+   "보조카드우선순위": [
+    "gEmber",
+    "gBounty",
+    "dmg",
+    "speed"
+   ],
+   "비추천카드": [
+    "exp",
+    "magnet",
+    "knock",
+    "orb",
+    "shard",
+    "move"
+   ],
+   "근거": "총잡이 고유 카드 위주"
+  }
+ ]
+}
