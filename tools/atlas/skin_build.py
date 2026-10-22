@@ -1,5 +1,5 @@
 """스킨 시트 → 아틀라스 + 일러스트. 자르기·배경 제거만 (색 수정 없음).
-사용: python3 tools/atlas/skin_build.py <악마사냥꾼(레어) 시트> <지옥늑대 시트> <악마사냥꾼(에픽) 시트>
+사용: python3 tools/atlas/skin_build.py <악마사냥꾼(레어) 시트> <지옥늑대 시트> <악마사냥꾼(에픽) 시트> [현무 리저드 시트]
  → src/assets/skin/{gunH, gunE, wolfE}.{webp,json} + {gunH,gunE,wolfE}_art.webp
 ※ v8.04: 배경 판정 밝기(thr)를 낮췄다 — 어두운 검은 옷이 투명하게 뚫리던 문제(thr 34 → 16~20) + 틈 닫기(close)
 프레임 [x, y, w, h, 기준x(몸통 가운데), 기준y(발)] — 키 이름은 게임 쪽 동작 이름과 같게 둔다"""
@@ -9,7 +9,7 @@ from PIL import Image
 from scipy import ndimage as nd
 ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 OUT = os.path.join(ROOT, 'src/assets/skin'); os.makedirs(OUT, exist_ok=True)
-def build(src, name, rows, art, thr=34, close=0, valley=0):   # thr: 배경으로 볼 최대 밝기(어두운 옷이 잘리지 않게 낮게 · v8.04부터 16~22)
+def build(src, name, rows, art, thr=34, close=0, valley=0, holemax=0, thin=False):   # thr: 배경으로 볼 최대 밝기(어두운 옷이 잘리지 않게 낮게 · v8.04부터 16~22)
     A = np.array(Image.open(src).convert('RGBA')); RGB = A[:, :, :3].astype(int)
     tiles, frames = [], {}
     if valley:   # v8.04: 칸 경계를 '그림이 가장 비어 있는 세로줄'로 옮긴다 — 이웃 칸과 붙은 몸·꼬리·이펙트가 잘리지 않게 (경계 ±valley px 안에서)
@@ -35,7 +35,12 @@ def build(src, name, rows, art, thr=34, close=0, valley=0):   # thr: 배경으�
                 if sz[i] >= 25 and not thin and not (edge and sz[i] < 0.2 * mx): ok.append(i + 1)
             keep = np.isin(lab, ok)
             if close: keep = nd.binary_closing(np.pad(keep, close + 2), structure=np.ones((3, 3)), iterations=close)[close + 2:-(close + 2), close + 2:-(close + 2)] | keep   # 닫기: 가는 틈을 메워 구멍 메우기가 잘 되게
-            keep = nd.binary_fill_holes(keep)
+            if thin:   # 패널 테두리 조각(가는 가로·세로 선) 지우기
+                th = nd.binary_dilation(nd.binary_opening(keep, structure=np.ones((3, 3))), iterations=1)
+                keep &= ~((nd.binary_opening(keep, structure=np.ones((1, 12))) | nd.binary_opening(keep, structure=np.ones((12, 1)))) & ~th)
+            if holemax:   # 작은 구멍만 메운다 (이펙트 사이 큰 빈 곳이 까맣게 채워지지 않게)
+                hole = nd.binary_fill_holes(keep) & ~keep; hl, hn = nd.label(hole); hs = nd.sum(hole, hl, range(1, hn + 1)); keep = keep | np.isin(hl, [i + 1 for i in range(hn) if hs[i] <= holemax])
+            else: keep = nd.binary_fill_holes(keep)
             big = lab == (int(np.argmax(sz)) + 1)
             ys, xs = np.where(keep); by, bx = np.where(big)
             X0, X1, Y0, Y1 = xs.min(), xs.max() + 1, ys.min(), ys.max() + 1
@@ -52,6 +57,7 @@ def build(src, name, rows, art, thr=34, close=0, valley=0):   # thr: 배경으�
     Image.open(src).convert('RGB').crop(art).save(os.path.join(OUT, name + '_art.webp'), quality=90)
     print(name, out.size, {k: len(v) for k, v in frames.items()})
 hunter, wolf, hunterE = sys.argv[1], sys.argv[2], sys.argv[3]
+lizG = sys.argv[4] if len(sys.argv) > 4 else None
 # 악마 사냥꾼 (악마 총잡이 최종 진화 스킨): 원본은 오른쪽을 본다 — 게임 키 i2 w2 a2 r2 h2 d2 s2
 build(hunter, 'gunH', {
     'i2': (45, 156, [(796, 911)]),
@@ -80,3 +86,12 @@ build(hunterE, 'gunE', {
     'd2': (714, 818, [(515, 588), (589, 684), (684, 836), (836, 994)]),
     's2': (862, 1002, [(36, 202, 893), (202, 356), (356, 506), (506, 736), (738, 900), (905, 1066)]),
 }, (10, 10, 345, 668), thr=20, close=1)
+# 현무 리저드 (리저드 수호의 길 최종 진화 스킨, 레어): 시트 1448x1086, 원본은 오른쪽을 본다 · 키 = 게임 동작 이름
+if lizG: build(lizG, 'lizG', {
+    'idle':   (402, 498, [(140,338),(338,545),(545,757),(757,962),(962,1188),(1188,1420)]),
+    'walk':   (502, 598, [(140,305),(305,467),(467,623),(623,770),(770,930),(930,1085),(1085,1268),(1268,1435)]),
+    'attack': (602, 698, [(140,318),(318,520),(520,792),(792,1030),(1030,1232),(1232,1435)]),
+    'skill':  (703, 838, [(100,262),(262,522),(522,752),(752,962),(962,1160),(1160,1440)]),
+    'hit':    (848, 942, [(100,252),(252,380),(380,545)]),
+    'death':  (848, 948, [(652,800),(800,935),(935,1085),(1085,1235),(1235,1405)]),
+}, (120, 50, 850, 402), thr=24, close=1, valley=30, holemax=160, thin=True)
