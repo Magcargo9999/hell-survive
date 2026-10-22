@@ -220,7 +220,7 @@
 /* ============================================================
  * 0. 기본 설정
  * ============================================================ */
-const SRC = { mfloor: '__MFLOOR__', mprops: '__MPROPS__', mmob: '__MMOB__', mmap: '__MMAP__', mini: '__MINI__', snail: '__SNAIL__', base: '__ATLAS__', pup: '__PUP__', dark: '__DARK__', bug: '__BUG__', floor: '__FLOOR__', props: '__PROPS__', castle: '__CASTLE__', arena: '__ARENA__', boss: '__BOSS__', mobs: '__MOBS__', blood: '__BLOOD__', twin: '__TWIN__', triple: '__TRIPLE__', items: '__ITEMS__', drophb: '__DROPHB__', droppo: '__DROPPO__', blood2: '__BLOOD2__', holy: '__HOLY__', lavasn: '__LAVASN__', lavafx: '__LAVAFX__', venom2: '__VENOM2__', venom3: '__VENOM3__', venomfx: '__VENOMFX__', elf0: '__ELF0__', elf1: '__ELF1__', skel: '__SKEL__', chim0: '__CHIM0__', chim1: '__CHIM1__', chim2: '__CHIM2__', chimfx: '__CHIMFX__', flm1: '__FLM1__', flm2: '__FLM2__', flmfx: '__FLMFX__', drm1: '__DRM1__', drm2: '__DRM2__', drfx: '__DRFX__', arcr: '__ARCR__', arch: '__ARCH__', arfx: '__ARFX__', hlfx: '__HLFX__', slot: '__SLOT__', uniq: '__UNIQ__', eyem: '__EYEM__', relic: '__RELIC__', liz0: '__LIZ0__', liz1: '__LIZ1__', liz2: '__LIZ2__', liz3: '__LIZ3__', gh: '__GH__', gg: '__GG__', oc: '__OC__', lg: '__LG__', os: '__OS__', bs: '__BS__', tw0: '__TW0__', tw1: '__TW1__', tw2: '__TW2__', fwb: '__FWB__', fwp: '__FWP__', fwfx: '__FWFX__', bmap: '__BMAP__', skb: '__SKB__', skw: '__SKW__', chm: '__CHMAP__', cm: '__CM__', ab: '__AB__', an: '__AN__', anfx: '__ANFX__', amap: '__AMAP__', gun: '__GUN__' };
+const SRC = { sh: '__SH__', mfloor: '__MFLOOR__', mprops: '__MPROPS__', mmob: '__MMOB__', mmap: '__MMAP__', mini: '__MINI__', snail: '__SNAIL__', base: '__ATLAS__', pup: '__PUP__', dark: '__DARK__', bug: '__BUG__', floor: '__FLOOR__', props: '__PROPS__', castle: '__CASTLE__', arena: '__ARENA__', boss: '__BOSS__', mobs: '__MOBS__', blood: '__BLOOD__', twin: '__TWIN__', triple: '__TRIPLE__', items: '__ITEMS__', drophb: '__DROPHB__', droppo: '__DROPPO__', blood2: '__BLOOD2__', holy: '__HOLY__', lavasn: '__LAVASN__', lavafx: '__LAVAFX__', venom2: '__VENOM2__', venom3: '__VENOM3__', venomfx: '__VENOMFX__', elf0: '__ELF0__', elf1: '__ELF1__', skel: '__SKEL__', chim0: '__CHIM0__', chim1: '__CHIM1__', chim2: '__CHIM2__', chimfx: '__CHIMFX__', flm1: '__FLM1__', flm2: '__FLM2__', flmfx: '__FLMFX__', drm1: '__DRM1__', drm2: '__DRM2__', drfx: '__DRFX__', arcr: '__ARCR__', arch: '__ARCH__', arfx: '__ARFX__', hlfx: '__HLFX__', slot: '__SLOT__', uniq: '__UNIQ__', eyem: '__EYEM__', relic: '__RELIC__', liz0: '__LIZ0__', liz1: '__LIZ1__', liz2: '__LIZ2__', liz3: '__LIZ3__', gh: '__GH__', gg: '__GG__', oc: '__OC__', lg: '__LG__', os: '__OS__', bs: '__BS__', tw0: '__TW0__', tw1: '__TW1__', tw2: '__TW2__', fwb: '__FWB__', fwp: '__FWP__', fwfx: '__FWFX__', bmap: '__BMAP__', skb: '__SKB__', skw: '__SKW__', chm: '__CHMAP__', cm: '__CM__', ab: '__AB__', an: '__AN__', anfx: '__ANFX__', amap: '__AMAP__', gun: '__GUN__' };
 const SNAIL_RECTS = [[0, 0, 216, 146], [220, 0, 273, 208], [497, 0, 276, 208], [777, 0, 289, 214]];
 const PROP_RECTS = [[0, 0, 38, 48], [40, 0, 22, 49], [64, 0, 34, 48], [100, 0, 26, 44], [128, 0, 29, 44], [159, 0, 56, 44], [217, 0, 64, 59], [283, 0, 42, 44], [327, 0, 20, 48], [349, 0, 62, 62], [413, 0, 47, 64], [462, 0, 44, 56], [0, 66, 33, 62], [35, 66, 36, 56], [73, 66, 28, 57], [103, 66, 19, 29], [124, 66, 20, 46], [146, 66, 18, 28], [166, 66, 18, 23], [186, 66, 19, 31], [207, 66, 21, 31], [230, 66, 22, 30], [254, 66, 21, 18], [277, 66, 20, 19], [299, 66, 32, 50], [333, 66, 32, 49], [367, 66, 40, 46], [409, 66, 39, 46], [450, 66, 33, 45], [0, 130, 37, 45], [39, 130, 19, 29], [60, 130, 18, 29], [80, 130, 17, 18], [99, 130, 20, 19], [121, 130, 20, 20], [143, 130, 58, 60], [203, 130, 31, 54], [236, 130, 30, 54], [268, 130, 30, 54], [300, 130, 47, 53], [349, 130, 28, 53], [379, 130, 31, 53], [412, 130, 43, 41], [457, 130, 44, 40], [0, 192, 36, 11], [38, 192, 25, 16], [65, 192, 48, 11], [115, 192, 76, 57], [193, 192, 43, 49], [238, 192, 21, 21], [261, 192, 35, 45], [298, 192, 50, 38], [350, 192, 67, 77], [419, 192, 53, 57], [0, 271, 45, 79], [47, 271, 53, 24], [102, 271, 32, 36], [136, 271, 59, 53]];
 // 늑대 형태별 스프라이트 설정: 한 칸 크기, 배율, 원본이 바라보는 방향(flip), 공격이 맞는 프레임(hitF), 동작별 (줄, 프레임 수, 초당 프레임)
@@ -4970,6 +4970,7 @@ function drawSlotArrows() { for (const s of slots) if (!s.used) edgeArrow(s, '25
 const UNIQ = {
   belia: { name: '벨리아', sub: '불꽃채찍의 마녀', row: 0, reach: 215, half: 0.55, wind: 0.95, lashes: 1, spd: 150, hpK: 0.82, rgb: '255,150,70', rgb2: '190,100,255', from: 110 },
   octo: { name: '문어 마법사', sub: '심연의 직선 마법', row: -1, reach: 330, spd: 118, hpK: 0.9, rgb: '200,120,255', rgb2: '255,170,255', from: 150, tier: 2 },   // 히든: 난이도 2단계부터
+  shroom: { name: '대형 버섯 괴물', sub: '날뛰며 독 웅덩이를 뿌린다', row: -1, reach: 0, spd: 0, hpK: 1.0, rgb: '255,110,220', rgb2: '150,255,80', from: 110, tier: 5, mush: true },   // v6.61 히든: 지하 6~10층(버섯 맵)만
   celia: { name: '셀리아', sub: '업화의 채찍꾼',   row: 5, reach: 190, half: 0.5, wind: 0.8, lashes: 2, spd: 160, hpK: 0.76, rgb: '255,80,50', rgb2: '255,170,90', from: 190 },
 };
 const UNIQ_P = 0.0011;     // 스폰 틱마다 나올 확률 (틱이 초당 2~3번이라 낮게 잡아야 8분 안에 각자 절반쯤은 만난다)
@@ -4979,6 +4980,7 @@ function spawnUniq(k) {
   P.uniqSeen[k] = true; uniqCd = (P.tier || 0) >= 3 ? 40 : 80;
   enemies.push({ kind: 'uniq', uk: k, x: P.x + Math.cos(a) * d, y: P.y + Math.sin(a) * d, kx: 0, ky: 0, sp: U.spd, spec: null, sc: 1, r: 23, hp, max: hp, dmg: 0, exp: 0, elite: false,
     flash: 0, t: rand() * 4, orbCd: 0, slowT: 0, kres: 0.3, face: -1, st: 'chase', cd: 1.6, at: null, tele: [], rage: false, mv: false });
+  if (k === 'shroom') { const e = enemies[enemies.length - 1]; e.r = 46; e.st = 'rest'; e.cd = 1.4; e.kres = 0.15; shroomPick(e); banner = { txt: `히든 마물 ${U.name} 등장!  ${U.sub}\n제멋대로 뛰어다니며 독 웅덩이를 남긴다 — 웅덩이를 밟지 말고, 멈춰 쉴 때 잡으세요`, t: 6, c: '#ff9ae8' }; sfx('skill'); markDex('uq:' + k, 1); return; }
   if (k === 'octo') { const e = enemies[enemies.length - 1]; e.r = 30; e.st = 'chase'; e.cd = 2.2; banner = { txt: `히든 마물 ${U.name} 등장!  ${U.sub}\n곧게 뻗는 마법 — 바닥의 줄·원 경고를 옆으로 피하세요`, t: 6, c: '#e0a0ff' }; sfx('skill'); markDex('uq:' + k, 1); return; }
   banner = { txt: `${U.name} 등장!  ${U.sub}\n빠르게 쫓아오는 불꽃채찍 — 바닥의 부채꼴 경고가 사라지기 전에 벗어나세요 (맞으면 기절 + 화상)`, t: 5.5, c: '#ffb070' }; sfx('skill');
   markDex('uq:' + k, 1);
@@ -5001,7 +5003,68 @@ function uniqHit(e) {
     burst(P.x, P.y - 30, 14, ['#ff6a1c', '#ffc247', '#ffffff'], 240, 0.6); shake = Math.max(shake, 9);
   }
 }
+/* v6.61 히든 마물 '대형 버섯 괴물' (지하 6~10층): 잠깐 멈췄다가(다음 진로를 점선으로 예고) 아무 쪽으로나 곧게 뛰어간다.
+   뛰는 길에 독 웅덩이를 남긴다 (밟으면 초당 피해 + 둔화, 6.5초 뒤 마름) · 플레이어에게서 SHR.leash 밖으로는 안 간다 · 다른 공격 없음 (몸통 박치기만) */
+const SHA = {"idle":[[0,0,118,102,60.0,95],[120,0,99,104,49.0,97],[221,0,103,104,51.0,100],[326,0,98,103,49.0,96],[426,0,97,105,51.0,100],[525,0,96,107,49.0,100],[623,0,102,107,47.0,100]],"walk":[[727,0,116,118,61.0,113],[845,0,104,116,45.0,111],[951,0,109,117,53.0,112],[1062,0,102,115,49.0,110],[1166,0,103,118,48.0,113],[1271,0,110,117,46.0,112],[1383,0,108,118,48.0,113],[0,120,131,95,70.0,90]],"hit":[[133,120,111,97,50.0,91],[246,120,118,98,55.0,92],[366,120,99,103,46.0,97],[467,120,107,103,47.0,97],[576,120,109,102,46.0,96]],"death":[[687,120,123,106,55.0,100],[812,120,111,109,53.0,103],[925,120,148,103,71.0,97],[1075,120,134,109,71.0,103],[1211,120,126,105,61.0,99]],"pool":[[1339,120,102,109,51.0,54]]};
+const SHR = { leash: 520, dash: [340, 600], sp: 540, rest: [0.75, 1.25], warn: 0.45, drop: 62, r: 56, life: 6.5, cap: 46, s: 1.55 };
+function shroomPick(e) {   // 다음 돌진 진로: 무작위 방향 · 끝점이 플레이어 근처(leash) 안
+  let tx = 0, ty = 0, ok = false;
+  for (let i = 0; i < 12 && !ok; i++) {
+    const a = rand() * 6.283, L = SHR.dash[0] + rand() * (SHR.dash[1] - SHR.dash[0]); tx = e.x + Math.cos(a) * L; ty = e.y + Math.sin(a) * L * 0.8;
+    ok = Math.hypot(tx - P.x, ty - P.y) < SHR.leash && Math.hypot(tx - P.x, ty - P.y) > 80;
+  }
+  if (!ok) { const a = rand() * 6.283, r = 120 + rand() * 260; tx = P.x + Math.cos(a) * r; ty = P.y + Math.sin(a) * r; }
+  const dx = tx - e.x, dy = ty - e.y, d = Math.hypot(dx, dy) || 1; e.dx = dx / d; e.dy = dy / d; e.left = Math.min(d, 900); e.tx = e.x + e.dx * e.left; e.ty = e.y + e.dy * e.left;
+}
+function shroomPool(x, y, big) {
+  let n = 0, old = null; for (const z of zones) if (z.type === 'mpool') { n++; if (!old || z.life < old.life) old = z; }
+  if (n >= SHR.cap && old) old.life = 0;
+  const life = SHR.life * (big ? 1.2 : 1); zones.push({ type: 'mpool', x, y, r: SHR.r * (big ? 1.3 : 1) * (0.9 + rand() * 0.2), life, max: life, dm: 12 * (1 + 0.1 * (P.tier || 0)) });
+}
+function updateShroom(e, dt) {
+  e.t += dt; e.flash = Math.max(0, e.flash - dt); if (e.slowT > 0) e.slowT -= dt;
+  e.x += e.kx * dt; e.y += e.ky * dt; { const kk = Math.exp(-8 * dt); e.kx *= kk; e.ky *= kk; }
+  const dP = Math.hypot(P.x - e.x, P.y - e.y);
+  if (dP > 1300) { const a = rand() * 6.283; e.x = P.x + Math.cos(a) * 560; e.y = P.y + Math.sin(a) * 560; e.st = 'rest'; e.cd = 1; shroomPick(e); }
+  if (!e.rage && e.hp <= e.max * 0.4) { e.rage = true; floatNum(e.x, e.y - 170, '분노!', '#ff5ad8'); addRing(e.x, e.y - 30, 14, 220, 0.6, '255,110,220', 10); sfx('skill'); }
+  if (e.st === 'rest') {
+    e.mv = false; e.cd -= dt; if (Math.abs(e.dx) > 0.2) e.face = e.dx > 0 ? 1 : -1;
+    if (e.cd <= 0) { e.st = 'dash'; e.drop = SHR.drop * 0.5; e.hitDone = false; sfx('zap'); }
+    return;
+  }
+  const sp = SHR.sp * (e.rage ? 1.18 : 1) * (e.slowT > 0 ? 0.7 : 1), step = Math.min(e.left, sp * dt);
+  e.x += e.dx * step; e.y += e.dy * step; e.left -= step; e.drop -= step; e.mv = true;
+  if (e.drop <= 0) { e.drop = SHR.drop; shroomPool(e.x, e.y); }
+  if (!e.hitDone && state === 'play' && dP < e.r + 18 + PR()) { e.hitDone = true; hurtPlayer((22 + gt * 0.025) * (1 + 0.1 * (P.tier || 0))); }
+  if (e.left <= 0) {
+    shroomPool(e.x, e.y, true); burst(e.x, e.y - 10, 14, ['#9aff3a', '#ff6ad8', '#ffe28a'], 200, 0.6);
+    e.st = 'rest'; e.cd = (SHR.rest[0] + rand() * (SHR.rest[1] - SHR.rest[0])) * (e.rage ? 0.72 : 1); shroomPick(e);
+  }
+}
+function shroomSprite(name, f, x, y, face, k, a, white) {
+  const L = SHA[name], r = L[Math.min(L.length - 1, f) % L.length];
+  ctx.save(); ctx.globalAlpha = a; ctx.translate(Math.round(x), Math.round(y)); ctx.scale(face === 1 ? -1 : 1, 1); ctx.imageSmoothingEnabled = true; ctx.imageSmoothingQuality = 'high';
+  const args = [IMG.sh, r[0], r[1], r[2], r[3], -r[4] * k, -r[5] * k, r[2] * k, r[3] * k]; ctx.drawImage(...args);
+  if (white) { ctx.globalCompositeOperation = 'lighter'; ctx.globalAlpha = 0.5 * a; ctx.drawImage(...args); }
+  ctx.restore();
+}
+function drawShroom(e, x, y) {
+  const k = SHR.s;
+  if (e.st === 'rest' && e.cd < SHR.warn) {   // 다음 진로 예고
+    const p = 1 - e.cd / SHR.warn, x1 = x + (e.tx - e.x), y1 = y + (e.ty - e.y);
+    ctx.save(); ctx.strokeStyle = `rgba(160,255,80,${0.35 + 0.45 * p})`; ctx.lineWidth = 4 + 6 * p; ctx.setLineDash([16, 12]); ctx.beginPath(); ctx.moveTo(x, y - 6); ctx.lineTo(x1, y1 - 6); ctx.stroke(); ctx.restore();
+  }
+  ctx.fillStyle = 'rgba(0,0,0,0.4)'; ctx.beginPath(); ctx.ellipse(x, y - 1, 64, 13, 0, 0, 6.283); ctx.fill();
+  if (e.rage) { ctx.strokeStyle = `rgba(255,90,220,${0.5 + Math.sin(wallT * 7) * 0.3})`; ctx.lineWidth = 3; ctx.beginPath(); ctx.ellipse(x, y - 1, 72, 15, 0, 0, 6.283); ctx.stroke(); }
+  if (e.st === 'dash') shroomSprite('walk', Math.floor(e.t * 14) % 8, x, y, e.face, k, 1, e.flash > 0);
+  else if (e.flash > 0.06) shroomSprite('hit', Math.floor(e.t * 10) % 3, x, y, e.face, k, 1, true);
+  else shroomSprite('idle', Math.floor(e.t * 9) % 7, x, y, e.face, k, 1, false);
+  const U = UNIQ.shroom, w = 96, by = y - 112 * k - 12;
+  ctx.fillStyle = '#1a0608'; ctx.fillRect(x - w / 2 - 2, by - 2, w + 4, 8); ctx.fillStyle = e.rage ? '#ff3ad0' : `rgb(${U.rgb})`; ctx.fillRect(x - w / 2, by, w * Math.max(0, e.hp / e.max), 4);
+  ctx.font = 'bold 12px "Malgun Gothic", sans-serif'; ctx.textAlign = 'center'; ctx.lineWidth = 3; ctx.strokeStyle = '#120406'; ctx.strokeText(U.name, x, by - 6); ctx.fillStyle = '#ffd0f4'; ctx.fillText(U.name, x, by - 6);
+}
 function updateUniq(e, dt) {
+  if (e.uk === 'shroom') { updateShroom(e, dt); return; }
   if (e.uk === 'octo') { updateOctoMob(e, dt); return; }
   const U = UNIQ[e.uk];
   e.t += dt; e.flash = Math.max(0, e.flash - dt);
@@ -5057,6 +5120,7 @@ function uniqDefeated(e) {
   if (!SAVE.chars.twins && twinsReady()) { SAVE.chars.twins = true; saveSave(); banner.txt += '\n🔓 두 마녀를 모두 쓰러뜨렸다 — 새 캐릭터 [사슬 악마] 해금!'; banner.t = 7; }
 }
 function drawUniq(e, x, y) {
+  if (e.uk === 'shroom') { drawShroom(e, x, y); return; }
   if (e.uk === 'octo') { drawOctoMob(e, x, y); return; }
   const U = UNIQ[e.uk], k = 0.82, base = U.row;
   let row, f;
@@ -5076,6 +5140,7 @@ function drawUniq(e, x, y) {
   ctx.font = 'bold 12px "Malgun Gothic", sans-serif'; ctx.textAlign = 'center'; ctx.lineWidth = 3; ctx.strokeStyle = '#120406'; ctx.strokeText(U.name, x, by - 6); ctx.fillStyle = '#ffd9a8'; ctx.fillText(U.name, x, by - 6);
 }
 function drawUniqDeath(m, x, y) {
+  if (m.uk === 'shroom') { shroomSprite('death', Math.floor(m.t * 5), x, y, m.face, SHR.s, m.t > 1.4 ? Math.max(0, 1 - (m.t - 1.4) / 0.7) : 1, false); return; }
   if (m.uk === 'octo') { const L = OCA.a_death, f = Math.min(L.length - 1, Math.floor(m.t * 5)), fade = m.t > 1.4 ? Math.max(0, 1 - (m.t - 1.4) / 0.7) : 1; ctx.save(); ctx.globalAlpha = fade; octoSprite(L[f], x, y, m.face, OCTO_MOB_S); ctx.restore(); return; }
   const U = UNIQ[m.uk], k = 0.82, f = Math.min(4, Math.floor(m.t * 6)), fade = m.t > 1.4 ? Math.max(0, 1 - (m.t - 1.4) / 0.7) : 1;
   ctx.save(); ctx.globalAlpha = fade; ctx.fillStyle = 'rgba(0,0,0,0.35)'; ctx.beginPath(); ctx.ellipse(x, y - 1, 34, 8, 0, 0, 6.283); ctx.fill();
@@ -5241,7 +5306,7 @@ function drawOctoMob(e, x, y) {
 function trySpawnUniq() {   // 스폰 틱마다 한 번 굴린다 — 한 판에 각자 한 번만, 동시에 한 명만
   if (arena || castle || mini || chal || uniqCd > 0 || gt < 110) return;
   if (enemies.filter(q => q.kind === 'uniq' && q.hp > 0).length >= ((P.tier || 0) >= 3 ? 2 : 1)) return;   // v5.15: 난이도 3단계 이상은 동시에 2마리까지 (같은 유니크는 한 판에 한 번)
-  const pool = Object.keys(UNIQ).filter(k => !P.uniqSeen[k] && gt >= UNIQ[k].from && (P.tier || 0) >= (UNIQ[k].tier || 0));
+  const pool = Object.keys(UNIQ).filter(k => !P.uniqSeen[k] && gt >= UNIQ[k].from && (P.tier || 0) >= (UNIQ[k].tier || 0) && (!UNIQ[k].mush || (isMush() && IMG.sh)));
   if (pool.length && rand() < UNIQ_P) spawnUniq(pool[(rand() * pool.length) | 0]);
 }
 function updateStatus(dt) {   // 기절 · 화상 · 둔화 · 저주 타이머
@@ -5646,7 +5711,8 @@ function updateSkills(dt) {
   const rgb = routeRGB();
   for (const z of zones) {
     z.life -= dt;
-    if (z.type === 'bpool') { if (state === 'play' && P.inv <= 0 && Math.hypot(P.x - z.x, (P.y - z.y) * 1.35) < z.r) dotPlayer(z.dm * dt); continue; }   // 혈랑왕이 남긴 핏물
+    if (z.type === 'bpool') { if (state === 'play' && P.inv <= 0 && Math.hypot(P.x - z.x, (P.y - z.y) * 1.35) < z.r) dotPlayer(z.dm * dt); continue; }
+    if (z.type === 'mpool') { if (state === 'play' && P.inv <= 0 && Math.hypot(P.x - z.x, (P.y - z.y) * 1.5) < z.r * 0.85) { dotPlayer(z.dm * dt * (P.taken || 1)); P.slowT = Math.max(P.slowT, 0.25); } continue; }   // v6.61 버섯 괴물의 독 웅덩이   // 혈랑왕이 남긴 핏물
     if (z.type === 'fire') {
       z.tick -= dt; const tk = z.tick <= 0; if (tk) z.tick = 0.3;
       for (const e of enemies) {
@@ -6375,6 +6441,11 @@ function drawZones(wx, wy) {
   }
   for (const z of zones) {
     const x = wx(z.x), y = wy(z.y), k = clamp(z.life / z.max, 0, 1);
+    if (z.type === 'mpool') {   // 받은 '독 웅덩이 생성' 그림 (고리 부분이 바닥 자리)
+      if (x < -150 || x > W + 150 || y < -150 || y > H + 150 || !IMG.sh) continue;
+      const a = Math.min(1, z.life * 1.4, (z.max - z.life) * 5 + 0.25), r = SHA.pool[0], k = z.r * 2.2 / r[2], cy = Math.round(r[3] * 0.58), ch = r[3] - cy;   // 아래쪽 고리(웅덩이)만 잘라 쓴다
+      ctx.save(); ctx.globalAlpha = a * 0.8; ctx.imageSmoothingEnabled = true; ctx.drawImage(IMG.sh, r[0], r[1] + cy, r[2], ch, x - r[2] * k / 2, y - ch * k * 0.55, r[2] * k, ch * k); ctx.restore(); continue;
+    }
     if (z.type === 'bpool') {
       const a = Math.min(1, z.life * 1.6, (z.max - z.life) * 6 + 0.3), g = ctx.createRadialGradient(x, y, 4, x, y, z.r);
       g.addColorStop(0, `rgba(170,0,20,${0.62 * a})`); g.addColorStop(0.75, `rgba(120,0,16,${0.45 * a})`); g.addColorStop(1, 'rgba(80,0,10,0)');
@@ -7698,7 +7769,7 @@ function openDex() {
   add(gr, { on: d.kills.boss, trophy: true, name: '원숭이 마왕', sub: d.kills.boss + '회 처치', hint: '<br>보스 (지하 1층부터 등장)', draw: (g, w, h, l) => dexSprite(g, w, h, IMG.boss, 88, 138, 100, 94, false, l) });
   gr = sec('유니크 마물 · 저주받은 성유물 (유니크는 한 판에 한 번씩만 등장)');
   { const ud = (g, w, h, l, row) => { const sw = 150, sh = 134, f = Math.min((w - 4) / sw, (h - 2) / sh), dw = sw * f, dh = sh * f; g.save(); g.imageSmoothingEnabled = true; g.imageSmoothingQuality = 'high'; g.drawImage(IMG.uniq, 25, row * 176 + 18, sw, sh, (w - dw) / 2, h - 2 - dh, dw, dh); if (l) { g.globalCompositeOperation = 'source-atop'; g.fillStyle = '#0c0508'; g.fillRect(0, 0, w, h); } g.restore(); };
-    for (const k of Object.keys(UNIQ)) { const U = UNIQ[k]; add(gr, { on: d.seen['uq:' + k], trophy: !!d.kills['uq:' + k], name: U.name, sub: (d.kills['uq:' + k] || 0) + '회 처치 · ' + U.sub, hint: k === 'octo' ? '<br>히든 마물 (지하 3층부터 · 직선 마법)' : '<br>유니크 마물 (긴 불꽃채찍)', draw: (g, w, h, l) => k === 'octo' ? dexSprite(g, w, h, IMG.oc, ...OCA.a_idle[0].slice(0, 4), false, l, true) : ud(g, w, h, l, U.row) }); }
+    for (const k of Object.keys(UNIQ)) { const U = UNIQ[k]; add(gr, { on: d.seen['uq:' + k], trophy: !!d.kills['uq:' + k], name: U.name, sub: (d.kills['uq:' + k] || 0) + '회 처치 · ' + U.sub, hint: k === 'octo' ? '<br>히든 마물 (지하 3층부터 · 직선 마법)' : k === 'shroom' ? '<br>히든 마물 (지하 6~10층 · 뛰어다니며 독 웅덩이)' : '<br>유니크 마물 (긴 불꽃채찍)', draw: (g, w, h, l) => k === 'shroom' ? (IMG.sh && dexSprite(g, w, h, IMG.sh, ...SHA.idle[0].slice(0, 4), false, l, true)) : k === 'octo' ? dexSprite(g, w, h, IMG.oc, ...OCA.a_idle[0].slice(0, 4), false, l, true) : ud(g, w, h, l, U.row) }); }
     for (const k of Object.keys(RELICS)) add(gr, { on: d.seen['relic:' + k], name: RELICS[k].name, sub: RELICS[k].sub, hint: '<br>유니크 · 미니 보스가 드롭 (이공벌레는 1.2%)', draw: (g, w, h, l) => { relicIcon(g, k, (w - 64) / 2, (h - 64) / 2 - 2, 64); if (l) { g.save(); g.globalCompositeOperation = 'source-atop'; g.fillStyle = '#0c0508'; g.fillRect(0, 0, w, h); g.restore(); } } }); }
   $('dexSum').textContent = `발견 ${got} / ${tot} · 트로피 ${trophies} · 런 목표 달성 ${SAVE.dex.goals || 0}회 · 해금 ${floorName(SAVE.diff.max)}`;
   show('dexBox', true);
@@ -7888,7 +7959,7 @@ window.__G = {
   get rollQ() { return rollQ; }, get gunFx() { return gunFx; }, GUN, GUN_AMMO, GUNA, gunLoad, gunRange,
   get anOrbs() { return anOrbs; }, get anFx() { return anFx; }, AMAP, ANB, ANX, AN, anStart, anTrans, pickBossK, floorName, arenaExit,
   sizes() { const o = { enemies, orbs, items, shards, fx, nums, arcs, embers, zones, rings, globs, sprFx, blades, lights, ebul, afx, gunFx, cfx, bfx, healFx, allies, slots, cutSaws, airs, octoFx, smokes, skp, mfx }; const r = {}; for (const k in o) if (o[k] && o[k].length != null) r[k] = o[k].length; return r; },
-  get banner() { return banner; }, get perfLv() { return perfLv; }, get NUM_C() { return NUM_C; }, get chal() { return chal; }, chTime, chDmgT, startChallenge, chEvent, chEnterBoss, chFrag, chGoldSpawn, chShelter, inCh, CHM, spawnCut, spawnAb, abStart, RUNES, TREASURES, get cutSaws() { return cutSaws; }, setChMode(v) { chMode = v; }, get W() { return W; }, get H() { return H; }, get species() { return SPECIES; }, get mspecies() { return MSPECIES; }, MMAP, isMush, floorSet,
+  get banner() { return banner; }, get perfLv() { return perfLv; }, get NUM_C() { return NUM_C; }, get chal() { return chal; }, chTime, chDmgT, startChallenge, chEvent, chEnterBoss, chFrag, chGoldSpawn, chShelter, inCh, CHM, spawnCut, spawnAb, abStart, RUNES, TREASURES, get cutSaws() { return cutSaws; }, setChMode(v) { chMode = v; }, get W() { return W; }, get H() { return H; }, get species() { return SPECIES; }, get mspecies() { return MSPECIES; }, spawnUniq, SHR, SHA, MMAP, isMush, floorSet,
 };
 
 function loadImg(src) {   // v6.30 프레임 드랍: 미리 해독한 ImageBitmap으로 바꿔 둔다 (Image는 처음 그릴 때 해독·업로드로 큰 시트마다 20~40ms씩 멈췄다)
@@ -7912,7 +7983,7 @@ function silhouette(img, color) {
   g.drawImage(img, 0, 0); g.globalCompositeOperation = 'source-atop'; g.fillStyle = color; g.fillRect(0, 0, c.width, c.height);
   return c;
 }
-const LAZY_IMG = ['drophb', 'droppo', 'chm', 'cm', 'ab', 'an', 'anfx', 'amap', 'mmap'];   // 시작하자마자 쓰지 않는 그림은 따로 (시작 화면이 빨리 뜨게): 드랍 아이템 · 챌린지 · 타락천사
+const LAZY_IMG = ['drophb', 'droppo', 'chm', 'cm', 'ab', 'an', 'anfx', 'amap', 'mmap', 'sh'];   // 시작하자마자 쓰지 않는 그림은 따로 (시작 화면이 빨리 뜨게): 드랍 아이템 · 챌린지 · 타락천사
 for (const k of LAZY_IMG) loadImg(SRC[k]).then(i => { IMG[k] = i; if (k === 'cm' || k === 'ab') IMG[k + 'W'] = silhouette(i, '#ffffff'); }).catch(() => {});
 Promise.all(Object.keys(SRC).filter(k => !LAZY_IMG.includes(k)).map(k => loadImg(SRC[k]).then(i => { IMG[k] = i; }))).then(() => {   // IMG.이름 = SRC.이름
   IMG.miniW = silhouette(IMG.mini, '#ffffff'); IMG.floorD = toneFloor(IMG.floor); try { buildMushSpecies(); } catch (_) {}
