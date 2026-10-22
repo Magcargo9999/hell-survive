@@ -220,7 +220,7 @@
 /* ============================================================
  * 0. 기본 설정
  * ============================================================ */
-const SRC = { mini: '__MINI__', snail: '__SNAIL__', base: '__ATLAS__', pup: '__PUP__', dark: '__DARK__', bug: '__BUG__', floor: '__FLOOR__', props: '__PROPS__', castle: '__CASTLE__', arena: '__ARENA__', boss: '__BOSS__', mobs: '__MOBS__', blood: '__BLOOD__', twin: '__TWIN__', triple: '__TRIPLE__', items: '__ITEMS__', drophb: '__DROPHB__', droppo: '__DROPPO__', blood2: '__BLOOD2__', holy: '__HOLY__', lavasn: '__LAVASN__', lavafx: '__LAVAFX__', venom2: '__VENOM2__', venom3: '__VENOM3__', venomfx: '__VENOMFX__', elf0: '__ELF0__', elf1: '__ELF1__', skel: '__SKEL__', chim0: '__CHIM0__', chim1: '__CHIM1__', chim2: '__CHIM2__', chimfx: '__CHIMFX__', flm1: '__FLM1__', flm2: '__FLM2__', flmfx: '__FLMFX__', drm1: '__DRM1__', drm2: '__DRM2__', drfx: '__DRFX__', arcr: '__ARCR__', arch: '__ARCH__', arfx: '__ARFX__', hlfx: '__HLFX__', slot: '__SLOT__', uniq: '__UNIQ__', eyem: '__EYEM__', relic: '__RELIC__', liz0: '__LIZ0__', liz1: '__LIZ1__', liz2: '__LIZ2__', liz3: '__LIZ3__', gh: '__GH__', gg: '__GG__', oc: '__OC__', lg: '__LG__', os: '__OS__', bs: '__BS__', tw0: '__TW0__', tw1: '__TW1__', tw2: '__TW2__', fwb: '__FWB__', fwp: '__FWP__', fwfx: '__FWFX__', bmap: '__BMAP__', skb: '__SKB__', skw: '__SKW__', chm: '__CHMAP__', cm: '__CM__', ab: '__AB__', an: '__AN__', anfx: '__ANFX__', amap: '__AMAP__', gun: '__GUN__' };
+const SRC = { mfloor: '__MFLOOR__', mprops: '__MPROPS__', mmob: '__MMOB__', mmap: '__MMAP__', mini: '__MINI__', snail: '__SNAIL__', base: '__ATLAS__', pup: '__PUP__', dark: '__DARK__', bug: '__BUG__', floor: '__FLOOR__', props: '__PROPS__', castle: '__CASTLE__', arena: '__ARENA__', boss: '__BOSS__', mobs: '__MOBS__', blood: '__BLOOD__', twin: '__TWIN__', triple: '__TRIPLE__', items: '__ITEMS__', drophb: '__DROPHB__', droppo: '__DROPPO__', blood2: '__BLOOD2__', holy: '__HOLY__', lavasn: '__LAVASN__', lavafx: '__LAVAFX__', venom2: '__VENOM2__', venom3: '__VENOM3__', venomfx: '__VENOMFX__', elf0: '__ELF0__', elf1: '__ELF1__', skel: '__SKEL__', chim0: '__CHIM0__', chim1: '__CHIM1__', chim2: '__CHIM2__', chimfx: '__CHIMFX__', flm1: '__FLM1__', flm2: '__FLM2__', flmfx: '__FLMFX__', drm1: '__DRM1__', drm2: '__DRM2__', drfx: '__DRFX__', arcr: '__ARCR__', arch: '__ARCH__', arfx: '__ARFX__', hlfx: '__HLFX__', slot: '__SLOT__', uniq: '__UNIQ__', eyem: '__EYEM__', relic: '__RELIC__', liz0: '__LIZ0__', liz1: '__LIZ1__', liz2: '__LIZ2__', liz3: '__LIZ3__', gh: '__GH__', gg: '__GG__', oc: '__OC__', lg: '__LG__', os: '__OS__', bs: '__BS__', tw0: '__TW0__', tw1: '__TW1__', tw2: '__TW2__', fwb: '__FWB__', fwp: '__FWP__', fwfx: '__FWFX__', bmap: '__BMAP__', skb: '__SKB__', skw: '__SKW__', chm: '__CHMAP__', cm: '__CM__', ab: '__AB__', an: '__AN__', anfx: '__ANFX__', amap: '__AMAP__', gun: '__GUN__' };
 const SNAIL_RECTS = [[0, 0, 216, 146], [220, 0, 273, 208], [497, 0, 276, 208], [777, 0, 289, 214]];
 const PROP_RECTS = [[0, 0, 38, 48], [40, 0, 22, 49], [64, 0, 34, 48], [100, 0, 26, 44], [128, 0, 29, 44], [159, 0, 56, 44], [217, 0, 64, 59], [283, 0, 42, 44], [327, 0, 20, 48], [349, 0, 62, 62], [413, 0, 47, 64], [462, 0, 44, 56], [0, 66, 33, 62], [35, 66, 36, 56], [73, 66, 28, 57], [103, 66, 19, 29], [124, 66, 20, 46], [146, 66, 18, 28], [166, 66, 18, 23], [186, 66, 19, 31], [207, 66, 21, 31], [230, 66, 22, 30], [254, 66, 21, 18], [277, 66, 20, 19], [299, 66, 32, 50], [333, 66, 32, 49], [367, 66, 40, 46], [409, 66, 39, 46], [450, 66, 33, 45], [0, 130, 37, 45], [39, 130, 19, 29], [60, 130, 18, 29], [80, 130, 17, 18], [99, 130, 20, 19], [121, 130, 20, 20], [143, 130, 58, 60], [203, 130, 31, 54], [236, 130, 30, 54], [268, 130, 30, 54], [300, 130, 47, 53], [349, 130, 28, 53], [379, 130, 31, 53], [412, 130, 43, 41], [457, 130, 44, 40], [0, 192, 36, 11], [38, 192, 25, 16], [65, 192, 48, 11], [115, 192, 76, 57], [193, 192, 43, 49], [238, 192, 21, 21], [261, 192, 35, 45], [298, 192, 50, 38], [350, 192, 67, 77], [419, 192, 53, 57], [0, 271, 45, 79], [47, 271, 53, 24], [102, 271, 32, 36], [136, 271, 59, 53]];
 // 늑대 형태별 스프라이트 설정: 한 칸 크기, 배율, 원본이 바라보는 방향(flip), 공격이 맞는 프레임(hitF), 동작별 (줄, 프레임 수, 초당 프레임)
@@ -855,18 +855,35 @@ const PROPS_TINY = pr([19, 22, 23, 32, 33, 34, 44, 45, 46, 48, 49, 50, 51, 15, 1
 const PROPS_MID  = pr([36, 37, 38, 41, 53, 55, 57, 1, 3, 4, 8, 12, 13, 14, 16, 40, 7, 26, 27, 28, 29, 54, 30, 31, 20, 21]);
 const PROPS_BIG  = pr([0, 2, 5, 6, 10, 11, 9, 35, 52, 47, 42, 43, 24, 25]);
 const PS = 1.5;   // 소품 배율
+/* v6.52 지하 6~10층 '버섯 군락' 바닥: 받은 타일셋 36칸(42px)·소품 시트 그대로 — 넓은 얼룩(노이즈)마다 같은 계열 타일만 깔아 누더기처럼 보이지 않게
+   A 보랏빛 돌 · B 이끼 · C 자줏빛 / 드물게 빛나는 타일 · 독 늪(용암 자리) 2장 번갈아 */
+const MF = { A: [4, 4, 4, 17], B: [22, 22, 28, 19], C: [31, 31, 34], glow: [13, 15, 29], pool: [20, 7], ps: 1.25, dim: 'rgba(6, 3, 10, 0.2)' };
+const MPROP_RECTS = [[0, 0, 42, 51], [44, 0, 23, 58], [69, 0, 29, 52], [100, 0, 42, 59], [144, 0, 26, 63], [172, 0, 39, 50], [213, 0, 31, 47], [246, 0, 42, 51], [290, 0, 48, 49], [340, 0, 21, 49], [363, 0, 40, 49], [405, 0, 48, 47], [455, 0, 36, 48], [493, 0, 24, 50], [519, 0, 30, 44], [551, 0, 35, 51], [588, 0, 55, 55], [645, 0, 41, 36], [688, 0, 59, 71], [749, 0, 71, 67], [822, 0, 43, 62], [867, 0, 28, 62], [897, 0, 28, 57], [927, 0, 42, 49], [971, 0, 25, 50], [998, 0, 24, 43], [0, 73, 24, 46], [26, 73, 25, 50], [53, 73, 37, 50], [92, 73, 21, 49], [115, 73, 31, 49], [148, 73, 27, 50], [177, 73, 35, 55], [214, 73, 28, 59], [244, 73, 33, 57], [279, 73, 35, 54], [316, 73, 54, 58], [372, 73, 25, 60], [399, 73, 35, 45], [436, 73, 50, 52], [488, 73, 90, 78], [580, 73, 72, 78], [654, 73, 58, 75], [714, 73, 49, 63], [765, 73, 64, 138], [831, 73, 76, 78], [909, 73, 62, 67], [973, 73, 44, 54], [0, 213, 57, 48], [59, 213, 34, 48], [95, 213, 45, 49], [142, 213, 57, 62], [201, 213, 32, 50], [235, 213, 34, 53]];
+const MPROPS_BIG = [18, 19, 40, 41, 42, 44, 45, 46, 51], MPROPS_MID = MPROP_RECTS.map((_, i) => i).filter(i => !MPROPS_BIG.includes(i));
+function mushTile(tx, ty) {
+  const z = vnoise(tx / 11 + 3, ty / 11 + 11), grp = z < 0.45 ? MF.A : z < 0.66 ? MF.B : MF.C, h = hash2(tx, ty, 1);
+  return h < 0.02 ? MF.glow[((h * 100) | 0) % MF.glow.length] : grp[((h * 1000) | 0) % grp.length];
+}
 
 // 바닥: 8×8칸(512px) 덩어리로 한 번만 그려 두고 붙여 그린다 (v6.30 프레임 드랍: 매 프레임 타일 약 390장 + 칸마다 해시 계산 → 덩어리 6장)
 // 덩어리에는 타일 · 작은 소품 · 바닥 누르기(어둡게)까지 넣고, 움직이는 용암 칸과 키 큰 소품(앞뒤 정렬)은 매 프레임 따로 그린다
 const GCH = 8, GCS = GCH * TILE, GROUND = new Map(), GROUND_MAX = 36, GROUND_DIM = 'rgba(6, 3, 10, 0.12)';
 function groundChunk(cx, cy) {
-  const key = cx + ',' + cy; let ch = GROUND.get(key);
+  const mu = isMush(), key = (mu ? 'm' : '') + cx + ',' + cy; let ch = GROUND.get(key);
   if (ch) { GROUND.delete(key); GROUND.set(key, ch); return ch; }   // 최근에 쓴 순서
   const c = mkCanvas(GCS, GCS), g = c.getContext('2d'), tx0 = cx * GCH, ty0 = cy * GCH, lava = [], tall = [];
   g.imageSmoothingEnabled = true;
   for (let ty = ty0 - 1; ty <= ty0 + GCH; ty++) for (let tx = tx0 - 1; tx <= tx0 + GCH; tx++) {   // 이웃 칸 소품이 걸쳐 들어오므로 한 칸 둘레까지 같은 순서로 그린다
     const sx = (tx - tx0) * TILE, sy = (ty - ty0) * TILE, inside = tx >= tx0 && tx < tx0 + GCH && ty >= ty0 && ty < ty0 + GCH;
     if (isLava(tx, ty)) { if (inside) lava.push([tx, ty, (isLava(tx, ty - 1) ? 0 : 1) | (isLava(tx + 1, ty) ? 0 : 2) | (isLava(tx, ty + 1) ? 0 : 4) | (isLava(tx - 1, ty) ? 0 : 8)]); continue; }
+    if (mu) {   // v6.52 버섯 군락: 소품은 모두 키가 커서 앞뒤 정렬로 따로 그린다
+      g.drawImage(IMG.mfloor, mushTile(tx, ty) * 42, 0, 42, 42, sx, sy, TILE + 1, TILE + 1);
+      const d = hash2(tx, ty, 3); if (d > 0.04 || !inside) continue;
+      const list = d < 0.006 ? MPROPS_BIG : MPROPS_MID, id = list[(hash2(tx, ty, 9) * list.length) | 0], r = MPROP_RECTS[id], dw = r[2] * MF.ps, dh = r[3] * MF.ps;
+      const jx = (hash2(tx, ty, 11) - 0.5) * (TILE - 20), jy = hash2(tx, ty, 13) * (TILE - 10) + 8;
+      tall.push({ y: ty * TILE + jy, id, m: true, x: tx * TILE + TILE / 2 + jx - dw / 2, top: ty * TILE + jy - dh, dw, dh });
+      continue;
+    }
     const h = hash2(tx, ty, 1), idx = h < 0.025 ? GLOW0 + ((h * 100) | 0) % 3 : ((h * 1000) | 0) % NGROUND;
     g.drawImage(IMG.floorD || IMG.floor, idx * 48, 0, 48, 48, sx, sy, TILE + 1, TILE + 1);
     const d = hash2(tx, ty, 3);
@@ -877,14 +894,14 @@ function groundChunk(cx, cy) {
     if (r[3] >= 34 || id === 52) { if (inside) tall.push({ y: ty * TILE + jy, id, x: tx * TILE + TILE / 2 + jx - dw / 2, top: ty * TILE + jy - dh, dw, dh }); }
     else g.drawImage(IMG.props, r[0], r[1], r[2], r[3], sx + TILE / 2 + jx - dw / 2, sy + jy - dh, dw, dh);
   }
-  g.fillStyle = GROUND_DIM; g.fillRect(0, 0, GCS, GCS);   // 바닥을 살짝 눌러 캐릭터가 돋보이게
+  g.fillStyle = mu ? MF.dim : GROUND_DIM; g.fillRect(0, 0, GCS, GCS);   // 바닥을 살짝 눌러 캐릭터가 돋보이게
   ch = { c, lava, tall }; GROUND.set(key, ch);
   if (GROUND.size > GROUND_MAX) GROUND.delete(GROUND.keys().next().value);
   return ch;
 }
 // 바닥을 그리고, 키가 큰 소품 목록을 돌려준다 (늑대·몬스터와 함께 앞뒤를 맞춰 그림)
 function drawGround(camX, camY, time) {
-  const ox = Math.floor(W / 2 - camX), oy = Math.floor(H / 2 - camY), tall = [];
+  const ox = Math.floor(W / 2 - camX), oy = Math.floor(H / 2 - camY), tall = [], mu = isMush();
   const cx0 = Math.floor((camX - W / 2) / GCS), cx1 = Math.floor((camX + W / 2) / GCS), cy0 = Math.floor((camY - H / 2) / GCS), cy1 = Math.floor((camY + H / 2 + 3 * TILE) / GCS);
   ctx.imageSmoothingEnabled = true;
   for (let cy = cy0; cy <= cy1; cy++) for (let cx = cx0; cx <= cx1; cx++) {
@@ -894,13 +911,14 @@ function drawGround(camX, camY, time) {
       const sx = tx * TILE + ox, sy = ty * TILE + oy;
       if (sx > W || sy > H || sx + TILE < 0 || sy + TILE < 0) continue;
       const f = (Math.floor(time * 2.2) + ((hash2(tx, ty, 5) * 2) | 0)) % 2;
-      ctx.drawImage(IMG.floor, (LAVA0 + f) * 48, 0, 48, 48, sx, sy, TILE + 1, TILE + 1);
-      ctx.fillStyle = `rgba(255, 120, 30, ${0.20 + 0.10 * Math.sin(time * 3 + tx + ty)})`; ctx.fillRect(sx, sy, TILE, TILE);
+      if (mu) { ctx.drawImage(IMG.mfloor, MF.pool[f] * 42, 0, 42, 42, sx, sy, TILE + 1, TILE + 1); ctx.fillStyle = `rgba(150, 255, 40, ${0.10 + 0.08 * Math.sin(time * 3 + tx + ty)})`; }   // v6.52 독 늪
+      else { ctx.drawImage(IMG.floor, (LAVA0 + f) * 48, 0, 48, 48, sx, sy, TILE + 1, TILE + 1); ctx.fillStyle = `rgba(255, 120, 30, ${0.20 + 0.10 * Math.sin(time * 3 + tx + ty)})`; }
+      ctx.fillRect(sx, sy, TILE, TILE);
       ctx.fillStyle = 'rgba(20, 4, 8, 0.85)';   // 용암 가장자리에 식은 암석 테두리
       if (edge & 1) ctx.fillRect(sx, sy, TILE, 4); if (edge & 2) ctx.fillRect(sx + TILE - 4, sy, 4, TILE); if (edge & 4) ctx.fillRect(sx, sy + TILE - 4, TILE, 4); if (edge & 8) ctx.fillRect(sx, sy, 4, TILE);
       ctx.fillStyle = GROUND_DIM; ctx.fillRect(sx, sy, TILE, TILE);
     }
-    for (const t of ch.tall) { const px = t.x + ox, py = t.top + oy; if (px > W + 40 || px + t.dw < -40 || py > H + 40 || py + t.dh < -40) continue; tall.push({ y: t.y, id: t.id, px, py, dw: t.dw, dh: t.dh }); }
+    for (const t of ch.tall) { const px = t.x + ox, py = t.top + oy; if (px > W + 40 || px + t.dw < -40 || py > H + 40 || py + t.dh < -40) continue; tall.push({ y: t.y, id: t.id, m: t.m, px, py, dw: t.dw, dh: t.dh }); }
   }
   return tall;
 }
@@ -926,6 +944,20 @@ function buildSpecies() {
     const scale = 3 + (i >= 4 ? 1 : 0) + (i >= 8 ? 1 : 0);
     SPECIES.push({ name, idx: i, frames, scale, hpMult: 1.0 + r * 0.3, unlock: r * 26, dmg: 7 + r * 1.5, exp: 1 + Math.floor(r * 0.6),
       speed: 100 * spd * (1.12 - r * 0.04), r: 4.2 * scale, k: 0.55 + 0.07 * (scale - 3), nh: MOB.sizes[i][1] });
+  });
+}
+/* v6.52 버섯형 악마 8종 (지하 6~10층 잡몹): 받은 도트를 108×114 칸에 (작은 4종은 정수 2배 · 2프레임, 큰 4종은 원본 1프레임)
+   난이도 순위는 원래 잡몹 10종의 0~9 자리에 맞춰 체력·공격·등장 시간이 같은 폭으로 오른다 */
+let MSPECIES = [];
+const MMOB = [['꼬마 독버섯 악마', 0, 1.0, 96], ['꼬마 흰버섯 악마', 1, 0.95, 96], ['꼬마 보라버섯 악마', 2, 1.15, 96], ['꼬마 금버섯 악마', 3, 1.05, 94],
+  ['독버섯 악마', 5, 0.95, 93], ['흰버섯 악마', 6, 0.9, 96], ['보라버섯 악마', 8, 1.05, 109], ['금버섯 악마', 9, 1.0, 105]];
+function buildMushSpecies() {
+  if (MSPECIES.length || !IMG.mmob) return;
+  MMOB.forEach(([name, r, spd, nh], i) => {
+    const frames = [0, 1].map(k => { const c = mkCanvas(MOB.cw, MOB.ch); c.getContext('2d').drawImage(IMG.mmob, i * MOB.cw, k * MOB.ch, MOB.cw, MOB.ch, 0, 0, MOB.cw, MOB.ch); return { img: c, white: silhouette(c, '#ffffff') }; });
+    const scale = r >= 8 ? 5 : r >= 4 ? 4 : 3;
+    MSPECIES.push({ name, idx: 100 + i, frames, scale, hpMult: 1.0 + r * 0.3, unlock: r * 26, dmg: 7 + r * 1.5, exp: 1 + Math.floor(r * 0.6),
+      speed: 100 * spd * (1.12 - r * 0.04), r: 4.2 * scale, k: 0.55 + 0.07 * (scale - 3), nh });
   });
 }
 window.__SP = () => SPECIES;
@@ -954,13 +986,26 @@ const ARENA = {
 };
 ARENA.w = Math.round(ARENA.w * AS); ARENA.h = Math.round(ARENA.h * AS); ARENA.start = ARENA.start.map(v => v * AS); ARENA.poly = ARENA.poly.map(([x, y]) => [x * AS, y * AS]);
 const EXIT_Y = 1075 * AS, EXIT_HOLD = 1.3, FORCE_T = 9, REGRACE = 90;   // 출구 구역 y, 출구에 머무는 시간, 강제 입장 카운트, 퇴장 후 재입장까지
-const arenaExit = () => !arena || arena.k === 'blood' ? null : arena.k === 'angel' ? { x: AMAP.start[0], y: AMAP.exitY, half: AMAP.exitHalf, y1: AMAP.h - 4, dw: 130 } : { x: ARENA.start[0], y: EXIT_Y, half: 90, y1: 1196 * AS, dw: 58 };   // 맵 아래쪽 출구 (혈랑왕 제단은 없음)
+/* v6.52 지하 6~10층 보스맵 (버섯 성채): 받은 그림(1448×1086)을 1.5배 · 마왕 4종 모두 여기서 싸운다. 바닥 다각형은 벽 안쪽 · 아래 계단이 출구 · 가운데 기둥 무더기는 장식(충돌 없음) */
+const MMAP = { s: 1.5, iw: 1448, ih: 1086,
+  poly: [[445, 128], [598, 128], [602, 165], [655, 168], [662, 150], [788, 150], [796, 168], [846, 165], [852, 128], [1003, 128], [1012, 280], [1095, 300], [1232, 305], [1252, 330], [1252, 695], [1205, 712], [1095, 745], [1030, 800], [1003, 878], [855, 880], [800, 905], [795, 1086],
+    [658, 1086], [652, 905], [598, 880], [447, 878], [420, 800], [355, 745], [243, 712], [198, 692], [196, 330], [216, 305], [350, 300], [437, 282]],
+  start: [725, 830], cx: 725, cy: 500, bx: 725, by: 450, exitY: 950, itemY: 860, skp: [[330, 520], [1120, 520], [725, 250]] };
+{ const k = MMAP.s; MMAP.w = Math.round(MMAP.iw * k); MMAP.h = Math.round(MMAP.ih * k); MMAP.poly = MMAP.poly.map(([x, y]) => [x * k, y * k]); MMAP.skp = MMAP.skp.map(([x, y]) => [x * k, y * k]);
+  for (const f of ['cx', 'cy', 'bx', 'by', 'exitY', 'itemY']) MMAP[f] *= k; MMAP.start = MMAP.start.map(v => v * k); }
+const AMC = () => arena && arena.mush ? MMAP : AMAP;   // 타락천사 위치 계산의 기준 맵
+let MMS = null;
+function mmapS() {   // 버섯 보스맵: 한 번만 1.5배로 키워 둔다 (2배 확대본을 줄여서 도트가 고르게)
+  if (MMS) return MMS;
+  const H2 = hq(IMG.mmap, 2); MMS = mkCanvas(MMAP.w, MMAP.h); const g = MMS.getContext('2d'); g.imageSmoothingEnabled = true; g.imageSmoothingQuality = 'high'; g.drawImage(H2, 0, 0, MMAP.w, MMAP.h); HQ.delete(IMG.mmap); return MMS;
+}
+const arenaExit = () => !arena || arena.k === 'blood' ? null : arena.mush ? { x: MMAP.start[0], y: MMAP.exitY, half: 84, y1: MMAP.h - 4, dw: 90 } : arena.k === 'angel' ? { x: AMAP.start[0], y: AMAP.exitY, half: AMAP.exitHalf, y1: AMAP.h - 4, dw: 130 } : { x: ARENA.start[0], y: EXIT_Y, half: 90, y1: 1196 * AS, dw: 58 };   // 맵 아래쪽 출구 (혈랑왕 제단은 없음)
 const BOSS_TEMPO = 1.22;   // 마왕 기술은 모든 캐릭터에게 같은 속도로 빠르다 (이속 약 190 이상이면 피하기 편함 · 가장 느린 리자드는 이속 카드 2~3장)
 const bossTempo = () => BOSS_TEMPO;
 function inPoly(x, y) {
   if (chal && !arena) return inCh(x, y);   // v6.41: 챌린지 마왕은 챌린지 맵(필드)에서 싸운다
   if (arena && arena.k === 'blood') return inBlood(x, y);   // 타락한 혈랑왕의 제단 (타원)
-  let c = false; const q = arena && arena.k === 'angel' ? AMAP.poly : ARENA.poly;   // v6.30: 타락천사 보스맵
+  let c = false; const q = arena && arena.mush ? MMAP.poly : arena && arena.k === 'angel' ? AMAP.poly : ARENA.poly;   // v6.30: 타락천사 보스맵
   for (let i = 0, j = q.length - 1; i < q.length; j = i++) {
     if ((q[i][1] > y) !== (q[j][1] > y) && x < (q[j][0] - q[i][0]) * (y - q[i][1]) / (q[j][1] - q[i][1]) + q[i][0]) c = !c;
   }
@@ -972,7 +1017,8 @@ function raiseCastle() {
   P.exitLeft = 1;   // 성 안에서 밖으로 나갈 수 있는 기회는 딱 1번
   banner = { txt: '대지가 갈라지며 마왕성이 솟아오른다!\n성이 완성되면 강제로 끌려 들어갑니다', t: 4, c: '#ff9a8a' };
   shake = Math.max(shake, 12); sfx('boom');
-  if (P.bossK !== 'angel') setTimeout(() => { try { arenaS(); } catch (_) {} }, 400);   // v6.30: 성 내부 확대 그림을 입장 전에 미리 만든다 (입장 순간 끊김 방지)
+  if (P.fset === 'mush' && IMG.mmap) setTimeout(() => { try { mmapS(); } catch (_) {} }, 400);   // v6.52
+  else if (P.bossK !== 'angel') setTimeout(() => { try { arenaS(); } catch (_) {} }, 400);   // v6.30: 성 내부 확대 그림을 입장 전에 미리 만든다 (입장 순간 끊김 방지)
 }
 let ARS = null;
 function arenaS() {   // v5.11: 성 내부 그림을 한 번만 AS배로 키워 둔다
@@ -993,9 +1039,10 @@ function enterArena() {
   if (trans) return;
   startTrans(() => {
     const sealed = P.exitLeft <= 0, an = P.bossK === 'angel';
-    arena = an ? { sealed, hold: 0, k: 'angel' } : { sealed, hold: 0 }; castle.force = 0;   // v6.30: 타락천사는 전용 보스맵
+    arena = an ? { sealed, hold: 0, k: 'angel' } : { sealed, hold: 0 }; castle.force = 0;
+    if (P.fset === 'mush' && IMG.mmap) arena.mush = true;   // v6.52: 지하 6~10층은 마왕 4종 모두 버섯 보스맵   // v6.30: 타락천사는 전용 보스맵
     clearField();
-    const S0 = an ? AMAP.start : ARENA.start; P.x = S0[0]; P.y = S0[1]; cam.x = P.x; cam.y = P.y - 20; placeAllies();
+    const S0 = arena.mush ? MMAP.start : an ? AMAP.start : ARENA.start; P.x = S0[0]; P.y = S0[1]; cam.x = P.x; cam.y = P.y - 20; placeAllies();
     P.hp = P.max; P.healBank = P.max * 0.12;   // 마왕전은 체력을 가득 채우고 시작한다
     spawnBoss(); itemT = 14;
     let tx = sealed ? '출구가 봉인되었다!  이제 마왕을 쓰러뜨리는 수밖에 없다' : '마왕전 시작!  성 밖으로 나갈 수 있는 기회는 딱 1번\n맵 아래쪽 출구 ▼ 에 잠시 머물면 나갈 수 있어요 (나가면 마왕은 체력 회복)';
@@ -1267,7 +1314,8 @@ const BOSS_HP = 20000;   // v5.00: 한 방 피해 상한을 없앤 만큼 18000 
 const bossHit = d => hurtPlayer(d * 1.19 * (boss && !boss.bk ? 0.92 : 0.8) * (1 + 0.08 * P.tier) * (boss && !boss.bk && P.tier >= 5 ? 0.85 : 1) * (chal ? 1 + 0.25 * chal.cyc : 1));   // v6.22: 5단계 원숭이 마왕 피해 -15% · v5.00: 마왕 공격력 +8%   // 원숭이 마왕은 조금 더 아프다   // 보스 공격은 일반 몹보다 강하다 (Lv.25 입장은 빡빡하게, Lv.30은 여유있게)
 const BSP = { cw: 272, ch: 234, rows: { idle: [0, 4], walk: [1, 2], attack: [2, 3], hit: [3, 2], jump: [4, 1], roar: [5, 1] } };
 function spawnBoss() {
-  boss = { kind: 'boss', x: 657 * AS, y: 760 * AS, kx: 0, ky: 0, sp: 0, spec: null, sc: 1, r: 58, hp: BOSS_HP * (1 + 0.3 * P.tier), max: BOSS_HP * (1 + 0.3 * P.tier), dmg: 0, exp: 0, elite: false, flash: 0, t: 0, orbCd: 0, slowT: 0,
+  const mu = arena && arena.mush;
+  boss = { kind: 'boss', x: mu ? MMAP.bx : 657 * AS, y: mu ? MMAP.by : 760 * AS, kx: 0, ky: 0, sp: 0, spec: null, sc: 1, r: 58, hp: BOSS_HP * (1 + 0.3 * P.tier), max: BOSS_HP * (1 + 0.3 * P.tier), dmg: 0, exp: 0, elite: false, flash: 0, t: 0, orbCd: 0, slowT: 0,
     noKB: true, invul: true, face: -1, st: 'intro', stT: 2.4, rage: false, last: '', tele: [], jh: 0, combo: 0, dashN: 0, swing: 0, air: null, dv: null, dashHit: false, ghost: [] };
   if (!P.bossK || P.bossK === 'monkey') { const k5 = P.tier >= 5 ? 0.85 : 1; boss.hp *= k5; boss.max *= k5; }   // v6.22: 5단계 원숭이 마왕 체력 -15%   // 원숭이 마왕 체력 (22500 → 18000: 너무 길어서 루즈했다)
   if (P.bossK === 'skel') initSkBoss(boss);
@@ -1748,6 +1796,7 @@ const SK_PH = [0.66, 0.33], SK_DM = 0.78 * 0.92 * 1.1;   // 결계 단계 · 피
 const skHit = d => bossHit(d * SK_DM);              // 결계 단계: 체력 66% · 33%
 const SKP = [[190, 650], [1125, 650], [657, 418]].map(([x, y]) => [x * AS, y * AS]);
 function skpPts() {   // v6.41: 챌린지 필드 마왕전은 마왕이 처음 선 자리를 가운데로 같은 모양(왼·오른·위)으로 솟는다
+  if (arena && arena.mush) return MMAP.skp;   // v6.52 버섯 보스맵
   if (!(chal && !arena)) return SKP;
   const c = chal.fbC || { x: P.x, y: P.y };
   return [[-584, 62], [585, 62], [0, -228]].map(([dx, dy]) => { for (let k = 1; k > 0; k -= 0.1) { const x = c.x + dx * k, y = c.y + dy * k; if (inCh(x, y)) return [x, y]; } return [c.x, c.y]; });
@@ -2225,8 +2274,8 @@ const anIn = (t, x, y, pad) => { const dx = (x - t.x) / (t.r + pad), dy = (y - t
 function anAoE(t, d) { const p = P.pet; if (p && !p.down && anIn(t, p.x, p.y, 8)) petHurt(p, d); if (anIn(t, P.x, P.y, 10 + PR())) anHit(d); }
 function anTele(e, o) { e.tele.push(Object.assign({ t: 0, dur: 1, done: false }, o)); }
 function anSpot(x, y) {   // 바닥 밖이면 가운데 쪽으로 당겨 넣는다
-  for (let k = 1; k > 0; k -= 0.08) { const qx = AMAP.cx + (x - AMAP.cx) * k, qy = AMAP.cy + (y - AMAP.cy) * k; if (inPoly(qx, qy)) return [qx, qy]; }
-  return [AMAP.cx, AMAP.cy];
+  const A = AMC(); for (let k = 1; k > 0; k -= 0.08) { const qx = A.cx + (x - A.cx) * k, qy = A.cy + (y - A.cy) * k; if (inPoly(qx, qy)) return [qx, qy]; }
+  return [A.cx, A.cy];
 }
 const anFront = e => e.shT > 0 && Math.abs(angDiff(Math.atan2(P.y - e.y, P.x - e.x), e.sAng)) < 1.2;   // 방패: 정면 약 140° (등 뒤 220°는 열려 있다)
 function anBlock(e) {
@@ -2234,7 +2283,7 @@ function anBlock(e) {
   if (wallT > (e.blkT || 0)) { e.blkT = wallT + 0.5; floatNum(e.x + Math.cos(e.sAng) * 80, e.y - 150, '막힘!', '#ffe8a0'); burst(e.x + Math.cos(e.sAng) * 80, e.y - 110, 5, ['#ffe8a0', '#ffffff'], 160, 0.3); sfx('item'); }
 }
 function initAnBoss(b) {
-  b.bk = 'angel'; b.hp *= AN.hp; b.max *= AN.hp; b.r = 66; b.x = AMAP.cx; b.y = AMAP.cy; b.stT = 2.6;
+  b.bk = 'angel'; b.hp *= AN.hp; b.max *= AN.hp; b.r = 66; b.x = AMC().cx; b.y = AMC().cy; b.stT = 2.6;
   Object.assign(b, { ph: 1, an: 'idle', fr: -1, anT: 0, frT: 0, n: 0, shT: 0, sAng: Math.PI / 2, shCd: 5, orbCd: 0, thT: 0, near: 0, blCd: 0, alpha: 1, halo: 0, beat: null, ghost: [] });
   anFx = []; anOrbs = []; anDeath = null;
 }
@@ -2335,9 +2384,9 @@ function anBlinkSpot() {   // 순간이동할 자리: 플레이어에게서 멀�
   for (let i = 0; i < 14; i++) {
     const a = rand() * 6.283, d = 420 + rand() * 140, x = P.x + Math.cos(a) * d, y = P.y + Math.sin(a) * d * 0.75;
     if (!inPoly(x, y) || !inPoly(x + 60, y) || !inPoly(x - 60, y)) continue;
-    const s = Math.hypot(x - AMAP.cx, (y - AMAP.cy) * 1.6) < 900 ? 1 : 0.5; if (s > bs) { bs = s; best = [x, y]; }
+    const s = Math.hypot(x - AMC().cx, (y - AMC().cy) * 1.6) < 900 ? 1 : 0.5; if (s > bs) { bs = s; best = [x, y]; }
   }
-  return best || anSpot(AMAP.cx, AMAP.cy);
+  return best || anSpot(AMC().cx, AMC().cy);
 }
 function updateAnBoss(e, dt) {
   e.t += dt; e.flash = Math.max(0, e.flash - dt); e.anT += dt; e.halo = Math.max(0, e.halo - dt * 2); if (e.frT > 0) e.frT -= dt;
@@ -2551,7 +2600,7 @@ function startFw() {
   for (const k of SNAP_KEYS) if (S[k] !== undefined && k !== 'tier') P[k] = JSON.parse(JSON.stringify(S[k]));
   if (P.orbD > 2) P.orbD = P.orbD >= 17 ? 0.95 : 0.55;   // v4.05 이전 스펙: 구슬 피해 고정값 → 배율
   let ft = S.tier || 0; while (ft > 0 && SAVE.shards < ft * 25) ft--;   // v5.00: 숨은 난이도도 참가비(단계×25)를 낸다 (없으면 단계를 낮춘다)
-  P.tier = ft; P.fee = ft * 25; if (P.fee) { SAVE.shards -= P.fee; saveSave(); }
+  P.tier = ft; P.fset = 'hell'; P.fee = ft * 25; if (P.fee) { SAVE.shards -= P.fee; saveSave(); }
   P.fwRun = true; P.hp = P.max; P.spd0 = P.spd; P.skT = P.skill ? skillCd() * 0.5 : 0; P.miniDone = true; P.poisonSpawned = true; P.exitLeft = 0; P.goal = null;
   if (P.char !== 'snail') ensureTint(P.form);
   show('startBox', false); show('overBox', false); show('levelBox', false); show('pauseBox', false);
@@ -3022,7 +3071,7 @@ function newPlayer(char) {
   return p;
 }
 function reset(char) {
-  buildSpecies();
+  buildSpecies(); try { buildMushSpecies(); } catch (_) {}
   P = newPlayer(char || curChar);
   DMETER = {}; DBOSS = {}; bfx = []; enemies = []; orbs = []; shards = []; fx = []; nums = []; arcs = []; zones = []; rings = []; beam = null; meteorQ = null; cerbQ = null; rainQ = null; bigQ = null; dashQ = null; evo = null; airs = []; diveQ = null; breathQ = null; rushQ = null; bombQ = null; holyQ = null; afx = []; bombT = []; holyPtr = null; cfx = []; ebul = []; allies = []; items = []; globs = []; sprFx = []; whipQ = null; ambT = 1.5; itemT = 9; blades = []; lights = []; waveT = 80 + rand() * 20;
   eleQ = null; tentQ = null; octoFx = [];
@@ -3063,7 +3112,7 @@ const routeRGB = () => theme().rgb;
 
 /* ---------- 적 ---------- */
 function spawnEnemy(ang, dist, forceElite) {
-  const avail = SPECIES.filter(s => s.unlock <= gt);
+  const avail = (isMush() && MSPECIES.length ? MSPECIES : SPECIES).filter(s => s.unlock <= gt);   // v6.52: 지하 6~10층은 버섯형 악마
   const pick = avail[Math.min(avail.length - 1, Math.floor(Math.pow(rand(), 1.6) * avail.length * 0.5 + rand() * avail.length * 0.5))];
   const elite = forceElite || (gt > 60 && rand() < 0.02);
   const a = ang === undefined ? rand() * 6.283 : ang, d = dist || Math.hypot(W, H) / 2 + 60;
@@ -3240,7 +3289,8 @@ const floorName = t => '지하 ' + ((t | 0) + 1) + '층';
    보스 패턴의 속도·횟수·추가 패턴은 5단계(지하 6층) 값에서 멈춘다 → 규칙 9(최고 단계에도 피할 곳이 남아야 함) 보장. 새 패턴은 새 맵·몹 시트가 오면 여기에 단계를 더한다. */
 const TP = () => Math.min(P.tier | 0, 5);
 /* 층별 맵·잡몹 세트: 지하 1~10층 모두 지금은 같은 지옥 맵·몹(자리만 잡아 둠). 지하 6~10층 새 도트 시트가 오면 여기서 갈라 쓴다. */
-const floorSet = t => 'hell';
+const floorSet = t => (t | 0) >= 5 ? 'mush' : 'hell';   // v6.52: 지하 6~10층 = 버섯 군락 맵 · 버섯형 악마 · 버섯 보스맵
+const isMush = () => !!(P && P.fset === 'mush');
 function calcShards() { return Math.round((Math.floor(P.kills / 20) + Math.floor(gt / 30) + Math.floor(P.lvl * 1.5) + P.named * 2 + P.goalShards) * tierMul() * (1 + 0.05 * (SAVE.perks.shard | 0))); }   // v4.06: 한 번 더 상향 (판이 짧아진 만큼 + α)   // v4.02: 약 1.5배 상향
 /* ---------- 런 목표: 한 판 안에서 순서대로 나오는 작은 목표. 달성하면 영혼 조각을 추가로 받는다 ---------- */
 const GOAL_TYPES = [
@@ -5274,7 +5324,7 @@ function useTeleport() {
   let best = null, bs = -1e9;
   for (let i = 0; i < 40; i++) {
     const a = i / 40 * 6.283 + rand() * 0.15, d = (arena ? 170 : 300) + rand() * (arena ? 190 : 230), x = P.x + Math.cos(a) * d, y = P.y + Math.sin(a) * d;
-    if (arena ? (!inPoly(x, y) || y > 1040 * AS) : chal ? !inCh(x, y) : isLava(Math.floor(x / TILE), Math.floor(y / TILE))) continue;
+    if (arena ? (!inPoly(x, y) || y > (arena.mush ? MMAP.itemY : 1040 * AS)) : chal ? !inCh(x, y) : isLava(Math.floor(x / TILE), Math.floor(y / TILE))) continue;
     let sc = 400;
     for (const e of enemies) { if (e.hp <= 0) continue; const w = (e.kind === 'boss' || e.kind === 'mini' || e.kind === 'uniq') ? 0.55 : 1; sc = Math.min(sc, (Math.hypot(e.x - x, e.y - y) - e.r) * w); }
     for (const b of ebul) sc = Math.min(sc, Math.hypot(b.x - x, b.y - y) - 40);
@@ -5805,7 +5855,7 @@ function update(dt) {
   // --- 용암: 흩어진 작은 웅덩이. 밟고 있으면 짤짤이로 계속 아프다 (시간이 갈수록 더 아프다) ---
   if (!arena && isLava(Math.floor(P.x / TILE), Math.floor(P.y / TILE))) {
     P.lavaT += dt; P.lavaTick -= dt;
-    if (rand() < 0.5) burst(P.x, P.y - 4, 1, ['#ff6a1c', '#ffc247'], 90, 0.5);
+    if (rand() < 0.5) burst(P.x, P.y - 4, 1, isMush() ? ['#9aff3a', '#d8ff6a'] : ['#ff6a1c', '#ffc247'], 90, 0.5);
     if (P.lavaTick <= 0) {
       P.lavaTick = 0.22;
       if (P.shield <= 0 && P.inv < 3) {
@@ -5919,7 +5969,7 @@ function update(dt) {
   cam.x += (P.x - cam.x) * Math.min(1, dt * 8);
   cam.y += (P.y - 20 - cam.y) * Math.min(1, dt * 8);
   if (arena) {   // 성 내부: 지도 밖은 보여주지 않는다
-    const A = arena.k === 'blood' ? BMAP : arena.k === 'angel' ? AMAP : ARENA, aw = A.w, ah = A.h;
+    const A = arena.k === 'blood' ? BMAP : arena.mush ? MMAP : arena.k === 'angel' ? AMAP : ARENA, aw = A.w, ah = A.h;
     cam.x = W >= aw ? aw / 2 : clamp(cam.x, W / 2, aw - W / 2);
     cam.y = H >= ah ? ah / 2 : clamp(cam.y, H / 2, ah - H / 2);
   } else if (chal) {   // 챌린지 맵 밖은 보여주지 않는다
@@ -6425,6 +6475,7 @@ function render() {
   if (arena) {
     ctx.imageSmoothingEnabled = true;
     if (arena.k === 'blood') ctx.drawImage(bmapS(), Math.round(W / 2 - cx), Math.round(H / 2 - cy));   // 혈랑왕의 제단
+    else if (arena.mush) ctx.drawImage(mmapS(), Math.round(W / 2 - cx), Math.round(H / 2 - cy));   // v6.52 버섯 보스맵
     else if (arena.k === 'angel') drawAmap(cx, cy);   // v6.30: 타락천사 보스맵
     else ctx.drawImage(arenaS(), Math.round(W / 2 - cx), Math.round(H / 2 - cy));   // 성 내부: 받은 도트 그림 그대로
   } else if (chal) {
@@ -6481,9 +6532,9 @@ function render() {
     } else if (it.chs) {
       drawChaser(it.chs, wx(it.chs.x), wy(it.chs.y));
     } else if (it.prop) {
-      const t = it.prop, r = PROP_RECTS[t.id];
+      const t = it.prop, r = (t.m ? MPROP_RECTS : PROP_RECTS)[t.id];
       ctx.imageSmoothingEnabled = true;
-      ctx.drawImage(IMG.props, r[0], r[1], r[2], r[3], t.px, t.py, t.dw, t.dh);
+      ctx.drawImage(t.m ? IMG.mprops : IMG.props, r[0], r[1], r[2], r[3], t.px, t.py, t.dw, t.dh);
     } else if (it.pet) {
       drawPet(it.pet, wx(it.pet.x), wy(it.pet.y));
     } else if (it.md) {
@@ -6840,7 +6891,7 @@ function drawHud() {
   }
   if (!arena && isLava(Math.floor(P.x / TILE), Math.floor(P.y / TILE)) && state === 'play') {
     ctx.textAlign = 'center'; ctx.font = 'bold 20px "Malgun Gothic", monospace';
-    const lv = P.char === 'snail' && !P.route && P.lavaT < 4 ? `용암! 버티는 중 ${P.lavaT.toFixed(1)} / 4초  (용암 진화 조건)` : '용암! 벗어나세요';
+    const lw = isMush() ? '독 늪' : '용암', lv = P.char === 'snail' && !P.route && P.lavaT < 4 ? `${lw}! 버티는 중 ${P.lavaT.toFixed(1)} / 4초  (용암 진화 조건)` : `${lw}! 벗어나세요`;
     ctx.strokeText(lv, W / 2, 60); ctx.fillStyle = '#ff6a1c'; ctx.fillText(lv, W / 2, 60);
   }
 }
@@ -6936,7 +6987,7 @@ function startChallenge(char) {
   if (char) curChar = char;
   if (!SAVE.chars[curChar]) curChar = 'wolf';
   audioInit(); reset(curChar); markDex(curChar + ':0');
-  chal = newChal(); P.tier = 2; P.bossK = 'monkey'; P.fee = 0; P.miniDone = true;   // 마왕 패턴은 2단계 기준 (기믹 약화)
+  chal = newChal(); P.tier = 2; P.fset = 'hell'; P.bossK = 'monkey'; P.fee = 0; P.miniDone = true;   // 마왕 패턴은 2단계 기준 (기믹 약화)
   P.x = CHM.start[0]; P.y = CHM.start[1]; cam.x = P.x; cam.y = P.y - 20;
   for (const r of RUNES) for (let i = 0; i < (SAVE.ch.rune[r.k] | 0); i++) r.ap(P);
   P.spd0 = P.spd; P.hp = P.max;
@@ -7498,7 +7549,7 @@ function startGame(char) {
   audioInit();
   const want = Math.min(SAVE.diff.sel | 0, SAVE.diff.max | 0); let t = want; while (t > 0 && SAVE.shards < t * 25) t--;   // 참가비(단계×25)를 낼 수 없으면 낮춘다
   reset(curChar); markDex(curChar + ':0');
-  P.tier = t; P.bossK = pickBossK(t);
+  P.tier = t; P.bossK = pickBossK(t); P.fset = floorSet(t) === 'mush' && IMG.mfloor && IMG.mprops && MSPECIES.length ? 'mush' : 'hell';
   P.fee = t * 25; if (P.fee) { SAVE.shards -= P.fee; saveSave(); banner = { txt: `${floorName(t)} 도전! (참가비 ${P.fee})`, t: 3.5 }; }
   if (t < want) banner = { txt: `영혼 조각이 모자라 ${floorName(want)} 대신 ${floorName(t)}에서 시작합니다` + (P.fee ? ` (참가비 ${P.fee})` : ''), t: 5, c: '#ff8a7a' };
   show('startBox', false); show('overBox', false); show('levelBox', false); show('pauseBox', false);
@@ -7627,7 +7678,7 @@ function openDex() {
   [['twins:0', TWIN_FORMS[0], '시작', '<br>조건: 벨리아·셀리아 처치'], ['twins:1', TWIN_FORMS[1], '진화 · 두 가닥 사슬 · 사슬 휘두르기', '<br>Lv.10 진화'], ['twins:2', TWIN_FORMS[2], '최종 진화 · 사슬의 폭군', '<br>Lv.20 진화', 1]].forEach(([key, D, sub, hint, tr]) => add(gr, { on: d.seen[key], trophy: !!tr, name: D.name, sub, hint,
     draw: (g, w, h, l) => dexSprite(g, w, h, IMG[D.src], D.pv[0], D.pv[1], D.pv[2], D.pv[3], false, l, true) }));
   gr = sec('마물 (처치 수)');
-  SPECIES.forEach(sp => add(gr, { on: d.kills['m' + sp.idx], name: sp.name, sub: d.kills['m' + sp.idx] + '마리 처치', draw: (g, w, h, l) => dexSprite(g, w, h, sp.frames[0].img, 0, 0, MOB.cw, MOB.ch, false, l) }));
+  SPECIES.concat(MSPECIES).forEach(sp => add(gr, { on: d.kills['m' + sp.idx], name: sp.name, sub: d.kills['m' + sp.idx] + '마리 처치', draw: (g, w, h, l) => dexSprite(g, w, h, sp.frames[0].img, 0, 0, MOB.cw, MOB.ch, false, l) }));
   add(gr, { on: d.kills.bug, name: '이공벌레', sub: d.kills.bug + '마리 처치', draw: (g, w, h, l) => dexSprite(g, w, h, IMG.bug, 0, BUGDEF.ch, BUGDEF.cw, BUGDEF.ch, false, l) });
   { const f = MINI_FR.B9, g2 = MINI_FR.E1;
     add(gr, { on: d.kills.mini, name: '원숭이 전사', sub: d.kills.mini + '회 처치', hint: '<br>미니 보스 (Lv.15)', draw: (g, w, h, l) => dexSprite(g, w, h, IMG.mini, f[0], f[1], f[2], f[3], false, l, true) });
@@ -7837,7 +7888,7 @@ window.__G = {
   get rollQ() { return rollQ; }, get gunFx() { return gunFx; }, GUN, GUN_AMMO, GUNA, gunLoad, gunRange,
   get anOrbs() { return anOrbs; }, get anFx() { return anFx; }, AMAP, ANB, ANX, AN, anStart, anTrans, pickBossK, floorName, arenaExit,
   sizes() { const o = { enemies, orbs, items, shards, fx, nums, arcs, embers, zones, rings, globs, sprFx, blades, lights, ebul, afx, gunFx, cfx, bfx, healFx, allies, slots, cutSaws, airs, octoFx, smokes, skp, mfx }; const r = {}; for (const k in o) if (o[k] && o[k].length != null) r[k] = o[k].length; return r; },
-  get banner() { return banner; }, get perfLv() { return perfLv; }, get NUM_C() { return NUM_C; }, get chal() { return chal; }, chTime, chDmgT, startChallenge, chEvent, chEnterBoss, chFrag, chGoldSpawn, chShelter, inCh, CHM, spawnCut, spawnAb, abStart, RUNES, TREASURES, get cutSaws() { return cutSaws; }, setChMode(v) { chMode = v; }, get W() { return W; }, get H() { return H; }, get species() { return SPECIES; },
+  get banner() { return banner; }, get perfLv() { return perfLv; }, get NUM_C() { return NUM_C; }, get chal() { return chal; }, chTime, chDmgT, startChallenge, chEvent, chEnterBoss, chFrag, chGoldSpawn, chShelter, inCh, CHM, spawnCut, spawnAb, abStart, RUNES, TREASURES, get cutSaws() { return cutSaws; }, setChMode(v) { chMode = v; }, get W() { return W; }, get H() { return H; }, get species() { return SPECIES; }, get mspecies() { return MSPECIES; }, MMAP, isMush, floorSet,
 };
 
 function loadImg(src) {   // v6.30 프레임 드랍: 미리 해독한 ImageBitmap으로 바꿔 둔다 (Image는 처음 그릴 때 해독·업로드로 큰 시트마다 20~40ms씩 멈췄다)
@@ -7861,10 +7912,10 @@ function silhouette(img, color) {
   g.drawImage(img, 0, 0); g.globalCompositeOperation = 'source-atop'; g.fillStyle = color; g.fillRect(0, 0, c.width, c.height);
   return c;
 }
-const LAZY_IMG = ['drophb', 'droppo', 'chm', 'cm', 'ab', 'an', 'anfx', 'amap'];   // 시작하자마자 쓰지 않는 그림은 따로 (시작 화면이 빨리 뜨게): 드랍 아이템 · 챌린지 · 타락천사
+const LAZY_IMG = ['drophb', 'droppo', 'chm', 'cm', 'ab', 'an', 'anfx', 'amap', 'mmap'];   // 시작하자마자 쓰지 않는 그림은 따로 (시작 화면이 빨리 뜨게): 드랍 아이템 · 챌린지 · 타락천사
 for (const k of LAZY_IMG) loadImg(SRC[k]).then(i => { IMG[k] = i; if (k === 'cm' || k === 'ab') IMG[k + 'W'] = silhouette(i, '#ffffff'); }).catch(() => {});
 Promise.all(Object.keys(SRC).filter(k => !LAZY_IMG.includes(k)).map(k => loadImg(SRC[k]).then(i => { IMG[k] = i; }))).then(() => {   // IMG.이름 = SRC.이름
-  IMG.miniW = silhouette(IMG.mini, '#ffffff'); IMG.floorD = toneFloor(IMG.floor);
+  IMG.miniW = silhouette(IMG.mini, '#ffffff'); IMG.floorD = toneFloor(IMG.floor); try { buildMushSpecies(); } catch (_) {}
   BUGW = silhouette(IMG.bug, '#ffffff'); BUGR = silhouette(IMG.bug, '#ff2a2a'); IMG.bugAlly = allyTint(IMG.bug);
   bindSettings();
   buildCards();

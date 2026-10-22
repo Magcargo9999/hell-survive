@@ -11,6 +11,8 @@ SCENES = {
     'dream': "()=>{const G=__G;G.startGame('chimera');window.__rt=2;__lv(22);G.setT(500);for(let i=0;i<200;i++)G.spawnEnemy();}",
     'chgun': "()=>{const G=__G;G.SAVE.ch.open=true;G.setChMode(true);G.SAVE.chars.gun=true;G.startGame('gun');window.__rt=2;__lv(30);G.setT(1500);for(let i=0;i<280;i++)G.spawnEnemy();}",
     'fgun': "()=>{const G=__G;G.SAVE.chars.gun=true;G.startGame('gun');window.__rt=1;__lv(22);G.setT(560);for(let i=0;i<260;i++)G.spawnEnemy();}",
+    'mfield': "()=>{const G=__G;G.SAVE.diff.max=9;G.SAVE.shards=9999;G.SAVE.diff.sel=7;G.startGame('wolf');window.__rt=1;__lv(22);G.setT(560);for(let i=0;i<260;i++)G.spawnEnemy();}",
+    'mboss': "()=>{const G=__G;G.SAVE.diff.max=9;G.SAVE.shards=9999;G.SAVE.diff.sel=7;G.startGame('ghost');G.P.bossK='skel';__lv(25);G.enemies.length=0;G.raiseCastle();G.enterArena();}",
     'chal': "()=>{const G=__G;G.SAVE.ch.open=true;G.setChMode(true);G.startGame('octo');__lv(20);G.setT(900);for(let i=0;i<220;i++)G.spawnEnemy();}",
 }
 HOOK = """()=>{window.__ft=[];let l=performance.now();const f=t=>{window.__ft.push(t-l);l=t;requestAnimationFrame(f)};requestAnimationFrame(f);
