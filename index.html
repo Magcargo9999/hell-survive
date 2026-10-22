@@ -446,7 +446,7 @@ const GUN_FORMS = [
 let gunFx = [], rollQ = null;
 const gunRange = () => (P.rng * 3.2 + 40) * (P.form >= 2 ? 1.06 : 1);   // 보통보다 조금 짧다 (궁수 480 · 마안 구슬 유령 430 · 총잡이 360)
 const gunReload = () => GUN.reload * (1 - 0.15 * (P.up.gReload | 0));
-const gunSpec = k => (k === 'R' || k === 'F') ? 1 + 0.15 * (P.up.gSpec | 0) : 1;
+const gunSpec = k => (k === 'R' || k === 'F') ? 1 + 0.12 * (P.up.gSpec | 0) : 1;   // v6.46: 15% → 12%
 function gunRoll1() {   // 탄 하나 뽑기
   const f = GUN_AMMO.F.p + 0.05 * (P.up.gEmber | 0), r = rand();
   return r < f ? 'F' : r < f + GUN_AMMO.R.p ? 'R' : r < f + GUN_AMMO.R.p + GUN_AMMO.B.p ? 'B' : 'N';
@@ -621,7 +621,7 @@ const BUGDEF = { cw: 107, ch: 64, ws: 1.35, anim: { walk: { row: 1, n: 7, fps: 8
 // 진화 루트: fur=털 색조, sat=채도 보정, eye=눈·참격 색조, rgb=이펙트 색
 const ROUTES = {
   crimson:  { name: '혈랑', title: '혈랑 (血狼)',  fur: 346, satAdd: 0.22, lm: 0.95, eye: 352, rgb: '255,50,80',  c1: '#e0384c', c2: '#ff9aa8',
-    desc: '공격력 +20% · 범위 +8% · 처치 시 체력 +1 (피흡형)', later: 'Lv.20 : 혈랑(흡혈) / 성혈랑(피의 비) 중 선택' },
+    desc: '공격력 +20% · 범위 +8% · 처치 시 체력 +0.2 (피흡형)', later: 'Lv.20 : 혈랑(흡혈) / 성혈랑(피의 비) 중 선택' },
   abyss:    { name: '심연', title: '심연 (深淵)',  fur: 190, satAdd: 0.18, lm: 1.0,  eye: 186, rgb: '60,220,255', c1: '#35d6e8', c2: '#b8f6ff',
     desc: '이속 +15% · 공속 +22% · 회피 6% · 체력 +15 (기동형)', later: 'Lv.20 : 이속 +8% · 공속 +18% · 회피 16% · 체력 +15' },
   twin:     { name: '쌍두', title: '쌍두 (雙頭)', fur: 330, satAdd: 0.2, lm: 0.95, eye: 340, rgb: '230,90,140', c1: '#e05a90', c2: '#ffc0d8',
@@ -735,7 +735,7 @@ window.addEventListener('pagehide', () => saveSave());
 const PERKS = [
   { id: 'hp',     name: '단단한 육체',    desc: '최대 체력 +8%',            max: 10, cost: l => 40 + 30 * l },
   { id: 'spd',    name: '가벼운 발',      desc: '이동 속도 +4%',            max: 10, cost: l => 40 + 30 * l },
-  { id: 'dmg',    name: '날 선 의지',     desc: '공격력 +5%',               max: 10, cost: l => 60 + 40 * l },
+  { id: 'dmg',    name: '날 선 의지',     desc: '공격력 +4%',               max: 10, cost: l => 60 + 40 * l },
   { id: 'exp',    name: '영혼 공명',      desc: '경험치 획득 +8%',          max: 10, cost: l => 50 + 35 * l },
   { id: 'magnet', name: '끌어당기는 힘',  desc: '구슬 흡수 범위 +25% · 끌어당기는 속도 +25%', max: 10, cost: l => 30 + 25 * l },
   { id: 'banish', name: '선택지 삭제권',  desc: '판마다 레벨업 카드 N장 삭제 (단계마다 +1장)', max: 5, cost: l => 120 + 100 * l },
@@ -2991,6 +2991,7 @@ function drawCastle(wx, wy) {
 const atkCdBase = () => Math.max(0.22, P.cd / P.aspd);   // 공속 카드는 더하기로 쌓인다 (공속 +12% = 12%)
 const ease = () => Math.min(1, 0.7 + gt / 300);   // 초반에는 적의 공격이 약하다
 
+const RANGED_NERF = 0.75, MELEE_NERF = 0.8, WOLF_NERF = 0.8;
 function newPlayer(char) {
   const sn = char === 'snail', ar = char === 'archer';
   const p = {
@@ -3013,9 +3014,10 @@ function newPlayer(char) {
   if (char === 'gun') { p.max = p.hp = 100; p.spd = 185; p.dmg = 30; p.cd = 0.34; p.rng = 100; p.pickup = 92; p.mag = null; p.magI = 0; p.reloadT = 0; p.reloadMax = 1; p.gShot = 0; p.bountyN = 0; p.bountyT = 0; }   // 악마 총잡이: 체력 낮음 · 느림 · 한 발이 강하다 (6발마다 재장전 1초)
   if (char === 'ghost') { p.max = p.hp = 100; p.spd = 210; p.dmg = 15; p.cd = 0.65; p.rng = 100; p.pickup = 95; p.gOrbs = 5; }   // 구슬 유령: 약한 구슬 여러 개
   if (char === 'lizard') { p.max = p.hp = 112; p.spd = 163; p.dmg = 21; p.cd = 1.12; p.rng = 92; p.pickup = 90; p.armor = 0.85; p.knock += 0.15; }   // 느리고 단단하지만 한 방이 강하다
+  p.dmg *= ['snail', 'archer', 'ghost', 'octo', 'gun'].includes(char) ? RANGED_NERF : MELEE_NERF;   // v6.46: 전 캐릭터 기본 공격력 너프 (원거리 -25% · 근접 -20%) — 삼두 루트는 Lv.10에 되돌려 제외
   const pk = SAVE.perks;   // 상점에서 산 영구 강화 적용
   p.max = Math.round(p.max * (1 + 0.08 * pk.hp)); p.hp = p.max;
-  p.spd *= 1 + 0.04 * pk.spd; p.dmg *= 1 + 0.05 * pk.dmg; p.pickup *= 1 + 0.25 * pk.magnet; p.magPull = 1 + 0.25 * pk.magnet; p.reviveLeft = Math.min(1, pk.revive || 0); p.regen += 0.1 * (pk.regen | 0); p.critD += 0.1 * (pk.critd | 0); p.expMul = 1 + 0.08 * pk.exp;
+  p.spd *= 1 + 0.04 * pk.spd; p.dmg *= 1 + 0.04 * pk.dmg; p.pickup *= 1 + 0.25 * pk.magnet; p.magPull = 1 + 0.25 * pk.magnet; p.reviveLeft = Math.min(1, pk.revive || 0); p.regen += 0.1 * (pk.regen | 0); p.critD += 0.1 * (pk.critd | 0); p.expMul = 1 + 0.08 * pk.exp;
   p.healBank = p.max * 0.12; p.banish = pk.banish || 0; p.spd0 = p.spd; p.exitLeft = 1;
   return p;
 }
@@ -3497,8 +3499,8 @@ const GD = n => 16 - 2 * n;   // 방어막: 레벨별 재충전 시간(초) Lv1 
 const AU = n => ({ R: 95 + 22 * n, dm: 0.45 + 0.13 * n });   // v4.13 대폭 상향 (반경 70→117 · 피해 ×2 이상)                                                 // 불길 오라
 // txt(n): n레벨이 되었을 때의 효과 한 줄 / alt: 캐릭터별 [이름, 효과]
 const UPGRADES = [
-  { id: 'claw',   name: '날카로운 발톱', txt: () => '공격력 +16%',      apply: p => { p.dmg *= 1.16; },
-    alt: { gun: ['강화 화약', '탄환 피해 +16%'], octo: ['마력 증폭', '마력탄 · 구체 피해 +16%'], lava: ['용암 강화', '공격력 +16% (용암탄 · 흔적 모두)'], snail: ['맹독 강화', '공격력 +16% (독 침 · 독 자국 모두)'], archer: ['화살 강화', '화살 피해 +16%'], lizard: ['대검 단련', '공격력 +16%'], twins: ['악마의 분노', '공격력 +16%'], ghost: ['진한 저승 기운', '구슬 피해 +16%'] } },
+  { id: 'claw',   name: '날카로운 발톱', txt: () => '공격력 +14%',      apply: p => { p.dmg *= 1.14; },
+    alt: { gun: ['강화 화약', '탄환 피해 +14%'], octo: ['마력 증폭', '마력탄 · 구체 피해 +14%'], lava: ['용암 강화', '공격력 +14% (용암탄 · 흔적 모두)'], snail: ['맹독 강화', '공격력 +14% (독 침 · 독 자국 모두)'], archer: ['화살 강화', '화살 피해 +14%'], lizard: ['대검 단련', '공격력 +14%'], twins: ['악마의 분노', '공격력 +14%'], ghost: ['진한 저승 기운', '구슬 피해 +14%'] } },
   { id: 'speed',  name: '날렵한 발톱',   txt: () => '공속 +12%',        apply: p => { p.aspd += 0.12; },
     alt: { gun: ['빠른 방아쇠', '사격 속도 +12% (재장전은 그대로)'], octo: ['고속 영창', '공속 +12%'], snail: ['빠른 분비', '공속 +12%'], archer: ['속사', '공속 +12%'], lizard: ['가벼운 휘두르기', '공속 +12%'], twins: ['빠른 손놀림', '타격 간격 -11%'], ghost: ['빠른 손짓', '공속 +12%'] } },
   { id: 'move',   name: '질주',          txt: () => '이속 +7.5%',       apply: p => { p.spd *= 1.075; },
@@ -3522,7 +3524,7 @@ const UPGRADES = [
   { id: 'aura',   name: '불길 오라',     txt: n => `오라 반경 ${AU(n).R} · 지속 피해`,        apply: () => {} },
 ];
 const UNIQUE = {
-  wolf:  [{ id: 'thirst', name: '피의 갈증', max: 5, txt: () => '처치 시 체력 +0.5', apply: p => { p.killHeal += 0.5; } }],   // 혈랑 진화의 조건
+  wolf:  [{ id: 'thirst', name: '피의 갈증', max: 5, txt: () => '처치 시 체력 +0.2', apply: p => { p.killHeal += 0.2; } }],   // 혈랑 진화의 조건
   snail: [{ id: 'sticky', name: '끈적한 독', txt: () => '독 자국 +20% 넓고 오래', lavaAlt: ['끈적한 용암', '용암 흔적 +32% 넓고 오래'], apply: p => { p.trailBonus += P.route === 'lava' ? 0.32 : 0.2; } },   // v5.11: 용암만 중폭 상향
           { id: 'spread', name: '번지는 독', txt: () => '자국 크기 +16% · 독 피해 +9% (기본 공격 포함)', lavaAlt: ['번지는 용암', '흔적 크기 +14% · 피해 +7% (기본 공격 포함)'], apply: p => { const L = P.route === 'lava'; p.trailR = (p.trailR || 0) + (L ? 0.14 : 0.16); p.trailD = (p.trailD || 0) + (L ? 0.07 : 0.09); } },   // v5.11: 용암만 소폭 너프
           { id: 'magma', name: '끓는 용암', route: 'lava', txt: () => '폭발 +13% · 웅덩이 +22%', apply: p => { p.magma = (p.magma || 0) + 1; } }],
@@ -3548,7 +3550,7 @@ const UNIQUE = {
   ],
   gun: [
     { id: 'gReload', name: '빠른 장전', max: 3, txt: n => `재장전 시간 -15% (1초 → ${(1 - 0.15 * n).toFixed(2)}초)`, apply: () => {} },
-    { id: 'gSpec', name: '특수탄 강화', max: 3, txt: n => `불씨탄 · 도탄 피해 +15% (합계 +${15 * n}%)`, apply: () => {} },
+    { id: 'gSpec', name: '특수탄 강화', max: 3, txt: n => `불씨탄 · 도탄 피해 +12% (합계 +${12 * n}%)`, apply: () => {} },
     { id: 'gEmber', name: '불씨 각인', max: 3, txt: n => `불씨탄 확률 +5%p (${15 + 5 * n}% · 일반탄 ${55 - 5 * n}%)`, apply: () => {} },
     { id: 'gBounty', name: '현상금 사냥', max: 3, txt: n => `처치할 때마다 1.5초 동안 이속 +2% (최대 ${1 + 2 * n}중첩)`, apply: () => {} },
   ],
@@ -3582,7 +3584,7 @@ const SYNERGIES = [
   { id: 'galeWing',  name: '질풍 날개',   txt: '에어슬래시 +1갈래 · 피해 +30%',    need: ['airA', 'airB'], only: 'chimera', apply: p => { p.syn.gale = true; } },
   { id: 'ricochet',  name: '도탄 사격',   txt: '처치 시 근처 적에게 화살이 튕김',  need: ['claw', 'shard'], only: 'archer' },
   { id: 'lifeOrb',   name: '불사의 영혼', txt: '경험치 구슬마다 체력 회복',        need: ['heart', 'magnet'] },
-  { id: 'tstorm',    name: '폭풍 낙뢰',   txt: '낙뢰 쿨타임 -40% · +2발',            need: ['thunder', 'speed'] },
+  { id: 'tstorm',    name: '폭풍 낙뢰',   txt: '낙뢰 쿨타임 +80% · +2발 · 피해 -8%',            need: ['thunder', 'speed'] },
   { id: 'bstorm',    name: '칼날 폭풍',   txt: '칼날 +2개 · 크기 +62%',            need: ['blade', 'range'] },
   { id: 'dnova',     name: '이중 충격파', txt: '충격파가 두 번 터지고 밀쳐냄',     need: ['nova', 'knock'] },
   { id: 'inferno',   name: '화염 지옥',   txt: '오라 반경 +40% · 피해 +70%',       need: ['aura', 'armor'] },
@@ -3961,7 +3963,7 @@ function openRoute() {
 function applyEvo(to) {
   if (P.char === 'gun') {
     if (to === 1) { P.max += 34; P.dmg *= 1.22; P.spd *= 1.03; }   // 지옥의 무법자
-    else { P.max += 48; P.dmg *= 1.16; P.spd *= 1.04; P.rng *= 1.05; P.taken *= 0.92; }   // 악마처형자 (+ 스킬 구르기 · 받는 피해 -8%)
+    else { P.max += 48; P.dmg *= 1.12; P.cd *= 1.07; P.spd *= 1.04; P.rng *= 1.05; P.taken *= 0.92; }   // v6.46: 공격력 1.16→1.12 · 공속 -6.5%   // 악마처형자 (+ 스킬 구르기 · 받는 피해 -8%)
     P.hp = P.max; markDex('gun:' + to);
     return;
   }
@@ -4044,14 +4046,14 @@ function applyEvo(to) {
   const r = P.route;
   if (to === 1) {
     P.max += 20; P.rng *= 1.1;
-    if (r === 'crimson') { P.dmg *= 1.2; P.rng *= 1.08; P.killHeal += 1; }   // 혈랑: 처치 회복 +1
+    if (r === 'crimson') { P.dmg *= 1.2; P.rng *= 1.08; P.killHeal += 0.2; }   // 혈랑: 처치 회복 +0.2 (v6.46 하향)
     if (r === 'abyss')   { P.spd *= 1.15; P.aspd += 0.22; P.max += 15; P.dodge = 0.06; }
-    if (r === 'twin')    { P.max += 20; P.spd *= 1.06; }   // 2연타는 형태(FD.hits)가 담당
+    if (r === 'twin')    { P.max += 20; P.spd *= 1.06; P.dmg /= WOLF_NERF; }   // v6.46: 삼두 루트는 전 캐릭터 공격력 너프(근접 -20%)에서 제외   // 2연타는 형태(FD.hits)가 담당
   } else {
     P.max += 30; P.dmg *= 1.15;
-    if (r === 'crimson') { P.dmg *= 1.15; if (P.fin === 'holy') { P.max += 30; P.rng *= 1.1; P.regen += 0.65; P.dmg *= 0.86; } else if (P.fin === 'fallen') { P.max += 45; P.dmg *= 1.22; P.rng *= 1.25; P.aspd += 0.1; P.killHeal += 1; } else { P.max += 20; P.dmg *= 1.06 * 1.12; P.syn.vamp = true; P.killHeal += 1; } }   // v6.22: 피의 혈랑 공격력 +12%
+    if (r === 'crimson') { P.dmg *= 1.15; if (P.fin === 'holy') { P.max += 30; P.rng *= 1.1; P.regen += 0.65; P.dmg *= 0.86; } else if (P.fin === 'fallen') { P.max += 45; P.dmg *= 1.22; P.rng *= 1.25; P.aspd += 0.1; P.killHeal += 0.2; } else { P.max += 20; P.dmg *= 1.06 * 1.12; P.syn.vamp = true; P.killHeal += 0.2; } }   // v6.22: 피의 혈랑 공격력 +12%
     if (r === 'abyss')   { P.spd *= 1.11; P.aspd += 0.24; P.max += 30; P.dmg *= 1.07; P.dodge = 0.16; }   // v5.00: 공격 +7% · 공속 +6% · 체력 +15 · 이속 +3%
-    if (r === 'twin')    { P.max += 30; P.spd *= 1.04; P.dmg *= 1.12; }   // 3연타 · v6.22: 삼두 늑대 공격력 +12%
+    if (r === 'twin')    { P.max += 30; P.spd *= 1.04; P.dmg *= 1.12; P.aspd *= 2; }   // v6.46: 삼두 늑대 최종 공속 ×2 핫픽스   // 3연타 · v6.22: 삼두 늑대 공격력 +12%
   }
   P.hp = P.max;
   markDex(to === 1 ? 'wolf:1:' + P.route : r === 'twin' ? 'wolf:2t' : r === 'crimson' ? 'wolf:2c:' + P.fin : 'wolf:2', P.route);
@@ -5432,7 +5434,7 @@ function castThunder(c) {
     const t = pool.splice((rand() * pool.length) | 0, 1)[0], x = t.x, y = t.y, R = 84, pts = [];
     for (let k = 0; k < 6; k++) pts.push([(rand() - 0.5) * 56 * (1 - k / 6), -560 + k * 100]);
     lights.push({ x, y, t: 0, life: 0.4, pts });
-    for (const e of enemies) if (e.hp > 0 && Math.hypot(e.x - x, e.y - y) < R + e.r) hurtEnemy(e, P.dmg * c.dm, 0, 0, 0);
+    for (const e of enemies) if (e.hp > 0 && Math.hypot(e.x - x, e.y - y) < R + e.r) hurtEnemy(e, P.dmg * c.dm * (P.syn.tstorm ? 0.92 : 1), 0, 0, 0);   // v6.46: 폭풍 낙뢰 피해 -8%
     addRing(x, y, 6, R, 0.3, '255,240,140', 6); burst(x, y - 10, 8, ['#fff3a0', '#ffffff', '#9be7ff'], 260, 0.4); hit++;
   }
   if (hit) { shake = Math.max(shake, 3); sfx('zap'); }
@@ -5454,7 +5456,7 @@ function castNova(c) {
 }
 function cardAttacks(dt) {
   const T = P.cdT, up = P.up, tn = nearestEnemy(640);   // 화면 안에 적이 있을 때만 발동
-  if (up.thunder) { T.th -= dt; if (T.th <= 0 && tn) { const c = TH(up.thunder); T.th = c.cd * (P.syn.tstorm ? 0.6 : 1); withSrc('thunder', () => castThunder(c)); } }
+  if (up.thunder) { T.th -= dt; if (T.th <= 0 && tn) { const c = TH(up.thunder); T.th = c.cd * (P.syn.tstorm ? 1.8 : 1) /* v6.46: 폭풍 낙뢰 쿨타임 ×3 (0.6 → 1.8) */; withSrc('thunder', () => castThunder(c)); } }
   if (up.blade) { T.bl -= dt; if (T.bl <= 0 && tn) { const c = BL(up.blade); T.bl = c.cd; castBlades(c, tn); } }
   if (up.nova) {
     T.nv -= dt; const c = NV(up.nova);
