@@ -227,7 +227,7 @@
 /* ============================================================
  * 0. 기본 설정
  * ============================================================ */
-const SRC = { sh: '__SH__', mfloor: '__MFLOOR__', mprops: '__MPROPS__', mmob: '__MMOB__', mmap: '__MMAP__', mini: '__MINI__', snail: '__SNAIL__', base: '__ATLAS__', pup: '__PUP__', dark: '__DARK__', bug: '__BUG__', floor: '__FLOOR__', props: '__PROPS__', castle: '__CASTLE__', arena: '__ARENA__', boss: '__BOSS__', mobs: '__MOBS__', blood: '__BLOOD__', twin: '__TWIN__', triple: '__TRIPLE__', items: '__ITEMS__', drophb: '__DROPHB__', droppo: '__DROPPO__', blood2: '__BLOOD2__', holy: '__HOLY__', lavasn: '__LAVASN__', lavafx: '__LAVAFX__', venom2: '__VENOM2__', venom3: '__VENOM3__', venomfx: '__VENOMFX__', elf0: '__ELF0__', elf1: '__ELF1__', skel: '__SKEL__', chim0: '__CHIM0__', chim1: '__CHIM1__', chim2: '__CHIM2__', chimfx: '__CHIMFX__', flm1: '__FLM1__', flm2: '__FLM2__', flmfx: '__FLMFX__', drm1: '__DRM1__', drm2: '__DRM2__', drfx: '__DRFX__', arcr: '__ARCR__', arch: '__ARCH__', arfx: '__ARFX__', hlfx: '__HLFX__', slot: '__SLOT__', uniq: '__UNIQ__', eyem: '__EYEM__', relic: '__RELIC__', liz0: '__LIZ0__', liz1: '__LIZ1__', liz2: '__LIZ2__', liz3: '__LIZ3__', gh: '__GH__', gg: '__GG__', oc: '__OC__', lg: '__LG__', os: '__OS__', bs: '__BS__', tw0: '__TW0__', tw1: '__TW1__', tw2: '__TW2__', fwb: '__FWB__', fwp: '__FWP__', fwfx: '__FWFX__', bmap: '__BMAP__', skb: '__SKB__', skw: '__SKW__', chm: '__CHMAP__', cm: '__CM__', ab: '__AB__', an: '__AN__', anfx: '__ANFX__', amap: '__AMAP__', gun: '__GUN__' };
+const SRC = { mimic: '__MIMIC__', sh: '__SH__', mfloor: '__MFLOOR__', mprops: '__MPROPS__', mmob: '__MMOB__', mmap: '__MMAP__', mini: '__MINI__', snail: '__SNAIL__', base: '__ATLAS__', pup: '__PUP__', dark: '__DARK__', bug: '__BUG__', floor: '__FLOOR__', props: '__PROPS__', castle: '__CASTLE__', arena: '__ARENA__', boss: '__BOSS__', mobs: '__MOBS__', blood: '__BLOOD__', twin: '__TWIN__', triple: '__TRIPLE__', items: '__ITEMS__', drophb: '__DROPHB__', droppo: '__DROPPO__', blood2: '__BLOOD2__', holy: '__HOLY__', lavasn: '__LAVASN__', lavafx: '__LAVAFX__', venom2: '__VENOM2__', venom3: '__VENOM3__', venomfx: '__VENOMFX__', elf0: '__ELF0__', elf1: '__ELF1__', skel: '__SKEL__', chim0: '__CHIM0__', chim1: '__CHIM1__', chim2: '__CHIM2__', chimfx: '__CHIMFX__', flm1: '__FLM1__', flm2: '__FLM2__', flmfx: '__FLMFX__', drm1: '__DRM1__', drm2: '__DRM2__', drfx: '__DRFX__', arcr: '__ARCR__', arch: '__ARCH__', arfx: '__ARFX__', hlfx: '__HLFX__', slot: '__SLOT__', uniq: '__UNIQ__', eyem: '__EYEM__', relic: '__RELIC__', liz0: '__LIZ0__', liz1: '__LIZ1__', liz2: '__LIZ2__', liz3: '__LIZ3__', gh: '__GH__', gg: '__GG__', oc: '__OC__', lg: '__LG__', os: '__OS__', bs: '__BS__', tw0: '__TW0__', tw1: '__TW1__', tw2: '__TW2__', fwb: '__FWB__', fwp: '__FWP__', fwfx: '__FWFX__', bmap: '__BMAP__', skb: '__SKB__', skw: '__SKW__', chm: '__CHMAP__', cm: '__CM__', ab: '__AB__', an: '__AN__', anfx: '__ANFX__', amap: '__AMAP__', gun: '__GUN__' };
 const SNAIL_RECTS = [[0, 0, 216, 146], [220, 0, 273, 208], [497, 0, 276, 208], [777, 0, 289, 214]];
 const PROP_RECTS = [[0, 0, 38, 48], [40, 0, 22, 49], [64, 0, 34, 48], [100, 0, 26, 44], [128, 0, 29, 44], [159, 0, 56, 44], [217, 0, 64, 59], [283, 0, 42, 44], [327, 0, 20, 48], [349, 0, 62, 62], [413, 0, 47, 64], [462, 0, 44, 56], [0, 66, 33, 62], [35, 66, 36, 56], [73, 66, 28, 57], [103, 66, 19, 29], [124, 66, 20, 46], [146, 66, 18, 28], [166, 66, 18, 23], [186, 66, 19, 31], [207, 66, 21, 31], [230, 66, 22, 30], [254, 66, 21, 18], [277, 66, 20, 19], [299, 66, 32, 50], [333, 66, 32, 49], [367, 66, 40, 46], [409, 66, 39, 46], [450, 66, 33, 45], [0, 130, 37, 45], [39, 130, 19, 29], [60, 130, 18, 29], [80, 130, 17, 18], [99, 130, 20, 19], [121, 130, 20, 20], [143, 130, 58, 60], [203, 130, 31, 54], [236, 130, 30, 54], [268, 130, 30, 54], [300, 130, 47, 53], [349, 130, 28, 53], [379, 130, 31, 53], [412, 130, 43, 41], [457, 130, 44, 40], [0, 192, 36, 11], [38, 192, 25, 16], [65, 192, 48, 11], [115, 192, 76, 57], [193, 192, 43, 49], [238, 192, 21, 21], [261, 192, 35, 45], [298, 192, 50, 38], [350, 192, 67, 77], [419, 192, 53, 57], [0, 271, 45, 79], [47, 271, 53, 24], [102, 271, 32, 36], [136, 271, 59, 53]];
 // 늑대 형태별 스프라이트 설정: 한 칸 크기, 배율, 원본이 바라보는 방향(flip), 공격이 맞는 프레임(hitF), 동작별 (줄, 프레임 수, 초당 프레임)
@@ -3234,10 +3234,11 @@ function hurtEnemy(e, dmg, kx, ky, kn, quiet) {
   if (e.hp <= 0) {
     P.kills++; if (P.up.gBounty) gunBounty();
     if (SAVE.ch.tr.rat && P.kills % 100 === 0) { P.max += 1; P.hp = Math.min(P.max, P.hp + 1); floatNum(P.x, P.y - 100, '쥐 이빨 목걸이  최대 체력 +1', '#ffd0a0'); }   // 보물
-    dexKill(e.kind === 'boss' ? dexBoss(e) : e.kind === 'mini' ? (e.bk === 'eye' ? 'mini2' : e.bk === 'cut' ? 'cut' : e.sk ? 'skw' : 'mini') : e.kind === 'abm' ? 'abm' : e.kind === 'bug' ? 'bug' : e.kind === 'uniq' ? 'uq:' + e.uk : (e.kind === 'skh' || e.kind === 'skm') ? 'skx' : 'm' + e.spec.idx);
+    dexKill(e.kind === 'boss' ? dexBoss(e) : e.kind === 'mini' ? (e.bk === 'eye' ? 'mini2' : e.bk === 'cut' ? 'cut' : e.sk ? 'skw' : 'mini') : e.kind === 'abm' ? 'abm' : e.kind === 'bug' ? 'bug' : e.kind === 'uniq' ? 'uq:' + e.uk : e.kind === 'mimic' ? 'mimic' : (e.kind === 'skh' || e.kind === 'skm') ? 'skx' : 'm' + e.spec.idx);
     if (e.kind === 'boss') { markDex(dexBoss(e), 1); if (e.bk === 'fw') fwBossDefeated(e); else bossDefeated(); return; }
     if (e.kind === 'skh' || e.kind === 'skm') { skMinorDead(e); return; }
     fangGain(e);
+    if (e.kind === 'mimic') { mimicDefeated(e); return; }
     if (e.kind === 'uniq') { uniqDefeated(e); return; }
     if (e.kind === 'mini') { miniDefeated(e); return; }
     orbs.push({ x: e.x, y: e.y, val: e.exp, t: rand() * 6 });
@@ -3300,7 +3301,7 @@ const TP = () => Math.min(P.tier | 0, 5);
 /* 층별 맵·잡몹 세트: 지하 1~10층 모두 지금은 같은 지옥 맵·몹(자리만 잡아 둠). 지하 6~10층 새 도트 시트가 오면 여기서 갈라 쓴다. */
 const floorSet = t => (t | 0) >= 5 ? 'mush' : 'hell';   // v6.52: 지하 6~10층 = 버섯 군락 맵 · 버섯형 악마 · 버섯 보스맵
 const isMush = () => !!(P && P.fset === 'mush');
-function calcShards() { return Math.round((Math.floor(P.kills / 20) + Math.floor(gt / 30) + Math.floor(P.lvl * 1.5) + P.named * 2 + P.goalShards) * tierMul() * (1 + 0.05 * (SAVE.perks.shard | 0))); }   // v4.06: 한 번 더 상향 (판이 짧아진 만큼 + α)   // v4.02: 약 1.5배 상향
+function calcShards() { return Math.round((Math.floor(P.kills / 20) + Math.floor(gt / 30) + Math.floor(P.lvl * 1.5) + P.named * 2 + P.goalShards) * tierMul() * (1 + 0.05 * (SAVE.perks.shard | 0))) + (P.mimicShards | 0); }   /* v7.02: 미믹 영혼 조각은 배율 없이 그대로 */   // v4.06: 한 번 더 상향 (판이 짧아진 만큼 + α)   // v4.02: 약 1.5배 상향
 /* ---------- 런 목표: 한 판 안에서 순서대로 나오는 작은 목표. 달성하면 영혼 조각을 추가로 받는다 ---------- */
 const GOAL_TYPES = [
   { k: 'kills', label: n => `마물 ${n}마리 처치`,       tg: i => 80 + 60 * i,            ok: () => true },
@@ -4853,6 +4854,7 @@ const SLOT_FX = [
   { id: 'curse', good: false, name: '운명의 저주',  desc: '다음 레벨업 카드를 고를 수 없다 (무작위 1장이 억지로 적용)' },
   { id: 'half',  good: false, name: '피의 대가',    desc: '현재 체력이 절반이 된다' },
   { id: 'slow',  good: false, name: '굳어붙은 발',  desc: '30~60초 동안 이동 속도 -35%' },
+  { id: 'mimic', good: false, name: '미믹 습격',    desc: '미믹 2마리가 달려든다 (쓰러뜨리면 한 마리당 영혼 조각 1000개)' },
   { id: 'gate',  good: false, name: '지옥문 개방',  desc: '내 주변에 마물 10마리 + 정예 1마리가 쏟아진다 (정예는 보물 상자를 반드시 떨어뜨림)' },
 ];
 const SLOT_LIFE = 80;   // 나타난 뒤 사라지기까지 (초)
@@ -4884,9 +4886,10 @@ function slotKey(code) {
   if (u.ph === 'ask') { if (code === 'Digit1' || code === 'Enter' || code === 'Space') slotSpin(); else if (code === 'Digit2' || code === 'Escape') closeSlot(false); }
   else if (u.ph === 'done' && (code === 'Digit1' || code === 'Digit2' || code === 'Enter' || code === 'Escape' || code === 'Space')) closeSlot(true);
 }
+function slotRoll() { const g = rand() < 0.5, pool = SLOT_FX.filter(f => f.good === g); return pool[(rand() * pool.length) | 0]; }
 function slotSpin() {
   const u = slotUI; if (!u || u.ph !== 'ask') return;
-  u.ph = 'spin'; u.t = 0; u.res = SLOT_FX[(rand() * SLOT_FX.length) | 0];
+  u.ph = 'spin'; u.t = 0; u.res = slotRoll();   /* v7.02: 좋은 쪽 · 나쁜 쪽을 먼저 50:50으로 고른 뒤 그 안에서 뽑는다 (나쁜 보상이 늘어도 확률은 그대로) */
   $('slotSpin').style.display = 'none'; $('slotLeave').style.display = 'none'; sfx('skill');
 }
 function slotResult() {
@@ -4923,6 +4926,7 @@ const SLOT_APPLY = {
   half()  { P.hp = Math.max(1, Math.ceil(P.hp / 2)); P.healBank = Math.min(P.healBank, P.max * 0.04); },
   slow()  { P.slowT = 30 + Math.floor(rand() * 31); },
   gate(u) { u.after = slotGate; },
+  mimic(u) { u.after = () => spawnMimic(2); },
 };
 function slotBoom() {
   shake = 20; sfx('boom'); darkT = 0;
@@ -4941,6 +4945,76 @@ function slotGate() {
   for (let i = 0; i < n; i++) { const e = spawnEnemy(base + i / n * 6.283, 270 + rand() * 70); e.ai = 0; e.sp *= 0.95; }
   const el = spawnEnemy(base + 3.14, 310, true); el.sure = true;
   banner = { txt: '☠ 지옥문이 열렸다!  주변에서 마물과 정예가 쏟아진다 — 정예를 잡으면 보물 상자', t: 4.5, c: '#ff8a7a' };
+}
+/* ---------- v7.02 미믹 습격 (잭팟 머신의 나쁜 보상): 미믹 2마리가 달려든다 · 잡으면 한 마리당 영혼 조각 1000 (정예보다 약간 세고 히든 마물보다 훨씬 약함) ---------- */
+const MIA = [[[0,0,162,129,65,114],[164,0,162,125,64,114],[328,0,154,127,64,117],[484,0,165,127,67,116],[651,0,171,124,64,114],[824,0,179,125,65,114],[1005,0,157,132,64,114]],[[0,134,166,124,69,111],[168,134,174,120,68,108],[344,134,177,124,66,113],[523,134,184,120,83,108],[709,134,182,121,70,110],[893,134,169,119,68,109],[1064,134,175,125,73,114]],[[0,261,169,137,72,119],[171,261,242,146,69,136],[415,261,303,140,69,130],[720,261,228,131,102,120],[950,261,180,123,69,112],[1132,261,168,134,71,123]],[[0,409,185,125,96,113],[187,409,175,139,68,128],[364,409,178,120,91,108],[544,409,169,109,70,98],[715,409,155,117,71,101],[872,409,208,100,87,83]],[[0,550,167,121,63,108],[169,550,193,124,75,113],[364,550,219,109,74,96],[585,550,223,94,83,83],[810,550,243,80,79,69]]];
+const MIM = { hp: 0.4, sp: 215, k: 0.6, wind: 0.42, lunge: 0.28, lv: 640, rest: 0.55, reward: 1000 };
+function spawnMimic(n) {
+  const base = rand() * 6.283; sfx('skill');
+  for (let i = 0; i < n; i++) {
+    const a = base + i / n * 6.283 + (rand() - 0.5) * 0.4, d = 430 + rand() * 50, hp = uniqHp() * MIM.hp;
+    const e = { kind: 'mimic', x: P.x + Math.cos(a) * d, y: P.y + Math.sin(a) * d, kx: 0, ky: 0, sp: MIM.sp, spec: null, sc: 1, r: 24, hp, max: hp, dmg: (16 + gt * 0.03) * (1 + 0.1 * (P.tier || 0)), exp: 0, elite: false,
+      flash: 0, t: rand() * 4, orbCd: 0, slowT: 0, kres: 0.35, face: 1, st: 'run', cd: 1.2 + rand() * 0.8, sT: 0, lx: 1, ly: 0, hit: false };
+    if (chal && !arena) chSpot(e, d);
+    enemies.push(e); addRing(e.x, e.y - 10, 10, 90, 0.5, '255,60,90', 8); burst(e.x, e.y - 20, 14, ['#ff4a6a', '#ffc247', '#ffffff'], 200, 0.6);
+  }
+  banner = { txt: '🎁 미믹 습격!  미믹 ' + n + '마리가 달려든다\n쓰러뜨리면 한 마리당 영혼 조각 ' + MIM.reward + '개 — 혀를 뻗기 전 멈추는 순간을 피하세요', t: 5, c: '#ff8a7a' };
+}
+function updateMimic(e, dt) {
+  e.t += dt; e.flash = Math.max(0, e.flash - dt); e.cd -= dt;
+  const dx = P.x - e.x, dy = P.y - e.y, d = Math.hypot(dx, dy) || 1, slow = e.slowT > 0 ? 0.5 : 1;
+  if (e.slowT > 0) e.slowT -= dt;
+  let sp = 0, mx = dx / d, my = dy / d;
+  if (e.st === 'run') {
+    sp = e.sp * slow; if (Math.abs(dx) > 6) e.face = dx > 0 ? 1 : -1;
+    if (e.cd <= 0 && d < 200) { e.st = 'wind'; e.sT = 0; e.hit = false; e.lx = mx; e.ly = my; }
+  } else if (e.st === 'wind') {   /* 웅크린다: 앞쪽 절반은 플레이어를 따라가다가 고정된다 */
+    e.sT += dt; if (e.sT < MIM.wind * 0.55) { e.lx = mx; e.ly = my; if (Math.abs(dx) > 6) e.face = dx > 0 ? 1 : -1; }
+    if (e.sT >= MIM.wind) { e.st = 'lunge'; e.sT = 0; }
+  } else if (e.st === 'lunge') {
+    e.sT += dt; sp = MIM.lv; mx = e.lx; my = e.ly;
+    if (!e.hit && d < e.r + PR() + 22) { e.hit = true; hurtPlayer(e.dmg * 1.4 * ease()); }
+    if (e.sT >= MIM.lunge) { e.st = 'rest'; e.sT = 0; }
+  } else {
+    e.sT += dt; if (e.sT >= MIM.rest) { e.st = 'run'; e.cd = 1.6 + rand() * 1.0; }
+  }
+  e.x += (mx * sp + e.kx) * dt; e.y += (my * sp + e.ky) * dt;
+  const k = Math.exp(-8 * dt); e.kx *= k; e.ky *= k;
+  if ((e.st === 'run' || e.st === 'rest') && d < e.r + 13 + PR()) hurtPlayer(e.dmg * 0.5 * ease());
+}
+function mimicSprite(row, f, x, y, face, a, white) {
+  if (!IMG.mimic) return;
+  const L = MIA[row], r = L[Math.min(L.length - 1, f) % L.length], k = MIM.k;
+  ctx.save(); ctx.globalAlpha = a; ctx.translate(Math.round(x), Math.round(y)); ctx.scale(face === -1 ? -1 : 1, 1); ctx.imageSmoothingEnabled = true; ctx.imageSmoothingQuality = 'high';
+  const args = [IMG.mimic, r[0], r[1], r[2], r[3], -r[4] * k, -r[5] * k, r[2] * k, r[3] * k]; ctx.drawImage(...args);
+  if (white) { ctx.globalCompositeOperation = 'lighter'; ctx.globalAlpha = 0.5 * a; ctx.drawImage(...args); }
+  ctx.restore();
+}
+function drawMimic(e, x, y) {
+  if (x < -220 || x > W + 220 || y < -120 || y > H + 300) return;
+  ctx.fillStyle = 'rgba(0,0,0,0.4)'; ctx.beginPath(); ctx.ellipse(x, y - 1, 34, 9, 0, 0, 6.283); ctx.fill();
+  let row = 0, f = Math.floor(e.t * 8) % 7, ox = 0;
+  if (e.st === 'run') { row = 1; f = Math.floor(e.t * 12) % 7; }
+  else if (e.st === 'wind') {
+    row = 2; f = 0; ox = Math.sin(e.sT * 70) * 2;
+    const p = e.sT / MIM.wind, L = MIM.lv * MIM.lunge, x1 = x + e.lx * L, y1 = y + e.ly * L;
+    ctx.save(); ctx.strokeStyle = `rgba(255,70,90,${0.3 + 0.5 * p})`; ctx.lineWidth = 6 + 8 * p; ctx.lineCap = 'round'; ctx.setLineDash([14, 10]); ctx.beginPath(); ctx.moveTo(x, y - 8); ctx.lineTo(x1, y1 - 8); ctx.stroke(); ctx.restore();
+  } else if (e.st === 'lunge') { row = 2; f = 1 + Math.min(2, Math.floor(e.sT / MIM.lunge * 3)); }
+  mimicSprite(row, f, x + ox, y, e.face, 1, e.flash > 0);
+  const w = 56, by = y - 86;
+  ctx.fillStyle = '#1a0608'; ctx.fillRect(x - w / 2 - 1, by - 1, w + 2, 7); ctx.fillStyle = '#ff5a6a'; ctx.fillRect(x - w / 2, by, w * Math.max(0, e.hp / e.max), 5);
+}
+function mimicDeath(m, x, y) {   /* 쓰러지는 줄 끝 3칸 + 죽음 줄 5칸 */
+  const seq = [[3, 3], [3, 4], [3, 5], [4, 0], [4, 1], [4, 2], [4, 3], [4, 4]], q = seq[Math.min(seq.length - 1, Math.floor(m.t * 8))];
+  mimicSprite(q[0], q[1], x, y, m.face, m.t > 1.4 ? Math.max(0, 1 - (m.t - 1.4) / 0.7) : 1, false);
+}
+function mimicDefeated(e) {
+  P.mimicShards = (P.mimicShards | 0) + MIM.reward; goalAdd('kills');
+  udeath.push({ x: e.x, y: e.y, face: e.face, t: 0, uk: 'mimic' });
+  burst(e.x, e.y - 30, 36, ['#b48aff', '#8af0ff', '#ffe28a', '#ffffff'], 320, 0.9); addRing(e.x, e.y - 20, 10, 200, 0.6, '180,138,255', 10); shake = Math.max(shake, 8); sfx('chest');
+  floatNum(e.x, e.y - 70, '영혼 조각 +' + MIM.reward, '#c8a8ff');
+  let left = 0; for (const o of enemies) if (o.kind === 'mimic' && o.hp > 0 && o !== e) left++;
+  banner = { txt: '미믹을 쓰러뜨렸다!  영혼 조각 +' + MIM.reward + (left ? `  (남은 미믹 ${left}마리)` : ''), t: 3.5, c: '#c8a8ff' };
 }
 function drawSlotWorld(s, x, y) {
   const k = 0.54, fr = Math.floor(s.t * 6) % 4, pu = 0.5 + 0.5 * Math.sin(s.t * 4), used = s.used;
@@ -5151,6 +5225,7 @@ function drawUniq(e, x, y) {
   ctx.font = 'bold 12px "Malgun Gothic", sans-serif'; ctx.textAlign = 'center'; ctx.lineWidth = 3; ctx.strokeStyle = '#120406'; ctx.strokeText(U.name, x, by - 6); ctx.fillStyle = '#ffd9a8'; ctx.fillText(U.name, x, by - 6);
 }
 function drawUniqDeath(m, x, y) {
+  if (m.uk === 'mimic') { mimicDeath(m, x, y); return; }
   if (m.uk === 'shroom') { shroomSprite('death', Math.floor(m.t * 5), x, y, m.face, SHR.s, m.t > 1.4 ? Math.max(0, 1 - (m.t - 1.4) / 0.7) : 1, false); return; }
   if (m.uk === 'octo') { const L = OCA.a_death, f = Math.min(L.length - 1, Math.floor(m.t * 5)), fade = m.t > 1.4 ? Math.max(0, 1 - (m.t - 1.4) / 0.7) : 1; ctx.save(); ctx.globalAlpha = fade; octoSprite(L[f], x, y, m.face, OCTO_MOB_S); ctx.restore(); return; }
   const U = UNIQ[m.uk], k = 0.82, f = Math.min(4, Math.floor(m.t * 6)), fade = m.t > 1.4 ? Math.max(0, 1 - (m.t - 1.4) / 0.7) : 1;
@@ -5976,6 +6051,7 @@ function update(dt) {
     if (e.kind === 'boss') { updateBoss(e, dt); continue; }
     if (e.kind === 'mini') { updateMini(e, dt); continue; }
     if (e.kind === 'uniq') { updateUniq(e, dt); continue; }
+    if (e.kind === 'mimic') { updateMimic(e, dt); continue; }
     if (e.kind === 'skh') { updateSkTower(e, dt); continue; }
     if (e.kind === 'skm') { updateSkMinion(e, dt); continue; }
     if (e.kind === 'abm') { updateAbMinion(e, dt); continue; }
@@ -6013,7 +6089,7 @@ function update(dt) {
     }
   }
   chUpdate(dt);   // v6.20: 챌린지 모드 (강적 · 황금 도망자 · 쉼터 · 추격자 · 맵 경계)
-  enemies = enemies.filter(e => e.hp > 0 && (e.kind === 'mini' || e.kind === 'uniq' || e.kind === 'boss' || Math.hypot(e.x - P.x, e.y - P.y) < 1800));
+  enemies = enemies.filter(e => e.hp > 0 && (e.kind === 'mini' || e.kind === 'uniq' || e.kind === 'boss' || e.kind === 'mimic' || Math.hypot(e.x - P.x, e.y - P.y) < 1800));
 
   // --- 영혼 구슬 ---
   for (const o of orbs) {
@@ -6662,6 +6738,7 @@ function render() {
       if (e.kind === 'boss') { wx0 = wx; wy0 = wy; drawBoss(e, x, y); continue; }
       if (e.kind === 'mini') { drawMini(e, x, y); continue; }
       if (e.kind === 'uniq') { drawUniq(e, x, y); continue; }
+      if (e.kind === 'mimic') { drawMimic(e, x, y); continue; }
       if (e.kind === 'skh') { drawSkTower(e, x, y); continue; }
       if (e.kind === 'skm') { drawSkMinion(e, x, y); continue; }
       if (e.kind === 'abm') { drawAbMinion(e, x, y); continue; }
@@ -7604,7 +7681,7 @@ function showOver(win) {
   $('overTitle').textContent = win ? (P.fwRun ? '타락한 혈랑왕을 쓰러뜨렸다!' : '마왕을 쓰러뜨렸다!') : '쓰러졌습니다';
   const m = Math.floor(gt / 60), s = Math.floor(gt % 60);
   $('overStats').innerHTML = `생존 시간 ${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')} · 레벨 ${P.lvl} · 처치 ${P.kills}`;
-  $('overShards').textContent = `영혼 조각 +${P.earned}  (보유 ${SAVE.shards})` + (P.goalDone ? `  ·  런 목표 ${P.goalDone}개 (+${P.goalShards})` : '') + (win && P.fee ? `  ·  참가비 ${P.fee} 반환 포함` : '');
+  $('overShards').textContent = `영혼 조각 +${P.earned}  (보유 ${SAVE.shards})` + (P.goalDone ? `  ·  런 목표 ${P.goalDone}개 (+${P.goalShards})` : '') + (P.mimicShards ? `  ·  미믹 +${P.mimicShards}` : '') + (win && P.fee ? `  ·  참가비 ${P.fee} 반환 포함` : '');
   if (win && P.unlocked) $('overStats').innerHTML += `<br><span style="color:var(--gold)">🔓 ${floorName(P.unlocked)} 해금!</span>`;
   if (win && P.dropGot) $('overStats').innerHTML += `<br><span style="color:#ffe28a">✨ ${P.dropGot}</span>`;
   if (win && P.fwOpen) $('overStats').innerHTML += `<br><span style="color:#ff8a9a">☠ 새 난이도 [타락한 혈랑] 추가! (시작 화면 난이도 ▶ 끝)</span>`;
@@ -7969,7 +8046,7 @@ window.__G = {
   get ready() { return !!IMG.floorD; }, get state() { return state; }, get P() { return P; }, get enemies() { return enemies; }, get orbs() { return orbs; },
   get zones() { return zones; }, get ebul() { return ebul; }, get EYE() { return EYE; }, get shards() { return shards; }, get bigQ() { return bigQ; }, get bombQ() { return bombQ; }, get holyQ() { return holyQ; }, get afx() { return afx; }, get dashQ() { return dashQ; }, get beam() { return beam; }, get evo() { return evo; }, get choices() { return choices; },
   get SAVE() { return SAVE; }, render, get boss() { return boss; }, get mini() { return mini; }, get skp() { return skp; }, SK_PH, SKB, get mdeath() { return mdeath; }, spawnMini, miniDefeated, spawnBoss, raiseCastle, enterArena, exitArena, get castle() { return castle; }, get arena() { return arena; }, get trans() { return trans; }, openChest, openShop, buildCards, get joy() { return joy; }, get gt() { return gt; }, get allies() { return allies; }, get items() { return items; }, spawnItem, get globs() { return globs; }, recruit, keys, tick, needFor, pick: pickChoice, cast: castSkill, spawnBug,
-  get slots() { return slots; }, get slotUI() { return slotUI; }, get udeath() { return udeath; }, get lasers() { return lasers; }, get eyeF() { return eyeF; }, get uniqCd() { return uniqCd; }, spawnSlot, spawnUniq, gainRelic, useTeleport, closeSlot, slotSpin, slotKey, updateSlotUI, SLOT_FX, SLOT_APPLY, UNIQ, RELICS, trySpawnUniq, UNIQ_P, setState(v) { state = v; }, spawnEnemy,
+  get slots() { return slots; }, spawnMimic, slotRoll, get MIM() { return MIM; },  get slotUI() { return slotUI; }, get udeath() { return udeath; }, get lasers() { return lasers; }, get eyeF() { return eyeF; }, get uniqCd() { return uniqCd; }, spawnSlot, spawnUniq, gainRelic, useTeleport, closeSlot, slotSpin, slotKey, updateSlotUI, SLOT_FX, SLOT_APPLY, UNIQ, RELICS, trySpawnUniq, UNIQ_P, setState(v) { state = v; }, spawnEnemy,
   get DMETER() { return DMETER; }, get DBOSS() { return DBOSS; }, get DUNK() { return DUNK; }, setDbg(v) { DDBG = v; }, dmName, get eleQ() { return eleQ; }, fwStart, setT(v) { gt = v; }, calcShards, FD, LIZ_FORMS, TWIN_FORMS, startFw, snapP, get fwFx() { return fwFx; }, get bsig() { return bsig; }, BMAP, inBlood, twLen, availSyn, SYNERGIES, inPoly, hurtEnemy, startGame, addExp, hurt: hurtPlayer, rebuild: buildSpecies,
   get rollQ() { return rollQ; }, get gunFx() { return gunFx; }, GUN, GUN_AMMO, GUNA, gunLoad, gunRange,
   get anOrbs() { return anOrbs; }, get anFx() { return anFx; }, AMAP, ANB, ANX, AN, anStart, anTrans, pickBossK, floorName, arenaExit,
@@ -7998,7 +8075,7 @@ function silhouette(img, color) {
   g.drawImage(img, 0, 0); g.globalCompositeOperation = 'source-atop'; g.fillStyle = color; g.fillRect(0, 0, c.width, c.height);
   return c;
 }
-const LAZY_IMG = ['drophb', 'droppo', 'chm', 'cm', 'ab', 'an', 'anfx', 'amap', 'mmap', 'sh'];   // 시작하자마자 쓰지 않는 그림은 따로 (시작 화면이 빨리 뜨게): 드랍 아이템 · 챌린지 · 타락천사
+const LAZY_IMG = ['drophb', 'droppo', 'chm', 'cm', 'ab', 'an', 'anfx', 'amap', 'mmap', 'sh', 'mimic'];   // 시작하자마자 쓰지 않는 그림은 따로 (시작 화면이 빨리 뜨게): 드랍 아이템 · 챌린지 · 타락천사
 for (const k of LAZY_IMG) loadImg(SRC[k]).then(i => { IMG[k] = i; if (k === 'cm' || k === 'ab') IMG[k + 'W'] = silhouette(i, '#ffffff'); }).catch(() => {});
 Promise.all(Object.keys(SRC).filter(k => !LAZY_IMG.includes(k)).map(k => loadImg(SRC[k]).then(i => { IMG[k] = i; }))).then(() => {   // IMG.이름 = SRC.이름
   IMG.miniW = silhouette(IMG.mini, '#ffffff'); IMG.floorD = toneFloor(IMG.floor); try { buildMushSpecies(); } catch (_) {}
