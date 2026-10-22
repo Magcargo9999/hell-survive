@@ -307,10 +307,10 @@
   <div id="gPull" style="display:flex;flex-direction:column;align-items:center;gap:12px">
     <div class="gban"><img class="gb" id="gBanB" alt=""><img class="ga" id="gBanA" alt=""><div class="gt"><b>심연의 의상실</b><small>에픽 · 레어 스킨이 완성품 또는 조각으로 나와요.<br>같은 스킨 조각을 모으면 완성 스킨으로 조합!<br>(레어 10개 · 에픽 15개)</small></div></div>
     <div class="gpity"><i id="gPityBar"></i></div><p id="gPityTxt"></p>
-    <div class="row gbtns"><button id="gOne">1회 뽑기<small>◆ 300</small></button><button id="gTen">10회 뽑기<small>◆ 2700 (10% 할인)</small></button></div>
-    <p class="gprob">확률 (1회): 에픽 완성 스킨 1/49 (2.0%) · 레어 완성 스킨 3/49 (6.1%) · 스킨 조각 45/49 (91.8%: 레어 조각 1~2개 · 에픽 조각 1개, 어느 스킨인지는 무작위)<br>이미 가진 스킨과 그 조각은 나오지 않아요 · 완성 스킨 없이 25번째 뽑기는 완성 스킨 확정 (에픽 20% · 레어 80%)</p>
+    <div class="row gbtns"><button id="gOne">1회 뽑기<small>◆ 1000</small></button><button id="gTen">10회 뽑기<small>◆ 9000 (10% 할인)</small></button></div>
+    <p class="gprob">확률 (1회): 에픽 완성 스킨 1/58 (1.7%) · 레어 완성 스킨 2/58 (3.4%) · 스킨 조각 55/58 (94.8%: 레어 조각 1~2개 · 에픽 조각 1개, 어느 스킨인지는 무작위)<br>이미 가진 스킨과 그 조각은 나오지 않아요 · 완성 스킨 없이 25번째 뽑기는 완성 스킨 확정 (에픽 20% · 레어 80%)</p>
   </div>
-  <div id="gDex" style="display:none"><div class="sgrid" id="gDexGrid"></div><p class="gprob" style="margin-top:10px">완성 스킨은 하나만 ON(착용)할 수 있어요 · 다른 스킨을 켜면 기존 스킨은 자동으로 꺼집니다</p></div>
+  <div id="gDex" style="display:none"><div class="sgrid" id="gDexGrid"></div><p class="gprob" style="margin-top:10px">완성 스킨은 캐릭터마다 하나씩 ON(착용)할 수 있어요 · 같은 캐릭터의 다른 스킨을 켜면 그 캐릭터의 기존 스킨만 꺼지고, 다른 캐릭터 스킨은 그대로입니다</p></div>
 </div>
 <div id="gRes"></div>
 <div class="overlay" id="heartBox">
@@ -828,7 +828,7 @@ const SAVE_DEF = () => ({
   fw: { wins: {}, open: false, cleared: false, snap: null },   // 숨은 보스: 혈랑/성혈랑 클리어 기록 · 마지막 클리어 스펙
   ch: { open: false, frag: 0, best: 0, rune: {}, tr: { rat: false, pouch: false, mirror: false } },   // v6.20: 챌린지 모드 (해금 · 룬 조각 · 룬 · 보물)
   set: { nums: true, calm: false, sfx: 0.7, bgm: 0.35, speed: 1, joy: ('ontouchstart' in window) },
-  skin: { own: {}, frag: {}, on: null, pity: 0, pulls: 0 },   // v7.30 스킨 가챠
+  skin: { own: {}, frag: {}, on: {}, pity: 0, pulls: 0 },   // v7.30 스킨 가챠
   heart: { inv: [], eq: [], n: 0 },   // v8.01 보스 심장 (인벤토리 · 장착 슬롯 · 다음 id)
 });
 let SAVE = SAVE_DEF();
@@ -8503,23 +8503,29 @@ function openDex() {
 let shopKind = 'char';
 /* ---------- v7.30 스킨 가챠 · 스킨 도감 ----------
    데이터: SKINS (id · 이름 · 등급 · 대상 캐릭터 · 적용 진화 단계) / 아틀라스 SKINF[id] (게임 동작 이름별 프레임) / 일러스트 SRC['skA_' + id]
-   세이브: SAVE.skin = { own: {id: true}, frag: {id: 개수}, on: 장착 id 또는 null, pity: 마지막 완성 스킨 이후 뽑은 횟수, pulls: 총 뽑기 }
-   뽑기 1회: 가중치 49 = 에픽 완성 1 · 레어 완성 3 · 스킨 조각 45 (조각 대상 스킨은 완전 무작위 · 레어 조각 1~2개 · 에픽 조각 1개)
+   세이브: SAVE.skin = { own: {id: true}, frag: {id: 개수}, on: {캐릭터: 장착 id} (캐릭터마다 독립), pity: 마지막 완성 스킨 이후 뽑은 횟수, pulls: 총 뽑기 }
+   뽑기 1회: 가중치 58 = 에픽 완성 1 · 레어 완성 2 · 스킨 조각 55 (조각 대상 스킨은 완전 무작위 · 레어 조각 1~2개 · 에픽 조각 1개)
    · 이미 가진 스킨과 그 조각은 나오지 않는다 (나올 수 없는 결과는 빼고 남은 가중치로 다시 나눈다) · 조각은 조합에 필요한 개수까지만
    · 천장: 완성 스킨 없이 25번째 뽑기 → 완성 스킨 확정 (에픽 20% · 레어 80%, 남은 등급이 없으면 다른 등급)
-   조합: 같은 스킨 조각 레어 10개 · 에픽 15개 → 완성 스킨 / 장착: 완성 스킨 하나만 ON (다른 걸 켜면 기존 것은 OFF) */
+   조합: 같은 스킨 조각 레어 10개 · 에픽 15개 → 완성 스킨 / 장착: 캐릭터마다 하나씩 독립 ON/OFF (같은 캐릭터 스킨끼리만 서로 꺼진다) */
 const SKINF = { gunH: {"i2":[[0,0,112,101,55,101]],"w2":[[114,0,84,103,42,103],[200,0,96,103,48,103]],"a2":[[298,0,71,89,34,89],[371,0,90,89,32,89],[463,0,85,89,30,89],[550,0,85,89,42,89],[637,0,85,88,48,88],[724,0,97,88,36,88]],"r2":[[823,0,73,106,36,106],[898,0,73,104,24,104],[0,108,69,102,25,102],[71,108,71,104,35,104],[144,108,72,105,36,105],[218,108,94,107,55,107]],"h2":[[314,108,83,88,30,88],[399,108,87,89,51,89],[488,108,85,90,34,90],[575,108,95,90,44,90],[672,108,106,89,52,89]],"d2":[[780,108,89,87,20,87],[871,108,94,77,30,77],[0,217,150,77,55,77],[152,217,165,76,82,76]],"s2":[[319,217,190,101,94,101],[511,217,188,100,94,100],[701,217,292,96,146,96],[0,320,187,101,93,101],[189,320,169,101,84,101]]}, wolfE: {"idle":[[0,0,83,127,41,127],[85,0,86,128,42,128],[173,0,83,127,41,127]],"walk":[[258,0,100,119,50,119],[360,0,120,118,60,118],[482,0,122,114,61,114],[606,0,110,116,54,116],[718,0,101,115,50,115],[821,0,123,119,74,119],[0,130,111,119,55,119],[113,130,114,117,56,117]],"attack":[[229,130,116,124,58,124],[347,130,147,117,73,117],[496,130,168,109,84,109],[666,130,155,124,77,124],[823,130,184,129,110,129],[0,261,166,145,82,145]],"hit":[[168,261,138,120,68,120],[308,261,131,124,65,124],[441,261,145,122,72,122],[588,261,156,119,80,119]],"death":[[746,261,133,96,66,96],[0,408,154,92,76,92],[156,408,130,86,65,86],[288,408,137,76,68,76],[427,408,135,86,67,86],[564,408,143,91,71,91]]} };
 const SKINS = [
   { id: 'gunH', name: '악마 사냥꾼', grade: 'rare', char: 'gun', forms: [2], where: '악마 총잡이 · 최종 진화(악마처형자)', face: {} },
   { id: 'wolfE', name: '지옥늑대', grade: 'epic', char: 'wolf', forms: [0, 1, 2], where: '지옥 늑대 · 모든 진화 단계', ws: [0.72, 0.86, 1.0], face: { walk: 1, attack: 1, hit: -1, death: -1 } },
 ];
 const SKIN_GRADE = { epic: { name: '에픽', need: 15, star: '★★★' }, rare: { name: '레어', need: 10, star: '★★' } };
-const GACHA = { cost1: 300, cost10: 2700, W: { epic: 1, rare: 3, frag: 45 }, pity: 25, pityEpic: 0.2 };
+const GACHA = { cost1: 1000, cost10: 9000, W: { epic: 1, rare: 2, frag: 55 }, pity: 25, pityEpic: 0.2 };
+function skinMap() {   // 캐릭터별 장착 표 (옛 세이브의 문자열 하나는 그 캐릭터 칸으로 옮긴다)
+  const S = SAVE.skin, o = S.on;
+  if (!o || typeof o !== 'object') { const s = o && SKINS.find(k => k.id === o); S.on = s ? { [s.char]: o } : {}; }
+  return S.on;
+}
+const skinIsOn = id => { const s = skinG(id); return !!s && skinMap()[s.char] === id; };
 const skinG = id => SKINS.find(s => s.id === id);
 const skinNeed = s => SKIN_GRADE[s.grade].need;
 function skinOn(ch) {   // 지금 캐릭터·진화 단계에 장착한 스킨 (없으면 null)
-  const S = SAVE.skin; if (!S || !S.on || !P || P.char !== ch) return null;
-  const s = skinG(S.on); return s && S.own[s.id] && s.char === ch && s.forms.includes(P.form | 0) && IMG['sk_' + s.id] ? s : null;
+  const S = SAVE.skin; if (!S || !P || P.char !== ch) return null;
+  const s = skinG(skinMap()[ch]); return s && S.own[s.id] && s.char === ch && s.forms.includes(P.form | 0) && IMG['sk_' + s.id] ? s : null;
 }
 const gA = k => (SKINF.gunH[k] && skinOn('gun')) ? SKINF.gunH : GUNA;   // 악마 총잡이: 스킨 아틀라스 또는 원래 아틀라스
 const gI = k => gA(k) === GUNA ? IMG.gun : IMG.sk_gunH;
@@ -8555,20 +8561,20 @@ function gachaRoll() {   // 뽑기 1번 → { type: 'skin' | 'frag', id, n, pity
     S.frag[s.id] = have + n; return { type: 'frag', id: s.id, n, have: have + n };
   }
   const s = pickOne(Q[g]), pity = S.pity >= GACHA.pity; S.own[s.id] = true; S.pity = 0;
-  if (!S.on) S.on = s.id;   // 처음 얻은 스킨은 바로 장착
+  if (!skinMap()[s.char]) S.on[s.char] = s.id;   // 그 캐릭터의 첫 스킨은 바로 장착
   return { type: 'skin', id: s.id, pity };
 }
 function skinCraft(id) {   // 조각 조합
   const S = SAVE.skin, s = skinG(id); if (!s || S.own[id] || (S.frag[id] || 0) < skinNeed(s)) return false;
-  S.frag[id] -= skinNeed(s); S.own[id] = true; if (!S.on) S.on = id; saveSave(); return true;
+  S.frag[id] -= skinNeed(s); S.own[id] = true; if (!skinMap()[s.char]) S.on[s.char] = id; saveSave(); return true;
 }
-function skinToggle(id) { const S = SAVE.skin; if (!S.own[id]) return; S.on = S.on === id ? null : id; saveSave(); }   // ON/OFF (한 번에 하나만)
+function skinToggle(id) { const S = SAVE.skin, s = skinG(id); if (!s || !S.own[id]) return; const m = skinMap(); if (m[s.char] === id) delete m[s.char]; else m[s.char] = id; saveSave(); }   // ON/OFF (캐릭터마다 독립)
 const canCraft = s => !SAVE.skin.own[s.id] && (SAVE.skin.frag[s.id] || 0) >= skinNeed(s);
 /* --- 화면 --- */
 let gTab = 'pull', gBusy = false;
 function gachaBtnTxt() {
-  const S = SAVE.skin, on = S.on && skinG(S.on);
-  $('gachaBtn').innerHTML = `<span class="lk">✨</span>스킨 가챠<small>${on ? '착용: ' + on.name : '천장 ' + S.pity + ' / ' + GACHA.pity}</small>`;
+  const S = SAVE.skin, on = Object.values(skinMap()).map(skinG).filter(Boolean);
+  $('gachaBtn').innerHTML = `<span class="lk">✨</span>스킨 가챠<small>${on.length ? '착용: ' + on.map(o => o.name).join(', ') : '천장 ' + S.pity + ' / ' + GACHA.pity}</small>`;
 }
 function openGacha(tab) { if (tab) gTab = tab; renderGacha(); show('gachaBox', true); }
 function skinSil(s, w, h) {   // 미획득: 흑백 실루엣 (게임 속 모습의 그림자만)
@@ -8587,13 +8593,13 @@ function renderGacha() {
   const dex = $('gDexGrid'); dex.innerHTML = '';
   for (const s of SKINS) {
     const own = !!S.own[s.id], fr = S.frag[s.id] || 0, seen = own || fr > 0, need = skinNeed(s), G = SKIN_GRADE[s.grade];
-    const d = document.createElement('div'); d.className = `scard ${s.grade}${seen ? '' : ' lock'}${S.on === s.id ? ' on' : ''}`;
+    const d = document.createElement('div'); d.className = `scard ${s.grade}${seen ? '' : ' lock'}${skinIsOn(s.id) ? ' on' : ''}`;
     d.innerHTML = `<div class="sart"></div><div class="sinfo"><span class="grade ${s.grade}">${G.name} ${G.star}</span><b>${seen ? s.name : '???'}</b><small>${seen ? s.where : '아직 얻지 못한 스킨'}</small>`
       + (own ? `<small class="okc">✔ 보유</small>` : `<div class="fbar"><i style="width:${100 * Math.min(1, fr / need)}%"></i></div><small>조각 ${fr} / ${need}</small>`) + `</div>`;
     const art = d.querySelector('.sart');
     if (seen) { const im = document.createElement('img'); im.src = SRC['skA_' + s.id]; im.alt = s.name; art.appendChild(im); } else art.appendChild(skinSil(s, 180, 190));
     const bt = document.createElement('button'); bt.className = 'sm';
-    if (own) { bt.textContent = S.on === s.id ? 'ON (착용 중)' : 'OFF'; bt.classList.toggle('onb', S.on === s.id); bt.onclick = () => { skinToggle(s.id); sfx('item'); renderGacha(); gachaBtnTxt(); }; }
+    if (own) { bt.textContent = skinIsOn(s.id) ? 'ON (착용 중)' : 'OFF'; bt.classList.toggle('onb', skinIsOn(s.id)); bt.onclick = () => { skinToggle(s.id); sfx('item'); renderGacha(); gachaBtnTxt(); }; }
     else { bt.textContent = canCraft(s) ? '조합하기' : `조합하기 (${fr}/${need})`; bt.disabled = !canCraft(s); bt.onclick = () => { if (skinCraft(s.id)) { sfx('evolve'); gachaShow([{ type: 'skin', id: s.id, craft: true }]); } }; }
     d.appendChild(bt); dex.appendChild(d);
   }
@@ -8622,9 +8628,9 @@ function gachaShow(res) {   // 연출: 빛 구슬(가장 높은 등급 색) → 
       h = `<div class="gbig ${s.grade}"><img src="${SRC['skA_' + s.id]}" alt="${s.name}"></div><div class="gname"><span class="grade ${s.grade}">${G.name} ${G.star}</span><b>${s.name}</b><small>${s.where}${res[0].pity ? ' · 천장 확정!' : res[0].craft ? ' · 조합 완료!' : ' · NEW!'}</small></div>`;
     } else h = `<div class="ggrid">${res.map(card).join('')}</div>`;
     const sk = res.find(r => r.type === 'skin');
-    box.innerHTML = h + `<div class="row">${sk && SAVE.skin.on !== sk.id ? `<button class="sm" id="gEquip">바로 착용</button>` : ''}<button class="sm" id="gOk">확인</button></div>`;
+    box.innerHTML = h + `<div class="row">${sk && !skinIsOn(sk.id) ? `<button class="sm" id="gEquip">바로 착용</button>` : ''}<button class="sm" id="gOk">확인</button></div>`;
     $('gOk').onclick = () => { box.classList.remove('show'); gBusy = false; renderGacha(); };
-    if ($('gEquip')) $('gEquip').onclick = () => { SAVE.skin.on = sk.id; saveSave(); $('gEquip').remove(); sfx('item'); };
+    if ($('gEquip')) $('gEquip').onclick = () => { skinMap()[sk.char] = sk.id; saveSave(); $('gEquip').remove(); sfx('item'); };
   };
   box.onclick = e => { if (!shown) reveal(); };
   setTimeout(reveal, 1100);
