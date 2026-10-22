@@ -40,6 +40,12 @@
   .card.route { width: 200px; text-align: center; }
   .card.skill { width: 210px; }
   .panel { background: var(--panel); border: 1px solid #6a3a30; border-radius: 8px; padding: 14px 20px; text-align: left; }
+  #gachaBtn { position: fixed; right: 36px; bottom: 44px; z-index: 5; display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 14px 26px 12px; font-size: 17px; font-weight: bold; color: #ffe9a8; border: 2px solid #ffc247; border-radius: 14px; cursor: not-allowed;
+    background: linear-gradient(160deg, #4a1668 0%, #2a0c3c 55%, #5a1a2a 100%); box-shadow: 0 0 18px rgba(255, 194, 71, 0.55), inset 0 0 14px rgba(255, 120, 220, 0.25); animation: gachaGlow 1.8s ease-in-out infinite; }
+  #gachaBtn small { font-size: 12px; font-weight: normal; color: #d8b8ff; }
+  #gachaBtn .lk { font-size: 22px; filter: drop-shadow(0 0 6px #ffc247); }
+  @keyframes gachaGlow { 0%, 100% { box-shadow: 0 0 12px rgba(255, 194, 71, 0.4), inset 0 0 12px rgba(255, 120, 220, 0.2); transform: translateY(0); } 50% { box-shadow: 0 0 30px rgba(255, 194, 71, 0.95), inset 0 0 18px rgba(255, 120, 220, 0.4); transform: translateY(-3px); } }
+  @media (max-width: 1500px), (max-height: 940px) { #gachaBtn { position: static; margin-top: 4px; } }   /* 작은 화면: 카드를 가리지 않도록 버튼 줄 아래에 놓는다 */
   .row { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; }
   button.sm { padding: 7px 16px; font-size: 15px; letter-spacing: 0; box-shadow: 0 3px 0 #7a2a0a; }
   button:disabled { opacity: 0.4; cursor: not-allowed; }
@@ -148,6 +154,7 @@
   <p id="chInfo" style="font-size:12px;margin-top:-6px;color:#c9a0ff;line-height:1.5"></p>
   <p class="keys"><b>W</b><b>A</b><b>S</b><b>D</b> 또는 방향키로 이동 · 공격은 자동 · <b>SPACE</b> 특수 스킬 · <b>E</b> 성유물(순간이동) · <b>P</b> 일시정지</p>
   <div class="row"><button id="startBtn">시작하기</button><button id="chBtn" class="sm" style="border-color:#8a4aff">∞ 챌린지 모드</button><button id="shopBtn" class="sm">캐릭터 상점</button><button id="perkBtn" class="sm">강화 상점</button><button id="dexBtn" class="sm">몬스터 도감</button><button id="setBtn" class="sm">설정</button></div>
+  <button id="gachaBtn" title="준비 중"><span class="lk">🔒</span>✨ 스킨 가챠 ✨<small>준비 중 · 곧 열립니다</small></button>
 </div>
 
 <div class="overlay" id="levelBox">
@@ -6977,7 +6984,7 @@ function drawHud() {
  *  · 5레벨마다 강적 1마리: Lv.5 미니보스/히든/유니크 · Lv.10 미니보스/히든 · Lv.15 마왕(기믹 약화) → 15레벨마다 반복(사이클마다 강해짐)
  *  · 시간이 갈수록 잡몹 체력·생성량이 천천히 오른다 (10분 이후 기울기 절반)
  *  · 룬 조각(챌린지 전용 영구 스탯) · 보물(사망 시 버틴 시간으로 지급, 모든 모드에서 효과)
- *  · 황금 도망자 · 엘리트 접두사(20분~) · 쉼터(마왕 처치 후 10초 + 안식/어둠의 계약) · 심연 추격자(25분~)
+ *  · 황금 도망자 · 엘리트 접두사(20분~) · 쉼터(마왕 처치 후 10초 + 안식/어둠의 계약) · 심연 추격자(15분~, v6.63)
  * ============================================================ */
 // v6.21: 그림을 키우지 않고(정수 2배, 도트 그대로) 가운데 띠(가로 a~b · 세로 c~d)를 복사해 이어 붙여 맵 공간을 넓힌다
 const CHM = { s: 2, iw: 1672, ih: 941, a: 596, b: 908, c: 318, d: 596, nx: 3, ny: 3 };
@@ -7238,7 +7245,7 @@ function chUpdate(dt) {
     }
   }
   if (gt >= 1200 && !chal.eliteSeen) { chal.eliteSeen = true; banner = { txt: '20분 돌파!  접두사가 붙은 마물이 나타난다\n빠름 · 분열 · 보호막', t: 4.5, c: '#ffb070' }; }
-  if (gt >= 1500 && !chal.chaser) { chal.chaser = { x: 0, y: 0, t: 0, hitCd: 0, stun: 0 }; chChaserPlace(); banner = { txt: '⚠ 심연 추격자가 깨어났다!\n아주 느리지만 죽지 않는다 — 한곳에 머물지 말고 계속 움직이세요', t: 6, c: '#d6a8ff' }; sfx('evolve'); }
+  if (gt >= 900 && !chal.chaser) { /* v6.63: 25분 → 15분 */ chal.chaser = { x: 0, y: 0, t: 0, hitCd: 0, stun: 0 }; chChaserPlace(); banner = { txt: '⚠ 심연 추격자가 깨어났다!\n아주 느리지만 죽지 않는다 — 한곳에 머물지 말고 계속 움직이세요', t: 6, c: '#d6a8ff' }; sfx('evolve'); }
   if (chal.chaser) chChaserStep(dt);
 }
 function chOnDeath() {   // 버틴 시간으로 보물 하나 (가진 적 없는 것 중 가장 좋은 것)
@@ -7861,6 +7868,7 @@ $('diffPlus').addEventListener('click', () => {
   if (SAVE.shards < n * 25) { $('hint').textContent = `${floorName(n)}은 참가비 ${n * 25} 영혼 조각이 필요해요.`; return; }
   SAVE.diff.sel = n; saveSave(); $('hint').textContent = ''; updateDiff();
 });
+$('gachaBtn').addEventListener('click', () => { $('hint').textContent = '🔒 스킨 가챠: 아직 준비 중이에요. 곧 열립니다!'; });   // v6.63: 자리만 (잠금)
 $('startBtn').addEventListener('click', () => { chMode = false; startGame(selChar); });
 $('chBtn').addEventListener('click', () => { if (!chOpen()) { $('hint').textContent = '🔒 ∞ 챌린지 모드: 지하 6층 마왕을 쓰러뜨리면 열립니다'; return; } chMode = true; startGame(selChar); });
 $('retryBtn').addEventListener('click', () => startGame(curChar));
