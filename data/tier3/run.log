@@ -1,1 +1,55 @@
+<<<<<<< HEAD
 [17:18:48] NA=1 python3 tools/tier3.py A
+=======
+[01:48:31] NA=1 python3 tools/tier3.py A
+jobs 126 bot_ver 34bef5df commit 363b78f
+A wolf:holy monkey 1 boss_dead 158 0.0
+A wolf:crimson monkey 1 boss_dead 216 0.0
+A wolf:fallen monkey 1 boss_dead 198 0.0
+A wolf:abyss monkey 1 boss_dead 159 0.0
+A wolf:twin monkey 1 boss_dead 140 0.0
+A snail:venom monkey 1 boss_dead 229 0.0
+A snail:lava monkey 1 boss_dead 221 0.0
+A snail:bomb monkey 1 boss_dead 121 0.0
+A archer:red monkey 1 boss_dead 127 0.0
+A archer:holy monkey 1 boss_dead 101 0.0
+A archer:skel monkey 1 boss_dead 158 0.0
+A chimera monkey 1 boss_dead 195 0.0
+A chimera:dream monkey 1 boss_dead 199 0.0
+A chimera:flame monkey 1 timeout 240 24.44
+A lizard:rage monkey 1 player_dead 140 9.55
+A lizard:water monkey 1 timeout 240 25.83
+A twins monkey 1 boss_dead 217 0.0
+A lizard:guard monkey 1 player_dead 239 6.09
+A octo monkey 1 boss_dead 122 0.0
+A ghost monkey 1 boss_dead 49 0.0
+A gun monkey 1 boss_dead 128 0.0
+A wolf:crimson eye 1 player_dead 185 28.67
+A wolf:fallen eye 1 player_dead 181 33.35
+A wolf:holy eye 1 boss_dead 185 0.0
+A wolf:abyss eye 1 player_dead 114 38.2
+A wolf:twin eye 1 player_dead 155 13.34
+A snail:lava eye 1 player_dead 150 25.31
+A snail:venom eye 1 player_dead 165 32.95
+A snail:bomb eye 1 boss_dead 120 0.0
+A archer:red eye 1 player_dead 114 3.13
+A archer:holy eye 1 boss_dead 98 0.0
+A archer:skel eye 1 player_dead 128 17.81
+A chimera eye 1 player_dead 226 9.0
+A chimera:flame eye 1 player_dead 225 33.25
+A lizard:rage eye 1 player_dead 91 35.44
+A chimera:dream eye 1 player_dead 159 19.7
+A lizard:water eye 1 timeout 240 42.35
+A lizard:guard eye 1 boss_dead 233 0.0
+A ghost eye 1 boss_dead 45 0.0
+A twins eye 1 timeout 240 8.6
+A octo eye 1 player_dead 103 13.18
+A gun eye 1 player_dead 82 31.04
+A wolf:crimson skel 1 player_dead 157 35.48
+A wolf:holy skel 1 timeout 150 33.0
+A wolf:fallen skel 1 timeout 225 14.37
+A wolf:abyss skel 1 boss_dead 201 0.0
+A wolf:twin skel 1 player_dead 124 32.92
+A snail:venom skel 1 player_dead 118 61.15
+[04:30:44] NA=1 python3 tools/tier3.py A
+>>>>>>> 4441d68 (tier3: 측정 원본 로그 자동 저장 04:30)
