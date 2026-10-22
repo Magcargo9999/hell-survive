@@ -2774,7 +2774,18 @@ function eyeBul(x, y, a, sp, o) {
   if (ebul.length > 360) return;
   ebul.push(Object.assign({ x, y, a, sp, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp, r: 9, dmg: 12, t: 0, life: 7, k: 'orb' }, o));
 }
-function eyeHit(b) { if (b.mini) miniHit(b.dmg); else bossHit(b.dmg * EYE.dmg); }
+function eyeHit(b) { if (b.mob) { hurtPlayer(b.dmg); return; } if (b.mini) miniHit(b.dmg); else bossHit(b.dmg * EYE.dmg); }
+/* v7.11 정예 잡몹: 4.5~6초마다 느린 구슬 1발 (속도 220 · 수명 3.4초 · 직선, 예고로 몸이 번쩍) — 옆으로 한 걸음이면 피한다 */
+function updateEliteShots(dt) {
+  for (const e of enemies) {
+    if (!e.elite || e.kind !== 'mob' || e.hp <= 0) continue;
+    if (e.shotT === undefined) e.shotT = 2 + rand() * 3;
+    e.shotT -= dt; if (e.shotT > 0) continue;
+    const d = Math.hypot(P.x - e.x, P.y - e.y); if (d > 640 || d < 90) { e.shotT = 0.5; continue; }
+    e.shotT = 4.5 + rand() * 1.5; e.flash = 0.18;
+    eyeBul(e.x, e.y - 20, Math.atan2(P.y - e.y, P.x - e.x), 220, { mob: true, dmg: e.dmg * 0.8, r: 8, life: 3.4 });
+  }
+}
 function updateEbul(dt) {
   if (!ebul.length) return;
   const pet = P.pet;
@@ -3175,7 +3186,8 @@ function spawnEnemy(ang, dist, forceElite) {
   const elite = forceElite || (gt > 60 && rand() < 0.02);
   const a = ang === undefined ? rand() * 6.283 : ang, d = dist || Math.hypot(W, H) / 2 + 60;
   const sc = pick.scale + (elite ? 2 : 0);
-  const hp = 26 * pick.hpMult * (chal ? chTime() * chPact() : 1 + gt / 115) * (elite ? 7.5 : 1) * (0.75 + 0.25 * Math.min(1, gt / 150)) * (1 + 0.1 * P.tier);   // v5.21: 난이도 단계당 +10% (1단계 +10% · 2단계 +20% · 3단계 +30%)
+  const hp = 26 * pick.hpMult * (chal ? chTime() * chPact() : 1 + gt / 115) * (elite ? 7.5 : 1) * (0.75 + 0.25 * Math.min(1, gt / 150)) * (1 + 0.15 * P.tier);   // v7.11: 단계당 +15%
+   // v5.21: 난이도 단계당 +10% (1단계 +10% · 2단계 +20% · 3단계 +30%)
   const pl = Math.min(0.34, gt / 420), pf = Math.min(0.3, gt / 520), q = rand();   // 후반일수록 앞질러 막거나(ai 1) 옆으로 파고드는(ai 2) 마물이 늘어난다
   const e = {
     x: P.x + Math.cos(a) * d, y: P.y + Math.sin(a) * d, kx: 0, ky: 0,
@@ -5964,7 +5976,7 @@ function update(dt) {
   if (P.char === 'twins') updateTwins(dt);
   updateBsig(dt);
   P.still = moving ? 0 : P.still + dt;
-  stepDash(dt); if (P.char === 'gun') gunStep(dt); if (bombQ) stepBomb(dt); if (holyQ) stepHoly(dt); if (diveQ) stepDive(dt); if (breathQ) stepBreath(dt); if (rushQ) stepRush(dt); updateBurn(dt); updateIgnite(dt); updateAirs(dt); updateEbul(dt); if (anOrbs.length) updateAnOrbs(dt);
+  updateEliteShots(dt); stepDash(dt); if (P.char === 'gun') gunStep(dt); if (bombQ) stepBomb(dt); if (holyQ) stepHoly(dt); if (diveQ) stepDive(dt); if (breathQ) stepBreath(dt); if (rushQ) stepRush(dt); updateBurn(dt); updateIgnite(dt); updateAirs(dt); updateEbul(dt); if (anOrbs.length) updateAnOrbs(dt);
   updateCastle(dt, ox0, oy0);
   P.inv = Math.max(0, P.inv - dt); P.hitT = Math.max(0, P.hitT - dt);
   if (P.regen) P.hp = Math.min(P.max, P.hp + P.regen * dt * (P.still > 1.2 ? 0.25 : 1));
