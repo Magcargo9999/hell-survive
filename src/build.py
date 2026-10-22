@@ -1,6 +1,8 @@
 """게임 빌드: src/game_template.html 의 '__XXX__' 토큰을 src/assets 이미지(base64)로 바꿔 build/hell_survive.html 을 만든다.
-사용: python3 src/build.py  [출력경로]"""
-import base64, os, sys
+사용: python3 src/build.py            → build/hell_survive.html (그림 포함 단일 파일 · 공유용)
+      python3 src/build.py --split    → index.html (그림은 src/assets/ 를 따로 불러옴 · GitHub Pages 배포용, v8.14)
+      python3 src/build.py [출력경로] (단일 파일, 경로 지정)"""
+import base64, hashlib, os, sys
 HERE = os.path.dirname(os.path.abspath(__file__)); ROOT = os.path.dirname(HERE)
 ASSETS = {
     '__ATLAS__': 'opt/atlas.webp',
@@ -103,11 +105,15 @@ ASSETS = {
     '__SKTW__': 'sk/sktower.webp'
 }
 def b64(p): return 'data:image/' + ('webp' if p.endswith('.webp') else 'png') + ';base64,' + base64.b64encode(open(os.path.join(HERE, 'assets', p), 'rb').read()).decode()
+SPLIT = '--split' in sys.argv; args = [a for a in sys.argv[1:] if not a.startswith('--')]
+def url(p):   # 분리 배포: 내용 해시를 붙여 그림이 바뀌면 브라우저 캐시도 자동으로 새로 받는다
+    h = hashlib.md5(open(os.path.join(HERE, 'assets', p), 'rb').read()).hexdigest()[:8]
+    return 'src/assets/' + p + '?v=' + h
 s = open(os.path.join(HERE, 'game_template.html'), encoding='utf8').read()
 for k, p in ASSETS.items():
     assert s.count("'" + k + "'") == 1, k
-    s = s.replace("'" + k + "'", "'" + b64(p) + "'")
-out = sys.argv[1] if len(sys.argv) > 1 else os.path.join(ROOT, 'build', 'hell_survive.html')
+    s = s.replace("'" + k + "'", "'" + (url(p) if SPLIT else b64(p)) + "'")
+out = os.path.join(ROOT, 'index.html') if SPLIT else (args[0] if args else os.path.join(ROOT, 'build', 'hell_survive.html'))
 os.makedirs(os.path.dirname(out), exist_ok=True)
 open(out, 'w', encoding='utf8').write(s)
-print(out, len(s) // 1024, 'KB')
+print(out, len(s) // 1024, 'KB', '(분리)' if SPLIT else '(단일 파일)')

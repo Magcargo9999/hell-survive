@@ -4,7 +4,7 @@
 **이 문서를 먼저 다 읽고 작업할 것.** 답변은 한국어로 짧고 간결하게.
 
 ## 꼭 지킬 규칙 (사용자 지시)
-1. **파일 이름:** 매 빌드 `hell survive v.N.NN.html`, 버전은 매번 올린다. 마지막 배포 = **v8.13** → 다음은 v8.14. (v6.01부터 6대 · v7.01부터 7대: 지하 10층·버섯 맵 개편 · **v8.01부터 8대: 보스 심장 시스템 기준, 사용자 지시**)
+1. **파일 이름:** 매 빌드 `hell survive v.N.NN.html`, 버전은 매번 올린다. 마지막 배포 = **v8.14** → 다음은 v8.15. (v6.01부터 6대 · v7.01부터 7대: 지하 10층·버섯 맵 개편 · **v8.01부터 8대: 보스 심장 시스템 기준, 사용자 지시**)
    - 끝자리: 작은 수정 · 가운데 자리: 캐릭터·보스 추가 같은 큰 변화.
 2. **도트는 절대 수정·재색칠 금지.** 자르기·배경 제거·마스크·배율 조정만 허용.
 3. 기능은 **단순하게**. 서로 복사한 듯한 중복 스킬/카드 금지.
@@ -20,11 +20,11 @@
 11. **딜 미터기 이름은 화면의 이름과 항상 같게.** 스킬은 `skillName()`(변형 이름 포함), 카드·조합은 `upName()`/`altOf()`를 쓴다. 새 스킬·카드·피해 출처(`DSRC` 키)를 만들면 `dmName`이 영문 id·옛 이름을 내지 않는지 확인한다 (`tools/tests/dmeter22.py`).
 12. **검색 노출 금지(사용자 결정):** 구글 검색용 태그·`robots.txt`·`sitemap.xml`·Search Console 등록은 하지 않는다. 사용자가 다시 원할 때만.
 14. **미니 보스는 자가복제 금지(사용자 지시):** 새 미니 보스는 다른 미니 보스(원숭이 전사·마안 감시자·해골 전사·절단안의 짐승·혈혼마·네르칸·부패한 성상)의 패턴·구조를 복사하지 않고 고유한 패턴 3가지 안팎으로 만든다. **예외로 나오는 미니 보스(말 2종 15%씩 · 어인섬 절단안의 짐승)와 히든 마물은 건드리지 않는다** — 판 전용 미니는 `spawnMini()`에서 `P.bossK`로 갈라 넣는다.
-13. **100MB 경고:** `index.html`이 GitHub 파일 한도(100MB, 푸시 거부)에 가까워지면(약 90MB↑, 지금 약 75MB) 빌드 직후 크기를 확인하고, 넘기 전에 **사용자에게 해결 작업(이미지를 `assets/`로 분리해 따로 불러오기 등)을 할지 물어본다.** 배포 때마다 `ls -l index.html`로 크기를 보고한다.
+13. **100MB 경고(v8.14 분리 배포로 해결됨):** 이제 `index.html`은 약 0.8MB이고 그림은 `src/assets/`에 따로 있다. 배포 때마다 `ls -l index.html`로 크기를 보고하고, 저장소(.git)가 이미 1GB를 넘은 상태라는 점도 기억한다. 단일 공유 파일(`build/hell_survive.html`)은 그림이 들어 있어 계속 커지지만 GitHub에는 올리지 않는다(.gitignore).
 
 ## 폴더 구조
 ```
-index.html              배포본 (GitHub Pages가 서비스하는 실제 게임, 약 75MB — 100MB 넘으면 푸시 거부되니 이미지를 따로 불러오는 구조로 바꿔야 함)
+index.html              배포본 (GitHub Pages가 서비스하는 실제 게임. v8.14부터 `build.py --split` 결과 약 0.8MB — 그림은 src/assets/ 를 따로 불러온다. 사용자에게 보내는 단일 파일은 `build/hell_survive.html`)
 src/game_template.html  ★ 실제로 고치는 원본 (이미지 자리는 '__XXX__' 토큰)
 src/build.py            템플릿 + src/assets 이미지 → build/hell_survive.html
 src/assets/             모든 도트 아틀라스(webp/png). 경로는 build.py 표 참고
@@ -54,7 +54,7 @@ timeout 900 python3 tools/smoke.py | grep -c "\[\]$"   # 3) 15 이어야 정상 
 PYTHONPATH=tools python3 tools/tests/octo.py        # 필요할 때 캐릭터별 테스트
 # 4) 새 UI·이펙트는 playwright로 스크린샷 찍어 직접 눈으로 확인
 cp build/hell_survive.html "hell survive v.6.09.html"   # 사용자에게 보낼 파일 (SendUserFile)
-cp build/hell_survive.html index.html
+python3 src/build.py --split           # index.html = 분리 배포본(그림은 src/assets 를 따로 불러옴, 약 0.8MB)
 git add -A && git commit -m "v6.10: 변경점 한 줄" && git push origin main
 ```
 - 커밋 작성자: `-c user.name="Magcargo9999" -c user.email="gyubinpyeon@gmail.com"`
@@ -82,6 +82,7 @@ git add -A && git commit -m "v6.10: 변경점 한 줄" && git push origin main
 - **유니크 몹** `UNIQ`: 한 판에 종류별 1회, 난이도 3+ 은 동시에 2마리까지.
 - **난이도:** 이름은 **지하 1층~15층** (`floorName(t)`, 내부 값 `P.tier` 0~14 · 세이브 `SAVE.diff`는 그대로 · 6~10층 버섯 · 11~15층 어인섬 세트 `floorSet`). 몹 체력 층당 +15%, 몹 공격 +10%, 보스·미니·유니크 체력 +30%. 정예 구슬은 4층부터.
 - **HUD:** 체력바 아래 획득 카드 칩, 캐릭터 머리 위 체력바, 설정의 딜 미터기(`DSRC` 태그 → `DMETER`), 성유물·슬롯 화면밖 화살표.
+- **분리 배포 (v8.14):** `build.py --split` → 그림 토큰이 `src/assets/<경로>?v=<해시>` 로 바뀐다(내용이 바뀌면 캐시도 새로). `loadImg`가 3번까지 다시 시도하고, 시작 전 필수 그림은 `#ldBox` 진행률 표시 후 시작, 실패하면 새로고침 안내. 테스트는 `GAME_URL=http://localhost:포트/index.html` 로 로컬 서버(`python3 -m http.server`)를 띄워 돌린다. file:// 로 열 수 있는 건 단일 파일 빌드뿐.
 - **그림·성능 (v6.30):** `loadImg`가 ImageBitmap으로 바꿔 둔다(처음 그릴 때 해독 끊김 방지). `hq()` 확대 캔버스는 `HQ_MAX` 4096px 이하. 필드 바닥은 512px 덩어리 캐시(`groundChunk`, 용암 칸·키 큰 소품만 매 프레임), 비네트는 캐시(`drawVignette`), 화면 밖 잡몹·구슬은 안 그린다. 이미지 목록은 `SRC` 이름 = `IMG` 이름 (나중에 불러와도 되는 것은 `LAZY_IMG`).
 - **세이브:** localStorage `hellSurvivorSave1` (기기·브라우저별). 키를 바꾸면 사용자 진행이 날아가니 절대 바꾸지 말 것.
 - **∞ 챌린지 모드 (v6.20, 템플릿 'v6.20 ∞ 챌린지 모드' 블록):** 난이도 5단계 마왕 처치 시 해금(`SAVE.ch.open`, 예전 5단계 클리어 스펙 `fw.snap.tier>=5`도 인정). 시작 화면 [∞ 챌린지 모드] 버튼 → `chMode` → `startChallenge`. 전역 `chal`(판 상태), `CHM`(맵 그림 3.5배 · 다각형 `inCh` · 밖은 `chPull`).

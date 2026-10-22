@@ -105,3 +105,6 @@ CLAUDE.md에서 분리. 필요할 때만 `grep -n "키워드" docs/CHANGELOG.md`
 
 ## v8.13
 - 레어 스킨 '수호령 총령 · 연보라'(ghostG) 추가: 연보라 총령 최종 진화(수호령의 총령, forms [2])에만 적용. 스킨별 fps(`SKINS.fps`) 지원. 테스트 `tools/tests/ghostg813.py`
+
+## v8.14
+- 이미지 분리 배포: `python3 src/build.py --split` 가 `index.html`(약 0.8MB)을 만들고 그림은 `src/assets/`를 `?v=해시`로 따로 불러온다(GitHub Pages 용, 100MB 한도 해결). 그림 불러오기 실패 시 자동 재시도(3회) + 시작 전 진행률 표시 + 실패 안내 문구. 공유용 단일 파일은 `python3 src/build.py` 그대로.
