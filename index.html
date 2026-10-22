@@ -3220,12 +3220,14 @@ function hurtEnemy(e, dmg, kx, ky, kn, quiet) {
    // v5.00: 마왕의 '한 방 피해 상한'은 없앴다 (대신 마왕 체력을 올렸다)
   let crit = false;
   if (e.gazeT > gt) dmg *= 1.2;   // 광기의 시선: 촉수에 맞은 적
+  if (e.frzT > gt) dmg *= P.syn.glacier ? 1.25 : 1.1;   /* v7.05 빙결 */
   if (!quiet && P.crit + critAdd > 0 && rand() < P.crit + critAdd) { dmg *= P.critD; crit = true; }   // 치명타 카드 (+ 저격수의 표식)
   if (e.shd > 0) { const ab = Math.min(e.shd, dmg); e.shd -= ab; dmg -= ab; if (e.shd <= 0) addRing(e.x, e.y - e.r, 6, 44, 0.3, '120,200,255', 4); if (dmg <= 0) { e.flash = 0.06; return; } }   // 보호막 접두사
   { const dd = Math.min(dmg, Math.max(0, e.hp)), k = DSRC || '?';   // v6.49: 출처 없는 피해도 '기타'로 집계 + 보스 전용 미터기
     DMETER[k] = (DMETER[k] || 0) + dd; if (e.kind === 'boss') DBOSS[k] = (DBOSS[k] || 0) + dd;
     if (DDBG && !DSRC) { const st = (new Error().stack || '').split('\n').slice(2, 5).map(x => x.trim().replace(/^at /, '').split(' ')[0]).join('<'); DUNK[st] = (DUNK[st] || 0) + dd; } }
   e.hp -= dmg; e.flash = 0.12; sfx('hit');
+  if (!quiet && e.hp > 0 && (P.up.freeze || P.up.ignite)) procElem(e);
   if (P.syn.vamp && !quiet && P.vampCd <= 0 && P.hp < P.max) { healP(0.5); P.vampCd = 0.2; }
   if (!e.noKB) { const kr = e.kres || (e.elite || e.kind === 'bug' ? 0.6 : 1); e.kx += kx * kn * kr; e.ky += ky * kn * kr; }   // 정예·이공벌레는 덜 밀린다
   if (DSRC === 'aura') floatNum(e.x + (rand() - 0.5) * 20, e.y - e.r * 2 - 8, Math.round(dmg), '#ff9a3a');   // v5.11: 오라 피해가 보이게
@@ -3590,6 +3592,8 @@ const UPGRADES = [
   { id: 'thunder', name: '지옥 낙뢰',    txt: n => `낙뢰 ${TH(n).n}발 · ${TH(n).cd}초마다`,   apply: () => {} },
   { id: 'blade',  name: '회전 칼날',     txt: n => `칼날 ${BL(n).n}개 · ${BL(n).cd}초마다`,   apply: () => {} },
   { id: 'nova',   name: '충격파',        txt: n => `반경 ${NV(n).R} · ${NV(n).cd}초마다`,     apply: () => {} },
+  { id: 'freeze', name: '빙결', txt: n => `공격이 적중하면 ${5 + 3 * (n - 1)}% 확률로 ${(1 + 0.1 * n).toFixed(1)}초 빙결 (정지 · 받는 피해 +10%) · 같은 적에게 3.5초에 1번 · 보스급은 정지 없이 받는 피해만`, apply: () => {} },
+  { id: 'ignite', name: '점화', txt: n => `공격이 적중하면 ${8 + 2 * (n - 1)}% 확률로 3초간 점화 (0.5초마다 공격력의 ${Math.round(20 * (1 + 0.12 * (n - 1)))}% + 최대 체력의 ${(0.5 * (1 + 0.5 * (n - 1))).toFixed(2).replace(/\.?0+$/, '')}%, 보스급은 체력 비례 ${(0.04 * (1 + 0.375 * (n - 1))).toFixed(2).replace(/\.?0+$/, '')}%)`, apply: () => {} },
   { id: 'aura',   name: '불길 오라',     txt: n => `오라 반경 ${AU(n).R} · 지속 피해`,        apply: () => {} },
 ];
 const UNIQUE = {
@@ -3655,6 +3659,8 @@ const SYNERGIES = [
   { id: 'lifeOrb',   name: '불사의 영혼', txt: '경험치 구슬마다 체력 회복',        need: ['heart', 'magnet'] },
   { id: 'tstorm',    name: '폭풍 낙뢰',   txt: '낙뢰 쿨타임 -20% · +2발 · 피해 -8%',            need: ['thunder', 'speed'] },
   { id: 'bstorm',    name: '칼날 폭풍',   txt: '칼날 +2개 · 크기 +62%',            need: ['blade', 'range'] },
+  { id: 'glacier',   name: '빙하 충격파', txt: '충격파에 맞은 적은 반드시 빙결 · 빙결 중 받는 피해 +10% → +25%', need: ['freeze', 'nova'] },
+  { id: 'forge',     name: '달궈진 칼날', txt: '칼날에 맞은 적은 반드시 점화 · 점화 지속 +2초 · 점화 피해 +30%', need: ['ignite', 'blade'] },
   { id: 'dnova',     name: '이중 충격파', txt: '충격파가 두 번 터지고 밀쳐냄',     need: ['nova', 'knock'] },
   { id: 'inferno',   name: '화염 지옥',   txt: '오라 반경 +40% · 피해 +70%',       need: ['aura', 'armor'] },
   { id: 'deadeye',   name: '급소 사냥꾼', txt: '치명타 피해 ×2.3',                 need: ['crit', 'claw'], apply: p => { p.critD += 0.6; } },
@@ -4963,7 +4969,9 @@ function spawnMimic(n) {
   banner = { txt: '🎁 미믹 습격!  미믹 ' + n + '마리가 달려든다\n쓰러뜨리면 한 마리당 영혼 조각 ' + MIM.reward + '개 — 혀를 뻗기 전 멈추는 순간을 피하세요', t: 5, c: '#ff8a7a' };
 }
 function updateMimic(e, dt) {
-  e.t += dt; e.flash = Math.max(0, e.flash - dt); e.cd -= dt;
+  e.t += dt; e.flash = Math.max(0, e.flash - dt);
+  if (e.frzT > gt) { e.x += e.kx * dt; e.y += e.ky * dt; const k0 = Math.exp(-8 * dt); e.kx *= k0; e.ky *= k0; return; }   /* 빙결 */
+  e.cd -= dt;
   const dx = P.x - e.x, dy = P.y - e.y, d = Math.hypot(dx, dy) || 1, slow = e.slowT > 0 ? 0.5 : 1;
   if (e.slowT > 0) e.slowT -= dt;
   let sp = 0, mx = dx / d, my = dy / d;
@@ -5002,7 +5010,7 @@ function drawMimic(e, x, y) {
     const p = e.sT / MIM.wind, L = MIM.lv * MIM.lunge, x1 = x + e.lx * L, y1 = y + e.ly * L;
     ctx.save(); ctx.strokeStyle = `rgba(255,70,90,${0.3 + 0.5 * p})`; ctx.lineWidth = 6 + 8 * p; ctx.lineCap = 'round'; ctx.setLineDash([14, 10]); ctx.beginPath(); ctx.moveTo(x, y - 8); ctx.lineTo(x1, y1 - 8); ctx.stroke(); ctx.restore();
   } else if (e.st === 'lunge') { row = 2; f = 1 + Math.min(2, Math.floor(e.sT / MIM.lunge * 3)); }
-  mimicSprite(row, f, x + ox, y, e.face, 1, e.flash > 0);
+  mimicSprite(row, f, x + ox, y, e.face, 1, e.flash > 0); if (e.frzT > gt) drawFrost(x, y - 2, 90, 64);
   const w = 56, by = y - 86;
   ctx.fillStyle = '#1a0608'; ctx.fillRect(x - w / 2 - 1, by - 1, w + 2, 7); ctx.fillStyle = '#ff5a6a'; ctx.fillRect(x - w / 2, by, w * Math.max(0, e.hp / e.max), 5);
 }
@@ -5661,7 +5669,7 @@ function castNova(c) {
   for (const e of enemies) {
     if (e.hp <= 0) continue;
     const dx = e.x - P.x, dy = e.y - P.y, d = Math.hypot(dx, dy) || 1;
-    if (d < c.R + e.r) { hurtEnemy(e, P.dmg * c.dm, dx / d, dy / d, P.syn.dnova ? 420 : 0); e.slowT = Math.max(e.slowT || 0, 1.0); }
+    if (d < c.R + e.r) { hurtEnemy(e, P.dmg * c.dm, dx / d, dy / d, P.syn.dnova ? 420 : 0); e.slowT = Math.max(e.slowT || 0, 1.0); if (P.syn.glacier) freezeE(e, true); }
   }
   addRing(P.x, P.y - 16, 16, c.R, 0.5, th.rgb, 10); addRing(P.x, P.y - 16, 8, c.R * 0.6, 0.4, '255,255,255', 6);
   shake = Math.max(shake, 5); sfx('boom');
@@ -5691,7 +5699,7 @@ function cardAttacks(dt) {
     b.x += vx * dt; b.y += vy * dt; if (b.t > 3) b.dead = true;
     for (const e of enemies) {
       if (e.hp <= 0 || (b.hit.get(e) || 0) > b.t) continue;
-      if (Math.hypot(e.x - b.x, e.y - e.r - b.y) < b.r + e.r) { DSRC = 'blade'; hurtEnemy(e, P.dmg * b.dm, 0, 0, 0); DSRC = null; b.hit.set(e, b.t + 0.5); }
+      if (Math.hypot(e.x - b.x, e.y - e.r - b.y) < b.r + e.r) { DSRC = 'blade'; hurtEnemy(e, P.dmg * b.dm, 0, 0, 0); DSRC = null; if (P.syn.forge) igniteX(e, true); b.hit.set(e, b.t + 0.5); }
     }
   }
   blades = blades.filter(b => !b.dead);
@@ -5897,7 +5905,7 @@ function update(dt) {
   if (P.char === 'twins') updateTwins(dt);
   updateBsig(dt);
   P.still = moving ? 0 : P.still + dt;
-  stepDash(dt); if (P.char === 'gun') gunStep(dt); if (bombQ) stepBomb(dt); if (holyQ) stepHoly(dt); if (diveQ) stepDive(dt); if (breathQ) stepBreath(dt); if (rushQ) stepRush(dt); updateBurn(dt); updateAirs(dt); updateEbul(dt); if (anOrbs.length) updateAnOrbs(dt);
+  stepDash(dt); if (P.char === 'gun') gunStep(dt); if (bombQ) stepBomb(dt); if (holyQ) stepHoly(dt); if (diveQ) stepDive(dt); if (breathQ) stepBreath(dt); if (rushQ) stepRush(dt); updateBurn(dt); updateIgnite(dt); updateAirs(dt); updateEbul(dt); if (anOrbs.length) updateAnOrbs(dt);
   updateCastle(dt, ox0, oy0);
   P.inv = Math.max(0, P.inv - dt); P.hitT = Math.max(0, P.hitT - dt);
   if (P.regen) P.hp = Math.min(P.max, P.hp + P.regen * dt * (P.still > 1.2 ? 0.25 : 1));
@@ -6076,7 +6084,7 @@ function update(dt) {
     }
     e.x += (mx * sp + e.kx) * dt; e.y += (my * sp + e.ky) * dt;
     const k = Math.exp(-8 * dt); e.kx *= k; e.ky *= k;
-    if (d < e.r + 13 + PR()) hurtPlayer(e.dmg * ease() * (chal ? chDmgT() : 1));
+    if (d < e.r + 13 + PR() && !(e.frzT > gt)) hurtPlayer(e.dmg * ease() * (chal ? chDmgT() : 1));
   }
   for (let i = 0; i < enemies.length; i++) {   // 적끼리 겹치지 않게 살짝 밀어내기
     const a = enemies[i]; if (a.hp <= 0) continue;
@@ -6346,6 +6354,47 @@ function blazeBoom0(e) {   // 업화 연쇄: 화상 입은 적이 죽으며 터�
     if (d < R + o.r) { igniteE(o); hurtEnemy(o, P.dmg * 0.6, dx / d, dy / d, 120, o.kind === 'boss'); }
   }
   blazeBusy = false;
+}
+/* ---------- v7.05 빙결 · 점화 카드 (공격이 적중하면 확률로 발동) ---------- */
+const isBig = e => e.kind === 'boss' || e.kind === 'mini' || e.kind === 'uniq';
+function freezeE(e, force) {
+  if (e.hp <= 0 || (!force && e.frzCd > gt)) return;
+  const n = Math.max(1, P.up.freeze | 0), dur = 1 + 0.1 * n;
+  e.frzT = gt + dur; e.frzCd = gt + 3.5;
+  if (!isBig(e)) e.rootT = Math.max(e.rootT || 0, gt + dur);
+  burst(e.x, e.y - e.r, 8, ['#9fe0ff', '#e6fbff', '#ffffff'], 150, 0.5); floatNum(e.x, e.y - e.r * 2 - 14, '❄ 빙결', '#9fe0ff');
+}
+function igniteX(e, force) {
+  if (e.hp <= 0) return;
+  e.ignT = 3 + (P.syn.forge ? 2 : 0); e.ignAcc = e.ignAcc || 0;
+  if (force && !(e.ignFx > gt)) { e.ignFx = gt + 1; burst(e.x, e.y - e.r, 5, ['#ff8a2a', '#ffd27a'], 120, 0.4); }
+}
+function procElem(e) {   /* hurtEnemy에서 (지속 피해가 아닌) 일반 적중마다 */
+  const f = P.up.freeze | 0, g = P.up.ignite | 0;
+  if (f && rand() < 0.05 + 0.03 * (f - 1)) freezeE(e);
+  if (g && !(e.ignT > 0) && rand() < 0.08 + 0.02 * (g - 1)) igniteX(e);
+}
+function updateIgnite(dt) {
+  const lv = Math.max(1, P.up.ignite | 0);
+  let nb = 0; for (const e of enemies) if (e.ignT > 0) nb++;
+  const pr = nb > 40 ? 3 : nb > 15 ? 7 : 12;
+  for (const e of enemies) {
+    if (!(e.ignT > 0) || e.hp <= 0) continue;
+    e.ignT -= dt; e.ignAcc = (e.ignAcc || 0) + dt;
+    if (e.ignAcc >= 0.5) {
+      e.ignAcc -= 0.5;
+      const big = isBig(e), qf = e.kind === 'boss' ? 0.12 : e.kind === 'mini' ? 0.5 : e.kind === 'uniq' ? 0.6 : 1;   /* hurtEnemy가 지속 피해를 깎는 만큼 체력 비례분을 보정 */
+      const flat = P.dmg * 0.2 * (1 + 0.12 * (lv - 1)) * (P.syn.forge ? 1.3 : 1);
+      const pcs = big ? 0.0004 * (1 + 0.375 * (lv - 1)) : 0.005 * (1 + 0.5 * (lv - 1));   /* 0.5초마다 최대 체력 비례 */
+      const pc = Math.min(P.dmg * 8, e.max * pcs);
+      withSrc('ignite', () => hurtEnemy(e, flat + pc / qf, 0, 0, 0, true));
+    }
+    if (fx.length < 500 && rand() < dt * pr) fx.push({ x: e.x + (rand() - 0.5) * e.r, y: e.y - e.r * (0.6 + rand()), vx: (rand() - 0.5) * 24, vy: -50 - rand() * 40, life: 0.5, max: 0.5, c: rand() < 0.5 ? '#ff5a1a' : '#ffb04a', s: 3 });
+  }
+}
+function drawFrost(x, y, w, h) {
+  ctx.save(); ctx.globalAlpha = 0.42; ctx.fillStyle = '#9fe0ff'; ctx.beginPath(); ctx.ellipse(x, y - h / 2, w / 2 + 3, h / 2 + 3, 0, 0, 6.283); ctx.fill();
+  ctx.globalAlpha = 0.9; ctx.strokeStyle = '#e6fbff'; ctx.lineWidth = 2; ctx.stroke(); ctx.restore();
 }
 function igniteE(e) { e.burnSrc = 'burn'; e.burnT = 3 + 0.5 * (P.up.flameA || 0); e.burnD = P.dmg * 0.2 * (1 + 0.3 * (P.up.flameA || 0)); }
 function updateBurn(dt) {
@@ -6747,7 +6796,7 @@ function render() {
       if (x < -170 || x > W + 170 || y < -60 || y > H + 260) continue;   // v6.30: 화면 밖 몹은 그리지 않는다
       if (e.kind === 'bug') {
         ctx.fillStyle = 'rgba(0,0,0,0.4)'; ctx.beginPath(); ctx.ellipse(x, y - 1, 56, 10, 0, 0, 6.283); ctx.fill();
-        drawBug(e, x, y);
+        drawBug(e, x, y); if (e.frzT > gt) drawFrost(x, y - 2, 90, 80);
         if (e.hp < e.max) { const w = 60; ctx.fillStyle = '#220608'; ctx.fillRect(x - w / 2, y - 94, w, 5); ctx.fillStyle = '#c04cff'; ctx.fillRect(x - w / 2, y - 94, w * Math.max(0, e.hp / e.max), 5); }
         continue;
       }
@@ -6760,6 +6809,7 @@ function render() {
       if (e.gold) chMobPre(e);
       ctx.drawImage(img, Math.round(x - MOB.cw * k / 2), Math.round(y - MOB.ch * k + (Math.floor(e.t * 6) % 2 ? 0 : -s)), MOB.cw * k, MOB.ch * k);
       if (e.gold || e.pfx) chMobPost(e, x, y, s, top);
+      if (e.frzT > gt) drawFrost(x, y - 2, top * 0.8, top);
       if (e.max > 60 && e.hp < e.max) {   // 체력이 많은 적만 체력바 표시
         const w = 8 * s; ctx.fillStyle = '#220608'; ctx.fillRect(x - w / 2, y - top - 6, w, 4);
         ctx.fillStyle = '#e0343f'; ctx.fillRect(x - w / 2, y - top - 6, w * Math.max(0, e.hp / e.max), 4);
@@ -6905,7 +6955,7 @@ function render() {
 }
 let skillBtn = { x: 0, y: 0, w: 0, h: 0 };
 const hudCards = { t: 0, L: [] };
-const dmName = k => k === '?' ? '기타 (출처 없음)' : k === 'bugBoom' ? '이공벌레 폭발' : k === 'burn' ? '화상 (불꽃 지속 피해)' : k === 'twTip' ? '창날 타격' : k === 'twChain' ? '사슬 휘두르기' : String(k).startsWith('g:') ? GUN_AMMO[k.slice(2)].name + (k === 'g:F' ? ' (화상 포함)' : '') : k === 'basic' ? '기본 공격' : String(k).startsWith('sk:') ? '【스킬】' + (SKILLS[k.slice(3)] ? SKILLS[k.slice(3)].name : k.slice(3)) : k === 'trail' ? '이동 자국 (장판)' : (SYNERGIES.find(x => x.id === k) ? '★' + (a => a ? a[0] : SYNERGIES.find(x => x.id === k).name)(altOf(SYNERGIES.find(x => x.id === k))) : upName(k));
+const dmName = k => k === '?' ? '기타 (출처 없음)' : k === 'bugBoom' ? '이공벌레 폭발' : k === 'burn' ? '화상 (불꽃 지속 피해)' : k === 'ignite' ? '점화 (지속 피해)' : k === 'twTip' ? '창날 타격' : k === 'twChain' ? '사슬 휘두르기' : String(k).startsWith('g:') ? GUN_AMMO[k.slice(2)].name + (k === 'g:F' ? ' (화상 포함)' : '') : k === 'basic' ? '기본 공격' : String(k).startsWith('sk:') ? '【스킬】' + (SKILLS[k.slice(3)] ? SKILLS[k.slice(3)].name : k.slice(3)) : k === 'trail' ? '이동 자국 (장판)' : (SYNERGIES.find(x => x.id === k) ? '★' + (a => a ? a[0] : SYNERGIES.find(x => x.id === k).name)(altOf(SYNERGIES.find(x => x.id === k))) : upName(k));
 function drawDmeter() { dmeterBox(DMETER, '딜 미터기', chal ? 124 : 90); if (DBOSS && boss && boss.hp > 0 && Object.keys(DBOSS).length) dmeterBox(DBOSS, '보스 딜 미터기', Math.min(H - 220, (chal ? 124 : 90) + 24 + Math.min(8, Object.keys(DMETER).length) * 22 + 14), 6); }
 function dmeterBox(M, title, y0, maxN) {   // v5.11: 딜 미터기 (설정에서 켜기) — 기본 공격과 스킬 카드별 누적 피해
   const L = Object.entries(M).sort((a, b) => b[1] - a[1]).slice(0, maxN || 8), tot = L.reduce((a, b) => a + b[1], 0); if (!tot) return;
@@ -8049,7 +8099,7 @@ window.__G = {
   get zones() { return zones; }, get ebul() { return ebul; }, get EYE() { return EYE; }, get shards() { return shards; }, get bigQ() { return bigQ; }, get bombQ() { return bombQ; }, get holyQ() { return holyQ; }, get afx() { return afx; }, get dashQ() { return dashQ; }, get beam() { return beam; }, get evo() { return evo; }, get choices() { return choices; },
   get SAVE() { return SAVE; }, render, get boss() { return boss; }, get mini() { return mini; }, get skp() { return skp; }, SK_PH, SKB, get mdeath() { return mdeath; }, spawnMini, miniDefeated, spawnBoss, raiseCastle, enterArena, exitArena, get castle() { return castle; }, get arena() { return arena; }, get trans() { return trans; }, openChest, openShop, buildCards, get joy() { return joy; }, get gt() { return gt; }, get allies() { return allies; }, get items() { return items; }, spawnItem, get globs() { return globs; }, recruit, keys, tick, needFor, pick: pickChoice, cast: castSkill, spawnBug,
   get slots() { return slots; }, spawnMimic, slotRoll, get MIM() { return MIM; },  get slotUI() { return slotUI; }, get udeath() { return udeath; }, get lasers() { return lasers; }, get eyeF() { return eyeF; }, get uniqCd() { return uniqCd; }, spawnSlot, spawnUniq, gainRelic, useTeleport, closeSlot, slotSpin, slotKey, updateSlotUI, SLOT_FX, SLOT_APPLY, UNIQ, RELICS, trySpawnUniq, UNIQ_P, setState(v) { state = v; }, spawnEnemy,
-  get DMETER() { return DMETER; }, get DBOSS() { return DBOSS; }, get DUNK() { return DUNK; }, setDbg(v) { DDBG = v; }, dmName, get eleQ() { return eleQ; }, fwStart, setT(v) { gt = v; }, calcShards, FD, LIZ_FORMS, TWIN_FORMS, startFw, snapP, get fwFx() { return fwFx; }, get bsig() { return bsig; }, BMAP, inBlood, twLen, availSyn, SYNERGIES, inPoly, hurtEnemy, startGame, addExp, hurt: hurtPlayer, rebuild: buildSpecies,
+  get DMETER() { return DMETER; }, get DBOSS() { return DBOSS; }, get DUNK() { return DUNK; }, setDbg(v) { DDBG = v; }, dmName, get eleQ() { return eleQ; }, fwStart, setT(v) { gt = v; }, calcShards, FD, LIZ_FORMS, TWIN_FORMS, startFw, snapP, get fwFx() { return fwFx; }, get bsig() { return bsig; }, BMAP, inBlood, twLen, availSyn, SYNERGIES, UPGRADES, inPoly, hurtEnemy, startGame, addExp, hurt: hurtPlayer, rebuild: buildSpecies,
   get rollQ() { return rollQ; }, get gunFx() { return gunFx; }, GUN, GUN_AMMO, GUNA, gunLoad, gunRange,
   get anOrbs() { return anOrbs; }, get anFx() { return anFx; }, AMAP, ANB, ANX, AN, anStart, anTrans, pickBossK, floorName, arenaExit,
   sizes() { const o = { enemies, orbs, items, shards, fx, nums, arcs, embers, zones, rings, globs, sprFx, blades, lights, ebul, afx, gunFx, cfx, bfx, healFx, allies, slots, cutSaws, airs, octoFx, smokes, skp, mfx }; const r = {}; for (const k in o) if (o[k] && o[k].length != null) r[k] = o[k].length; return r; },
