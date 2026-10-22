@@ -86,6 +86,10 @@ ASSETS = {
     '__HORSE__': 'horse/horse.webp',
     '__AN2__': 'an/an2.webp',
     '__SHK__': 'shk/shk.webp',
+    '__SKGUNH__': 'skin/gunH.webp',
+    '__SKWOLFE__': 'skin/wolfE.webp',
+    '__SKAGUNH__': 'skin/gunH_art.webp',
+    '__SKAWOLFE__': 'skin/wolfE_art.webp',
     '__SH__': 'mush/sh.webp',
     '__MIMIC__': 'mimic/mimic.webp',
     '__SKTW__': 'sk/sktower.webp'

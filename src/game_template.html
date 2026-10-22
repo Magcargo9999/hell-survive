@@ -40,13 +40,62 @@
   .card.route { width: 200px; text-align: center; }
   .card.skill { width: 210px; }
   .panel { background: var(--panel); border: 1px solid #6a3a30; border-radius: 8px; padding: 14px 20px; text-align: left; }
-  #gachaBtn { position: fixed; right: 36px; bottom: 44px; z-index: 5; display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 14px 26px 12px; font-size: 17px; font-weight: bold; color: #ffe9a8; border: 2px solid #ffc247; border-radius: 14px; cursor: not-allowed;
+  #gachaBtn { position: fixed; right: 36px; bottom: 44px; z-index: 5; display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 14px 26px 12px; font-size: 17px; font-weight: bold; color: #ffe9a8; border: 2px solid #ffc247; border-radius: 14px; cursor: pointer;
     background: linear-gradient(160deg, #4a1668 0%, #2a0c3c 55%, #5a1a2a 100%); box-shadow: 0 0 18px rgba(255, 194, 71, 0.55), inset 0 0 14px rgba(255, 120, 220, 0.25); animation: gachaGlow 1.8s ease-in-out infinite; }
   #gachaBtn small { font-size: 12px; font-weight: normal; color: #d8b8ff; }
   #gachaBtn .lk { font-size: 22px; filter: drop-shadow(0 0 6px #ffc247); }
   @keyframes gachaGlow { 0%, 100% { box-shadow: 0 0 12px rgba(255, 194, 71, 0.4), inset 0 0 12px rgba(255, 120, 220, 0.2); transform: translateY(0); } 50% { box-shadow: 0 0 30px rgba(255, 194, 71, 0.95), inset 0 0 18px rgba(255, 120, 220, 0.4); transform: translateY(-3px); } }
   @media (max-width: 1500px), (max-height: 940px) { #gachaBtn { position: static; margin-top: 4px; } }   /* 작은 화면: 카드를 가리지 않도록 버튼 줄 아래에 놓는다 */
   .row { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; }
+  /* v7.30 스킨 가챠 · 도감 */
+  #gachaBox { background: radial-gradient(ellipse at 50% 28%, #541678, #0a020e 72%); gap: 12px; z-index: 20; }
+  #gachaBox h2 { color: #ffe28a; text-shadow: 0 0 16px rgba(255, 120, 230, 0.7), 3px 3px 0 #2a0638; }
+  .gtop { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; justify-content: center; }
+  .gtop .on { background: #5a1a7a; border-color: #e0b0ff; box-shadow: 0 3px 0 #2a0a3a; }
+  #gShards { color: var(--gold); font-weight: bold; }
+  .gban { position: relative; width: min(880px, 94vw); height: min(400px, 50vh); border-radius: 16px; overflow: hidden; border: 2px solid #ffc247;
+    background: linear-gradient(120deg, #3a0a2a 0%, #1a0626 45%, #2a0a48 100%); box-shadow: 0 0 34px rgba(200, 120, 255, 0.45); }
+  .gban img { position: absolute; bottom: 0; height: 100%; object-fit: contain; filter: drop-shadow(0 0 18px rgba(0, 0, 0, 0.8)); }
+  .gban .ga { right: 1%; height: 96%; } .gban .gb { left: 37%; height: 100%; }
+  .gban .gt { position: absolute; left: 22px; top: 18px; text-align: left; z-index: 2; max-width: 33%; }
+  .gban .gt b { display: block; font-size: clamp(22px, 3vw, 34px); color: #fff3c4; text-shadow: 0 0 12px #ff6ad5, 2px 2px 0 #2a0638; }
+  .gban .gt small { display: block; color: #e8d0ff; font-size: 13px; line-height: 1.6; margin-top: 6px; }
+  .gban::after { content: ''; position: absolute; inset: 0; background: linear-gradient(90deg, rgba(10, 2, 16, 0.9) 0%, rgba(10, 2, 16, 0.6) 34%, rgba(10, 2, 16, 0) 46%); pointer-events: none; }
+  .gpity { width: min(560px, 90vw); height: 10px; background: #2a1630; border-radius: 6px; overflow: hidden; border: 1px solid #6a3a8a; }
+  .gpity i { display: block; height: 100%; background: linear-gradient(90deg, #ffc247, #ff6ad5); transition: width 0.4s; }
+  #gPityTxt { font-size: 13px; color: #e8c8ff; }
+  .gbtns button { min-width: 210px; border-color: #ffc247; background: linear-gradient(180deg, #5a1a7a, #2a0a3a); box-shadow: 0 4px 0 #1a0626; }
+  .gbtns button small { display: block; font-size: 13px; color: #ffe28a; letter-spacing: 0; }
+  .gbtns button:disabled { opacity: 0.45; cursor: not-allowed; transform: none; }
+  .gprob { font-size: 12px; color: #b9a0c8; max-width: 760px; }
+  .grade { display: inline-block; padding: 2px 10px; border-radius: 10px; font-weight: bold; font-size: 12px; color: #fff; letter-spacing: 0.05em; }
+  .grade.epic { background: linear-gradient(90deg, #7b2cff, #e07dff); box-shadow: 0 0 10px #c77dff; } .grade.rare { background: linear-gradient(90deg, #1c6dd0, #4fd0ff); box-shadow: 0 0 8px #4fb3ff; } .grade.frag { background: #5a5262; }
+  .sgrid { display: flex; gap: 16px; flex-wrap: wrap; justify-content: center; }
+  .scard { width: 210px; padding: 10px; border-radius: 14px; background: rgba(20, 6, 26, 0.9); border: 2px solid #4a3a52; display: flex; flex-direction: column; gap: 8px; align-items: center; }
+  .scard.epic { border-color: #9a5ad8; } .scard.rare { border-color: #3a8ad8; } .scard.on { box-shadow: 0 0 22px #ffc247; border-color: #ffc247; }
+  .scard .sart { width: 190px; height: 200px; border-radius: 10px; overflow: hidden; background: #0c0410; display: flex; align-items: center; justify-content: center; }
+  .scard .sart img { width: 100%; height: 100%; object-fit: cover; }
+  .scard .sil { filter: grayscale(100%) brightness(0.16); }
+  .scard .sinfo { display: flex; flex-direction: column; align-items: center; gap: 3px; } .scard .sinfo b { color: #fff0d0; font-size: 17px; } .scard small { color: #b9a0c8; font-size: 12px; }
+  .scard .okc { color: #9bffc0; } .scard .fbar { width: 170px; height: 8px; background: #2a1630; border-radius: 5px; overflow: hidden; } .scard .fbar i { display: block; height: 100%; background: linear-gradient(90deg, #ffc247, #ff6ad5); }
+  .scard button.onb { background: #6a4a10; border-color: #ffc247; color: #ffe9a8; }
+  .scard button:disabled { opacity: 0.45; cursor: not-allowed; }
+  #gRes { position: fixed; inset: 0; z-index: 40; display: none; flex-direction: column; align-items: center; justify-content: center; gap: 16px; background: rgba(4, 0, 8, 0.95); padding: 16px; box-sizing: border-box; overflow-y: auto; }
+  #gRes.show { display: flex; }
+  .gorb { width: 120px; height: 120px; border-radius: 50%; animation: gOrb 1.1s ease-in forwards; }
+  .gorb.epic { background: radial-gradient(circle, #fff 0%, #e07dff 35%, rgba(123, 44, 255, 0) 70%); } .gorb.rare { background: radial-gradient(circle, #fff 0%, #4fd0ff 35%, rgba(28, 109, 208, 0) 70%); } .gorb.frag { background: radial-gradient(circle, #fff 0%, #c8b8d8 35%, rgba(90, 82, 98, 0) 70%); }
+  @keyframes gOrb { 0% { transform: scale(0.2); opacity: 0; } 55% { transform: scale(1.1); opacity: 1; } 100% { transform: scale(7); opacity: 0; } }
+  .gbig { max-height: 64vh; border-radius: 14px; overflow: hidden; border: 3px solid; animation: gReveal 0.8s both; }
+  .gbig.epic { border-color: #e07dff; box-shadow: 0 0 50px #c77dff; } .gbig.rare { border-color: #4fd0ff; box-shadow: 0 0 40px #4fb3ff; }
+  .gbig img { display: block; max-height: 64vh; max-width: 90vw; }
+  @keyframes gReveal { from { transform: scale(1.25); filter: brightness(4) blur(6px); opacity: 0; } to { transform: none; filter: none; opacity: 1; } }
+  .gname { display: flex; flex-direction: column; align-items: center; gap: 4px; } .gname b { font-size: 28px; color: #fff3c4; text-shadow: 0 0 14px #ff6ad5; } .gname small { color: #e8d0ff; }
+  .ggrid { display: grid; grid-template-columns: repeat(5, 130px); gap: 12px; } @media (max-width: 760px) { .ggrid { grid-template-columns: repeat(3, 110px); } }
+  .gcard { position: relative; height: 180px; border-radius: 10px; overflow: hidden; border: 3px solid #5a5262; background: #140812; display: flex; flex-direction: column; justify-content: flex-end; align-items: center; animation: gFlip 0.45s both; }
+  .gcard img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  .gcard.frag img { opacity: 0.45; filter: saturate(0.6); } .gcard.epic { border-color: #e07dff; box-shadow: 0 0 20px #c77dff; } .gcard.rare { border-color: #4fd0ff; box-shadow: 0 0 14px #4fb3ff; }
+  .gcard .grade { position: absolute; top: 6px; left: 6px; } .gcard b, .gcard small { position: relative; z-index: 1; width: 100%; background: rgba(0, 0, 0, 0.7); font-size: 12px; padding: 2px 0; color: #fff; } .gcard small { color: #ffe28a; }
+  @keyframes gFlip { from { transform: rotateY(90deg) scale(0.8); opacity: 0; } to { transform: none; opacity: 1; } }
   button.sm { padding: 7px 16px; font-size: 15px; letter-spacing: 0; box-shadow: 0 3px 0 #7a2a0a; }
   button:disabled { opacity: 0.4; cursor: not-allowed; }
   .setrow { display: flex; justify-content: space-between; align-items: center; gap: 28px; margin: 9px 0; min-width: 340px; font-size: 16px; }
@@ -154,7 +203,7 @@
   <p id="chInfo" style="font-size:12px;margin-top:-6px;color:#c9a0ff;line-height:1.5"></p>
   <p class="keys"><b>W</b><b>A</b><b>S</b><b>D</b> 또는 방향키로 이동 · 공격은 자동 · <b>SPACE</b> 특수 스킬 · <b>E</b> 성유물(순간이동) · <b>P</b> 일시정지</p>
   <div class="row"><button id="startBtn">시작하기</button><button id="chBtn" class="sm" style="border-color:#8a4aff">∞ 챌린지 모드</button><button id="shopBtn" class="sm">캐릭터 상점</button><button id="perkBtn" class="sm">강화 상점</button><button id="dexBtn" class="sm">몬스터 도감</button><button id="setBtn" class="sm">설정</button></div>
-  <button id="gachaBtn" title="준비 중"><span class="lk">🔒</span>✨ 스킨 가챠 ✨<small>준비 중 · 곧 열립니다</small></button>
+  <button id="gachaBtn" title="스킨 가챠 · 스킨 도감"><span class="lk">✨</span>스킨 가챠<small></small></button>
 </div>
 
 <div class="overlay" id="levelBox">
@@ -213,6 +262,19 @@
   <button id="dexClose" class="sm">닫기</button>
 </div>
 
+<div class="overlay" id="gachaBox">
+  <h2>✨ 스킨 가챠 ✨</h2>
+  <div class="gtop"><button id="gTabPull" class="sm">뽑기</button><button id="gTabDex" class="sm">스킨 도감</button><span id="gShards"></span><button id="gClose" class="sm">닫기</button></div>
+  <div id="gPull" style="display:flex;flex-direction:column;align-items:center;gap:12px">
+    <div class="gban"><img class="gb" id="gBanB" alt=""><img class="ga" id="gBanA" alt=""><div class="gt"><b>심연의 의상실</b><small>에픽 · 레어 스킨이 완성품 또는 조각으로 나와요.<br>같은 스킨 조각을 모으면 완성 스킨으로 조합!<br>(레어 10개 · 에픽 15개)</small></div></div>
+    <div class="gpity"><i id="gPityBar"></i></div><p id="gPityTxt"></p>
+    <div class="row gbtns"><button id="gOne">1회 뽑기<small>◆ 300</small></button><button id="gTen">10회 뽑기<small>◆ 2700 (10% 할인)</small></button></div>
+    <p class="gprob">확률 (1회): 에픽 완성 스킨 1/49 (2.0%) · 레어 완성 스킨 3/49 (6.1%) · 스킨 조각 45/49 (91.8%: 레어 조각 1~2개 · 에픽 조각 1개, 어느 스킨인지는 무작위)<br>이미 가진 스킨과 그 조각은 나오지 않아요 · 완성 스킨 없이 25번째 뽑기는 완성 스킨 확정 (에픽 20% · 레어 80%)</p>
+  </div>
+  <div id="gDex" style="display:none"><div class="sgrid" id="gDexGrid"></div><p class="gprob" style="margin-top:10px">완성 스킨은 하나만 ON(착용)할 수 있어요 · 다른 스킨을 켜면 기존 스킨은 자동으로 꺼집니다</p></div>
+</div>
+<div id="gRes"></div>
+
 <div class="overlay" id="shopBox">
   <h2 id="shopTitle">영혼 상점</h2>
   <p id="shopShards" style="color:var(--gold)"></p>
@@ -227,7 +289,7 @@
 /* ============================================================
  * 0. 기본 설정
  * ============================================================ */
-const SRC = { sktw: '__SKTW__', mimic: '__MIMIC__', sh: '__SH__', mfloor: '__MFLOOR__', mprops: '__MPROPS__', mmob: '__MMOB__', mmap: '__MMAP__', an2: '__AN2__', shk: '__SHK__', horse: '__HORSE__', sfloor: '__SFLOOR__', sprops: '__SPROPS__', smob: '__SMOB__', smap: '__SMAP__', mini: '__MINI__', snail: '__SNAIL__', base: '__ATLAS__', pup: '__PUP__', dark: '__DARK__', bug: '__BUG__', floor: '__FLOOR__', props: '__PROPS__', castle: '__CASTLE__', arena: '__ARENA__', boss: '__BOSS__', mobs: '__MOBS__', blood: '__BLOOD__', twin: '__TWIN__', triple: '__TRIPLE__', items: '__ITEMS__', drophb: '__DROPHB__', droppo: '__DROPPO__', blood2: '__BLOOD2__', holy: '__HOLY__', lavasn: '__LAVASN__', lavafx: '__LAVAFX__', venom2: '__VENOM2__', venom3: '__VENOM3__', venomfx: '__VENOMFX__', elf0: '__ELF0__', elf1: '__ELF1__', skel: '__SKEL__', chim0: '__CHIM0__', chim1: '__CHIM1__', chim2: '__CHIM2__', chimfx: '__CHIMFX__', flm1: '__FLM1__', flm2: '__FLM2__', flmfx: '__FLMFX__', drm1: '__DRM1__', drm2: '__DRM2__', drfx: '__DRFX__', arcr: '__ARCR__', arch: '__ARCH__', arfx: '__ARFX__', hlfx: '__HLFX__', slot: '__SLOT__', uniq: '__UNIQ__', eyem: '__EYEM__', relic: '__RELIC__', liz0: '__LIZ0__', liz1: '__LIZ1__', liz2: '__LIZ2__', liz3: '__LIZ3__', gh: '__GH__', gg: '__GG__', oc: '__OC__', lg: '__LG__', os: '__OS__', bs: '__BS__', tw0: '__TW0__', tw1: '__TW1__', tw2: '__TW2__', fwb: '__FWB__', fwp: '__FWP__', fwfx: '__FWFX__', bmap: '__BMAP__', skb: '__SKB__', skw: '__SKW__', chm: '__CHMAP__', cm: '__CM__', ab: '__AB__', an: '__AN__', anfx: '__ANFX__', amap: '__AMAP__', gun: '__GUN__' };
+const SRC = { sktw: '__SKTW__', mimic: '__MIMIC__', sh: '__SH__', mfloor: '__MFLOOR__', mprops: '__MPROPS__', mmob: '__MMOB__', mmap: '__MMAP__', an2: '__AN2__', shk: '__SHK__', sk_gunH: '__SKGUNH__', sk_wolfE: '__SKWOLFE__', skA_gunH: '__SKAGUNH__', skA_wolfE: '__SKAWOLFE__', horse: '__HORSE__', sfloor: '__SFLOOR__', sprops: '__SPROPS__', smob: '__SMOB__', smap: '__SMAP__', mini: '__MINI__', snail: '__SNAIL__', base: '__ATLAS__', pup: '__PUP__', dark: '__DARK__', bug: '__BUG__', floor: '__FLOOR__', props: '__PROPS__', castle: '__CASTLE__', arena: '__ARENA__', boss: '__BOSS__', mobs: '__MOBS__', blood: '__BLOOD__', twin: '__TWIN__', triple: '__TRIPLE__', items: '__ITEMS__', drophb: '__DROPHB__', droppo: '__DROPPO__', blood2: '__BLOOD2__', holy: '__HOLY__', lavasn: '__LAVASN__', lavafx: '__LAVAFX__', venom2: '__VENOM2__', venom3: '__VENOM3__', venomfx: '__VENOMFX__', elf0: '__ELF0__', elf1: '__ELF1__', skel: '__SKEL__', chim0: '__CHIM0__', chim1: '__CHIM1__', chim2: '__CHIM2__', chimfx: '__CHIMFX__', flm1: '__FLM1__', flm2: '__FLM2__', flmfx: '__FLMFX__', drm1: '__DRM1__', drm2: '__DRM2__', drfx: '__DRFX__', arcr: '__ARCR__', arch: '__ARCH__', arfx: '__ARFX__', hlfx: '__HLFX__', slot: '__SLOT__', uniq: '__UNIQ__', eyem: '__EYEM__', relic: '__RELIC__', liz0: '__LIZ0__', liz1: '__LIZ1__', liz2: '__LIZ2__', liz3: '__LIZ3__', gh: '__GH__', gg: '__GG__', oc: '__OC__', lg: '__LG__', os: '__OS__', bs: '__BS__', tw0: '__TW0__', tw1: '__TW1__', tw2: '__TW2__', fwb: '__FWB__', fwp: '__FWP__', fwfx: '__FWFX__', bmap: '__BMAP__', skb: '__SKB__', skw: '__SKW__', chm: '__CHMAP__', cm: '__CM__', ab: '__AB__', an: '__AN__', anfx: '__ANFX__', amap: '__AMAP__', gun: '__GUN__' };
 const SNAIL_RECTS = [[0, 0, 216, 146], [220, 0, 273, 208], [497, 0, 276, 208], [777, 0, 289, 214]];
 const PROP_RECTS = [[0, 0, 38, 48], [40, 0, 22, 49], [64, 0, 34, 48], [100, 0, 26, 44], [128, 0, 29, 44], [159, 0, 56, 44], [217, 0, 64, 59], [283, 0, 42, 44], [327, 0, 20, 48], [349, 0, 62, 62], [413, 0, 47, 64], [462, 0, 44, 56], [0, 66, 33, 62], [35, 66, 36, 56], [73, 66, 28, 57], [103, 66, 19, 29], [124, 66, 20, 46], [146, 66, 18, 28], [166, 66, 18, 23], [186, 66, 19, 31], [207, 66, 21, 31], [230, 66, 22, 30], [254, 66, 21, 18], [277, 66, 20, 19], [299, 66, 32, 50], [333, 66, 32, 49], [367, 66, 40, 46], [409, 66, 39, 46], [450, 66, 33, 45], [0, 130, 37, 45], [39, 130, 19, 29], [60, 130, 18, 29], [80, 130, 17, 18], [99, 130, 20, 19], [121, 130, 20, 20], [143, 130, 58, 60], [203, 130, 31, 54], [236, 130, 30, 54], [268, 130, 30, 54], [300, 130, 47, 53], [349, 130, 28, 53], [379, 130, 31, 53], [412, 130, 43, 41], [457, 130, 44, 40], [0, 192, 36, 11], [38, 192, 25, 16], [65, 192, 48, 11], [115, 192, 76, 57], [193, 192, 43, 49], [238, 192, 21, 21], [261, 192, 35, 45], [298, 192, 50, 38], [350, 192, 67, 77], [419, 192, 53, 57], [0, 271, 45, 79], [47, 271, 53, 24], [102, 271, 32, 36], [136, 271, 59, 53]];
 // 늑대 형태별 스프라이트 설정: 한 칸 크기, 배율, 원본이 바라보는 방향(flip), 공격이 맞는 프레임(hitF), 동작별 (줄, 프레임 수, 초당 프레임)
@@ -549,8 +611,8 @@ function gunDump() {   // 탄창에 남은 탄을 한꺼번에 쏜다 (가까운
 function updateGunFx(dt) { for (const q of gunFx) q.t += dt; gunFx = gunFx.filter(q => q.t < q.life); }
 /* --- 그리기 --- */
 function gunSpr(k, i, x, y, s, face, alpha, add) {
-  const L = GUNA[k], r = L && L[Math.min(L.length - 1, i)], img = IMG.gun; if (!r || !img) return;
-  const H = hq(img), K = H.width / img.width;
+  const A = gA(k), L = A[k], r = L && L[Math.min(L.length - 1, i)], img = A === GUNA ? IMG.gun : IMG.sk_gunH; if (!r || !img) return;   // v7.30: 스킨이면 스킨 아틀라스
+  const H = A === GUNA ? hq(img) : img, K = H.width / img.width;
   ctx.save(); ctx.translate(Math.round(x), Math.round(y)); if (face < 0) ctx.scale(-1, 1); ctx.imageSmoothingEnabled = true; ctx.imageSmoothingQuality = 'medium';
   if (alpha < 1) ctx.globalAlpha = Math.max(0, alpha); if (add) ctx.globalCompositeOperation = 'lighter';
   ctx.drawImage(H, r[0] * K, r[1] * K, r[2] * K, r[3] * K, -r[4] * s, -r[5] * s, r[2] * s, r[3] * s); ctx.restore();
@@ -559,18 +621,18 @@ function gunFrame() {   // 지금 그릴 [목록, 칸]
   const D = FD(), L = D.L, an = P.anim, a = D.anim[an] || D.anim.idle;
   if (an === 'roll') return [L.roll, Math.min(5, Math.floor(rollQ && rollQ.d ? rollQ.d.t / rollQ.d.dur * 6 : 5))];
   if (an === 'attack' || an === 'atkMove') {   // 사격: 몇 번째 탄인지에 맞는 칸 (총구 불꽃) → 겨눈 자세
-    const n = GUNA[L.attack].length, s = P.gShot | 0, fire = P.atkTimer < 0.09;
+    const n = gA(L.attack)[L.attack].length, s = P.gShot | 0, fire = P.atkTimer < 0.09;
     return [L.attack, P.form >= 2 ? Math.min(n - 1, s) : fire ? 1 + s % (n - 1) : 0];
   }
-  if (an === 'reload' && L.reload) return [L.reload, Math.min(GUNA[L.reload].length - 1, Math.floor((1 - P.reloadT / (P.reloadMax || 1)) * GUNA[L.reload].length))];
-  const k = L[an] || L.idle, n = GUNA[k].length, f = Math.floor(P.animT * a.fps);
+  if (an === 'reload' && L.reload) { const n = gA(L.reload)[L.reload].length; return [L.reload, Math.min(n - 1, Math.floor((1 - P.reloadT / (P.reloadMax || 1)) * n))]; }
+  const k = L[an] || L.idle, n = gA(k)[k].length, f = Math.floor(P.animT * a.fps);
   return [k, an === 'idle' || an === 'walk' ? f % n : Math.min(n - 1, f)];
 }
 function drawGun(x, y) {
-  const D = FD(), [k, f] = gunFrame(), r = GUNA[k][f], ws = D.ws * (evo && !evo.swapped ? 1 + Math.sin(evo.t * 20) * 0.03 : 1);
-  const bob = P.anim === 'idle' && P.form >= 1 ? Math.round(Math.sin(P.animT * 3) * 1.5) : P.anim === 'walk' && GUNA[k].length <= 2 ? -Math.abs(Math.round(Math.sin(P.animT * 10) * 3)) : 0;
+  const D = FD(), [k, f] = gunFrame(), GL = gA(k)[k], r = GL[Math.min(GL.length - 1, f)], ws = D.ws * (evo && !evo.swapped ? 1 + Math.sin(evo.t * 20) * 0.03 : 1);
+  const bob = P.anim === 'idle' && P.form >= 1 ? Math.round(Math.sin(P.animT * 3) * 1.5) : P.anim === 'walk' && GL.length <= 2 ? -Math.abs(Math.round(Math.sin(P.animT * 10) * 3)) : 0;
   const blink = P.inv > 0 && P.inv < 5 && P.anim !== 'death' && P.anim !== 'roll' && Math.floor(wallT * 22) % 2 === 0;
-  P.hpTop = y + bob - r[5] * ws + sprTop(IMG.gun, r[0], r[1], r[2], r[3]) * ws;
+  P.hpTop = y + bob - r[5] * ws + sprTop(gI(k), r[0], r[1], r[2], r[3]) * ws;
   gunSpr(k, f, x, y + bob, ws, P.face * D.flip, blink ? 0.5 : 1, false);
   if (P.anim !== 'death' && P.mag) drawGunMag(x, P.hpTop - 22);   // 머리 위 체력바(hpTop - 10) 바로 위
   if (rollQ && rollQ.n > 0 && !rollQ.d) {   // 남은 구르기 · 시간
@@ -719,13 +781,14 @@ const SAVE_DEF = () => ({
   fw: { wins: {}, open: false, cleared: false, snap: null },   // 숨은 보스: 혈랑/성혈랑 클리어 기록 · 마지막 클리어 스펙
   ch: { open: false, frag: 0, best: 0, rune: {}, tr: { rat: false, pouch: false, mirror: false } },   // v6.20: 챌린지 모드 (해금 · 룬 조각 · 룬 · 보물)
   set: { nums: true, calm: false, sfx: 0.7, bgm: 0.35, speed: 1, joy: ('ontouchstart' in window) },
+  skin: { own: {}, frag: {}, on: null, pity: 0, pulls: 0 },   // v7.30 스킨 가챠
 });
 let SAVE = SAVE_DEF();
 function loadSave() {
   try {
     const j = JSON.parse(localStorage.getItem(SAVE_KEY) || 'null'), d = SAVE_DEF();
     if (j && j.chars && j.chars.mage && !('archer' in j.chars)) j.chars.archer = true;   // 예전 뼈 마법사를 샀다면 궁수로 이어받는다
-    if (j) SAVE = { shards: +j.shards || 0, perks: Object.assign(d.perks, j.perks), chars: Object.assign(d.chars, j.chars), dex: { seen: Object.assign({}, j.dex && j.dex.seen), kills: Object.assign({}, j.dex && j.dex.kills), final: Object.assign({}, j.dex && j.dex.final), goals: +(j.dex && j.dex.goals) || 0 }, diff: Object.assign(d.diff, j.diff), holyBlood: !!j.holyBlood, fw: Object.assign(d.fw, j.fw), set: Object.assign(d.set, j.set), ch: Object.assign(d.ch, j.ch, { rune: Object.assign({}, j.ch && j.ch.rune), tr: Object.assign(d.ch.tr, j.ch && j.ch.tr) }) };
+    if (j) SAVE = { shards: +j.shards || 0, perks: Object.assign(d.perks, j.perks), chars: Object.assign(d.chars, j.chars), dex: { seen: Object.assign({}, j.dex && j.dex.seen), kills: Object.assign({}, j.dex && j.dex.kills), final: Object.assign({}, j.dex && j.dex.final), goals: +(j.dex && j.dex.goals) || 0 }, diff: Object.assign(d.diff, j.diff), holyBlood: !!j.holyBlood, fw: Object.assign(d.fw, j.fw), set: Object.assign(d.set, j.set), ch: Object.assign(d.ch, j.ch, { rune: Object.assign({}, j.ch && j.ch.rune), tr: Object.assign(d.ch.tr, j.ch && j.ch.tr) }), skin: Object.assign(d.skin, j.skin, { own: Object.assign({}, j.skin && j.skin.own), frag: Object.assign({}, j.skin && j.skin.frag) }) };
     delete SAVE.chars.mage;
   } catch (e) { /* 저장소를 못 쓰는 환경이면 기본값으로 진행 */ }
 }
@@ -7080,7 +7143,7 @@ function render() {
       ctx.fillStyle = 'rgba(0,0,0,0.38)'; ctx.beginPath(); ctx.ellipse(x, y - 2, P.char === 'snail' && !FD().src ? 44 : FD().sh, P.char === 'snail' ? 9 : 8 + P.form * 2, 0, 0, 6.283); ctx.fill();
       if (P.up.aura) drawAura(x, y);
       if (P.char === 'ghost') drawPals(wx, wy, false);
-      if (P.char === 'gun') drawGun(x, y); else if (P.char === 'snail') drawSnail(x, y); else if (diveQ && diveQ.ph !== 'land') drawDive(x, y); else if (breathQ) drawBreath(x, y); else if (rushQ) drawRush(x, y); else if (P.char === 'chimera') drawChim(x, y); else { drawWolf(x, y); if (P.char === 'lizard') drawLizAura(x, y); if (P.syn.vortex && P.tw && P.tw.spd > 420) { ctx.strokeStyle = `rgba(${theme().rgb},${0.3 + 0.15 * Math.sin(wallT * 12)})`; ctx.lineWidth = 2; ctx.beginPath(); ctx.ellipse(x, y - 26, 44, 34, 0, 0, 6.283); ctx.stroke(); } }
+      if (P.char === 'gun') drawGun(x, y); else if (P.char === 'snail') drawSnail(x, y); else if (diveQ && diveQ.ph !== 'land') drawDive(x, y); else if (breathQ) drawBreath(x, y); else if (rushQ) drawRush(x, y); else if (P.char === 'chimera') drawChim(x, y); else { if (skinOn('wolf')) drawSkinChar(x, y); else drawWolf(x, y); if (P.char === 'lizard') drawLizAura(x, y); if (P.syn.vortex && P.tw && P.tw.spd > 420) { ctx.strokeStyle = `rgba(${theme().rgb},${0.3 + 0.15 * Math.sin(wallT * 12)})`; ctx.lineWidth = 2; ctx.beginPath(); ctx.ellipse(x, y - 26, 44, 34, 0, 0, 6.283); ctx.stroke(); } }
       if (P.char === 'ghost') drawPals(wx, wy, true);
       if (P.shellT > 0) { const pu = 0.5 + 0.5 * Math.sin(wallT * 14); ctx.strokeStyle = `rgba(90,230,220,${0.55 + 0.35 * pu})`; ctx.lineWidth = 4; ctx.beginPath(); ctx.ellipse(x, y - 30, 96, 58, 0, Math.PI, 2 * Math.PI); ctx.stroke(); ctx.fillStyle = `rgba(90,230,220,${0.08 + 0.06 * pu})`; ctx.fill(); }   // 반격의 갑주
       if (P.up.guard && P.guardT <= 0) { ctx.strokeStyle = `rgba(150,220,255,${0.35 + 0.15 * Math.sin(wallT * 5)})`; ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(x, y - 38, 52, 0, 6.283); ctx.stroke(); }   // 방어막 준비됨
@@ -8370,6 +8433,134 @@ function openDex() {
 }
 /* 상점 */
 let shopKind = 'char';
+/* ---------- v7.30 스킨 가챠 · 스킨 도감 ----------
+   데이터: SKINS (id · 이름 · 등급 · 대상 캐릭터 · 적용 진화 단계) / 아틀라스 SKINF[id] (게임 동작 이름별 프레임) / 일러스트 SRC['skA_' + id]
+   세이브: SAVE.skin = { own: {id: true}, frag: {id: 개수}, on: 장착 id 또는 null, pity: 마지막 완성 스킨 이후 뽑은 횟수, pulls: 총 뽑기 }
+   뽑기 1회: 가중치 49 = 에픽 완성 1 · 레어 완성 3 · 스킨 조각 45 (조각 대상 스킨은 완전 무작위 · 레어 조각 1~2개 · 에픽 조각 1개)
+   · 이미 가진 스킨과 그 조각은 나오지 않는다 (나올 수 없는 결과는 빼고 남은 가중치로 다시 나눈다) · 조각은 조합에 필요한 개수까지만
+   · 천장: 완성 스킨 없이 25번째 뽑기 → 완성 스킨 확정 (에픽 20% · 레어 80%, 남은 등급이 없으면 다른 등급)
+   조합: 같은 스킨 조각 레어 10개 · 에픽 15개 → 완성 스킨 / 장착: 완성 스킨 하나만 ON (다른 걸 켜면 기존 것은 OFF) */
+const SKINF = { gunH: {"i2":[[0,0,112,101,55,101]],"w2":[[114,0,84,103,42,103],[200,0,96,103,48,103]],"a2":[[298,0,71,89,34,89],[371,0,90,89,32,89],[463,0,85,89,30,89],[550,0,85,89,42,89],[637,0,85,88,48,88],[724,0,97,88,36,88]],"r2":[[823,0,73,106,36,106],[898,0,73,104,24,104],[0,108,69,102,25,102],[71,108,71,104,35,104],[144,108,72,105,36,105],[218,108,94,107,55,107]],"h2":[[314,108,83,88,30,88],[399,108,87,89,51,89],[488,108,85,90,34,90],[575,108,95,90,44,90],[672,108,106,89,52,89]],"d2":[[780,108,89,87,20,87],[871,108,94,77,30,77],[0,217,150,77,55,77],[152,217,165,76,82,76]],"s2":[[319,217,190,101,94,101],[511,217,188,100,94,100],[701,217,292,96,146,96],[0,320,187,101,93,101],[189,320,169,101,84,101]]}, wolfE: {"idle":[[0,0,83,127,41,127],[85,0,86,128,42,128],[173,0,83,127,41,127]],"walk":[[258,0,100,119,50,119],[360,0,120,118,60,118],[482,0,122,114,61,114],[606,0,110,116,54,116],[718,0,101,115,50,115],[821,0,123,119,74,119],[0,130,111,119,55,119],[113,130,114,117,56,117]],"attack":[[229,130,116,124,58,124],[347,130,147,117,73,117],[496,130,168,109,84,109],[666,130,155,124,77,124],[823,130,184,129,110,129],[0,261,166,145,82,145]],"hit":[[168,261,138,120,68,120],[308,261,131,124,65,124],[441,261,145,122,72,122],[588,261,156,119,80,119]],"death":[[746,261,133,96,66,96],[0,408,154,92,76,92],[156,408,130,86,65,86],[288,408,137,76,68,76],[427,408,135,86,67,86],[564,408,143,91,71,91]]} };
+const SKINS = [
+  { id: 'gunH', name: '악마 사냥꾼', grade: 'rare', char: 'gun', forms: [2], where: '악마 총잡이 · 최종 진화(악마처형자)', face: {} },
+  { id: 'wolfE', name: '지옥늑대', grade: 'epic', char: 'wolf', forms: [0, 1, 2], where: '지옥 늑대 · 모든 진화 단계', ws: [0.72, 0.86, 1.0], face: { walk: 1, attack: 1, hit: -1, death: -1 } },
+];
+const SKIN_GRADE = { epic: { name: '에픽', need: 15, star: '★★★' }, rare: { name: '레어', need: 10, star: '★★' } };
+const GACHA = { cost1: 300, cost10: 2700, W: { epic: 1, rare: 3, frag: 45 }, pity: 25, pityEpic: 0.2 };
+const skinG = id => SKINS.find(s => s.id === id);
+const skinNeed = s => SKIN_GRADE[s.grade].need;
+function skinOn(ch) {   // 지금 캐릭터·진화 단계에 장착한 스킨 (없으면 null)
+  const S = SAVE.skin; if (!S || !S.on || !P || P.char !== ch) return null;
+  const s = skinG(S.on); return s && S.own[s.id] && s.char === ch && s.forms.includes(P.form | 0) && IMG['sk_' + s.id] ? s : null;
+}
+const gA = k => (SKINF.gunH[k] && skinOn('gun')) ? SKINF.gunH : GUNA;   // 악마 총잡이: 스킨 아틀라스 또는 원래 아틀라스
+const gI = k => gA(k) === GUNA ? IMG.gun : IMG.sk_gunH;
+function drawSkinChar(x, y) {   // 지옥 늑대 스킨: 동작 이름대로 프레임을 고른다
+  const s = skinOn(P.char), F = SKINF[s.id], img = IMG['sk_' + s.id];
+  let an = P.anim === 'atkMove' ? 'attack' : P.anim; if (!F[an]) an = 'idle';
+  const L = F[an], fps = { idle: 4, walk: 12, attack: 16, hit: 12, death: 7 }[an] || 8;
+  let f = Math.floor(P.animT * fps); f = an === 'idle' || an === 'walk' ? f % L.length : Math.min(L.length - 1, f);
+  const r = L[f], ws = s.ws[P.form | 0] * (evo && !evo.swapped ? 1 + Math.sin(evo.t * 20) * 0.03 : 1), o = s.face[an] || 0;
+  ctx.save(); ctx.translate(Math.round(x), Math.round(y)); if (o && P.face !== o) ctx.scale(-1, 1);
+  ctx.imageSmoothingEnabled = true; ctx.imageSmoothingQuality = 'medium';
+  if (P.inv > 0 && P.inv < 5 && P.anim !== 'death' && Math.floor(wallT * 22) % 2 === 0) ctx.globalAlpha = 0.5;
+  ctx.drawImage(img, r[0], r[1], r[2], r[3], -r[4] * ws, -r[5] * ws, r[2] * ws, r[3] * ws); ctx.restore();
+  P.hpTop = y - r[5] * ws + 6;
+}
+function gachaPools() {   // 지금 나올 수 있는 것들 (가진 스킨 · 그 조각 · 다 모은 조각은 빠진다)
+  const S = SAVE.skin, free = SKINS.filter(s => !S.own[s.id]);
+  return { epic: free.filter(s => s.grade === 'epic'), rare: free.filter(s => s.grade === 'rare'), frag: free.filter(s => (S.frag[s.id] || 0) < skinNeed(s)) };
+}
+const pickOne = L => L[(Math.random() * L.length) | 0];
+function gachaRoll() {   // 뽑기 1번 → { type: 'skin' | 'frag', id, n, pity } (다 모았으면 null)
+  const S = SAVE.skin, Q = gachaPools();
+  if (!Q.epic.length && !Q.rare.length) return null;
+  S.pulls++; S.pity++;
+  let g;
+  if (S.pity >= GACHA.pity) g = Q.epic.length && (!Q.rare.length || Math.random() < GACHA.pityEpic) ? 'epic' : 'rare';   // 천장
+  else {
+    const opt = ['epic', 'rare', 'frag'].filter(k => Q[k].length); let tot = 0; for (const k of opt) tot += GACHA.W[k];
+    let r = Math.random() * tot; g = opt[opt.length - 1]; for (const k of opt) { r -= GACHA.W[k]; if (r < 0) { g = k; break; } }
+  }
+  if (g === 'frag') {
+    const s = pickOne(Q.frag), have = S.frag[s.id] || 0, n = Math.min(skinNeed(s) - have, s.grade === 'rare' ? 1 + (Math.random() < 0.5 ? 1 : 0) : 1);
+    S.frag[s.id] = have + n; return { type: 'frag', id: s.id, n, have: have + n };
+  }
+  const s = pickOne(Q[g]), pity = S.pity >= GACHA.pity; S.own[s.id] = true; S.pity = 0;
+  if (!S.on) S.on = s.id;   // 처음 얻은 스킨은 바로 장착
+  return { type: 'skin', id: s.id, pity };
+}
+function skinCraft(id) {   // 조각 조합
+  const S = SAVE.skin, s = skinG(id); if (!s || S.own[id] || (S.frag[id] || 0) < skinNeed(s)) return false;
+  S.frag[id] -= skinNeed(s); S.own[id] = true; if (!S.on) S.on = id; saveSave(); return true;
+}
+function skinToggle(id) { const S = SAVE.skin; if (!S.own[id]) return; S.on = S.on === id ? null : id; saveSave(); }   // ON/OFF (한 번에 하나만)
+const canCraft = s => !SAVE.skin.own[s.id] && (SAVE.skin.frag[s.id] || 0) >= skinNeed(s);
+/* --- 화면 --- */
+let gTab = 'pull', gBusy = false;
+function gachaBtnTxt() {
+  const S = SAVE.skin, on = S.on && skinG(S.on);
+  $('gachaBtn').innerHTML = `<span class="lk">✨</span>스킨 가챠<small>${on ? '착용: ' + on.name : '천장 ' + S.pity + ' / ' + GACHA.pity}</small>`;
+}
+function openGacha(tab) { if (tab) gTab = tab; renderGacha(); show('gachaBox', true); }
+function skinSil(s, w, h) {   // 미획득: 흑백 실루엣 (게임 속 모습의 그림자만)
+  const c = mkCanvas(w, h), img = IMG['sk_' + s.id], F = SKINF[s.id], r = (F.idle || F.i2)[0];
+  if (img) { const g = c.getContext('2d'), k = Math.min((w - 10) / r[2], (h - 10) / r[3]); g.drawImage(img, r[0], r[1], r[2], r[3], (w - r[2] * k) / 2, h - 6 - r[3] * k, r[2] * k, r[3] * k); }
+  c.className = 'sil'; return c;
+}
+function renderGacha() {
+  const S = SAVE.skin, Q = gachaPools(), done = !Q.epic.length && !Q.rare.length;
+  $('gShards').textContent = `◆ 영혼 조각 ${SAVE.shards}`;
+  $('gTabPull').classList.toggle('on', gTab === 'pull'); $('gTabDex').classList.toggle('on', gTab === 'dex');
+  $('gPull').style.display = gTab === 'pull' ? '' : 'none'; $('gDex').style.display = gTab === 'dex' ? '' : 'none';
+  $('gPityBar').style.width = (100 * Math.min(1, S.pity / GACHA.pity)) + '%';
+  $('gPityTxt').textContent = done ? '모든 스킨을 모았어요!' : `완성 스킨 확정까지 ${GACHA.pity - S.pity}회  (천장: 에픽 20% · 레어 80%)`;
+  $('gOne').disabled = done || SAVE.shards < GACHA.cost1; $('gTen').disabled = done || SAVE.shards < GACHA.cost10;
+  const dex = $('gDexGrid'); dex.innerHTML = '';
+  for (const s of SKINS) {
+    const own = !!S.own[s.id], fr = S.frag[s.id] || 0, seen = own || fr > 0, need = skinNeed(s), G = SKIN_GRADE[s.grade];
+    const d = document.createElement('div'); d.className = `scard ${s.grade}${seen ? '' : ' lock'}${S.on === s.id ? ' on' : ''}`;
+    d.innerHTML = `<div class="sart"></div><div class="sinfo"><span class="grade ${s.grade}">${G.name} ${G.star}</span><b>${seen ? s.name : '???'}</b><small>${seen ? s.where : '아직 얻지 못한 스킨'}</small>`
+      + (own ? `<small class="okc">✔ 보유</small>` : `<div class="fbar"><i style="width:${100 * Math.min(1, fr / need)}%"></i></div><small>조각 ${fr} / ${need}</small>`) + `</div>`;
+    const art = d.querySelector('.sart');
+    if (seen) { const im = document.createElement('img'); im.src = SRC['skA_' + s.id]; im.alt = s.name; art.appendChild(im); } else art.appendChild(skinSil(s, 180, 190));
+    const bt = document.createElement('button'); bt.className = 'sm';
+    if (own) { bt.textContent = S.on === s.id ? 'ON (착용 중)' : 'OFF'; bt.classList.toggle('onb', S.on === s.id); bt.onclick = () => { skinToggle(s.id); sfx('item'); renderGacha(); gachaBtnTxt(); }; }
+    else { bt.textContent = canCraft(s) ? '조합하기' : `조합하기 (${fr}/${need})`; bt.disabled = !canCraft(s); bt.onclick = () => { if (skinCraft(s.id)) { sfx('evolve'); gachaShow([{ type: 'skin', id: s.id, craft: true }]); } }; }
+    d.appendChild(bt); dex.appendChild(d);
+  }
+  gachaBtnTxt();
+}
+function gachaPull(n) {
+  if (gBusy) return;
+  const cost = n === 10 ? GACHA.cost10 : GACHA.cost1; if (SAVE.shards < cost) return;
+  const res = []; for (let i = 0; i < n; i++) { const r = gachaRoll(); if (!r) break; res.push(r); }
+  if (!res.length) return;
+  const back = n === 10 ? Math.round(cost * (10 - res.length) / 10) : 0;   // 도중에 다 모으면 남은 횟수만큼 돌려준다
+  SAVE.shards -= cost - back; saveSave(); gachaShow(res);
+}
+function gachaShow(res) {   // 연출: 빛 구슬(가장 높은 등급 색) → 결과 카드 (완성 스킨 1개면 일러스트 크게)
+  gBusy = true;
+  const best = res.some(r => r.type === 'skin' && skinG(r.id).grade === 'epic') ? 'epic' : res.some(r => r.type === 'skin') ? 'rare' : 'frag';
+  const box = $('gRes'); box.innerHTML = `<div class="gorb ${best}"></div>`; box.classList.add('show'); sfx(best === 'frag' ? 'item' : 'evolve');
+  let shown = false;
+  const reveal = () => {
+    if (shown) return; shown = true;
+    const card = r => { const s = skinG(r.id), G = SKIN_GRADE[s.grade], sk = r.type === 'skin';
+      return `<div class="gcard ${sk ? s.grade : 'frag'}" style="animation-delay:${res.length > 1 ? res.indexOf(r) * 0.12 : 0}s"><img src="${SRC['skA_' + s.id]}" alt=""><span class="grade ${sk ? s.grade : 'frag'}">${sk ? G.name : '조각'}</span><b>${s.name}${sk ? '' : ' 조각 ×' + r.n}</b><small>${sk ? (r.craft ? '조합 완료!' : r.pity ? '천장 확정!' : 'NEW!') : r.have + ' / ' + skinNeed(s)}</small></div>`; };
+    let h;
+    if (res.length === 1 && res[0].type === 'skin') {
+      const s = skinG(res[0].id), G = SKIN_GRADE[s.grade];
+      h = `<div class="gbig ${s.grade}"><img src="${SRC['skA_' + s.id]}" alt="${s.name}"></div><div class="gname"><span class="grade ${s.grade}">${G.name} ${G.star}</span><b>${s.name}</b><small>${s.where}${res[0].pity ? ' · 천장 확정!' : res[0].craft ? ' · 조합 완료!' : ' · NEW!'}</small></div>`;
+    } else h = `<div class="ggrid">${res.map(card).join('')}</div>`;
+    const sk = res.find(r => r.type === 'skin');
+    box.innerHTML = h + `<div class="row">${sk && SAVE.skin.on !== sk.id ? `<button class="sm" id="gEquip">바로 착용</button>` : ''}<button class="sm" id="gOk">확인</button></div>`;
+    $('gOk').onclick = () => { box.classList.remove('show'); gBusy = false; renderGacha(); };
+    if ($('gEquip')) $('gEquip').onclick = () => { SAVE.skin.on = sk.id; saveSave(); $('gEquip').remove(); sfx('item'); };
+  };
+  box.onclick = e => { if (!shown) reveal(); };
+  setTimeout(reveal, 1100);
+}
 function openShop(kind) {   // v5.11: 캐릭터 상점 / 강화 상점 분리
   if (kind === 'char' || kind === 'perk') shopKind = kind;
   $('shopTitle').textContent = shopKind === 'char' ? '캐릭터 상점' : '강화 상점';
@@ -8448,7 +8639,13 @@ $('diffPlus').addEventListener('click', () => {
   if (SAVE.shards < n * 25) { $('hint').textContent = `${floorName(n)}은 참가비 ${n * 25} 영혼 조각이 필요해요.`; return; }
   SAVE.diff.sel = n; saveSave(); $('hint').textContent = ''; updateDiff();
 });
-$('gachaBtn').addEventListener('click', () => { $('hint').textContent = '🔒 스킨 가챠: 아직 준비 중이에요. 곧 열립니다!'; });   // v6.63: 자리만 (잠금)
+$('gachaBtn').addEventListener('click', () => openGacha('pull'));   // v7.30: 스킨 가챠 열림
+$('gTabPull').addEventListener('click', () => { gTab = 'pull'; renderGacha(); });
+$('gTabDex').addEventListener('click', () => { gTab = 'dex'; renderGacha(); });
+$('gClose').addEventListener('click', () => { show('gachaBox', false); buildCards(); });
+$('gOne').addEventListener('click', () => gachaPull(1));
+$('gTen').addEventListener('click', () => gachaPull(10));
+$('gBanA').src = SRC.skA_wolfE; $('gBanB').src = SRC.skA_gunH; gachaBtnTxt();
 $('startBtn').addEventListener('click', () => { chMode = false; startGame(selChar); });
 $('chBtn').addEventListener('click', () => { if (!chOpen()) { $('hint').textContent = '🔒 ∞ 챌린지 모드: 지하 6층 마왕을 쓰러뜨리면 열립니다'; return; } chMode = true; startGame(selChar); });
 $('retryBtn').addEventListener('click', () => startGame(curChar));
@@ -8550,7 +8747,7 @@ window.__G = {
   get zones() { return zones; }, get ebul() { return ebul; }, get EYE() { return EYE; }, get shards() { return shards; }, get bigQ() { return bigQ; }, get bombQ() { return bombQ; }, get holyQ() { return holyQ; }, get afx() { return afx; }, get dashQ() { return dashQ; }, get beam() { return beam; }, get evo() { return evo; }, get choices() { return choices; },
   get SAVE() { return SAVE; }, render, get boss() { return boss; }, get mini() { return mini; }, get skp() { return skp; }, SK_PH, SKB, get mdeath() { return mdeath; }, spawnMini, miniDefeated, spawnBoss, raiseCastle, enterArena, exitArena, get castle() { return castle; }, get arena() { return arena; }, get trans() { return trans; }, openChest, openShop, buildCards, get joy() { return joy; }, get gt() { return gt; }, get allies() { return allies; }, get items() { return items; }, spawnItem, get globs() { return globs; }, recruit, keys, tick, needFor, pick: pickChoice, cast: castSkill, spawnBug,
   get slots() { return slots; }, spawnMimic, slotRoll, get MIM() { return MIM; },  get slotUI() { return slotUI; }, get udeath() { return udeath; }, get lasers() { return lasers; }, get eyeF() { return eyeF; }, get uniqCd() { return uniqCd; }, spawnSlot, spawnUniq, gainRelic, useTeleport, closeSlot, slotSpin, slotKey, updateSlotUI, SLOT_FX, SLOT_APPLY, UNIQ, RELICS, trySpawnUniq, UNIQ_P, setState(v) { state = v; }, spawnEnemy,
-  get DMETER() { return DMETER; }, get DBOSS() { return DBOSS; }, get DUNK() { return DUNK; }, setDbg(v) { DDBG = v; }, dmName, UPGRADES, UNIQUE, SYNERGIES, SKILLS, skillName, get eleQ() { return eleQ; }, fwStart, setT(v) { gt = v; }, calcShards, FD, LIZ_FORMS, TWIN_FORMS, startFw, snapP, get fwFx() { return fwFx; }, get bsig() { return bsig; }, BMAP, inBlood, twLen, availSyn, SYNERGIES, UPGRADES, inPoly, hurtEnemy, startGame, addExp, hurt: hurtPlayer, rebuild: buildSpecies,
+  get DMETER() { return DMETER; }, get DBOSS() { return DBOSS; }, get DUNK() { return DUNK; }, setDbg(v) { DDBG = v; }, dmName, gachaRoll, gachaPools, skinCraft, skinToggle, skinOn, SKINS, GACHA, openGacha, gachaPull, UPGRADES, UNIQUE, SYNERGIES, SKILLS, skillName, get eleQ() { return eleQ; }, fwStart, setT(v) { gt = v; }, calcShards, FD, LIZ_FORMS, TWIN_FORMS, startFw, snapP, get fwFx() { return fwFx; }, get bsig() { return bsig; }, BMAP, inBlood, twLen, availSyn, SYNERGIES, UPGRADES, inPoly, hurtEnemy, startGame, addExp, hurt: hurtPlayer, rebuild: buildSpecies,
   get rollQ() { return rollQ; }, get gunFx() { return gunFx; }, GUN, GUN_AMMO, GUNA, gunLoad, gunRange,
   get anOrbs() { return anOrbs; }, get anFx() { return anFx; }, AMAP, ANB, ANX, AN, anStart, anTrans, pickBossK, floorName, arenaExit, get shkSp() { return shkSp; }, get shkFx() { return shkFx; }, SHK, SHKF, shkStart, shkSummon,
   sizes() { const o = { enemies, orbs, items, shards, fx, nums, arcs, embers, zones, rings, globs, sprFx, blades, lights, ebul, afx, gunFx, cfx, bfx, healFx, allies, slots, cutSaws, airs, octoFx, smokes, skp, mfx }; const r = {}; for (const k in o) if (o[k] && o[k].length != null) r[k] = o[k].length; return r; },
@@ -8578,7 +8775,7 @@ function silhouette(img, color) {
   g.drawImage(img, 0, 0); g.globalCompositeOperation = 'source-atop'; g.fillStyle = color; g.fillRect(0, 0, c.width, c.height);
   return c;
 }
-const LAZY_IMG = ['drophb', 'droppo', 'chm', 'cm', 'ab', 'an', 'anfx', 'amap', 'mmap', 'smap', 'horse', 'an2', 'shk', 'sh', 'mimic', 'sktw'];   // 시작하자마자 쓰지 않는 그림은 따로 (시작 화면이 빨리 뜨게): 드랍 아이템 · 챌린지 · 타락천사
+const LAZY_IMG = ['drophb', 'droppo', 'chm', 'cm', 'ab', 'an', 'anfx', 'amap', 'mmap', 'smap', 'horse', 'an2', 'shk', 'sk_gunH', 'sk_wolfE', 'skA_gunH', 'skA_wolfE', 'sh', 'mimic', 'sktw'];   // 시작하자마자 쓰지 않는 그림은 따로 (시작 화면이 빨리 뜨게): 드랍 아이템 · 챌린지 · 타락천사
 for (const k of LAZY_IMG) loadImg(SRC[k]).then(i => { IMG[k] = i; if (k === 'cm' || k === 'ab' || k === 'horse' || k === 'shk') IMG[k + 'W'] = silhouette(i, '#ffffff'); }).catch(() => {});
 Promise.all(Object.keys(SRC).filter(k => !LAZY_IMG.includes(k)).map(k => loadImg(SRC[k]).then(i => { IMG[k] = i; }))).then(() => {   // IMG.이름 = SRC.이름
   IMG.miniW = silhouette(IMG.mini, '#ffffff'); IMG.floorD = toneFloor(IMG.floor); try { buildMushSpecies(); buildSeaSpecies(); } catch (_) {}
