@@ -91,6 +91,8 @@ ASSETS = {
     '__SKGUNE__': 'skin/gunE.webp',
     '__HEART__': 'heart/heart.webp',
     '__SKWOLFE__': 'skin/wolfE.webp',
+    '__SKGHOSTG__': 'skin/ghostG.webp',
+    '__SKAGHOSTG__': 'skin/ghostG_art.webp',
     '__SKLIZG__': 'skin/lizG.webp',
     '__SKALIZG__': 'skin/lizG_art.webp',
     '__SKAGUNH__': 'skin/gunH_art.webp',

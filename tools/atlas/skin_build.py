@@ -58,6 +58,7 @@ def build(src, name, rows, art, thr=34, close=0, valley=0, holemax=0, thin=False
     print(name, out.size, {k: len(v) for k, v in frames.items()})
 hunter, wolf, hunterE = sys.argv[1], sys.argv[2], sys.argv[3]
 lizG = sys.argv[4] if len(sys.argv) > 4 else None
+ghostG = sys.argv[5] if len(sys.argv) > 5 else None
 # 악마 사냥꾼 (악마 총잡이 최종 진화 스킨): 원본은 오른쪽을 본다 — 게임 키 i2 w2 a2 r2 h2 d2 s2
 build(hunter, 'gunH', {
     'i2': (45, 156, [(796, 911)]),
@@ -95,3 +96,12 @@ if lizG: build(lizG, 'lizG', {
     'hit':    (848, 942, [(100,252),(252,380),(380,545)]),
     'death':  (848, 948, [(652,800),(800,935),(935,1085),(1085,1235),(1235,1405)]),
 }, (120, 50, 850, 402), thr=24, close=1, valley=30, holemax=160, thin=True)
+if ghostG:   # v8.13 연보라 총령 최종 레어 스킨 (수호령의 총령, 시트는 오른쪽을 봄 · 어두운 남색 배경 thr 30)
+    def cells(b): return [(b[i], b[i + 1]) for i in range(len(b) - 1)]
+    build(ghostG, 'ghostG', {'idle': (548, 622, cells([172, 315, 475, 635, 795, 950, 1110, 1270])),
+      'walk': (637, 712, cells([172, 315, 470, 630, 785, 940, 1100, 1270])),
+      'attack': (727, 805, cells([172, 300, 450, 585, 725, 855, 990, 1125, 1270])),
+      'skill': (817, 897, cells([172, 335, 490, 620, 745, 895, 1050, 1200, 1440])),
+      'hit': (907, 985, cells([172, 320, 480, 620, 765, 900])),
+      'death': (995, 1070, cells([172, 320, 480, 650, 850, 1070, 1280]))},
+      (20, 10, 560, 330), thr=30, close=1, valley=30, holemax=160, thin=True)
