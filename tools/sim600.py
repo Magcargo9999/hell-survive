@@ -2,7 +2,7 @@ import asyncio,sys,json,os,statistics as st
 from playwright.async_api import async_playwright
 URL=os.environ.get('SIMURL','file://'+os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))),'build','hell_survive.html'))
 JS="""([ch,route,fin,prof,L,gt0,win,boss,seed,tier,god,bk])=>{
- const G=__G; G.SAVE.holyBlood=true; Object.assign(G.SAVE.chars,{wolf:true,snail:true,archer:true,chimera:true,lizard:true,twins:true,ghost:true,octo:true,gun:true}); G.SAVE.diff.max=5; G.SAVE.shards=Math.max(G.SAVE.shards,99999); G.SAVE.diff.sel=tier||0; G.startGame(ch);   /* v6.30: 해금·참가비가 없으면 startGame이 0단계로 낮춰서 tier 인자가 무시되던 것 수정 */ let P=G.P; const keys=G.keys; if(window.__TW&&ch==='lizard'){ P.dmg*=window.__TW.dmg||1; P.cd*=window.__TW.cd||1; P.armor*=window.__TW.armor||1; P.spd*=window.__TW.spd||1; P.spd0=P.spd; P.max=Math.round(P.max*(window.__TW.hp||1)); P.hp=P.max; } const dt=1/30; P.uniqSeen={belia:true,celia:true};
+ const G=__G; if(G.setDbg)G.setDbg(true); G.SAVE.holyBlood=true; Object.assign(G.SAVE.chars,{wolf:true,snail:true,archer:true,chimera:true,lizard:true,twins:true,ghost:true,octo:true,gun:true}); G.SAVE.diff.max=5; G.SAVE.shards=Math.max(G.SAVE.shards,99999); G.SAVE.diff.sel=tier||0; G.startGame(ch);   /* v6.30: 해금·참가비가 없으면 startGame이 0단계로 낮춰서 tier 인자가 무시되던 것 수정 */ let P=G.P; const keys=G.keys; if(window.__TW&&ch==='lizard'){ P.dmg*=window.__TW.dmg||1; P.cd*=window.__TW.cd||1; P.armor*=window.__TW.armor||1; P.spd*=window.__TW.spd||1; P.spd0=P.spd; P.max=Math.round(P.max*(window.__TW.hp||1)); P.hp=P.max; } const dt=1/30; P.uniqSeen={belia:true,celia:true};
  let s=seed*7919+13; const rnd=()=>{s=(s*1103515245+12345)&0x7fffffff;return s/0x7fffffff;};
  const PROF={
   std:['★','날카로운 발톱','날렵한 발톱','지옥의 심장','피의 갈증','끈적한 독','번지는 독','다발 사격','관통 화살','질주','넓은 발톱','카이팅 사격','지옥 낙뢰','회전 칼날','충격파','불길 오라','단단한 피부','영혼 자석','배움의 눈','급소 노리기','저격 시선','지옥불 구슬','뼈 투사체','밀치기'],
@@ -65,7 +65,7 @@ JS="""([ch,route,fin,prof,L,gt0,win,boss,seed,tier,god,bk])=>{
      minhp=Math.min(minhp,P.hp);
      if(P.hp<P.max*0.15){ deaths++; P.hp=P.max; P.inv=2; }   // 거의 죽을 뻔한 횟수
    }
-   rec.dm=Object.fromEntries(Object.entries(G.DMETER).map(([k,v])=>[G.dmName?G.dmName(k):k,Math.round(v)]));
+   rec.dm=Object.fromEntries(Object.entries(G.DMETER).map(([k,v])=>[G.dmName?G.dmName(k):k,Math.round(v)])); rec.unk=G.DUNK; rec.dboss=Object.fromEntries(Object.entries(G.DBOSS).map(([k,v])=>[G.dmName(k),Math.round(v)]));
    rec.win={edmg:Math.round(edmg),casts:casts,kills:P.kills-k0,loss:Math.round(loss),near:deaths,exp:Math.round(expGain),t:Math.round(t),dead:G.state==='dead'};
    return rec;
  }
@@ -105,7 +105,7 @@ JS="""([ch,route,fin,prof,L,gt0,win,boss,seed,tier,god,bk])=>{
    if(G.state==='dead'){deadAt=bt;break;}
    if(!G.arena||!G.arena.k){ if(P.y>1055)P.y=1055; } else if(G.arena.k==='angel'&&P.y>1740)P.y=1740;
  }
- rec.dm=Object.fromEntries(Object.entries(G.DMETER).map(([k,v])=>[G.dmName?G.dmName(k):k,Math.round(v)]));
+ rec.dm=Object.fromEntries(Object.entries(G.DMETER).map(([k,v])=>[G.dmName?G.dmName(k):k,Math.round(v)])); rec.unk=G.DUNK; rec.dboss=Object.fromEntries(Object.entries(G.DBOSS).map(([k,v])=>[G.dmName(k),Math.round(v)]));
  rec.boss={bdmg:G.boss?Math.round(G.boss.max-G.boss.hp):0,mx:G.boss?Math.round(G.boss.max):0,t:Math.round(bt),dead:G.state==='dead',left:G.boss?Math.round(G.boss.hp):0,loss:Math.round(bloss),hp0:Math.round(hp0),casts:bcasts,hl:HL};
  return rec;
 }"""
@@ -153,6 +153,7 @@ async def main():
         for (v,L),rs in out.items():
             if any('err' in r for r in rs): print(v,L,'ERR',[r.get('err') for r in rs][:1]); continue
             r0=rs[0]
+            if os.environ.get('UNK'): print('UNK',v,L,json.dumps({'dm':r0.get('dm'),'unk':r0.get('unk'),'dboss':r0.get('dboss')},ensure_ascii=False)); continue
             if mode=='B' and os.environ.get('RAW'):
                 for r in rs: print('RAW',json.dumps({'v':v,'boss':r['boss'],'dmg':r['dmg'],'cards':r['cards'],'syn':r['synk'],'hp':r['hp'],'dm':r.get('dm')},ensure_ascii=False))
                 continue

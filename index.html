@@ -3024,7 +3024,7 @@ function newPlayer(char) {
 function reset(char) {
   buildSpecies();
   P = newPlayer(char || curChar);
-  DMETER = {}; bfx = []; enemies = []; orbs = []; shards = []; fx = []; nums = []; arcs = []; zones = []; rings = []; beam = null; meteorQ = null; cerbQ = null; rainQ = null; bigQ = null; dashQ = null; evo = null; airs = []; diveQ = null; breathQ = null; rushQ = null; bombQ = null; holyQ = null; afx = []; bombT = []; holyPtr = null; cfx = []; ebul = []; allies = []; items = []; globs = []; sprFx = []; whipQ = null; ambT = 1.5; itemT = 9; blades = []; lights = []; waveT = 80 + rand() * 20;
+  DMETER = {}; DBOSS = {}; bfx = []; enemies = []; orbs = []; shards = []; fx = []; nums = []; arcs = []; zones = []; rings = []; beam = null; meteorQ = null; cerbQ = null; rainQ = null; bigQ = null; dashQ = null; evo = null; airs = []; diveQ = null; breathQ = null; rushQ = null; bombQ = null; holyQ = null; afx = []; bombT = []; holyPtr = null; cfx = []; ebul = []; allies = []; items = []; globs = []; sprFx = []; whipQ = null; ambT = 1.5; itemT = 9; blades = []; lights = []; waveT = 80 + rand() * 20;
   eleQ = null; tentQ = null; octoFx = [];
   slots = []; slotUI = null; uniqCd = 0; lasers = []; udeath = []; eyeF = null;
   { const n = rand() < 0.5 ? 2 : 3; slotPlan = []; let t0 = 75 + rand() * 40; for (let i = 0; i < n; i++) { slotPlan.push(t0); t0 += 120 + rand() * 60; } }   // 잭팟 머신: 판당 2~3번
@@ -3116,7 +3116,7 @@ function explodeBug(e) {
     if (o === e || o.hp <= 0) continue;
     if (Math.hypot(o.x - e.x, o.y - e.y) < R + o.r) {
       const dx = o.x - e.x, dy = o.y - e.y, d = Math.hypot(dx, dy) || 1;
-      hurtEnemy(o, 55 + P.dmg * 1.5, dx / d, dy / d, 420);
+      withSrc('bugBoom', () => hurtEnemy(o, 55 + P.dmg * 1.5, dx / d, dy / d, 420));
     }
   }
   if (e.hp > 0) {   // 도화선이 다 타서 스스로 터진 경우
@@ -3140,7 +3140,7 @@ function drawHealFx(x, y) {
   ctx.globalAlpha = 1;
 }
 let critAdd = 0, blazeBusy = false;
-let DSRC = null, DMETER = {};   // v5.11: 딜 미터기 — 지금 피해를 주는 출처 (기본 공격 · 스킬 카드)
+let DSRC = null, DMETER = {}, DBOSS = {}, DUNK = {}, DDBG = false;   // v5.11: 딜 미터기 — 지금 피해를 주는 출처 (기본 공격 · 스킬 카드)
 const skSrc = k => 'sk:' + k;   // v6.08: 스킬 피해는 딜 미터기에 '【스킬】이름'으로 집계
 function skWrap(fn, key) {
   return function (...a) {
@@ -3164,7 +3164,9 @@ function hurtEnemy(e, dmg, kx, ky, kn, quiet) {
   if (e.gazeT > gt) dmg *= 1.2;   // 광기의 시선: 촉수에 맞은 적
   if (!quiet && P.crit + critAdd > 0 && rand() < P.crit + critAdd) { dmg *= P.critD; crit = true; }   // 치명타 카드 (+ 저격수의 표식)
   if (e.shd > 0) { const ab = Math.min(e.shd, dmg); e.shd -= ab; dmg -= ab; if (e.shd <= 0) addRing(e.x, e.y - e.r, 6, 44, 0.3, '120,200,255', 4); if (dmg <= 0) { e.flash = 0.06; return; } }   // 보호막 접두사
-  if (DSRC) DMETER[DSRC] = (DMETER[DSRC] || 0) + Math.min(dmg, Math.max(0, e.hp));
+  { const dd = Math.min(dmg, Math.max(0, e.hp)), k = DSRC || '?';   // v6.49: 출처 없는 피해도 '기타'로 집계 + 보스 전용 미터기
+    DMETER[k] = (DMETER[k] || 0) + dd; if (e.kind === 'boss') DBOSS[k] = (DBOSS[k] || 0) + dd;
+    if (DDBG && !DSRC) { const st = (new Error().stack || '').split('\n').slice(2, 5).map(x => x.trim().replace(/^at /, '').split(' ')[0]).join('<'); DUNK[st] = (DUNK[st] || 0) + dd; } }
   e.hp -= dmg; e.flash = 0.12; sfx('hit');
   if (P.syn.vamp && !quiet && P.vampCd <= 0 && P.hp < P.max) { healP(0.5); P.vampCd = 0.2; }
   if (!e.noKB) { const kr = e.kres || (e.elite || e.kind === 'bug' ? 0.6 : 1); e.kx += kx * kn * kr; e.ky += ky * kn * kr; }   // 정예·이공벌레는 덜 밀린다
@@ -3346,18 +3348,19 @@ function twinHits() {
     for (const e of enemies) {
       if (e.hp <= 0 || e.invul) continue;
       if (!(e[kB] > gt) && Math.hypot(e.x - tx, e.y - ty) < rB + e.r) {   // 창날 타격
-        e[kB] = gt + cd; hurtEnemy(e, dB * mul, ux, uy, kb);
+        e[kB] = gt + cd; withSrc('twTip', () => hurtEnemy(e, dB * mul, ux, uy, kb));
         if (P.syn.pendulum && !(P.pendCd > gt)) { P.pendCd = gt + 0.22; pendulumBoom(e); }
         continue;
       }
       if (e[kC] > gt) continue;
       let t = ((e.x - ax) * vx + (e.y - ay) * vy) / ll; t = t < 0.15 ? 0.15 : t > 1 ? 1 : t;   // 사슬 (본체 바로 앞부분은 뺀다)
       const qx = ax + vx * t, qy = ay + vy * t;
-      if (Math.hypot(e.x - qx, e.y - qy) < cw + e.r * 0.7) { e[kC] = gt + cd * 1.3; const dx = e.x - ax, dy = e.y - ay, dd = Math.hypot(dx, dy) || 1; hurtEnemy(e, dC * mul, dx / dd, dy / dd, 90 * (0.3 + P.knock)); }
+      if (Math.hypot(e.x - qx, e.y - qy) < cw + e.r * 0.7) { e[kC] = gt + cd * 1.3; const dx = e.x - ax, dy = e.y - ay, dd = Math.hypot(dx, dy) || 1; withSrc('twChain', () => hurtEnemy(e, dC * mul, dx / dd, dy / dd, 90 * (0.3 + P.knock))); }
     }
   }
 }
-function pendulumBoom(src) {   // 충격 진자: 창날이 칠 때마다 작은 충격파
+function pendulumBoom(src) { return withSrc('pendulum', () => pendulumBoom0(src)); }
+function pendulumBoom0(src) {   // 충격 진자: 창날이 칠 때마다 작은 충격파
   const R = 78; addRing(src.x, src.y - src.r, 6, R, 0.25, theme().rgb, 5);
   for (const o of enemies) { if (o === src || o.hp <= 0) continue; const dx = o.x - src.x, dy = o.y - src.y, d = Math.hypot(dx, dy) || 1; if (d < R + o.r) hurtEnemy(o, P.dmg * 0.49, dx / d, dy / d, 200, o.kind === 'boss'); }
 }
@@ -6133,7 +6136,7 @@ function blazeBoom0(e) {   // 업화 연쇄: 화상 입은 적이 죽으며 터�
   }
   blazeBusy = false;
 }
-function igniteE(e) { e.burnT = 3 + 0.5 * (P.up.flameA || 0); e.burnD = P.dmg * 0.2 * (1 + 0.3 * (P.up.flameA || 0)); }
+function igniteE(e) { e.burnSrc = 'burn'; e.burnT = 3 + 0.5 * (P.up.flameA || 0); e.burnD = P.dmg * 0.2 * (1 + 0.3 * (P.up.flameA || 0)); }
 function updateBurn(dt) {
   let bn = 0; for (const e of enemies) if (e.burnT > 0) bn++;
   const pr = bn > 40 ? 3 : bn > 15 ? 7 : 12;   // v6.45: 불씨탄이 관통으로 수십 마리를 태울 때 불꽃 입자가 폭증하지 않게
@@ -6684,12 +6687,13 @@ function render() {
 }
 let skillBtn = { x: 0, y: 0, w: 0, h: 0 };
 const hudCards = { t: 0, L: [] };
-const dmName = k => String(k).startsWith('g:') ? GUN_AMMO[k.slice(2)].name + (k === 'g:F' ? ' (화상 포함)' : '') : k === 'basic' ? '기본 공격' : String(k).startsWith('sk:') ? '【스킬】' + (SKILLS[k.slice(3)] ? SKILLS[k.slice(3)].name : k.slice(3)) : k === 'trail' ? '이동 자국 (장판)' : (SYNERGIES.find(x => x.id === k) ? '★' + (a => a ? a[0] : SYNERGIES.find(x => x.id === k).name)(altOf(SYNERGIES.find(x => x.id === k))) : upName(k));
-function drawDmeter() {   // v5.11: 딜 미터기 (설정에서 켜기) — 기본 공격과 스킬 카드별 누적 피해
-  const L = Object.entries(DMETER).sort((a, b) => b[1] - a[1]).slice(0, 8), tot = L.reduce((a, b) => a + b[1], 0); if (!tot) return;
-  const w = 230, x = W - w - 10, y0 = chal ? 124 : 90; let y = y0;
+const dmName = k => k === '?' ? '기타 (출처 없음)' : k === 'bugBoom' ? '이공벌레 폭발' : k === 'burn' ? '화상 (불꽃 지속 피해)' : k === 'twTip' ? '창날 타격' : k === 'twChain' ? '사슬 휘두르기' : String(k).startsWith('g:') ? GUN_AMMO[k.slice(2)].name + (k === 'g:F' ? ' (화상 포함)' : '') : k === 'basic' ? '기본 공격' : String(k).startsWith('sk:') ? '【스킬】' + (SKILLS[k.slice(3)] ? SKILLS[k.slice(3)].name : k.slice(3)) : k === 'trail' ? '이동 자국 (장판)' : (SYNERGIES.find(x => x.id === k) ? '★' + (a => a ? a[0] : SYNERGIES.find(x => x.id === k).name)(altOf(SYNERGIES.find(x => x.id === k))) : upName(k));
+function drawDmeter() { dmeterBox(DMETER, '딜 미터기', chal ? 124 : 90); if (DBOSS && boss && boss.hp > 0 && Object.keys(DBOSS).length) dmeterBox(DBOSS, '보스 딜 미터기', Math.min(H - 220, (chal ? 124 : 90) + 24 + Math.min(8, Object.keys(DMETER).length) * 22 + 14), 6); }
+function dmeterBox(M, title, y0, maxN) {   // v5.11: 딜 미터기 (설정에서 켜기) — 기본 공격과 스킬 카드별 누적 피해
+  const L = Object.entries(M).sort((a, b) => b[1] - a[1]).slice(0, maxN || 8), tot = L.reduce((a, b) => a + b[1], 0); if (!tot) return;
+  const w = 230, x = W - w - 10; let y = y0;
   ctx.save(); ctx.fillStyle = 'rgba(10,4,12,0.72)'; ctx.fillRect(x - 6, y0 - 4, w + 12, 24 + L.length * 22);
-  ctx.textAlign = 'left'; ctx.font = 'bold 13px "Malgun Gothic", monospace'; ctx.fillStyle = '#ffd36a'; ctx.fillText('딜 미터기', x, y0 + 12); y += 22;
+  ctx.textAlign = 'left'; ctx.font = 'bold 13px "Malgun Gothic", monospace'; ctx.fillStyle = '#ffd36a'; ctx.fillText(title, x, y0 + 12); y += 22;
   for (const [k, v] of L) { const r = v / tot, mx = L[0][1];
     ctx.fillStyle = 'rgba(255,255,255,0.08)'; ctx.fillRect(x, y, w, 18); ctx.fillStyle = k === 'basic' ? 'rgba(120,200,255,0.55)' : String(k).startsWith('sk:') ? 'rgba(190,120,255,0.6)' : 'rgba(255,130,60,0.55)'; ctx.fillRect(x, y, w * v / mx, 18);
     ctx.fillStyle = '#fff'; ctx.font = 'bold 12px "Malgun Gothic", monospace'; ctx.textAlign = 'left'; ctx.fillText(dmName(k), x + 4, y + 13);
@@ -7468,6 +7472,8 @@ function showOver(win) {
     + (chal.tr ? `<br><span style="color:#ffe28a">🎁 보물 획득: ${chal.tr.name} — ${chal.tr.desc}</span>` : `<br><span style="color:#b49484">보물: ${TREASURES.filter(t => !SAVE.ch.tr[t.k]).map(t => `${t.name} ${t.need / 60}분`).join(' · ') || '모두 모음'}</span>`); }
   if (win && P.gunOpen) $('overStats').innerHTML += `<br><span style="color:#ff9aa8">🔓 새 캐릭터 [악마 총잡이] 해금!</span>`;
   if (win && P.fwUnlock) $('overStats').innerHTML += `<br><span style="color:#ff8a9a">🔓 혈랑 루트 Lv.20 최종 진화에 [타락한 혈랑] 추가!</span>`;
+  { const bl = Object.entries(DBOSS).sort((a, b) => b[1] - a[1]).slice(0, 6), bt = bl.reduce((a, b) => a + b[1], 0);   // v6.49: 보스에게 준 피해 순위
+    if (bt) $('overStats').innerHTML += `<br><span style="color:#ffd36a">⚔ 보스에게 준 피해 ${Math.round(bt).toLocaleString()}</span>` + bl.map(([k, v]) => `<br><span style="font-size:13px">${dmName(k)} — ${Math.round(v).toLocaleString()} (${Math.round(v / bt * 100)}%)</span>`).join(''); }
   show('overBox', true);
 }
 /* v6.30 보스 등장 확률: 층마다 그 층에서 처음 나오는 보스가 70% · 나머지 30%는 앞 층까지 나온 보스 중 균등 · 지하 5층부터는 4종 완전 랜덤
@@ -7821,7 +7827,7 @@ window.__G = {
   get zones() { return zones; }, get ebul() { return ebul; }, get EYE() { return EYE; }, get shards() { return shards; }, get bigQ() { return bigQ; }, get bombQ() { return bombQ; }, get holyQ() { return holyQ; }, get afx() { return afx; }, get dashQ() { return dashQ; }, get beam() { return beam; }, get evo() { return evo; }, get choices() { return choices; },
   get SAVE() { return SAVE; }, render, get boss() { return boss; }, get mini() { return mini; }, get skp() { return skp; }, SK_PH, SKB, get mdeath() { return mdeath; }, spawnMini, miniDefeated, spawnBoss, raiseCastle, enterArena, exitArena, get castle() { return castle; }, get arena() { return arena; }, get trans() { return trans; }, openChest, openShop, buildCards, get joy() { return joy; }, get gt() { return gt; }, get allies() { return allies; }, get items() { return items; }, spawnItem, get globs() { return globs; }, recruit, keys, tick, needFor, pick: pickChoice, cast: castSkill, spawnBug,
   get slots() { return slots; }, get slotUI() { return slotUI; }, get udeath() { return udeath; }, get lasers() { return lasers; }, get eyeF() { return eyeF; }, get uniqCd() { return uniqCd; }, spawnSlot, spawnUniq, gainRelic, useTeleport, closeSlot, slotSpin, slotKey, updateSlotUI, SLOT_FX, SLOT_APPLY, UNIQ, RELICS, trySpawnUniq, UNIQ_P, setState(v) { state = v; }, spawnEnemy,
-  get DMETER() { return DMETER; }, dmName, get eleQ() { return eleQ; }, fwStart, setT(v) { gt = v; }, calcShards, FD, LIZ_FORMS, TWIN_FORMS, startFw, snapP, get fwFx() { return fwFx; }, get bsig() { return bsig; }, BMAP, inBlood, twLen, availSyn, SYNERGIES, inPoly, hurtEnemy, startGame, addExp, hurt: hurtPlayer, rebuild: buildSpecies,
+  get DMETER() { return DMETER; }, get DBOSS() { return DBOSS; }, get DUNK() { return DUNK; }, setDbg(v) { DDBG = v; }, dmName, get eleQ() { return eleQ; }, fwStart, setT(v) { gt = v; }, calcShards, FD, LIZ_FORMS, TWIN_FORMS, startFw, snapP, get fwFx() { return fwFx; }, get bsig() { return bsig; }, BMAP, inBlood, twLen, availSyn, SYNERGIES, inPoly, hurtEnemy, startGame, addExp, hurt: hurtPlayer, rebuild: buildSpecies,
   get rollQ() { return rollQ; }, get gunFx() { return gunFx; }, GUN, GUN_AMMO, GUNA, gunLoad, gunRange,
   get anOrbs() { return anOrbs; }, get anFx() { return anFx; }, AMAP, ANB, ANX, AN, anStart, anTrans, pickBossK, floorName, arenaExit,
   sizes() { const o = { enemies, orbs, items, shards, fx, nums, arcs, embers, zones, rings, globs, sprFx, blades, lights, ebul, afx, gunFx, cfx, bfx, healFx, allies, slots, cutSaws, airs, octoFx, smokes, skp, mfx }; const r = {}; for (const k in o) if (o[k] && o[k].length != null) r[k] = o[k].length; return r; },
