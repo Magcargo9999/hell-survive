@@ -3584,7 +3584,7 @@ const SYNERGIES = [
   { id: 'galeWing',  name: '질풍 날개',   txt: '에어슬래시 +1갈래 · 피해 +30%',    need: ['airA', 'airB'], only: 'chimera', apply: p => { p.syn.gale = true; } },
   { id: 'ricochet',  name: '도탄 사격',   txt: '처치 시 근처 적에게 화살이 튕김',  need: ['claw', 'shard'], only: 'archer' },
   { id: 'lifeOrb',   name: '불사의 영혼', txt: '경험치 구슬마다 체력 회복',        need: ['heart', 'magnet'] },
-  { id: 'tstorm',    name: '폭풍 낙뢰',   txt: '낙뢰 쿨타임 +80% · +2발 · 피해 -8%',            need: ['thunder', 'speed'] },
+  { id: 'tstorm',    name: '폭풍 낙뢰',   txt: '낙뢰 쿨타임 -20% · +2발 · 피해 -8%',            need: ['thunder', 'speed'] },
   { id: 'bstorm',    name: '칼날 폭풍',   txt: '칼날 +2개 · 크기 +62%',            need: ['blade', 'range'] },
   { id: 'dnova',     name: '이중 충격파', txt: '충격파가 두 번 터지고 밀쳐냄',     need: ['nova', 'knock'] },
   { id: 'inferno',   name: '화염 지옥',   txt: '오라 반경 +40% · 피해 +70%',       need: ['aura', 'armor'] },
@@ -5456,7 +5456,7 @@ function castNova(c) {
 }
 function cardAttacks(dt) {
   const T = P.cdT, up = P.up, tn = nearestEnemy(640);   // 화면 안에 적이 있을 때만 발동
-  if (up.thunder) { T.th -= dt; if (T.th <= 0 && tn) { const c = TH(up.thunder); T.th = c.cd * (P.syn.tstorm ? 1.8 : 1) /* v6.46: 폭풍 낙뢰 쿨타임 ×3 (0.6 → 1.8) */; withSrc('thunder', () => castThunder(c)); } }
+  if (up.thunder) { T.th -= dt; if (T.th <= 0 && tn) { const c = TH(up.thunder); T.th = c.cd * (P.syn.tstorm ? 0.8 : 1) /* v6.48: 폭풍 낙뢰 = 기본 낙뢰(×4 느림)보다 -20% 빠르게 + 2발 */; withSrc('thunder', () => castThunder(c)); } }
   if (up.blade) { T.bl -= dt; if (T.bl <= 0 && tn) { const c = BL(up.blade); T.bl = c.cd; castBlades(c, tn); } }
   if (up.nova) {
     T.nv -= dt; const c = NV(up.nova);
