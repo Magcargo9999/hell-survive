@@ -788,3 +788,125 @@ A chimera:dream eye 3 boss_dead 148 0.0
 A lizard:rage eye 3 timeout 240 19.27
 A lizard:water eye 3 timeout 240 44.03
 A lizard:guard eye 3 timeout 240 42.68
+A ghost eye 3 boss_dead 58 0.0
+A twins eye 3 boss_dead 200 0.0
+A octo eye 3 player_dead 97 8.86
+A gun eye 3 player_dead 101 26.87
+A wolf:crimson skel 3 player_dead 177 32.82
+A wolf:holy skel 3 timeout 185 31.14
+A wolf:fallen skel 3 timeout 155 32.88
+A wolf:abyss skel 3 player_dead 165 40.39
+A wolf:twin skel 3 player_dead 120 32.98
+A snail:venom skel 3 player_dead 142 59.75
+A snail:lava skel 3 player_dead 144 32.95
+A snail:bomb skel 3 timeout 106 32.62
+A archer:red skel 3 timeout 130 32.87
+A archer:holy skel 3 boss_dead 96 0.0
+A archer:skel skel 3 player_dead 49 65.39
+A chimera skel 3 player_dead 145 32.82
+A chimera:flame skel 3 player_dead 145 47.51
+A chimera:dream skel 3 boss_dead 153 0.0
+A lizard:rage skel 3 boss_dead 213 0.0
+A lizard:water skel 3 timeout 240 49.63
+A lizard:guard skel 3 timeout 240 33.0
+A twins skel 3 timeout 183 28.04
+A ghost skel 3 boss_dead 91 0.0
+A octo skel 3 player_dead 88 32.84
+A gun skel 3 player_dead 64 65.73
+A wolf:crimson angel 3 timeout 240 35.35
+A wolf:holy angel 3 timeout 240 5.05
+A wolf:fallen angel 3 player_dead 175 49.85
+A wolf:abyss angel 3 player_dead 181 42.15
+A wolf:twin angel 3 player_dead 192 24.85
+A snail:venom angel 3 timeout 240 37.76
+A snail:lava angel 3 player_dead 219 3.79
+A snail:bomb angel 3 boss_dead 136 0.0
+A archer:red angel 3 player_dead 199 7.36
+A archer:holy angel 3 boss_dead 101 0.0
+A archer:skel angel 3 player_dead 107 40.18
+A chimera angel 3 timeout 240 12.55
+A chimera:flame angel 3 player_dead 184 47.12
+A chimera:dream angel 3 boss_dead 194 0.0
+A lizard:rage angel 3 timeout 240 45.93
+A lizard:water angel 3 timeout 240 60.65
+A lizard:guard angel 3 timeout 240 63.81
+A twins angel 3 boss_dead 218 0.0
+A ghost angel 3 boss_dead 92 0.0
+A octo angel 3 player_dead 112 18.59
+A gun angel 3 player_dead 125 36.68
+A wolf:crimson shk 3 player_dead 55 77.3
+A wolf:holy shk 3 boss_dead 201 0.0
+A wolf:fallen shk 3 player_dead 41 77.55
+A wolf:abyss shk 3 player_dead 60 69.57
+A wolf:twin shk 3 player_dead 46 65.01
+A snail:venom shk 3 player_dead 97 63.91
+A snail:lava shk 3 player_dead 89 55.22
+A snail:bomb shk 3 player_dead 59 49.61
+A archer:red shk 3 player_dead 70 57.96
+A archer:holy shk 3 player_dead 69 23.43
+A archer:skel shk 3 player_dead 45 68.23
+A chimera shk 3 player_dead 61 62.03
+A chimera:flame shk 3 player_dead 72 69.04
+A chimera:dream shk 3 player_dead 36 67.3
+A lizard:rage shk 3 boss_dead 186 0.0
+A lizard:water shk 3 timeout 240 31.58
+A lizard:guard shk 3 boss_dead 136 0.0
+A twins shk 3 boss_dead 236 0.0
+A ghost shk 3 boss_dead 59 0.0
+A octo shk 3 player_dead 56 48.57
+A gun shk 3 player_dead 82 45.89
+A wolf:crimson fw 3 player_dead 178 55.49
+A wolf:holy fw 3 timeout 240 17.8
+A wolf:fallen fw 3 player_dead 168 43.98
+A wolf:abyss fw 3 timeout 240 27.29
+A wolf:twin fw 3 player_dead 163 30.05
+A snail:venom fw 3 player_dead 137 60.26
+A snail:lava fw 3 player_dead 70 76.49
+A snail:bomb fw 3 player_dead 48 65.86
+A archer:red fw 3 player_dead 183 19.96
+A archer:holy fw 3 boss_dead 99 0.0
+A archer:skel fw 3 player_dead 48 73.03
+A chimera fw 3 player_dead 129 55.9
+A chimera:flame fw 3 player_dead 123 67.4
+A chimera:dream fw 3 player_dead 108 28.34
+A lizard:rage fw 3 player_dead 172 35.35
+A lizard:water fw 3 timeout 240 73.88
+A lizard:guard fw 3 timeout 240 34.83
+A twins fw 3 boss_dead 235 0.0
+A ghost fw 3 player_dead 68 8.8
+A octo fw 3 player_dead 51 62.08
+A gun fw 3 player_dead 51 70.74
+ALLDONE
+[06:37:37] NB=4 python3 tools/tier3.py B
+jobs 94 bot_ver 34bef5df commit 363b78f
+B wolf 8 3 5 False
+B snail 8 3 125 False
+B archer 8 3 42 False
+B chimera 8 3 150 False
+B lizard 8 3 71 False
+B twins 8 3 191 False
+B ghost 8 3 136 False
+B octo 8 3 106 False
+B wolf:crimson 15 3 188 False
+B wolf:abyss 15 3 124 False
+B wolf:twin 15 3 96 False
+B snail:venom 15 3 113 False
+B snail:lava 15 3 40 True
+B snail:bomb 15 3 169 False
+B archer:elf 15 3 102 False
+B archer:skel 15 3 397 False
+B chimera 15 3 96 False
+B chimera:flame 15 3 237 False
+B chimera:dream 15 3 35 False
+B lizard:rage 15 3 73 False
+B lizard:guard 15 3 131 False
+B twins 15 3 279 False
+B ghost 15 3 23 True
+B wolf:crimson 24 3 284 False
+B octo 15 3 109 True
+B wolf:holy 24 3 465 False
+B wolf:fallen 24 3 552 False
+B wolf:abyss 24 3 455 False
+B wolf:twin 24 3 403 False
+B snail:venom 24 3 889 False
+B snail:lava 24 3 964 False
