@@ -27,6 +27,7 @@ ANCHORS = [
  ('챌린지 모드', r'v6\.20 ∞ 챌린지|^function startChallenge'),
  ('● 화면·UI', None),
  ('카드 선택 창', r'^function openChoice|^function openUpgrade|^function cardView'), ('HUD', r'^function drawHud'),
+ ('부패한 성상(타락천사 판 미니 보스)', r'v8\.06 부패한 성상|^function spawnStat|^function sAtk|^function updateStat|^function drawStat'),
  ('보스 심장', r'v8\.01 보스 심장|^function rerollHeart|^function equipHeart|^function playUpgradeEffect|^function heartBonus'),
  ('스킨 가챠·도감', r'v7\.30 스킨 가챠|^function gachaRoll|^function renderGacha|^function skinOn|^const SKINS'),
  ('설정·쿠폰', r'ai소프트웨어학과'), ('난이도 안내문', r'diffDesc'), ('세이브(키 변경 금지)', r'hellSurvivorSave1'),
