@@ -3440,7 +3440,7 @@ function smashBlow(px, py) {   // 대검 내려찍기: 4번째 공격마다 땅�
 /* ---------- 사슬 악마: 손에 쥔 사슬 끝 창날 (줄이 팽팽해지면 끌려오고, 방향을 틀면 휘둘린다) ---------- */
 // 1진화부터 반대쪽으로 두 번째 사슬(푸른 사슬)이 함께 돈다. 스킬 [사슬 휘두르기] 중에는 시트의 사슬 동작으로 바뀐다
 const TW = { L: [92, 104, 118], rB: [18, 22, 26], cm: [0.36, 0.42, 0.5] };
-const twLen = () => TW.L[P.form] * Math.min(1.8, Math.max(0.8, P.rng / 100)) * (1 + (0.1 + 0.12 * (P.twSt || 0)) * (P.up.whirl | 0)) * (P.chain4 > 0 ? 2 : 1);   // v5.11: 사슬 해방 중 길이 2배   // v5.02: 원심력 — 멈춰 있으면 사슬이 더 길어진다 (레벨당 +10% → 멈추면 +22%)
+const twLen = () => TW.L[P.form] * Math.min(1.8, Math.max(0.8, P.rng / 100)) * (1 + (0.1 + 0.12 * (1 - (P.twSt || 0))) * (P.up.whirl | 0)) * (P.chain4 > 0 ? 2 : 1);   // v5.11: 사슬 해방 중 길이 2배   // v5.02: 원심력 — 멈춰 있으면 사슬이 더 길어진다 (레벨당 +10% → 멈추면 +22%)
 const twTips = () => {   // 두 번째 창날은 몸 반대편 (피해 50%) · 폭군의 사슬 해방 중에는 직각 방향으로 2가닥 더 (총 4가닥)
   const T = P.tw; if (P.form < 1) return [[T.x, T.y, 1, 'twB', 'twC']];
   const L = [[T.x, T.y, 1, 'twB', 'twC'], [2 * P.x - T.x, 2 * P.y - T.y, 0.5, 'twB2', 'twC2']];
@@ -3452,7 +3452,7 @@ function updateTwins(dt) {
   const T = P.tw; if (!T) return;
   if (!T.init) { T.x = P.x - 70; T.y = P.y + 10; T.init = true; }   // 시작 위치: 왼쪽 뒤
   if (whipQ) { updateWhip(dt); T.x = P.x - P.face * twLen() * 0.6; T.y = P.y + 6; T.vx = P.vx; T.vy = P.vy; return; }
-  const L = twLen(), h = dt / 2, pv = P.moving ? Math.hypot(P.vx, P.vy) : 0, spin = ((2.4 + 0.6 * (P.up.whirl | 0)) * L + 0.9 * pv) * (P.chain4 > 0 ? 2 : 1) * (1 + 0.5 * Math.max(0, P.aspd - 1));   /* v7.04: 공속 +X% → 사슬 회전 +X/2% */   // 빨리 움직일수록 사슬이 빨리 돈다
+  const L = twLen(), h = dt / 2, pv = P.moving ? Math.hypot(P.vx, P.vy) : 0, spin = ((2.4 + 0.6 * (P.up.whirl | 0)) * L + 0.9 * pv) * (P.chain4 > 0 ? 2 : 1) * (1 + 0.5 * Math.max(0, P.aspd - 1)) * (1 + 0.04 * (P.up.whirl | 0) * (1 - (P.twSt || 0)));   /* v7.12 원심력: 움직일 때 회전 +4%/단계 · v7.04: 공속 +X% → 사슬 회전 +X/2% */   // 빨리 움직일수록 사슬이 빨리 돈다
   for (let k = 0; k < 2; k++) {
     const dmp = Math.exp(-0.7 * h); T.vx = P.vx + (T.vx - P.vx) * dmp; T.vy = P.vy + (T.vy - P.vy) * dmp;   // 본체를 따라 끌려간다
     let rx = T.x - P.x, ry = T.y - P.y, d = Math.hypot(rx, ry) || 1, nx = rx / d, ny = ry / d;
@@ -3505,7 +3505,7 @@ function startWhip() {
 }
 /* v7.08 사슬 휘두르기(궁극기): 기본 피해 없음 — 최대 체력 비례 피해(잡몹 1% · 보스급 0.2%, 맞을 때마다)만 주고, 사슬이 뻗은 범위(reach)의 75% 거리까지 밀쳐낸다 */
 function whipHit(e, ux, uy, dist, reach) {
-  const big = e.kind === 'boss' || e.kind === 'mini' || e.kind === 'uniq', kr = e.kres || (e.elite || e.kind === 'bug' ? 0.6 : 1), want = Math.max(0, reach * 0.75 - dist);
+  const big = e.kind === 'boss' || e.kind === 'mini' || e.kind === 'uniq', kr = e.kres || (e.elite || e.kind === 'bug' ? 0.6 : 1), want = Math.max(reach * 0.3, reach * 0.75 - dist);   // v7.12: 범위 끝에 맞아도 최소 30%는 밀친다
   hurtEnemy(e, e.max * (big ? 0.002 : 0.01) * (1 + 0.2 * (whipQ ? whipQ.n : 0)), ux, uy, want * 8 / kr);
 }
 function updateWhip(dt) {
@@ -3603,7 +3603,8 @@ function startTide() {   // 물의 주술: 즉시 자힐 + 주변 밀쳐내기
 function claw(hi = 0, n = 1) {
   const hm = FD().hm || 1, off = n > 1 && hi > 0 ? (hi % 2 ? 0.45 : -0.45) : 0;   // 다중 타격: 타당 피해 배율 / 호 방향을 조금씩 달리한다
   const flm = P.char === 'chimera' && P.route === 'flame', drm = P.char === 'chimera' && P.route === 'dream', hset = drm ? new Set() : null;
-  const R = P.rng * (flm ? 1 + 0.13 * (P.up.flameB || 0) : 1), cx = P.x + P.ax * R * 0.5, cy = P.y - 18 + P.ay * R * 0.5;
+  const R = P.rng * (flm ? 1.05 * (1 + 0.13 * (P.up.flameB || 0)) : 1),   // v7.12: 화염 발톱 범위 +5%
+    cx = P.x + P.ax * R * 0.5, cy = P.y - 18 + P.ay * R * 0.5;
   let hits = 0; const bz = berserkMul();
   for (const e of enemies) {
     if (e.hp <= 0) continue;
@@ -3676,6 +3677,7 @@ const UNIQUE = {
     { id: 'airC', name: '쌍날 바람',   form: 1, route: 'wind', max: 3, w: 0.8, txt: () => '에어슬래시 +1갈래 (추가분 70%)', apply: () => {} },
     { id: 'flameA', name: '불씨 강화', form: 1, route: 'flame', max: 3, txt: () => '화상 피해 +30% · 화상 시간 +0.5초', apply: () => {} },
     { id: 'flameB', name: '넓은 불길', form: 1, route: 'flame', max: 3, txt: () => '화염 발톱 범위 +13% · 불길 크기 +11%', apply: () => {} },
+    { id: 'breathHeart', name: '타오르는 업화', form: 2, route: 'flame', needSkill: 'breath', max: 2, txt: () => '화염 브레스 피해 +30% · 지속 +0.6초', apply: () => {} },   // v7.12: 업화의 사자 전용 — 최종 스킬 강화
     { id: 'breathUp', name: '끓는 숨결', form: 2, route: 'flame', needSkill: 'breath', max: 3, txt: () => '화염 브레스 길이 +10% · 피해 +15%', apply: () => {} },
     { id: 'dreamA', name: '늘어난 촉수', form: 1, route: 'dream', max: 3, txt: () => '발톱을 휘두를 때 촉수 공격 +1회', apply: () => {} },
     { id: 'dreamB', name: '뜬 눈', form: 1, route: 'dream', max: 3, txt: () => '촉수 사거리 +15% · 촉수 피해 +20%', apply: () => {} },
@@ -3702,7 +3704,7 @@ const UNIQUE = {
   ],
   twins: [
     { id: 'heavy',   name: '무거운 창날', max: 3, txt: () => '창날 타격 피해 +20% · 크기 +12% · 넉백 +30%', apply: () => {} },
-    { id: 'whirl',   name: '원심력',     max: 3, txt: () => '사슬 길이 +10% (멈춰 있으면 +22%) · 멈춰 있을 때 도는 속도 +25%', apply: () => {} },
+    { id: 'whirl',   name: '원심력',     max: 3, txt: () => '사슬 길이 +10% (움직이면 +22%) · 움직일 때 회전 속도 +4%', apply: () => {} },
     { id: 'chainUp', name: '달군 사슬',   form: 1, max: 3, txt: () => '사슬 피해 +40% · 사슬 두께 +3', apply: () => {} },
     { id: 'whipUp',  name: '폭군의 사슬', form: 1, needSkill: 'whip', max: 3, txt: () => '사슬 휘두르기 피해 +20% · 범위 +10%', apply: () => {} },
   ],
@@ -6338,7 +6340,8 @@ function stepDive(dt) {
 }
 /* ---------- 몽환 루트: 촉수 · 천안 난무 ---------- */
 function dreamTent(hset) {   // 발톱을 휘두를 때 촉수가 근처 적을 추가로 때린다 (발톱이 닿지 않은 적을 먼저 노린다)
-  const up = P.up, n = 2 + (up.dreamA || 0), TR = (P.rng * 1.15 + 70) * (1 + 0.15 * (up.dreamB || 0)), dm = (P.form >= 2 ? 0.24 : 0.2) * (1 + 0.2 * (up.dreamB || 0));
+  const up = P.up, n = 2 + (up.dreamA || 0), TR = (P.rng * 1.15 + 70) * (1 + 0.15 * (up.dreamB || 0)), dm = (P.form >= 2 ? 0.24 : 0.2) * 1.1 * (1 + 0.2 * (up.dreamB || 0));   // v7.12: 촉수 피해 +10%
+  
   const c = [];
   for (const e of enemies) { if (e.hp <= 0) continue; const d = Math.hypot(e.x - P.x, e.y - P.y); if (d < TR + e.r) c.push([(hset.has(e) ? 1e4 : 0) + d, e]); }
   if (!c.length) return;
@@ -6467,7 +6470,7 @@ function drawFrost(x, y, w, h) {
   ctx.save(); ctx.globalAlpha = 0.42; ctx.fillStyle = '#9fe0ff'; ctx.beginPath(); ctx.ellipse(x, y - h / 2, w / 2 + 3, h / 2 + 3, 0, 0, 6.283); ctx.fill();
   ctx.globalAlpha = 0.9; ctx.strokeStyle = '#e6fbff'; ctx.lineWidth = 2; ctx.stroke(); ctx.restore();
 }
-function igniteE(e) { e.burnSrc = 'burn'; e.burnT = 3 + 0.5 * (P.up.flameA || 0); e.burnD = P.dmg * 0.2 * (1 + 0.3 * (P.up.flameA || 0)); }
+function igniteE(e) { e.burnSrc = 'burn'; e.burnT = 3 + 0.5 * (P.up.flameA || 0); e.burnD = P.dmg * 0.2 * 1.1 * (1 + 0.3 * (P.up.flameA || 0)); }   // v7.12: 화상 피해 +10%
 function updateBurn(dt) {
   let bn = 0; for (const e of enemies) if (e.burnT > 0) bn++;
   const pr = bn > 40 ? 3 : bn > 15 ? 7 : 12;   // v6.45: 불씨탄이 관통으로 수십 마리를 태울 때 불꽃 입자가 폭증하지 않게
@@ -6478,7 +6481,7 @@ function updateBurn(dt) {
     if (fx.length < 500 && rand() < dt * pr) fx.push({ x: e.x + (rand() - 0.5) * e.r, y: e.y - e.r * (0.6 + rand()), vx: (rand() - 0.5) * 24, vy: -50 - rand() * 40, life: 0.5, max: 0.5, c: rand() < 0.5 ? '#ff8a2a' : '#ffd27a', s: 3 });
   }
 }
-const BREATH_DUR = 2.4;
+const BREATH_DUR = 2.4;   // 기본 지속 (카드로 늘어나면 breathQ.dur)
 function breathMouth() { const D = FD(), sg = breathQ && Math.cos(breathQ.ang) < 0 ? -1 : 1; return [P.x + sg * 70 * D.ws, P.y - 56 * D.ws]; }
 function breathTarget(mx, my) {
   let best = null, bs = -1e9;
@@ -6493,7 +6496,7 @@ function breathTarget(mx, my) {
 function startBreath() {
   const D = FD(), up = P.up.breathUp || 0, mx = P.x + P.face * 70 * D.ws, my = P.y - 56 * D.ws, t = breathTarget(mx, my);
   const ang = t ? Math.atan2(t.y - t.r - my, t.x - mx) : (P.face > 0 ? 0 : Math.PI);
-  breathQ = { t: 0, ph: 'charge', ang, tick: 0, LEN: 330 * (1 + 0.1 * up), half: 0.42, dm: 0.34 * (1 + 0.15 * up) };
+  breathQ = { t: 0, ph: 'charge', ang, tick: 0, LEN: 330 * (1 + 0.1 * up), half: 0.42, dm: 0.34 * (1 + 0.15 * up) * (1 + 0.3 * (P.up.breathHeart || 0)), dur: BREATH_DUR + 0.6 * (P.up.breathHeart || 0) };
   P.face = Math.cos(ang) >= 0 ? 1 : -1; P.atkTimer = -1;
 }
 function stepBreath(dt) {
@@ -6520,7 +6523,7 @@ function stepBreath(dt) {
   }
   if (fx.length < 520 && rand() < dt * 45) { const d = 40 + rand() * q.LEN, a = q.ang + (rand() - 0.5) * q.half * 1.6; fx.push({ x: mx + Math.cos(a) * d, y: my + Math.sin(a) * d, vx: Math.cos(a) * 50, vy: -40 - rand() * 40, life: 0.5, max: 0.5, c: rand() < 0.5 ? '#ff8a2a' : '#ffd27a', s: 3 }); }
   shake = Math.max(shake, 3);
-  if (q.t >= BREATH_DUR) { breathQ = null; P.anim = 'idle'; P.animT = 0; }
+  if (q.t >= q.dur) { breathQ = null; P.anim = 'idle'; P.animT = 0; }
 }
 function drawBreath(x, y) {
   const D = FD(), a = D.anim.skill, q = breathQ, ws = D.ws, img = IMG[D.src];
@@ -6541,7 +6544,7 @@ function drawBreathFx(wx, wy) {
     g.addColorStop(0, `rgba(255,220,140,${0.9 * k})`); g.addColorStop(1, 'rgba(255,90,20,0)');
     ctx.fillStyle = g; ctx.beginPath(); ctx.arc(x, y, rr, 0, 6.283); ctx.fill();
   } else {
-    const grow = Math.min(1, q.t / 0.18), fade = Math.min(1, (BREATH_DUR - q.t) / 0.3), L = q.LEN * grow, fl = Math.floor(wallT * 14) % 2;
+    const grow = Math.min(1, q.t / 0.18), fade = Math.min(1, (q.dur - q.t) / 0.3), L = q.LEN * grow, fl = Math.floor(wallT * 14) % 2;
     for (const off of [-0.3, 0, 0.3]) {
       ctx.save(); ctx.translate(x, y); ctx.rotate(q.ang + off * (0.9 + 0.1 * Math.sin(wallT * 9 + off * 5)));
       const hh = (off ? 118 : 150) * grow; ctx.scale(1, fl ? -1 : 1); ctx.globalAlpha = (off ? 0.6 : 0.9) * fade;
