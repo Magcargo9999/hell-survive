@@ -20,7 +20,7 @@ async def main():
         res = {}
         for k in ['monkey', 'eye', 'skel', 'fw']:
             r = await pg.evaluate("""async(k)=>{const G=__G,c=G.chal;c.ev=null;c.shelter=null;c.cyc=0;c.busyBoss=true;c.bossK=k;G.setT(1500);
-               G.chEnterBoss(k);const b0=G.boss;const r={k,arena:!!G.arena,n0:G.enemies.length,d0:Math.round(Math.hypot(b0.x-G.P.x,b0.y-G.P.y)),inCh:G.inCh(b0.x,b0.y),hp:Math.round(b0.max)};
+               for(let i=0;i<5;i++)G.spawnEnemy(i,300);const nb=G.enemies.length;G.chEnterBoss(k);const b0=G.boss;const r={k,arena:!!G.arena,nb,n0:G.enemies.length,d0:Math.round(Math.hypot(b0.x-G.P.x,b0.y-G.P.y)),inCh:G.inCh(b0.x,b0.y),hp:Math.round(b0.max)};
                const pats=new Set();let out=0,hurt=0;for(let i=0;i<120;i++){__run(30);const b=G.boss;if(b){pats.add(b.last||b.st);if(!G.inCh(b.x,b.y))out++;}}
                r.pats=[...pats].sort();r.out=out;r.spawned=G.enemies.filter(e=>e.kind!=='boss'&&e.kind!=='skh'&&e.kind!=='skm').length;
                r.spawnedTotal=G.enemies.length;
@@ -29,7 +29,7 @@ async def main():
                return r}""", k)
             await pg.evaluate("__G.render()"); await pg.screenshot(path=os.path.join(OUT, f'c41_{k}.png'))
             r['alive'] = await pg.evaluate("()=>!!__G.boss&&__G.boss.hp>0")
-            await pg.evaluate("()=>{const G=__G;if(G.boss){G.boss.invul=false;G.boss.shield=false;G.hurtEnemy(G.boss,1e9);}__run(200);}")
+            await pg.evaluate("()=>{const G=__G;if(G.boss){G.boss.invul=false;G.boss.shield=false;G.hurtEnemy(G.boss,1e9);}for(let i=0;i<600;i++){__run(1);if(__G.chal.shelter||document.getElementById('levelTitle').textContent.includes('쉼터'))break;}}")
             r['shelter'] = await pg.evaluate("()=>!!__G.chal.shelter||document.getElementById('levelTitle').textContent.includes('쉼터')")
             await pg.evaluate("(i)=>{__G.pick(i);}", 0); await pg.evaluate("()=>{__G.chal.shelter=null;__run(10);while(__s());}")
             r['bossN'] = await pg.evaluate("__G.chal.bossN")

@@ -5799,10 +5799,10 @@ function update(dt) {
   if (itemT <= 0) { itemT = 12 + rand() * 8; if (arena) { itemT = 16; } else if (items.length < 3) spawnItem(); }   // 보스전에는 회복·아이템이 나오지 않는다
 
   // --- 적 생성 ---
-  if (!arena && gt >= waveT && !(chal && (chal.busyBoss || chal.shelter))) { waveT = gt + 34 + rand() * 16; spawnWave(); }
+  if (!arena && gt >= waveT && !(chal && ((boss && boss.bk === 'ab') || chal.shelter))) { waveT = gt + 34 + rand() * 16; spawnWave(); }
   spawnT -= dt;
   if (spawnT <= 0 && arena) spawnT = 1;
-  if (spawnT <= 0 && chal && (chal.shelter || chal.busyBoss)) spawnT = 0.5;   // 쉼터 · 마왕전에는 잡몹이 새로 나오지 않는다
+  if (spawnT <= 0 && chal && (chal.shelter || (boss && boss.bk === 'ab'))) spawnT = 0.5;   // 쉼터 · 촉수마왕전에는 잡몹이 새로 나오지 않는다
   if (spawnT <= 0) {
     const n = chal ? 1 + Math.floor(gt / 55) : 1 + Math.floor(gt / 40), cap = chal ? Math.min(280, 150 + gt / 12) : 220;   // v6.20: 챌린지는 생성량이 천천히 오른다
     for (let i = 0; i < n && enemies.length < cap; i++) spawnEnemy();
@@ -6942,8 +6942,8 @@ function chBossCall(k, lv) {
 function chEnterBoss(k) {
   chal.ret = { x: P.x, y: P.y }; ebul = []; P.bossK = k; chal.gold = null;
   if (k === 'ab') { P.hp = P.max; P.healBank = P.max * 0.12; spawnAb(); return; }
-  // v6.41: 마왕도 보스맵으로 끌려가지 않고 챌린지 맵(필드)에서 싸운다 — 잡몹은 사라지고 새로 나오지 않는다
-  enemies = []; zones = []; shards = []; globs = []; ebul = []; P.hp = P.max; P.healBank = P.max * 0.12;
+  // v6.41: 마왕도 보스맵으로 끌려가지 않고 챌린지 맵(필드)에서 싸운다 — 필드 잡몹은 그대로 남고 계속 나온다
+  ebul = []; P.hp = P.max; P.healBank = P.max * 0.12;   // 필드의 잡몹은 그대로 둔다
   if (k === 'fw') spawnFw(); else spawnBoss();
   shake = Math.max(shake, 10); sfx('boom'); addRing(boss.x, boss.y - 30, 10, 320, 0.8, '255,90,60', 10);
   banner = { txt: `${CH_NAME[k]} 등장!  (챌린지 · 기믹 약화)\n쓰러뜨리면 쉼터가 열립니다` + (k === 'skel' ? '\n스켈레톤 마왕: 체력 66%·33%에 결계(무적)' : ''), t: 6, c: '#ffe28a' };
@@ -7078,7 +7078,7 @@ function chUpdate(dt) {
   }
   if (gt >= 1200 && !chal.eliteSeen) { chal.eliteSeen = true; banner = { txt: '20분 돌파!  접두사가 붙은 마물이 나타난다\n빠름 · 분열 · 보호막', t: 4.5, c: '#ffb070' }; }
   if (gt >= 1500 && !chal.chaser) { chal.chaser = { x: 0, y: 0, t: 0, hitCd: 0, stun: 0 }; chChaserPlace(); banner = { txt: '⚠ 심연 추격자가 깨어났다!\n아주 느리지만 죽지 않는다 — 한곳에 머물지 말고 계속 움직이세요', t: 6, c: '#d6a8ff' }; sfx('evolve'); }
-  if (chal.chaser && !chal.busyBoss) chChaserStep(dt);   // v6.41: 마왕전 중에는 심연 추격자가 멈춘다
+  if (chal.chaser) chChaserStep(dt);
 }
 function chOnDeath() {   // 버틴 시간으로 보물 하나 (가진 적 없는 것 중 가장 좋은 것)
   chal.tr = null;
