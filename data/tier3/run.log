@@ -401,3 +401,131 @@ snail:bomb skill:aura monkey 1 D 89.34
 octo syn:bstorm monkey 1 D 80.6
 snail:lava skill:thunder monkey 1 W 100.0
 twins syn:dnova monkey 1 W 100.0
+snail:bomb skill:nova monkey 1 W 100.0
+chimera syn:galeWing monkey 1 W 100.0
+snail:bomb ctrl monkey 1 W 100.0
+octo syn:deadeye monkey 1 W 100.0
+twins ctrl monkey 1 W 100.0
+lizard:rage ctrl monkey 1 W 100.0
+chimera syn:iron monkey 1 W 100.0
+snail:bomb syn:snare monkey 1 W 100.0
+wolf:crimson skill:aura monkey 1 D 76.28
+snail:lava syn:dnova monkey 1 W 100.0
+archer:red skill:thunder monkey 1 W 100.0
+archer:red syn:soulStorm monkey 1 W 100.0
+twins skill:blade monkey 1 W 100.0
+wolf:crimson ctrl monkey 1 D 85.61
+snail:lava syn:harvest monkey 1 D 47.67
+twins syn:deadeye monkey 1 W 100.0
+lizard:rage skill:blade monkey 1 D 81.28
+ghost ctrl monkey 1 W 100.0
+ghost syn:inferno monkey 1 D 89.34
+wolf:crimson skill:blade monkey 1 D 76.13
+snail:bomb skill:thunder monkey 1 W 100.0
+lizard:rage syn:harvest monkey 1 D 62.6
+snail:bomb syn:spore monkey 1 W 100.0
+ghost syn:lifeOrb monkey 1 W 100.0
+twins skill:nova monkey 1 W 100.0
+ghost syn:iron monkey 1 W 100.0
+snail:venom syn:lifeOrb monkey 1 D 76.36
+archer:red syn:deadeye monkey 1 W 100.0
+wolf:crimson syn:tstorm monkey 1 D 86.15
+snail:lava syn:fireBone monkey 1 W 100.0
+snail:venom syn:inferno monkey 1 W 100.0
+ALLDONE
+[05:46:02] NA=2 python3 tools/tier3.py A
+jobs 126 bot_ver 34bef5df commit 363b78f
+A wolf:crimson monkey 2 timeout 240 3.24
+A wolf:holy monkey 2 boss_dead 194 0.0
+A wolf:abyss monkey 2 boss_dead 121 0.0
+A wolf:fallen monkey 2 boss_dead 172 0.0
+A wolf:twin monkey 2 boss_dead 139 0.0
+A snail:venom monkey 2 boss_dead 181 0.0
+A snail:lava monkey 2 player_dead 216 2.46
+A snail:bomb monkey 2 boss_dead 132 0.0
+A archer:red monkey 2 boss_dead 121 0.0
+A archer:holy monkey 2 player_dead 119 11.74
+A archer:skel monkey 2 player_dead 92 69.59
+A chimera monkey 2 boss_dead 226 0.0
+A chimera:flame monkey 2 boss_dead 204 0.0
+A chimera:dream monkey 2 boss_dead 149 0.0
+A lizard:rage monkey 2 boss_dead 207 0.0
+A lizard:water monkey 2 timeout 240 41.74
+A lizard:guard monkey 2 boss_dead 190 0.0
+A twins monkey 2 boss_dead 218 0.0
+A ghost monkey 2 boss_dead 65 0.0
+A octo monkey 2 boss_dead 105 0.0
+A gun monkey 2 boss_dead 149 0.0
+A wolf:crimson eye 2 timeout 240 17.63
+A wolf:holy eye 2 boss_dead 230 0.0
+A wolf:fallen eye 2 timeout 240 14.91
+A wolf:abyss eye 2 player_dead 120 21.74
+A wolf:twin eye 2 player_dead 176 14.86
+A snail:venom eye 2 boss_dead 182 0.0
+A snail:lava eye 2 player_dead 174 17.25
+A snail:bomb eye 2 boss_dead 123 0.0
+A archer:red eye 2 player_dead 107 7.74
+A archer:holy eye 2 player_dead 108 5.59
+A archer:skel eye 2 player_dead 82 75.13
+A chimera eye 2 player_dead 226 7.58
+A chimera:flame eye 2 player_dead 222 7.11
+A chimera:dream eye 2 player_dead 170 10.07
+A lizard:rage eye 2 timeout 240 29.2
+A lizard:water eye 2 timeout 240 60.73
+A lizard:guard eye 2 timeout 240 20.93
+A twins eye 2 boss_dead 151 0.0
+A ghost eye 2 boss_dead 74 0.0
+A octo eye 2 boss_dead 101 0.0
+A gun eye 2 player_dead 141 13.97
+A wolf:crimson skel 2 player_dead 228 21.92
+A wolf:holy skel 2 timeout 221 27.68
+A wolf:fallen skel 2 player_dead 212 15.4
+A wolf:abyss skel 2 player_dead 137 19.21
+A wolf:twin skel 2 timeout 158 23.8
+A snail:venom skel 2 timeout 159 32.94
+A snail:lava skel 2 player_dead 160 34.37
+A snail:bomb skel 2 timeout 104 32.66
+A archer:red skel 2 timeout 94 32.8
+A archer:holy skel 2 player_dead 103 32.98
+A archer:skel skel 2 player_dead 86 66.98
+A chimera skel 2 player_dead 182 32.91
+A chimera:flame skel 2 player_dead 173 32.97
+A chimera:dream skel 2 player_dead 120 36.45
+A lizard:rage skel 2 timeout 204 32.84
+A lizard:water skel 2 timeout 240 57.53
+A lizard:guard skel 2 timeout 240 52.74
+A twins skel 2 timeout 240 29.04
+A ghost skel 2 timeout 94 29.68
+A octo skel 2 player_dead 85 32.75
+A gun skel 2 player_dead 109 39.41
+A wolf:crimson angel 2 timeout 240 40.72
+A wolf:holy angel 2 timeout 240 9.42
+A wolf:fallen angel 2 timeout 240 31.79
+A wolf:abyss angel 2 player_dead 114 33.03
+A wolf:twin angel 2 player_dead 155 37.08
+A snail:venom angel 2 player_dead 233 12.4
+A snail:lava angel 2 player_dead 204 16.66
+A snail:bomb angel 2 player_dead 170 2.96
+A archer:red angel 2 boss_dead 152 0.0
+A archer:holy angel 2 boss_dead 111 0.0
+A archer:skel angel 2 player_dead 148 67.71
+A chimera angel 2 timeout 240 12.41
+A chimera:flame angel 2 player_dead 152 39.5
+A chimera:dream angel 2 boss_dead 235 0.0
+A lizard:rage angel 2 timeout 240 34.65
+A lizard:water angel 2 timeout 240 63.49
+A lizard:guard angel 2 timeout 240 60.91
+A twins angel 2 boss_dead 206 0.0
+A ghost angel 2 boss_dead 102 0.0
+A octo angel 2 player_dead 120 1.26
+A gun angel 2 boss_dead 196 0.0
+A wolf:crimson shk 2 player_dead 42 80.36
+A wolf:holy shk 2 boss_dead 205 0.0
+A wolf:fallen shk 2 player_dead 56 69.8
+A wolf:abyss shk 2 player_dead 23 83.19
+A wolf:twin shk 2 player_dead 74 44.09
+A snail:venom shk 2 player_dead 107 44.67
+A snail:lava shk 2 player_dead 96 50.41
+A snail:bomb shk 2 player_dead 71 44.98
+A archer:red shk 2 player_dead 96 24.99
+A archer:holy shk 2 player_dead 63 49.98
