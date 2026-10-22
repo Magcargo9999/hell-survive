@@ -4,7 +4,7 @@
 **이 문서를 먼저 다 읽고 작업할 것.** 답변은 한국어로 짧고 간결하게.
 
 ## 꼭 지킬 규칙 (사용자 지시)
-1. **파일 이름:** 매 빌드 `hell survive v.N.NN.html`, 버전은 매번 올린다. 마지막 배포 = **v8.10** → 다음은 v8.11. (v6.01부터 6대 · v7.01부터 7대: 지하 10층·버섯 맵 개편 · **v8.01부터 8대: 보스 심장 시스템 기준, 사용자 지시**)
+1. **파일 이름:** 매 빌드 `hell survive v.N.NN.html`, 버전은 매번 올린다. 마지막 배포 = **v8.11** → 다음은 v8.12. (v6.01부터 6대 · v7.01부터 7대: 지하 10층·버섯 맵 개편 · **v8.01부터 8대: 보스 심장 시스템 기준, 사용자 지시**)
    - 끝자리: 작은 수정 · 가운데 자리: 캐릭터·보스 추가 같은 큰 변화.
 2. **도트는 절대 수정·재색칠 금지.** 자르기·배경 제거·마스크·배율 조정만 허용.
 3. 기능은 **단순하게**. 서로 복사한 듯한 중복 스킬/카드 금지.
@@ -92,7 +92,7 @@ git add -A && git commit -m "v6.10: 변경점 한 줄" && git push origin main
   - 신규 미니보스 절단안의 짐승(`mini.bk='cut'`, 원본 대기·이동은 왼쪽/공격 줄은 오른쪽을 봄) · 신규 마왕 심연의 촉수마왕(`boss.bk='ab'`, 하수인 kind `abm`, 추종하는 눈 = ebul k `abeye`). 둘 다 챌린지 전용.
 - **스킨 가챠 · 스킨 도감 (v7.30, 템플릿 'v7.30 스킨 가챠' 블록):** 시작 화면 `#gachaBtn` → `openGacha` (`#gachaBox` 탭 뽑기/스킨 도감, 결과 연출 `#gRes`). 데이터 `SKINS`(id·name·grade epic/rare·char·forms·where·ws·face) + 아틀라스 `SKINF[id]`(키 = 게임 동작 이름) + 그림 `IMG['sk_'+id]` · 일러스트 `SRC['skA_'+id]`(`tools/atlas/skin_build.py`, 자르기·배경 제거만). 세이브 `SAVE.skin = {own, frag, on, pity, pulls}`. 뽑기 `gachaRoll`: 가중치 58 = 에픽 완성 1 · 레어 완성 2 · 조각 55(대상 스킨 무작위, 레어 1~2개 · 에픽 1개), **가진 스킨·그 조각·다 모은 조각은 제외**(나올 수 없는 결과는 빼고 재정규화), 천장 `GACHA.pity` 25(완성 스킨 없이 25번째 → 에픽 20% · 레어 80%). 비용 1회 1000 · 10회 9000(영혼 조각). 조합 `skinCraft`(레어 10 · 에픽 15). 장착 `skinToggle` — 캐릭터마다 독립 ON/OFF(`SAVE.skin.on = {캐릭터: id}`, 같은 캐릭터 스킨끼리만 서로 꺼짐 · 옛 문자열 세이브는 `skinMap()`이 변환), 그 캐릭터 첫 스킨은 자동 ON. 게임 적용: 총잡이는 `gunSk()`(착용한 스킨 id) → `gA(k)`/`gI(k)`로 아틀라스 교체(최종 진화만, 레어 gunH · 에픽 gunE), 늑대는 `drawSkinChar`. **스킨은 `SKINS`의 `forms`(진화 단계) + 선택 `route`(루트)로 지정한 형태에만 적용된다** — 지옥군주늑대 `wolfE` = 심연(기본) 루트 최종 진화(`route:'abyss', forms:[2]`)만, 혈랑·쌍두·1진화·시작 형태에는 안 나옴. 새 스킨은 반드시 대상 형태를 `forms`/`route`로 정해 `skinOn()`이 걸러내게 한다. 새 스킨 추가 = 시트 → skin_build.py에 한 줄 → `SKINS`에 한 줄 + 해당 캐릭터 그리기에 훅. 테스트 `tools/tests/gacha730.py`
 - **보스 심장 (v8.01, 템플릿 'v8.01 보스 심장' 블록):** 시작 화면 `#heartBtn` → `openHeart` (`#heartBox`: 5칸 장착 슬롯 · 인벤토리 · 가운데 재련 패널(심장 오브·등급 화살표·전→후 옵션·비용)). 세이브 `SAVE.heart = {inv:[{id,g,st,v}], eq:[id…≤5], n}`. 등급 `HG` rare 회색 1~3% · epic 보라 4~6% · unique 노랑 7~9% · legend 초록 15~20%, 옵션 `HSTAT` atk/hp/aspd(각 1/3). 드랍 `rollHeartDrop(bk)` — 마왕 5종(`bhKey`: angel·shk·skel·eye·monkey)마다 심장 도트가 따로 있고 **종류당 한 번만**(`SAVE.heart.got[bk]`, 얻기 전까지 처치 시 20%) → 레어, 그중 1% 레전더리 · 챌린지·숨은 보스 드랍 없음. 심장 항목 `{id,g,b,st,v}`, 그림 `IMG.heart`(4열=등급 × 5줄=보스, `heartIcon(g,s,b)`)(대형 연출) · 아이템 type 'bheart'(날아와서 먹힘, `heartGain` → 빈 슬롯이면 자동 장착). 재설정 `rerollHeart(id)` 영혼 조각 등급별 500/600/700/800(`heartCost`): 등급업 30/20/5% 후 옵션·수치 재배정. `equipHeart` 최대 5 · `unequipHeart` · 분해 `disHeart`(50/150/400/1500 조각). 효과는 `newPlayer`에서 `heartBonus()`(공격력 ×, 기본 최대 체력 ×, 공속 +). 연출 `playUpgradeEffect(grade, text)`: `#hfx` 위 섬광·파티클·광선·충격파·글자 확대(등급 색, 레전더리 가장 큼). 테스트 `tools/tests/heart801.py`
-- **쿠폰:** 설정에서 `ai소프트웨어학과` 입력 → 문어 마법사 최종 스킨 (접속마다 재입력).
+- **쿠폰:** 설정에서 `ai소프트웨어학과` 입력 → 문어 마법사 최종 스킨 (접속마다 재입력) · `pyeon()` → 영혼 조각 +10000 (한 번만, `SAVE.cp.pyeon`).
 
 ## 티어 측정 방법
 - (v6.30) sim600은 이제 단계 인자가 실제로 적용된다 — 예전엔 해금(`SAVE.diff.max`)·영혼 조각이 없어 startGame이 항상 0단계로 낮췄다(v6.22까지의 '5단계' 측정도 실제로는 0단계였을 수 있음). 옵션 ANJ(타락천사 조절값 JSON) · NOEX(난이도 추가 패턴 끔) · TANK(죽지 않게 체력만 크게, 받은 피해를 그대로 잰다) · BIGHP.

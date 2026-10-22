@@ -829,6 +829,7 @@ const SAVE_DEF = () => ({
   ch: { open: false, frag: 0, best: 0, rune: {}, tr: { rat: false, pouch: false, mirror: false } },   // v6.20: 챌린지 모드 (해금 · 룬 조각 · 룬 · 보물)
   set: { nums: true, calm: false, sfx: 0.7, bgm: 0.35, speed: 1, joy: ('ontouchstart' in window) },
   skin: { own: {}, frag: {}, on: {}, pity: 0, pulls: 0 },   // v7.30 스킨 가챠
+  cp: {},   // v8.11 한 번 쓰는 쿠폰 사용 기록
   heart: { inv: [], eq: [], n: 0, got: {} },   // v8.01 보스 심장 (인벤토리 · 장착 슬롯 · 다음 id)
 });
 let SAVE = SAVE_DEF();
@@ -836,7 +837,7 @@ function loadSave() {
   try {
     const j = JSON.parse(localStorage.getItem(SAVE_KEY) || 'null'), d = SAVE_DEF();
     if (j && j.chars && j.chars.mage && !('archer' in j.chars)) j.chars.archer = true;   // 예전 뼈 마법사를 샀다면 궁수로 이어받는다
-    if (j) SAVE = { shards: +j.shards || 0, perks: Object.assign(d.perks, j.perks), chars: Object.assign(d.chars, j.chars), dex: { seen: Object.assign({}, j.dex && j.dex.seen), kills: Object.assign({}, j.dex && j.dex.kills), final: Object.assign({}, j.dex && j.dex.final), goals: +(j.dex && j.dex.goals) || 0 }, diff: Object.assign(d.diff, j.diff), holyBlood: !!j.holyBlood, fw: Object.assign(d.fw, j.fw), set: Object.assign(d.set, j.set), ch: Object.assign(d.ch, j.ch, { rune: Object.assign({}, j.ch && j.ch.rune), tr: Object.assign(d.ch.tr, j.ch && j.ch.tr) }), skin: Object.assign(d.skin, j.skin, { own: Object.assign({}, j.skin && j.skin.own), frag: Object.assign({}, j.skin && j.skin.frag) }), heart: { inv: (j.heart && Array.isArray(j.heart.inv)) ? j.heart.inv : [], eq: (j.heart && Array.isArray(j.heart.eq)) ? j.heart.eq.slice(0, 5) : [], n: (j.heart && +j.heart.n) || 0, got: (j.heart && j.heart.got && typeof j.heart.got === 'object') ? j.heart.got : {} } };
+    if (j) SAVE = { shards: +j.shards || 0, perks: Object.assign(d.perks, j.perks), chars: Object.assign(d.chars, j.chars), dex: { seen: Object.assign({}, j.dex && j.dex.seen), kills: Object.assign({}, j.dex && j.dex.kills), final: Object.assign({}, j.dex && j.dex.final), goals: +(j.dex && j.dex.goals) || 0 }, diff: Object.assign(d.diff, j.diff), holyBlood: !!j.holyBlood, fw: Object.assign(d.fw, j.fw), set: Object.assign(d.set, j.set), ch: Object.assign(d.ch, j.ch, { rune: Object.assign({}, j.ch && j.ch.rune), tr: Object.assign(d.ch.tr, j.ch && j.ch.tr) }), skin: Object.assign(d.skin, j.skin, { own: Object.assign({}, j.skin && j.skin.own), frag: Object.assign({}, j.skin && j.skin.frag) }), heart: { inv: (j.heart && Array.isArray(j.heart.inv)) ? j.heart.inv : [], eq: (j.heart && Array.isArray(j.heart.eq)) ? j.heart.eq.slice(0, 5) : [], n: (j.heart && +j.heart.n) || 0, got: (j.heart && j.heart.got && typeof j.heart.got === 'object') ? j.heart.got : {} }, cp: (j.cp && typeof j.cp === 'object') ? j.cp : {} };
     delete SAVE.chars.mage;
   } catch (e) { /* 저장소를 못 쓰는 환경이면 기본값으로 진행 */ }
 }
@@ -8929,6 +8930,10 @@ function bindSettings() {
   const useCoupon = () => {   // 저장하지 않는다: 새로 접속하면 다시 입력해야 한다
     const v = $('cpIn').value.replace(/\s/g, '').toLowerCase();
     if (v === 'ai소프트웨어학과') { octoSkin = true; angelSkin = true; $('cpMsg').textContent = '✔ 쿠폰 적용! 문어 마법사 최종 진화 · 타락천사 모습이 바뀝니다 (이번 접속 동안)'; sfx('chest'); }
+    else if (v === 'pyeon()') {   // v8.11: 계정당 한 번, 영혼 조각 10000
+      if (SAVE.cp.pyeon) $('cpMsg').textContent = '이미 사용한 쿠폰입니다';
+      else { SAVE.cp.pyeon = true; SAVE.shards += 10000; saveSave(); if ($('shardTxt')) $('shardTxt').textContent = `보유 영혼 조각 ${SAVE.shards}`; $('cpMsg').textContent = '✔ 쿠폰 적용! 영혼 조각 +10000'; sfx('chest'); }
+    }
     else $('cpMsg').textContent = v ? '올바르지 않은 쿠폰입니다' : '';
   };
   $('cpBtn').onclick = useCoupon; $('cpIn').addEventListener('keydown', e => { e.stopPropagation(); if (e.key === 'Enter') useCoupon(); });
