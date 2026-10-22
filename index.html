@@ -3448,13 +3448,18 @@ function startWhip() {
   whipQ = { t: 0, ph: 'lash', hit: false, si: 0, er: false, n: P.up.whipUp | 0, mom: 0.85 + 0.3 * Math.min(1, (T.spd || 0) / 700) };   // 쓰기 직전 사슬이 빨리 돌수록 강하다
   P.inv = Math.max(P.inv, 1.35); floatNum(P.x, P.y - 96, '사슬 휘두르기!', theme().c2);
 }
+/* v7.08 사슬 휘두르기(궁극기): 기본 피해 없음 — 최대 체력 비례 피해(잡몹 1% · 보스급 0.2%, 맞을 때마다)만 주고, 사슬이 뻗은 범위(reach)의 75% 거리까지 밀쳐낸다 */
+function whipHit(e, ux, uy, dist, reach) {
+  const big = e.kind === 'boss' || e.kind === 'mini' || e.kind === 'uniq', kr = e.kres || (e.elite || e.kind === 'bug' ? 0.6 : 1), want = Math.max(0, reach * 0.75 - dist);
+  hurtEnemy(e, e.max * (big ? 0.002 : 0.01) * (1 + 0.2 * (whipQ ? whipQ.n : 0)), ux, uy, want * 8 / kr);
+}
 function updateWhip(dt) {
   const q = whipQ, big = P.form >= 2, k = q.mom * (1 + 0.2 * q.n), rk = 1 + 0.1 * q.n, th = theme(), hy = FD().hy * FD().ws;
   q.t += dt;
   if (q.ph === 'lash') {
     if (!q.hit && q.t >= 6 / 16) {   // 사슬이 가장 길게 뻗는 순간: 앞쪽 일직선을 꿰뚫는다
       q.hit = true; const L = (big ? 380 : 320) * rk, x0 = P.x, x1 = P.x + P.face * L, yc = P.y - 4;
-      for (const e of enemies) { if (e.hp <= 0) continue; const rx = (e.x - x0) * P.face; if (rx > -20 && rx < L + e.r && Math.abs(e.y - yc) < 42 + e.r * 0.6) hurtEnemy(e, P.dmg * 1.8 * k, P.face, 0, L * 8 * 0.3); }   /* v7.07: 넉백 = 사슬이 뻗은 길이의 30% (전: 고정 40px) */
+      for (const e of enemies) { if (e.hp <= 0) continue; const rx = (e.x - x0) * P.face; if (rx > -20 && rx < L + e.r && Math.abs(e.y - yc) < 42 + e.r * 0.6) whipHit(e, P.face, 0, Math.max(0, rx), L); }
       for (let i = 1; i <= 5; i++) burst(x0 + P.face * L * i / 5, yc - hy * 0.6, 5, [th.c1, th.c2, '#ffffff'], 200, 0.4);
       shake = Math.max(shake, 7); sfx('hit');
     }
@@ -3463,14 +3468,14 @@ function updateWhip(dt) {
     const f = q.t * 11, R = (big ? 190 : 155) * rk;
     while (q.si < 4 && f >= [1, 3, 4, 5][q.si]) {   // 몸 주위로 휘둘러 4번 벤다
       q.si++; addRing(P.x, P.y - hy * 0.5, 12, R, 0.3, q.si % 2 ? '255,60,80' : '90,140,255', 8);
-      for (const e of enemies) { if (e.hp <= 0) continue; const dx = e.x - P.x, dy = e.y - P.y, d = Math.hypot(dx, dy) || 1; if (d < R + e.r) hurtEnemy(e, P.dmg * 0.5 * k, dx / d, dy / d, R * 8 * 0.15); }   /* 4번 베는 동안 쌓여 사슬 반경의 약 60% */
+      for (const e of enemies) { if (e.hp <= 0) continue; const dx = e.x - P.x, dy = e.y - P.y, d = Math.hypot(dx, dy) || 1; if (d < R + e.r) whipHit(e, dx / d, dy / d, d, R); }
       shake = Math.max(shake, 5); sfx('hit');
     }
     if (!q.er && f >= 6) {   // 마지막: 사슬 폭발 (폭군은 더 넓고 강하다)
       q.er = true; const R2 = (big ? 235 : 180) * rk;
       addRing(P.x, P.y - 10, 14, R2, 0.5, '255,50,70', 12); addRing(P.x, P.y - 10, 10, R2 * 0.8, 0.45, '90,140,255', 9);
       burst(P.x, P.y - 20, 40, ['#ff2a40', '#ff8a9a', '#5a8aff', '#ffffff'], 380, 0.8);
-      for (const e of enemies) { if (e.hp <= 0) continue; const dx = e.x - P.x, dy = e.y - P.y, d = Math.hypot(dx, dy) || 1; if (d < R2 + e.r) hurtEnemy(e, P.dmg * (big ? 1.7 : 1.1) * k, dx / d, dy / d, R2 * 8 * 0.35); }
+      for (const e of enemies) { if (e.hp <= 0) continue; const dx = e.x - P.x, dy = e.y - P.y, d = Math.hypot(dx, dy) || 1; if (d < R2 + e.r) whipHit(e, dx / d, dy / d, d, R2); }
       shake = Math.max(shake, big ? 16 : 11); sfx('boom');
     }
     if (f >= 7) {   // 끝나면 창날이 크게 돌며 다시 풀린다
