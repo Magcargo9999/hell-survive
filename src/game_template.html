@@ -4802,6 +4802,7 @@ const SYNERGIES = [
   { id: 'bstorm',    name: '칼날 폭풍',   txt: '칼날 +2개 · 크기 +62%',            need: ['blade', 'range'] },
   { id: 'glacier',   name: '빙하 충격파', txt: '충격파에 맞은 적은 반드시 빙결 · 빙결 중 받는 피해 +10% → +25%', need: ['freeze', 'nova'] },
   { id: 'forge',     name: '달궈진 칼날', txt: '칼날에 맞은 적은 반드시 점화 · 점화 지속 +2초 · 점화 피해 +30%', need: ['ignite', 'blade'] },
+  { id: 'shock',     name: '열충격',      txt: '점화와 빙결이 함께 걸린 적이 터져 주변에 공격력 220% 피해 (점화는 사라짐 · 적마다 3초에 한 번) · 점화 중인 적은 빙결, 빙결 중인 적은 점화 확률 ×2', need: ['ignite', 'freeze'] },
   { id: 'dnova',     name: '이중 충격파', txt: '충격파가 두 번 터지고 밀쳐냄',     need: ['nova', 'knock'] },
   { id: 'inferno',   name: '화염 지옥',   txt: '오라 반경 +40% · 피해 +70%',       need: ['aura', 'armor'] },
   { id: 'deadeye',   name: '급소 사냥꾼', txt: '치명타 피해 ×2.3',                 need: ['crit', 'claw'], apply: p => { p.critD += 0.6; } },
@@ -7552,6 +7553,23 @@ function freezeE(e, force) {
   e.frzT = gt + dur; e.frzCd = gt + 3.5;
   if (!isBig(e)) e.rootT = Math.max(e.rootT || 0, gt + dur);
   burst(e.x, e.y - e.r, 8, ['#9fe0ff', '#e6fbff', '#ffffff'], 150, 0.5); floatNum(e.x, e.y - e.r * 2 - 14, '❄ 빙결', '#9fe0ff');
+  thermalCheck(e);
+}
+let thermBusy = false;
+function thermalCheck(e) {   // 열충격: 점화 + 빙결이 동시에 걸린 적이 터진다
+  if (!P.syn.shock || thermBusy || e.hp <= 0 || !(e.ignT > 0) || !(e.frzT > gt) || e.thCd > gt) return;
+  e.thCd = gt + 3; e.ignT = 0; thermBusy = true;
+  const R = 110, x = e.x, y = e.y - e.r;
+  addRing(x, y, 8, R, 0.35, '200,230,255', 7); addRing(x, y, 6, R * 0.6, 0.3, '255,140,50', 5);
+  burst(x, y, 14, ['#9fe0ff', '#ffffff', '#ff8a2a', '#ffd27a'], 240, 0.5); sfx('boom');
+  withSrc('shock', () => {
+    for (const o of enemies) {
+      if (o.hp <= 0) continue;
+      const dx = o.x - e.x, dy = o.y - e.y, d = Math.hypot(dx, dy) || 1;
+      if (o === e || d < R + o.r) hurtEnemy(o, P.dmg * 2.2, dx / d, dy / d, 90);
+    }
+  });
+  thermBusy = false;
 }
 function igniteX(e, force) {
   if (e.hp <= 0) return;
@@ -7560,8 +7578,9 @@ function igniteX(e, force) {
 }
 function procElem(e) {   /* hurtEnemy에서 (지속 피해가 아닌) 일반 적중마다 */
   const f = P.up.freeze | 0, g = P.up.ignite | 0;
-  if (f && rand() < 0.05 + 0.03 * (f - 1)) freezeE(e);
-  if (g && !(e.ignT > 0) && rand() < 0.08 + 0.02 * (g - 1)) igniteX(e);
+  const sy = P.syn.shock;
+  if (f && rand() < (0.05 + 0.03 * (f - 1)) * (sy && e.ignT > 0 ? 2 : 1)) freezeE(e);
+  if (g && !(e.ignT > 0) && rand() < (0.08 + 0.02 * (g - 1)) * (sy && e.frzT > gt ? 2 : 1)) { igniteX(e); thermalCheck(e); }
 }
 function updateIgnite(dt) {
   const lv = Math.max(1, P.up.ignite | 0);
@@ -10052,7 +10071,7 @@ stepDive = skWrap(stepDive, 'dive'); stepRush = skWrap(stepRush, 'rush'); rushSt
 updateAirs = (f => function (...a) { return withSrc('basic', () => f.apply(this, a)); })(updateAirs);   // v6.22: 에어슬래시는 평타 (v6.30: 바로 뒤 천안 난무·브레스 감싸기가 주석에 묻혀 딜미터기에서 빠지던 것 수정)
 { const _tb = thornBlast, _sb = smashBlow; thornBlast = function (...a) { return withSrc('scale', () => _tb.apply(this, a)); }; smashBlow = function (...a) { return withSrc('smash', () => _sb.apply(this, a)); }; }
 shellReflect = skWrap(shellReflect, 'shell'); updateBsig = skWrap(updateBsig, 'bsigil');
-window.__G = { FD, shkAdd, toxAdd, skSpawnPair, phoenixRevive, mirrorBlock, palPop, updateCutSaws, get shkSp() { return shkSp; }, get toxFl() { return toxFl; }, get zonesRef() { return zones; },
+window.__G = { synCard, freezeE, availSyn, SYNERGIES, dmName, FD, shkAdd, toxAdd, skSpawnPair, phoenixRevive, mirrorBlock, palPop, updateCutSaws, get shkSp() { return shkSp; }, get toxFl() { return toxFl; }, get zonesRef() { return zones; },
   bossDefeated, get IMG() { return IMG; },
   get ready() { return !!IMG.floorD; }, get state() { return state; }, get P() { return P; }, get enemies() { return enemies; }, get orbs() { return orbs; },
   get zones() { return zones; }, get ebul() { return ebul; }, get EYE() { return EYE; }, get shards() { return shards; }, get bigQ() { return bigQ; }, get bombQ() { return bombQ; }, get holyQ() { return holyQ; }, get afx() { return afx; }, get dashQ() { return dashQ; }, get beam() { return beam; }, get evo() { return evo; }, get choices() { return choices; },
