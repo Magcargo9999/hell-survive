@@ -994,6 +994,14 @@ function isLava(tx, ty) {   // 큰 덩어리 대신 작은 웅덩이가 여기�
   return vnoise(tx / 4 + 31, ty / 4 + 17) * 0.6 + vnoise(tx / 2 + 5, ty / 2 + 9) * 0.4 > 0.7 && vnoise(tx / 14 + 50, ty / 14 + 70) > 0.42;
 }
 
+/* v8.56 지하 11~15층(어인섬) 둔화 웅덩이: 시트에 안 쓰던 '얕은 바다 · 심해' 타일(sfloor 7·8)을 그대로 쓴다. 마그마 풀과 겹치지 않고, 밟으면 이속 -35%가 벗어난 뒤에도 0.8초 더 남는다 (피해는 없음) */
+const SLOW_LINGER = 0.8;
+function isSlow(tx, ty) {
+  if (!isSea() || chal) return false;
+  if (tx * tx + ty * ty < 80) return false;
+  if (isLava(tx, ty)) return false;
+  return vnoise(tx / 4 + 71, ty / 4 + 43) * 0.6 + vnoise(tx / 2 + 23, ty / 2 + 37) * 0.4 > 0.72 && vnoise(tx / 14 + 90, ty / 14 + 12) > 0.4;
+}
 // 마계 타일셋: 바닥 25칸 = 어두운 돌바닥 20 + 마력 균열(안전) 3 + 용암 2
 const NGROUND = 20, GLOW0 = 20, LAVA0 = 23;
 const FLOOR_T = { sat: 0.14, br: 0.7, r: 9, g: 5, b: 1 };   // 바닥 톤 (채도 비율 · 밝기 · 약한 따뜻한 색)
@@ -1036,10 +1044,11 @@ const GCH = 8, GCS = GCH * TILE, GROUND = new Map(), GROUND_MAX = 36, GROUND_DIM
 function groundChunk(cx, cy) {
   const mu = isMush(), se = isSea(), ga = isGard(), key = (ga ? 'g' : se ? 's' : mu ? 'm' : '') + cx + ',' + cy; let ch = GROUND.get(key);
   if (ch) { GROUND.delete(key); GROUND.set(key, ch); return ch; }   // 최근에 쓴 순서
-  const c = mkCanvas(GCS, GCS), g = c.getContext('2d'), tx0 = cx * GCH, ty0 = cy * GCH, lava = [], tall = [];
+  const c = mkCanvas(GCS, GCS), g = c.getContext('2d'), tx0 = cx * GCH, ty0 = cy * GCH, lava = [], slow = [], tall = [];
   g.imageSmoothingEnabled = true;
   for (let ty = ty0 - 1; ty <= ty0 + GCH; ty++) for (let tx = tx0 - 1; tx <= tx0 + GCH; tx++) {   // 이웃 칸 소품이 걸쳐 들어오므로 한 칸 둘레까지 같은 순서로 그린다
     const sx = (tx - tx0) * TILE, sy = (ty - ty0) * TILE, inside = tx >= tx0 && tx < tx0 + GCH && ty >= ty0 && ty < ty0 + GCH;
+    if (isSlow(tx, ty)) { if (inside) slow.push([tx, ty, (isSlow(tx, ty - 1) ? 0 : 1) | (isSlow(tx + 1, ty) ? 0 : 2) | (isSlow(tx, ty + 1) ? 0 : 4) | (isSlow(tx - 1, ty) ? 0 : 8)]); continue; }   // v8.56
     if (isLava(tx, ty)) { if (inside) lava.push([tx, ty, (isLava(tx, ty - 1) ? 0 : 1) | (isLava(tx + 1, ty) ? 0 : 2) | (isLava(tx, ty + 1) ? 0 : 4) | (isLava(tx - 1, ty) ? 0 : 8)]); continue; }
     if (ga) {   // v8.30 악마 식물원: 소품은 모두 앞뒤 정렬로 따로 그린다
       g.drawImage(IMG.gfloor, gardTile(tx, ty) * 42, 0, 42, 42, sx, sy, TILE + 1, TILE + 1);
@@ -1076,7 +1085,7 @@ function groundChunk(cx, cy) {
     else g.drawImage(IMG.props, r[0], r[1], r[2], r[3], sx + TILE / 2 + jx - dw / 2, sy + jy - dh, dw, dh);
   }
   g.fillStyle = ga ? GF.dim : se ? SF.dim : mu ? MF.dim : GROUND_DIM; g.fillRect(0, 0, GCS, GCS);   // 바닥을 살짝 눌러 캐릭터가 돋보이게
-  ch = { c, lava, tall }; GROUND.set(key, ch);
+  ch = { c, lava, slow, tall }; GROUND.set(key, ch);
   if (GROUND.size > GROUND_MAX) GROUND.delete(GROUND.keys().next().value);
   return ch;
 }
@@ -1100,6 +1109,16 @@ function drawGround(camX, camY, time) {
       ctx.fillStyle = 'rgba(20, 4, 8, 0.85)';   // 용암 가장자리에 식은 암석 테두리
       if (edge & 1) ctx.fillRect(sx, sy, TILE, 4); if (edge & 2) ctx.fillRect(sx + TILE - 4, sy, 4, TILE); if (edge & 4) ctx.fillRect(sx, sy + TILE - 4, TILE, 4); if (edge & 8) ctx.fillRect(sx, sy, 4, TILE);
       ctx.fillStyle = GROUND_DIM; ctx.fillRect(sx, sy, TILE, TILE);
+    }
+    for (const [tx, ty, edge] of ch.slow) {   // v8.56 둔화 웅덩이: 얕은 바다 · 심해 타일이 번갈아 일렁인다
+      const sx = tx * TILE + ox, sy = ty * TILE + oy;
+      if (sx > W || sy > H || sx + TILE < 0 || sy + TILE < 0) continue;
+      const f = (Math.floor(time * 1.6) + ((hash2(tx, ty, 6) * 2) | 0)) % 2;
+      ctx.drawImage(IMG.sfloor, (7 + f) * 42, 0, 42, 42, sx, sy, TILE + 1, TILE + 1);
+      ctx.fillStyle = `rgba(120, 220, 255, ${0.05 + 0.06 * Math.sin(time * 2.4 + tx * 0.7 + ty)})`; ctx.fillRect(sx, sy, TILE, TILE);
+      ctx.fillStyle = 'rgba(4, 22, 30, 0.8)';
+      if (edge & 1) ctx.fillRect(sx, sy, TILE, 3); if (edge & 2) ctx.fillRect(sx + TILE - 3, sy, 3, TILE); if (edge & 4) ctx.fillRect(sx, sy + TILE - 3, TILE, 3); if (edge & 8) ctx.fillRect(sx, sy, 3, TILE);
+      ctx.fillStyle = SF.dim; ctx.fillRect(sx, sy, TILE, TILE);
     }
     for (const t of ch.tall) { const px = t.x + ox, py = t.top + oy; if (px > W + 40 || px + t.dw < -40 || py > H + 40 || py + t.dh < -40) continue; tall.push({ y: t.y, id: t.id, m: t.m, s: t.s, g: t.g, px, py, dw: t.dw, dh: t.dh }); }
   }
@@ -7359,6 +7378,10 @@ function update(dt) {
       }
     }
   } else P.lavaTick = 0;
+  if (!arena && state === 'play' && isSlow(Math.floor(P.x / TILE), Math.floor(P.y / TILE))) {   // v8.56 둔화 웅덩이
+    P.slowT = Math.max(P.slowT, SLOW_LINGER);
+    if (rand() < 0.35) burst(P.x, P.y - 4, 1, ['#9fe8ff', '#d8f8ff'], 70, 0.5);
+  }
 
   // --- 바닥에 조금씩 생기는 경험치 구슬 / 아이템 ---
   ambT -= dt;
@@ -8485,6 +8508,9 @@ function drawHud() {
       ctx.font = 'bold 13px "Malgun Gothic", sans-serif'; ctx.fillStyle = '#ffffff'; ctx.fillText(ready ? '지금 SPACE / Q 키 (모바일은 아래 바 터치) 로 발동!' : '아래 바가 꽉 차면 (쿨타임이 끝나면) SPACE / Q 키 (모바일은 바 터치) 로 발동', W / 2, ty + 44);
       ctx.fillStyle = R.c2; ctx.beginPath(); ctx.moveTo(W / 2 - 11, ty + 58); ctx.lineTo(W / 2 + 11, ty + 58); ctx.lineTo(W / 2, ty + 70 + pu * 4); ctx.closePath(); ctx.fill(); ctx.restore();
     }
+  }
+  if (!arena && state === 'play' && isSlow(Math.floor(P.x / TILE), Math.floor(P.y / TILE)) && !isLava(Math.floor(P.x / TILE), Math.floor(P.y / TILE))) {   // v8.56
+    ctx.textAlign = 'center'; ctx.font = 'bold 20px "Malgun Gothic", monospace'; ctx.strokeText('얕은 바다! 이동 속도 -35%', W / 2, 60); ctx.fillStyle = '#7fd8ff'; ctx.fillText('얕은 바다! 이동 속도 -35%', W / 2, 60);
   }
   if (!arena && isLava(Math.floor(P.x / TILE), Math.floor(P.y / TILE)) && state === 'play') {
     ctx.textAlign = 'center'; ctx.font = 'bold 20px "Malgun Gothic", monospace';
@@ -10278,7 +10304,7 @@ stepDive = skWrap(stepDive, 'dive'); stepRush = skWrap(stepRush, 'rush'); rushSt
 updateAirs = (f => function (...a) { return withSrc('basic', () => f.apply(this, a)); })(updateAirs);   // v6.22: 에어슬래시는 평타 (v6.30: 바로 뒤 천안 난무·브레스 감싸기가 주석에 묻혀 딜미터기에서 빠지던 것 수정)
 { const _tb = thornBlast, _sb = smashBlow; thornBlast = function (...a) { return withSrc('scale', () => _tb.apply(this, a)); }; smashBlow = function (...a) { return withSrc('smash', () => _sb.apply(this, a)); }; }
 shellReflect = skWrap(shellReflect, 'shell'); updateBsig = skWrap(updateBsig, 'bsigil');
-window.__G = { saveSave, svParse, spawnPlant, PL, get GSPECIES() { return GSPECIES; }, get plBalls() { return plBalls; }, synCard, freezeE, availSyn, SYNERGIES, dmName, FD, shkAdd, toxAdd, skSpawnPair, phoenixRevive, mirrorBlock, palPop, updateCutSaws, get shkSp() { return shkSp; }, get toxFl() { return toxFl; }, get zonesRef() { return zones; },
+window.__G = { isSlow, isLava, saveSave, svParse, spawnPlant, PL, get GSPECIES() { return GSPECIES; }, get plBalls() { return plBalls; }, synCard, freezeE, availSyn, SYNERGIES, dmName, FD, shkAdd, toxAdd, skSpawnPair, phoenixRevive, mirrorBlock, palPop, updateCutSaws, get shkSp() { return shkSp; }, get toxFl() { return toxFl; }, get zonesRef() { return zones; },
   bossDefeated, get IMG() { return IMG; },
   get ready() { return !!IMG.floorD; }, get state() { return state; }, get P() { return P; }, get enemies() { return enemies; }, get orbs() { return orbs; },
   get zones() { return zones; }, get ebul() { return ebul; }, get EYE() { return EYE; }, get shards() { return shards; }, get bigQ() { return bigQ; }, get bombQ() { return bombQ; }, get holyQ() { return holyQ; }, get afx() { return afx; }, get dashQ() { return dashQ; }, get beam() { return beam; }, get evo() { return evo; }, get choices() { return choices; },
