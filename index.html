@@ -243,7 +243,7 @@
   <p id="diffDesc" style="font-size:12px;margin-top:-8px"></p>
   <p id="chInfo" style="font-size:12px;margin-top:-6px;color:#c9a0ff;line-height:1.5"></p>
   <p class="keys"><b>W</b><b>A</b><b>S</b><b>D</b> 또는 방향키로 이동 · 공격은 자동 · <b>SPACE</b> 특수 스킬 · <b>E</b> 성유물(순간이동) · <b>P</b> 일시정지</p>
-  <div class="row"><button id="startBtn">시작하기</button><button id="chBtn" class="sm" style="border-color:#8a4aff">∞ 챌린지 모드</button><button id="shopBtn" class="sm">캐릭터 상점</button><button id="perkBtn" class="sm">강화 상점</button><button id="heartBtn" class="sm" style="border-color:#ff4a7a">💗 보스 심장</button><button id="dexBtn" class="sm">몬스터 도감</button><button id="setBtn" class="sm">설정</button></div>
+  <div class="row"><button id="startBtn">시작하기</button><button id="chBtn" class="sm" style="border-color:#8a4aff">∞ 챌린지 모드</button><button id="rushBtn" class="sm" style="border-color:#ff9a3a">⚔ 보스 러시</button><button id="shopBtn" class="sm">캐릭터 상점</button><button id="perkBtn" class="sm">강화 상점</button><button id="heartBtn" class="sm" style="border-color:#ff4a7a">💗 보스 심장</button><button id="dexBtn" class="sm">몬스터 도감</button><button id="setBtn" class="sm">설정</button></div>
   <button id="gachaBtn" title="스킨 가챠 · 스킨 도감"><span class="lk">✨</span>스킨 가챠<small></small></button>
 </div>
 
@@ -340,7 +340,7 @@
 /* ============================================================
  * 0. 기본 설정
  * ============================================================ */
-const SRC = { adm: 'src/assets/adm/adm.webp?v=23fc8c70', gfloor: 'src/assets/gard/gfloor.webp?v=5a66ac34', gprops: 'src/assets/gard/gprops.webp?v=8895f1f4', gmap: 'src/assets/gard/gmap.webp?v=c5062278', tox: 'src/assets/tox/tox.webp?v=ae83766e', skelF: 'src/assets/skin/skelF.webp?v=23c8b6b9', skelFa: 'src/assets/skin/skelF_arrow.webp?v=fa902f4a', sktw: 'src/assets/sk/sktower.webp?v=78a745ab', mimic: 'src/assets/mimic/mimic.webp?v=86627d9e', sh: 'src/assets/mush/sh.webp?v=91485cee', mfloor: 'src/assets/mush/mfloor.webp?v=58a1549b', mprops: 'src/assets/mush/mprops.webp?v=1700bcac', mmob: 'src/assets/mush/mmob.webp?v=29e57e79', mmap: 'src/assets/mush/mmap.webp?v=da62046e', an2: 'src/assets/an/an2.webp?v=e8d646c2', shk: 'src/assets/shk/shk.webp?v=0d35c3f1', statue: 'src/assets/statue/statue.webp?v=280ee2c1', sk_gunH: 'src/assets/skin/gunH.webp?v=2aef5301', sk_gunE: 'src/assets/skin/gunE.webp?v=579b6d98', heart: 'src/assets/heart/heart.webp?v=6f270b3b', sk_wolfE: 'src/assets/skin/wolfE.webp?v=a6772d4a', sk_lizG: 'src/assets/skin/lizG.webp?v=007d63ca', skA_lizG: 'src/assets/skin/lizG_art.webp?v=4df48179', sk_ghostG: 'src/assets/skin/ghostG.webp?v=770ac55e', sk_twS: 'src/assets/skin/twS.webp?v=ed19ff4b', skA_twS: 'src/assets/skin/twS_art.webp?v=6b5fc236', skA_ghostG: 'src/assets/skin/ghostG_art.webp?v=c8bb29fc', skA_gunH: 'src/assets/skin/gunH_art.webp?v=097764b7', skA_gunE: 'src/assets/skin/gunE_art.webp?v=79889d33', skA_wolfE: 'src/assets/skin/wolfE_art.webp?v=673ee5dc', horse: 'src/assets/horse/horse.webp?v=128207b7', sfloor: 'src/assets/sea/sfloor.webp?v=b8e8164b', sprops: 'src/assets/sea/sprops.webp?v=7b8f1831', smob: 'src/assets/sea/smob.webp?v=94dcefca', smap: 'src/assets/sea/smap.webp?v=e347a31c', mini: 'src/assets/opt/mini.webp?v=ef7bd838', snail: 'src/assets/snail/snail_q.png?v=d60b3063', base: 'src/assets/opt/atlas.webp?v=86f6ddad', pup: 'src/assets/opt/pup.webp?v=ade04411', dark: 'src/assets/final/dark.webp?v=4305e585', bug: 'src/assets/evo/bug_q.png?v=4475354d', floor: 'src/assets/opt/floor.webp?v=eefec490', props: 'src/assets/opt/props.webp?v=b6506fb7', castle: 'src/assets/castle/castle_q.png?v=d8227e4f', arena: 'src/assets/opt/arena.webp?v=d513eccd', boss: 'src/assets/opt/boss.webp?v=58622b00', mobs: 'src/assets/opt/mobs.webp?v=e54f9ae3', blood: 'src/assets/opt/blood.webp?v=12f1722d', twin: 'src/assets/final/twin.webp?v=5ee38046', triple: 'src/assets/opt/triple.webp?v=8be3574c', items: 'src/assets/final/items.webp?v=be482d0e', drophb: 'src/assets/final/drop_hb.webp?v=567abde1', droppo: 'src/assets/final/drop_po.webp?v=501882aa', blood2: 'src/assets/final/blood2.webp?v=a6f5468a', holy: 'src/assets/opt/holy.webp?v=48900af3', lavasn: 'src/assets/opt/lavasn.webp?v=137bf3a8', lavafx: 'src/assets/opt/lavafx.webp?v=6533c23f', venom2: 'src/assets/opt/venom2.webp?v=5309ab02', venom3: 'src/assets/final/venom3.webp?v=e87f56bb', venomfx: 'src/assets/final/venomfx.webp?v=e016c316', elf0: 'src/assets/opt/elf0.webp?v=41960075', elf1: 'src/assets/v401/n_elf.webp?v=a6c68d14', skel: 'src/assets/v401/n_skel.webp?v=264d7841', chim0: 'src/assets/v401/n_chimw.webp?v=a33f0788', chim1: 'src/assets/v401/n_chim1.webp?v=30c50901', chim2: 'src/assets/opt/chim2.webp?v=c50b22fc', chimfx: 'src/assets/opt/chimfx.webp?v=3693dfb6', flm1: 'src/assets/opt/flm1.webp?v=4f115b84', flm2: 'src/assets/final/flm2.webp?v=64165a64', flmfx: 'src/assets/opt/flmfx.webp?v=128873bc', drm1: 'src/assets/v401/n_drm1.webp?v=f4149b03', drm2: 'src/assets/v401/n_drm2.webp?v=5b518613', drfx: 'src/assets/final/drfx.webp?v=b3558beb', arcr: 'src/assets/opt/arcr.webp?v=4de9002d', arch: 'src/assets/opt/arch.webp?v=c8a5de79', arfx: 'src/assets/final/arfx.webp?v=cbebb4a9', hlfx: 'src/assets/final/hlfx.webp?v=9f760684', slot: 'src/assets/opt/slot.webp?v=802671d0', uniq: 'src/assets/opt/uniq.webp?v=63109307', eyem: 'src/assets/final/eyem.webp?v=d8e65a1b', relic: 'src/assets/final/relic.webp?v=97df87f7', liz0: 'src/assets/v401/n_liz0.webp?v=58a28b27', liz1: 'src/assets/v401/n_liz1.webp?v=b9d68e9f', liz2: 'src/assets/v401/n_liz2.webp?v=e83c57c8', liz3: 'src/assets/final/liz3.webp?v=2f8f01cc', gh: 'src/assets/gh/gh.webp?v=891097b2', gg: 'src/assets/gg/gg.webp?v=6a18d717', oc: 'src/assets/oc/oc.webp?v=314f9fbd', lg: 'src/assets/lg/lg.webp?v=db7a0c72', os: 'src/assets/os/os.webp?v=353068cb', bs: 'src/assets/bs/bs.webp?v=932c80ac', tw0: 'src/assets/cd/cd1.webp?v=8f619864', tw1: 'src/assets/cd/cd2.webp?v=78cbbaba', tw2: 'src/assets/cd/cd3.webp?v=3090fcd9', fwb: 'src/assets/v404/fwb.webp?v=53313174', fwp: 'src/assets/v404/fwp.webp?v=34499ca1', fwfx: 'src/assets/v404/fwfx.webp?v=4112e827', bmap: 'src/assets/v404/bmap.webp?v=053d00d6', skb: 'src/assets/sk/skb.webp?v=70c4535b', skw: 'src/assets/sk/skw.webp?v=ea0bf1a6', chm: 'src/assets/ch/chmap.webp?v=96178577', cm: 'src/assets/ch/cm.webp?v=9cbe4f41', ab: 'src/assets/ch/ab.webp?v=5f5acfff', an: 'src/assets/an/an.webp?v=cae7082f', anfx: 'src/assets/an/anfx.webp?v=17e26bd5', amap: 'src/assets/an/amap.webp?v=f2d66a84', gun: 'src/assets/gun/gun.webp?v=ae4161fb' };
+const SRC = { zom: 'src/assets/zom/zom.webp?v=b4711bf4', adm: 'src/assets/adm/adm.webp?v=23fc8c70', gfloor: 'src/assets/gard/gfloor.webp?v=5a66ac34', gprops: 'src/assets/gard/gprops.webp?v=8895f1f4', gmap: 'src/assets/gard/gmap.webp?v=c5062278', tox: 'src/assets/tox/tox.webp?v=ae83766e', skelF: 'src/assets/skin/skelF.webp?v=23c8b6b9', skelFa: 'src/assets/skin/skelF_arrow.webp?v=fa902f4a', sktw: 'src/assets/sk/sktower.webp?v=78a745ab', mimic: 'src/assets/mimic/mimic.webp?v=86627d9e', sh: 'src/assets/mush/sh.webp?v=91485cee', mfloor: 'src/assets/mush/mfloor.webp?v=58a1549b', mprops: 'src/assets/mush/mprops.webp?v=1700bcac', mmob: 'src/assets/mush/mmob.webp?v=29e57e79', mmap: 'src/assets/mush/mmap.webp?v=da62046e', an2: 'src/assets/an/an2.webp?v=e8d646c2', shk: 'src/assets/shk/shk.webp?v=0d35c3f1', statue: 'src/assets/statue/statue.webp?v=280ee2c1', sk_gunH: 'src/assets/skin/gunH.webp?v=2aef5301', sk_gunE: 'src/assets/skin/gunE.webp?v=579b6d98', heart: 'src/assets/heart/heart.webp?v=6f270b3b', sk_wolfE: 'src/assets/skin/wolfE.webp?v=a6772d4a', sk_lizG: 'src/assets/skin/lizG.webp?v=007d63ca', skA_lizG: 'src/assets/skin/lizG_art.webp?v=4df48179', sk_ghostG: 'src/assets/skin/ghostG.webp?v=770ac55e', sk_twS: 'src/assets/skin/twS.webp?v=ed19ff4b', skA_twS: 'src/assets/skin/twS_art.webp?v=6b5fc236', skA_ghostG: 'src/assets/skin/ghostG_art.webp?v=c8bb29fc', skA_gunH: 'src/assets/skin/gunH_art.webp?v=097764b7', skA_gunE: 'src/assets/skin/gunE_art.webp?v=79889d33', skA_wolfE: 'src/assets/skin/wolfE_art.webp?v=673ee5dc', horse: 'src/assets/horse/horse.webp?v=128207b7', sfloor: 'src/assets/sea/sfloor.webp?v=b8e8164b', sprops: 'src/assets/sea/sprops.webp?v=7b8f1831', smob: 'src/assets/sea/smob.webp?v=94dcefca', smap: 'src/assets/sea/smap.webp?v=e347a31c', mini: 'src/assets/opt/mini.webp?v=ef7bd838', snail: 'src/assets/snail/snail_q.png?v=d60b3063', base: 'src/assets/opt/atlas.webp?v=86f6ddad', pup: 'src/assets/opt/pup.webp?v=ade04411', dark: 'src/assets/final/dark.webp?v=4305e585', bug: 'src/assets/evo/bug_q.png?v=4475354d', floor: 'src/assets/opt/floor.webp?v=eefec490', props: 'src/assets/opt/props.webp?v=b6506fb7', castle: 'src/assets/castle/castle_q.png?v=d8227e4f', arena: 'src/assets/opt/arena.webp?v=d513eccd', boss: 'src/assets/opt/boss.webp?v=58622b00', mobs: 'src/assets/opt/mobs.webp?v=e54f9ae3', blood: 'src/assets/opt/blood.webp?v=12f1722d', twin: 'src/assets/final/twin.webp?v=5ee38046', triple: 'src/assets/opt/triple.webp?v=8be3574c', items: 'src/assets/final/items.webp?v=be482d0e', drophb: 'src/assets/final/drop_hb.webp?v=567abde1', droppo: 'src/assets/final/drop_po.webp?v=501882aa', blood2: 'src/assets/final/blood2.webp?v=a6f5468a', holy: 'src/assets/opt/holy.webp?v=48900af3', lavasn: 'src/assets/opt/lavasn.webp?v=137bf3a8', lavafx: 'src/assets/opt/lavafx.webp?v=6533c23f', venom2: 'src/assets/opt/venom2.webp?v=5309ab02', venom3: 'src/assets/final/venom3.webp?v=e87f56bb', venomfx: 'src/assets/final/venomfx.webp?v=e016c316', elf0: 'src/assets/opt/elf0.webp?v=41960075', elf1: 'src/assets/v401/n_elf.webp?v=a6c68d14', skel: 'src/assets/v401/n_skel.webp?v=264d7841', chim0: 'src/assets/v401/n_chimw.webp?v=a33f0788', chim1: 'src/assets/v401/n_chim1.webp?v=30c50901', chim2: 'src/assets/opt/chim2.webp?v=c50b22fc', chimfx: 'src/assets/opt/chimfx.webp?v=3693dfb6', flm1: 'src/assets/opt/flm1.webp?v=4f115b84', flm2: 'src/assets/final/flm2.webp?v=64165a64', flmfx: 'src/assets/opt/flmfx.webp?v=128873bc', drm1: 'src/assets/v401/n_drm1.webp?v=f4149b03', drm2: 'src/assets/v401/n_drm2.webp?v=5b518613', drfx: 'src/assets/final/drfx.webp?v=b3558beb', arcr: 'src/assets/opt/arcr.webp?v=4de9002d', arch: 'src/assets/opt/arch.webp?v=c8a5de79', arfx: 'src/assets/final/arfx.webp?v=cbebb4a9', hlfx: 'src/assets/final/hlfx.webp?v=9f760684', slot: 'src/assets/opt/slot.webp?v=802671d0', uniq: 'src/assets/opt/uniq.webp?v=63109307', eyem: 'src/assets/final/eyem.webp?v=d8e65a1b', relic: 'src/assets/final/relic.webp?v=97df87f7', liz0: 'src/assets/v401/n_liz0.webp?v=58a28b27', liz1: 'src/assets/v401/n_liz1.webp?v=b9d68e9f', liz2: 'src/assets/v401/n_liz2.webp?v=e83c57c8', liz3: 'src/assets/final/liz3.webp?v=2f8f01cc', gh: 'src/assets/gh/gh.webp?v=891097b2', gg: 'src/assets/gg/gg.webp?v=6a18d717', oc: 'src/assets/oc/oc.webp?v=314f9fbd', lg: 'src/assets/lg/lg.webp?v=db7a0c72', os: 'src/assets/os/os.webp?v=353068cb', bs: 'src/assets/bs/bs.webp?v=932c80ac', tw0: 'src/assets/cd/cd1.webp?v=8f619864', tw1: 'src/assets/cd/cd2.webp?v=78cbbaba', tw2: 'src/assets/cd/cd3.webp?v=3090fcd9', fwb: 'src/assets/v404/fwb.webp?v=53313174', fwp: 'src/assets/v404/fwp.webp?v=34499ca1', fwfx: 'src/assets/v404/fwfx.webp?v=4112e827', bmap: 'src/assets/v404/bmap.webp?v=053d00d6', skb: 'src/assets/sk/skb.webp?v=70c4535b', skw: 'src/assets/sk/skw.webp?v=ea0bf1a6', chm: 'src/assets/ch/chmap.webp?v=96178577', cm: 'src/assets/ch/cm.webp?v=9cbe4f41', ab: 'src/assets/ch/ab.webp?v=5f5acfff', an: 'src/assets/an/an.webp?v=cae7082f', anfx: 'src/assets/an/anfx.webp?v=17e26bd5', amap: 'src/assets/an/amap.webp?v=f2d66a84', gun: 'src/assets/gun/gun.webp?v=ae4161fb' };
 const SNAIL_RECTS = [[0, 0, 216, 146], [220, 0, 273, 208], [497, 0, 276, 208], [777, 0, 289, 214]];
 const PROP_RECTS = [[0, 0, 38, 48], [40, 0, 22, 49], [64, 0, 34, 48], [100, 0, 26, 44], [128, 0, 29, 44], [159, 0, 56, 44], [217, 0, 64, 59], [283, 0, 42, 44], [327, 0, 20, 48], [349, 0, 62, 62], [413, 0, 47, 64], [462, 0, 44, 56], [0, 66, 33, 62], [35, 66, 36, 56], [73, 66, 28, 57], [103, 66, 19, 29], [124, 66, 20, 46], [146, 66, 18, 28], [166, 66, 18, 23], [186, 66, 19, 31], [207, 66, 21, 31], [230, 66, 22, 30], [254, 66, 21, 18], [277, 66, 20, 19], [299, 66, 32, 50], [333, 66, 32, 49], [367, 66, 40, 46], [409, 66, 39, 46], [450, 66, 33, 45], [0, 130, 37, 45], [39, 130, 19, 29], [60, 130, 18, 29], [80, 130, 17, 18], [99, 130, 20, 19], [121, 130, 20, 20], [143, 130, 58, 60], [203, 130, 31, 54], [236, 130, 30, 54], [268, 130, 30, 54], [300, 130, 47, 53], [349, 130, 28, 53], [379, 130, 31, 53], [412, 130, 43, 41], [457, 130, 44, 40], [0, 192, 36, 11], [38, 192, 25, 16], [65, 192, 48, 11], [115, 192, 76, 57], [193, 192, 43, 49], [238, 192, 21, 21], [261, 192, 35, 45], [298, 192, 50, 38], [350, 192, 67, 77], [419, 192, 53, 57], [0, 271, 45, 79], [47, 271, 53, 24], [102, 271, 32, 36], [136, 271, 59, 53]];
 // 늑대 형태별 스프라이트 설정: 한 칸 크기, 배율, 원본이 바라보는 방향(flip), 공격이 맞는 프레임(hitF), 동작별 (줄, 프레임 수, 초당 프레임)
@@ -842,6 +842,7 @@ const SAVE_DEF = () => ({
   diff: { max: 0, sel: 0, fw: false },
   holyBlood: false,   // v6.03: 신성한 피를 먹었다 (성혈랑 최종 진화 해금)
   fw: { wins: {}, open: false, cleared: false, snap: null },   // 숨은 보스: 혈랑/성혈랑 클리어 기록 · 마지막 클리어 스펙
+  rush: { open: false, best: 0, clears: 0 },   // v8.50 보스 러시 (해금 · 최고 처치 수 · 완주 횟수)
   ch: { open: false, frag: 0, best: 0, rune: {}, tr: { rat: false, pouch: false, mirror: false } },   // v6.20: 챌린지 모드 (해금 · 룬 조각 · 룬 · 보물)
   set: { nums: true, calm: false, sfx: 0.7, bgm: 0.35, speed: 1, joy: ('ontouchstart' in window) },
   skin: { own: {}, frag: {}, on: {}, pity: 0, pulls: 0 },   // v7.30 스킨 가챠
@@ -854,7 +855,7 @@ function loadSave() {
   try {
     const j = JSON.parse(localStorage.getItem(SAVE_KEY) || 'null'), d = SAVE_DEF();
     if (j && j.chars && j.chars.mage && !('archer' in j.chars)) j.chars.archer = true;   // 예전 뼈 마법사를 샀다면 궁수로 이어받는다
-    if (j) SAVE = { shards: +j.shards || 0, perks: Object.assign(d.perks, j.perks), chars: Object.assign(d.chars, j.chars), dex: { seen: Object.assign({}, j.dex && j.dex.seen), kills: Object.assign({}, j.dex && j.dex.kills), final: Object.assign({}, j.dex && j.dex.final), goals: +(j.dex && j.dex.goals) || 0 }, diff: Object.assign(d.diff, j.diff), holyBlood: !!j.holyBlood, fw: Object.assign(d.fw, j.fw), set: Object.assign(d.set, j.set), ch: Object.assign(d.ch, j.ch, { rune: Object.assign({}, j.ch && j.ch.rune), tr: Object.assign(d.ch.tr, j.ch && j.ch.tr) }), skin: Object.assign(d.skin, j.skin, { own: Object.assign({}, j.skin && j.skin.own), frag: Object.assign({}, j.skin && j.skin.frag) }), heart: { inv: (j.heart && Array.isArray(j.heart.inv)) ? j.heart.inv : [], eq: (j.heart && Array.isArray(j.heart.eq)) ? j.heart.eq.slice(0, 5) : [], n: (j.heart && +j.heart.n) || 0, got: (j.heart && j.heart.got && typeof j.heart.got === 'object') ? j.heart.got : {} }, cp: (j.cp && typeof j.cp === 'object') ? j.cp : {} };
+    if (j) SAVE = { shards: +j.shards || 0, perks: Object.assign(d.perks, j.perks), chars: Object.assign(d.chars, j.chars), dex: { seen: Object.assign({}, j.dex && j.dex.seen), kills: Object.assign({}, j.dex && j.dex.kills), final: Object.assign({}, j.dex && j.dex.final), goals: +(j.dex && j.dex.goals) || 0 }, diff: Object.assign(d.diff, j.diff), holyBlood: !!j.holyBlood, fw: Object.assign(d.fw, j.fw), set: Object.assign(d.set, j.set), rush: Object.assign(d.rush, j.rush), ch: Object.assign(d.ch, j.ch, { rune: Object.assign({}, j.ch && j.ch.rune), tr: Object.assign(d.ch.tr, j.ch && j.ch.tr) }), skin: Object.assign(d.skin, j.skin, { own: Object.assign({}, j.skin && j.skin.own), frag: Object.assign({}, j.skin && j.skin.frag) }), heart: { inv: (j.heart && Array.isArray(j.heart.inv)) ? j.heart.inv : [], eq: (j.heart && Array.isArray(j.heart.eq)) ? j.heart.eq.slice(0, 5) : [], n: (j.heart && +j.heart.n) || 0, got: (j.heart && j.heart.got && typeof j.heart.got === 'object') ? j.heart.got : {} }, cp: (j.cp && typeof j.cp === 'object') ? j.cp : {} };
     if (j) SAVE.playT = Math.max(0, +j.playT || 0);
     delete SAVE.chars.mage;
   } catch (e) { /* 저장소를 못 쓰는 환경이면 기본값으로 진행 */ }
@@ -1164,6 +1165,7 @@ let curChar = 'wolf', selChar = 'wolf';
 let airs = [], diveQ = null, breathQ = null, rushQ = null, cfx = [], ebul = [], bombQ = null, holyQ = null, afx = [], bombT = [], holyPtr = null;   // 키메라: 에어슬래시 · 천공 강하 · 효과
 let eleQ = null, tentQ = null, octoFx = [];   // 문어 마법사: 코끼리 돌진 · 문어 다리 · 히든 몹 이펙트
 let slots = [], slotPlan = [], slotUI = null, uniqCd = 0, lasers = [], udeath = [], eyeF = null, tpBtn = { x: 0, y: 0, w: 0, h: 0 };   // 잭팟 머신 · 유니크 마물 · 성유물
+let rush = null, rushMode = false;   // v8.50 보스 러시
 let castle = null, arena = null, trans = null, banner = null, boss = null, winT = 0, darkT = 0, smokes = [];
 /* ---------- 마왕성 (Lv.25에 솟아오름) / 성 내부 맵 ---------- */
 const CAS = { s: 0.62, gx: 0.472, gate: 24 };   // 크기 배율, 성문 위치(그림 너비 비율), 성문 통로 반폭
@@ -1245,13 +1247,13 @@ function enterArena() {
   if (trans) return;
   startTrans(() => {
     const sealed = P.exitLeft <= 0, an = P.bossK === 'angel';
-    arena = an ? { sealed, hold: 0, k: 'angel' } : { sealed, hold: 0 }; castle.force = 0;
+    arena = an ? { sealed, hold: 0, k: 'angel' } : { sealed, hold: 0 }; if (castle) castle.force = 0;
     if (P.fset === 'gard' && IMG.gmap) { arena.mush = true; arena.gard = true; } else if (P.fset === 'sea' && IMG.smap) { arena.mush = true; arena.sea = true; } else if (P.fset === 'mush' && IMG.mmap) arena.mush = true;   // v6.52: 지하 6~10층은 마왕 4종 모두 버섯 보스맵   // v6.30: 타락천사는 전용 보스맵
     clearField();
     const S0 = arena.mush ? BM().start : an ? AMAP.start : ARENA.start; P.x = S0[0]; P.y = S0[1]; cam.x = P.x; cam.y = P.y - 20; placeAllies();
     P.hp = P.max; P.healBank = P.max * 0.12;   // 마왕전은 체력을 가득 채우고 시작한다
     spawnBoss(); itemT = 14;
-    let tx = sealed ? '출구가 봉인되었다!  이제 마왕을 쓰러뜨리는 수밖에 없다' : '마왕전 시작!  성 밖으로 나갈 수 있는 기회는 딱 1번\n맵 아래쪽 출구 ▼ 에 잠시 머물면 나갈 수 있어요 (나가면 마왕은 체력 회복)';
+    let tx = rush ? `⚔ 보스 러시 ${rush.i + 1}/${BR_N} — ${BR_NAME[P.bossK]}\n출구는 봉인되었다 · 쓰러뜨리면 체력이 회복되고 카드 2장을 고른다` : sealed ? '출구가 봉인되었다!  이제 마왕을 쓰러뜨리는 수밖에 없다' : '마왕전 시작!  성 밖으로 나갈 수 있는 기회는 딱 1번\n맵 아래쪽 출구 ▼ 에 잠시 머물면 나갈 수 있어요 (나가면 마왕은 체력 회복)';
     if (boss && boss.bk === 'skel') tx += '\n스켈레톤 마왕: 정면에 서 있으면 대검으로 내려찍는다 · 체력 66%·33%에 결계(무적) · 첨탑 20초 방치 시 체력 15% 회복 · 해골 전사 2마리 소환';
     if (boss && boss.bk === 'shk') tx += '\n거대 버섯마귀: 바닥에 그림자가 생기면 거대 포자가 떨어진다 (독 장판이 남는다) · 체력 75%·50%·25%에 버섯 군단 소환 — 다 잡을 때까지 받는 피해 -50%';
     if (boss && boss.bk === 'adm') tx += '\n썩어버린 해군 제독: 가까이 붙으면 닻을 빠르게 후려친다(한 번 피하고 다시 붙기) · 파란 줄 = 닻(맞으면 기절 + 끌려감) · 파란 원 = 포탄이 떨어질 자리 · 유령 함포는 부술 수 있다 · 체력 60%에 어인 수병 · 30%에 발악(함포 6문 일제 사격)';
@@ -1300,7 +1302,8 @@ function miniTele(e, o) { e.tele.push(Object.assign({ t: 0, dur: 1, done: false 
 function inRectT(px, py, t, pad) { if (px === P.x && py === P.y) pad += PR(); const c = Math.cos(t.ang), s = Math.sin(t.ang), dx = px - t.x, dy = py - t.y, lx = dx * c + dy * s, ly = -dx * s + dy * c; return lx > -pad && lx < t.len + pad && Math.abs(ly) < t.w / 2 + pad; }
 function spawnMini() {
   if (P.bossK === 'skel') { spawnSkMini(); return; }   // 스켈레톤 마왕 판: 해골 전사 둘
-  if (P.bossK === 'angel' && IMG.statue) { spawnStat(); return; }   // v8.06 타락천사 판: 부패한 성상
+  if (P.bossK === 'angel' && IMG.statue) { spawnStat(); return; }
+  if (P.bossK === 'adm' && IMG.zom) { spawnZom(); return; }   // v8.50 해군 제독 판: 해저좀비   // v8.06 타락천사 판: 부패한 성상
   P.miniDone = true;
   const a = rand() * 6.283, d = Math.hypot(W, H) / 2 + 90, hp = MINI_HP * (1 + 0.3 * P.tier);
   mini = { kind: 'mini', x: P.x + Math.cos(a) * d, y: P.y + Math.sin(a) * d, kx: 0, ky: 0, sp: 0, spec: null, sc: 1, r: 30, hp, max: hp, dmg: 0, exp: 0, elite: false, flash: 0, t: 0, orbCd: 0, slowT: 0,
@@ -1344,6 +1347,7 @@ function updateMini(e, dt) {
   if (e.bk === 'cut') { updateCut(e, dt); return; }
   if (e.bk === 'rig' || e.bk === 'nerk') { updateHorse(e, dt); return; }
   if (e.bk === 'stat') { updateStat(e, dt); return; }
+  if (e.bk === 'zom') { updateZom(e, dt); return; }
   if (e.bk === 'eye') { updateEyeMini(e, dt); return; }
   if (e.sk) { updateSkMini(e, dt); return; }
   e.t += dt; e.flash = Math.max(0, e.flash - dt);
@@ -1396,19 +1400,20 @@ function miniDefeated(e) {
   if (Object.keys(RELICS).some(k => !P.rel[k])) dropRelic(e.x - 34, e.y + 12);   // 미니 보스: 저주받은 성유물
   P.named += 4; goalAdd('kills'); goalAdd('elite');
   burst(e.x, e.y - 40, 34, ['#8a0f1c', '#c8283a', '#ff6a1c', '#ffc247'], 300, 0.9); addRing(e.x, e.y - 20, 10, 260, 0.7, '255,200,90', 12); shake = Math.max(shake, 14); sfx('chest');
-  if (nohit && e.bk !== 'eye' && e.bk !== 'cut' && e.bk !== 'rig' && e.bk !== 'nerk' && e.bk !== 'stat' && !P.pet && rand() < MINI_PET_P) {   // 이스터에그: 한 번도 안 맞고 쓰러뜨리면 동료가 된다
+  if (nohit && e.bk !== 'eye' && e.bk !== 'cut' && e.bk !== 'rig' && e.bk !== 'nerk' && e.bk !== 'stat' && e.bk !== 'zom' && !P.pet && rand() < MINI_PET_P) {   // 이스터에그: 한 번도 안 맞고 쓰러뜨리면 동료가 된다
     P.pet = { x: e.x, y: e.y, face: e.face, t: 0, hp: PET_HP, max: PET_HP, flash: 0, inv: 0, intro: 1.1, act: null, cd1: 0.5, cd2: 3, cd3: 6, down: false, downT: 0, moving: false, dashCd: 0 };
     markDex('pet', 1); sfx('recruit'); addRing(e.x, e.y, 10, 150, 0.7, '120,255,170', 8); burst(e.x, e.y - 40, 26, ['#7dffb0', '#ffffff', '#35d6e8'], 260, 0.9);
     banner = { txt: '원숭이 전사가 동료가 되었다!  (마왕전에서 함께 싸웁니다)', t: 5 };
   } else {
     mdeath = { x: e.x, y: e.y, face: e.face, t: 0, bk: e.bk };
-    banner = { txt: (e.bk === 'eye' ? '마안 감시자' : e.bk === 'cut' ? '절단안의 짐승' : e.bk === 'rig' ? '혈혼마 리고르' : e.bk === 'nerk' ? '네르칸' : e.bk === 'stat' ? '부패한 성상' : '원숭이 전사') + '를 쓰러뜨렸다!  보물 상자가 떨어졌다', t: 3.5 };
+    banner = { txt: (e.bk === 'eye' ? '마안 감시자' : e.bk === 'cut' ? '절단안의 짐승' : e.bk === 'rig' ? '혈혼마 리고르' : e.bk === 'nerk' ? '네르칸' : e.bk === 'stat' ? '부패한 성상' : e.bk === 'zom' ? '해저좀비' : '원숭이 전사') + '를 쓰러뜨렸다!  보물 상자가 떨어졌다', t: 3.5 };
   }
 }
 function drawMini(e, x, y) {
   if (e.bk === 'cut') { drawCut(e, x, y); return; }
   if (e.bk === 'rig' || e.bk === 'nerk') { drawHorse(e, x, y); return; }
   if (e.bk === 'stat') { drawStat(e, x, y); return; }
+  if (e.bk === 'zom') { drawZom(e, x, y); return; }
   if (e.bk === 'eye') { drawEyeMini(e, x, y); return; }
   if (e.sk) { drawSkMini(e, x, y); return; }
   const k = 1.5, up = e.jh || 0;
@@ -1423,6 +1428,7 @@ function drawMiniDeath(m, x, y) {
   if (m.bk === 'cut') { drawCutDeath(m, x, y); return; }
   if (m.bk === 'rig' || m.bk === 'nerk') { drawHorseDeath(m, x, y); return; }
   if (m.bk === 'stat') { drawStatDeath(m, x, y); return; }
+  if (m.bk === 'zom') { drawZomDeath(m, x, y); return; }
   if (m.bk === 'eye') { drawEyeMiniDeath(m, x, y); return; }   // 쓰러지고 핏빛 조각으로 흩어진다
   const f = Math.min(10, Math.floor(m.t * 9)), fade = m.t > 1.3 ? Math.max(0, 1 - (m.t - 1.3) / 0.6) : 1;
   ctx.fillStyle = `rgba(0,0,0,${0.35 * fade})`; ctx.beginPath(); ctx.ellipse(x, y - 1, 36, 7, 0, 0, 6.283); ctx.fill();
@@ -2967,7 +2973,7 @@ function drawToxTop(wx, wy) {   // 날아가는 살점 · 폭발 · 독 안개 (
    함포(kind 'adc')는 보스와 따로 움직이는 고정 포탑: 짧은 주기로 내 자리(발악 함포는 내 주변 무작위)를 노려 포탄을 쏜다 → 떨어질 자리에 원 예고 → 원형 폭발.
    정해진 발수를 다 쏘거나 시간이 지나면 스스로 부서진다 (공격해서 먼저 부술 수도 있다)
    규칙 9: 포탄은 쏘는 순간의 자리를 노리고 1초 넘게 날아간다 · 함포 최대 8문 · 함포가 5문 이상이거나 끌려가는 중·포효 중에는 난이도 추가 패턴을 멈춘다 (tools/tests/adm840.py)
-   그림: 도트 시트가 아직 없어 코드로 그린 임시 모습(drawAdmBody · drawAdmCannon) — 시트가 오면 아틀라스로 바꾼다 */
+   그림: 시트 아틀라스(v8.41 ADMF) — 아틀라스가 없으면 코드로 그린 옛 모습(drawAdmBody · drawAdmCannon) */
 const ADM = { hp: 1.15, dm: 1.05, sp: 52, r: 64,   // v8.40 밸런스: 봇 측정(지하 11층) 첫 값이 이독버섯 마왕보다 3배 빨리 죽어서 피해·빈도를 낮춤
   slashR: 170, slashHalf: 0.9, slashWind: 0.55, slashPull: 1.0, slashCd: 3.2, slashDm: 15,
   anCd: 9.5, anSp: 1250, anRange: 640, anR: 30, anAim: 0.85, anLock: 0.3, anDm: 18, pullSp: 1500, stun: 0.5,
@@ -3704,10 +3710,12 @@ function bossDefeated() {
   if (arena) arena.cleared = true;
   addRing(e.x, e.y - 40, 20, 600, 1.0, '255,200,90', 16); addRing(e.x, e.y - 40, 10, 360, 0.7, '255,80,50', 12);
   burst(e.x, e.y - 50, 80, ['#ff3a2a', '#ffb05a', '#ffffff', '#3a2a2a'], 520, 1.2); shake = 24; sfx('evolve');
-  const hbk = chal ? null : bhKey(e), hg = rollHeartDrop(hbk); if (hg) { items.push({ type: 'bheart', g: hg, b: hbk, x: e.x, y: e.y + 20, t: 0 }); if (hg === 'legend') playUpgradeEffect('legend', '✦ 레전더리 심장 출현! ✦'); }   // v8.01 보스 심장 20% (1% 레전더리)
+  const hbk = chal || rush ? null : bhKey(e), hg = rollHeartDrop(hbk); if (hg) { items.push({ type: 'bheart', g: hg, b: hbk, x: e.x, y: e.y + 20, t: 0 }); if (hg === 'legend') playUpgradeEffect('legend', '✦ 레전더리 심장 출현! ✦'); }   // v8.01 보스 심장 20% (1% 레전더리)
   if (chal) { chBossWin(e); return; }   // v6.20: 챌린지는 계속된다
+  if (rush) { rushWin(e); return; }   // v8.50 보스 러시: 다음 마왕으로
   banner = { txt: '마왕을 쓰러뜨렸다!', t: 6 };
   const refund = P.fee || 0; P.earned = calcShards() + Math.round(150 * tierMul()) + refund; SAVE.shards += P.earned;   // 클리어 보너스 +150 (단계 배율) + 참가비 반환
+  P.rushOpen = false; if (P.tier >= MAX_TIER && !SAVE.rush.open) { SAVE.rush.open = true; P.rushOpen = true; }   // v8.50: 지하 20층까지 클리어 → 보스 러시
   P.unlocked = 0; if (P.tier === SAVE.diff.max && SAVE.diff.max < MAX_TIER) { SAVE.diff.max = P.tier + 1; P.unlocked = SAVE.diff.max; }
   P.gunOpen = false; if (P.tier >= 5 && !SAVE.chars.gun) { SAVE.chars.gun = true; P.gunOpen = true; }   // v6.40: 악마 총잡이 해금
   P.chOpen = false; if (P.tier >= 5) { const was = chOpen(); SAVE.ch.open = true; P.chOpen = !was; }   // v6.20: 5단계 클리어 → 챌린지 모드
@@ -3860,6 +3868,7 @@ function drawEbul(wx, wy) {
     const x = wx(b.x), y = wy(b.y) - 18; if (x < -40 || x > W + 40 || y < -40 || y > H + 40) continue;
     const sz = b.r * 4.2, fade = Math.min(1, (b.life - b.t) * 3);
     if (b.k === 'shk' && IMG.shk) { shkSpr('fx', 0, x, y, 0.42, false, fade, IMG.shk, true); continue; }   // v7.20 거대 버섯마귀: 포자탄
+    if (b.k === 'zw' && IMG.zom) { zSpr('fx', [5, 7, 8, 6][(b.zi | 0) % 4], x, y + 22 + Math.sin(wallT * 5 + (b.zi | 0)) * 4, false, false, fade, 0.78); continue; }   // v8.50 해저좀비: 익사자의 영혼
     if (b.k === 'abeye' && IMG.ab) { abSpr('eye', 0, x, y, 1.25, fade); continue; }   // 촉수마왕: 추종하는 눈
     if (b.k === 'an') {   // v6.30 타락천사: 타락한 빛의 창
       ctx.save(); ctx.translate(x, y); ctx.rotate(Math.atan2(b.vy, b.vx)); ctx.globalCompositeOperation = 'lighter'; ctx.globalAlpha = fade;
@@ -4188,7 +4197,7 @@ function heartBonus() {   // v8.01: 장착한 보스 심장 합계 (%)
 }
 function reset(char) {
   buildSpecies(); try { buildMushSpecies(); buildSeaSpecies(); } catch (_) {}
-  chal = null;   // v6.62: 경험치통 계산이 이전 판의 챌린지 상태를 보지 않게
+  chal = null; rush = null;   // v6.62: 경험치통 계산이 이전 판의 챌린지 상태를 보지 않게
   P = newPlayer(char || curChar);
   DMETER = {}; DBOSS = {}; bfx = []; enemies = []; orbs = []; shards = []; fx = []; nums = []; arcs = []; zones = []; rings = []; beam = null; meteorQ = null; cerbQ = null; rainQ = null; bigQ = null; darkQ = null; dashQ = null; evo = null; airs = []; diveQ = null; breathQ = null; rushQ = null; bombQ = null; holyQ = null; afx = []; bombT = []; holyPtr = null; cfx = []; ebul = []; allies = []; items = []; globs = []; sprFx = []; whipQ = null; ambT = 1.5; itemT = 9; blades = []; lights = []; waveT = 80 + rand() * 20;
   eleQ = null; tentQ = null; octoFx = [];
@@ -4346,7 +4355,7 @@ function hurtEnemy(e, dmg, kx, ky, kn, quiet) {
   if (e.hp <= 0) {
     P.kills++; if (P.up.gBounty) gunBounty();
     if (SAVE.ch.tr.rat && P.kills % 100 === 0) { P.max += 1; P.hp = Math.min(P.max, P.hp + 1); floatNum(P.x, P.y - 100, '쥐 이빨 목걸이  최대 체력 +1', '#ffd0a0'); }   // 보물
-    dexKill(e.kind === 'boss' ? dexBoss(e) : e.kind === 'mini' ? (e.bk === 'rig' ? 'rig' : e.bk === 'nerk' ? 'nerk' : e.bk === 'eye' ? 'mini2' : e.bk === 'cut' ? 'cut' : e.bk === 'stat' ? 'stat' : e.sk ? 'skw' : 'mini') : e.kind === 'abm' ? 'abm' : e.kind === 'toxm' ? 'toxm' : e.kind === 'adc' ? 'adc' : e.kind === 'bug' ? 'bug' : e.kind === 'uniq' ? 'uq:' + e.uk : e.kind === 'mimic' ? 'mimic' : (e.kind === 'skh' || e.kind === 'skm') ? 'skx' : 'm' + e.spec.idx);
+    dexKill(e.kind === 'boss' ? dexBoss(e) : e.kind === 'mini' ? (e.bk === 'rig' ? 'rig' : e.bk === 'nerk' ? 'nerk' : e.bk === 'eye' ? 'mini2' : e.bk === 'cut' ? 'cut' : e.bk === 'stat' ? 'stat' : e.bk === 'zom' ? 'zom' : e.sk ? 'skw' : 'mini') : e.kind === 'abm' ? 'abm' : e.kind === 'toxm' ? 'toxm' : e.kind === 'adc' ? 'adc' : e.kind === 'bug' ? 'bug' : e.kind === 'uniq' ? 'uq:' + e.uk : e.kind === 'mimic' ? 'mimic' : (e.kind === 'skh' || e.kind === 'skm') ? 'skx' : 'm' + e.spec.idx);
     if (e.kind === 'boss') { markDex(dexBoss(e), 1); if (e.bk === 'fw') fwBossDefeated(e); else bossDefeated(); return; }
     if (e.kind === 'skh' || e.kind === 'skm') { skMinorDead(e); return; }
     fangGain(e);
@@ -4464,7 +4473,7 @@ function die() {
   }
   sfx('die');
   if (chal) chOnDeath();   // v6.20: 버틴 시간으로 보물
-  P.earned = calcShards(); SAVE.shards += P.earned; saveSave();
+  P.earned = calcShards() + (rush ? rush.shards : 0); SAVE.shards += P.earned; saveSave();
   state = 'dead'; P.anim = 'death'; P.animT = 0; deadT = 0; P.atkTimer = -1;
   if (P.char === 'snail' && FD().src) sprFx.push({ k: 'res', x: P.x, y: P.y, w: 170, t: 0, life: 1.4 });
   burst(P.x, P.y - 24, 30, ['#c8283a', '#7a1020', '#ff6a1c', '#ffc247'], 260, 0.9);
@@ -4894,7 +4903,7 @@ function levelUp() {
   sfx('level');
   P.exp -= P.need; P.lvl++; P.need = needFor(P.lvl); goalAdd('level', P.lvl); milestone();
   P.hp = Math.min(P.max, P.hp + 10);
-  if (P.lvl >= 25 && !castle && !chal) raiseCastle();
+  if (P.lvl >= 25 && !castle && !chal && !rush) raiseCastle();
   if (P.char === 'wolf') {
     if (P.lvl >= 10 && !P.route) { openRoute(); return; }
     if (P.lvl >= 20 && P.form === 1) { if (P.route === 'crimson') openFinal(); else startEvolve(2); return; }
@@ -7049,7 +7058,7 @@ function update(dt) {
     if (deadT > 1.7 && !overShown) showOver();
     return;
   }
-  gt += dt;
+  gt += dt; if (rush) rushTick(dt);
   if (P.lvl >= 15 && !P.miniDone && !arena && !trans && !chal) spawnMiniPick();   // v7.13: 미니 보스 선택   // Lv.15: 미니 보스 등장 (한 판에 한 번)
 
   // --- 이동 (WASD / 방향키, 8방향) ---
@@ -8202,7 +8211,7 @@ function drawHud() {
   // 시간 · 처치
   ctx.textAlign = 'right'; ctx.font = 'bold 16px "Malgun Gothic", monospace';
   const m = Math.floor(gt / 60), s = Math.floor(gt % 60);
-  const t1 = `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}` + (chal ? '  ·  ∞ 챌린지' : '  ·  ' + floorName(P.tier));
+  const t1 = `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}` + (chal ? '  ·  ∞ 챌린지' : rush ? `  ·  ⚔ 보스 러시 ${Math.min(BR_N, rush.i + 1)}/${BR_N} · ${floorName(P.tier)}` : '  ·  ' + floorName(P.tier));
   ctx.strokeText(t1, W - 12, 32); ctx.fillStyle = '#f3d9c6'; ctx.fillText(t1, W - 12, 32);
   {
     let sy2 = 76 + (Object.keys(P.rel).length ? 38 : 0); ctx.textAlign = 'left';
@@ -8251,7 +8260,7 @@ function drawHud() {
   if (mini && mini.hp > 0 && !arena) {   // 미니 보스 체력바 · 화면 밖이면 방향 표시
     const bw = Math.min(380, W - 80), bx = W / 2 - bw / 2, by = 44;
     ctx.fillStyle = 'rgba(10,4,16,0.75)'; ctx.fillRect(bx - 4, by - 20, bw + 8, 36);
-    ctx.fillStyle = '#ffd36a'; ctx.font = 'bold 13px "Malgun Gothic", sans-serif'; ctx.textAlign = 'center'; ctx.fillText((mini.bk === 'eye' ? '마안 감시자' : mini.bk === 'cut' ? '절단안의 짐승' : mini.bk === 'rig' ? '혈혼마 리고르' : mini.bk === 'nerk' ? '네르칸' : mini.bk === 'stat' ? '부패한 성상' : mini.sk ? '해골 검사 · 해골 창병' : '원숭이 전사') + (mini.rage ? '  ·  분노' : ''), W / 2, by - 6);
+    ctx.fillStyle = '#ffd36a'; ctx.font = 'bold 13px "Malgun Gothic", sans-serif'; ctx.textAlign = 'center'; ctx.fillText((mini.bk === 'eye' ? '마안 감시자' : mini.bk === 'cut' ? '절단안의 짐승' : mini.bk === 'rig' ? '혈혼마 리고르' : mini.bk === 'nerk' ? '네르칸' : mini.bk === 'stat' ? '부패한 성상' : mini.bk === 'zom' ? '해저좀비' : mini.sk ? '해골 검사 · 해골 창병' : '원숭이 전사') + (mini.rage ? '  ·  분노' : ''), W / 2, by - 6);
     ctx.fillStyle = '#2a0a0e'; ctx.fillRect(bx, by, bw, 10); ctx.fillStyle = mini.rage ? '#ff3a2a' : '#c8283a'; ctx.fillRect(bx, by, bw * Math.max(0, mini.sk ? (Math.max(0, mini.hp) + Math.max(0, mini.pair ? mini.pair.hp : 0)) / (mini.max * 2) : mini.hp / mini.max), 10);
     const sx = mini.x - cam.x + W / 2, sy = mini.y - cam.y + H / 2;
     if (sx < 24 || sx > W - 24 || sy < 24 || sy > H - 24) {
@@ -8713,7 +8722,7 @@ function spawnHorse(kind) {
 const H_ = () => H;   // 화면 높이 (아래 HORSE 상수와 이름이 겹쳐 따로 부른다)
 function spawnMiniPick() {   // Lv.15 미니 보스: 말 2종은 각 15% · 나머지는 원래대로 (어인섬 = 절단안의 짐승)
   const r = rand();
-  if (IMG.horse && r < 0.15) spawnHorse('rig'); else if (IMG.horse && r < 0.30) spawnHorse('nerk'); else if (isSea()) spawnCut(); else spawnMini();
+  if (IMG.horse && r < 0.15) spawnHorse('rig'); else if (IMG.horse && r < 0.30) spawnHorse('nerk'); else if (P.bossK === 'adm' && IMG.zom) spawnZom(); else if (isSea()) spawnCut(); else spawnMini();
 }
 function hAtk(e, k) {
   const m = e.rage ? 0.85 : 1, a = Math.atan2(P.y - e.y, P.x - e.x);
@@ -8950,6 +8959,167 @@ function drawStat(e, x, y) {
   ctx.fillStyle = '#1a0608'; ctx.fillRect(x - w / 2 - 2, by - 2, w + 4, 9); ctx.fillStyle = e.rage ? '#ff3a2a' : '#c8283a'; ctx.fillRect(x - w / 2, by, w * Math.max(0, e.hp / e.max), 5);
 }
 function drawStatDeath(m, x, y) { const f = Math.min(4, Math.floor(m.t * 5)), fade = m.t > 1.2 ? Math.max(0, 1 - (m.t - 1.2) / 0.6) : 1; sSpr('death', f, x, y, m.face, false, fade); }
+
+/* ============================================================
+ * v8.50 해저좀비 — 썩어버린 해군 제독 판의 미니 보스 (원숭이 전사 대신 나온다 · 다른 미니 보스 패턴을 가져다 쓰지 않는다)
+ *  패턴 3가지: 물결 후려치기(가까울 때 부채꼴) · 해일(줄지어 터지는 물기둥) · 익사자의 영혼(느리게 따라오는 유령 구슬). 체력 40% 분노.
+ *  도트: 시트 칸 자르기·배경 제거만 (tools/atlas/zom_build.py). 프레임 = [x,y,w,h,기준x(발 가운데),기준y(바닥)] · 시트는 오른쪽을 본다
+ *  fx 칸: 0·1·3 물보라 · 2 물결 호 · 4 초록 웅덩이 · 5~9 유령 · 10 물결 쌍 · 11 작은 물보라 · 12 잔물결
+ * ============================================================ */
+const ZOMF = {"idle":[[0,0,173,161,85,161],[175,0,175,155,86,155],[352,0,179,149,87,149],[533,0,167,148,81,148]],"walk":[[702,0,174,172,83,172],[878,0,169,169,76,169],[1049,0,149,164,77,164],[1200,0,143,166,70,166],[0,174,186,162,87,162]],"atk":[[188,174,162,191,59,191],[352,174,231,162,113,162],[585,174,171,159,83,159],[758,174,200,206,88,206],[960,174,160,207,93,207]],"hit":[[1122,174,169,159,78,159],[0,383,190,156,83,156],[192,383,204,156,89,156]],"death":[[398,383,201,163,90,163],[601,383,219,132,125,132],[822,383,248,94,129,94],[1072,383,225,69,110,69],[0,548,230,87,111,87],[232,548,262,170,114,170]],"fx":[[496,548,156,79,78,79],[654,548,101,80,50,80],[757,548,122,82,61,82],[881,548,86,94,43,94],[969,548,140,95,70,95],[1111,548,45,97,22,97],[1158,548,24,68,12,68],[1184,548,43,97,21,97],[1229,548,48,87,24,87],[1279,548,24,46,12,46],[0,720,150,79,75,79],[152,720,73,63,36,63],[227,720,128,61,64,61]],"port":[[357,720,500,676,250,676]]};
+const ZOM = { k: 0.95, sp: 86, hp: 1.15, r: 46, sw: 250, sd: 30, wn: 5, wr: 78, wd: 26, wisp: 3, wl: 20 };   // sw = 후려치기 사거리 · wn = 해일 물기둥 수(분노 +2, 두 갈래) · wisp = 유령 수(분노 +2)
+function spawnZom() {
+  P.miniDone = true;
+  const a = rand() * 6.283, d = Math.hypot(W, H_()) / 2 + 90, hp = MINI_HP * (1 + 0.3 * P.tier) * ZOM.hp;
+  mini = { kind: 'mini', bk: 'zom', x: P.x + Math.cos(a) * d, y: P.y + Math.sin(a) * d, kx: 0, ky: 0, sp: 0, spec: null, sc: 1, r: ZOM.r, hp, max: hp, dmg: 0, exp: 0, elite: false, flash: 0, t: 0, orbCd: 0, slowT: 0,
+    kres: 0.3, face: -1, st: 'chase', cd: 1.6, chaseT: 0, at: null, tele: [], jh: 0, invul: false, rage: false, n: 0, moveT: 0, zf: [], last: '' };
+  enemies.push(mini);
+  banner = { txt: '해저좀비가 나타났다!  물결 후려치기 · 해일 · 익사자의 영혼\n붉은 경고가 고정되면 피하세요 · 파란 영혼은 느리게 따라온다', t: 4.5 }; sfx('skill'); markDex('zom', 1);
+}
+function zEnd(e) { e.st = 'chase'; e.at = null; e.cd = (0.9 + rand() * 0.6) * (e.rage ? 0.8 : 1); e.chaseT = 0; }
+function zFx(e, k, x, y, life, fi) { e.zf.push({ k, x, y, t: 0, life, fi }); }
+function zAtk(e, k) {
+  const m = e.rage ? 0.82 : 1, a = Math.atan2(P.y - e.y, P.x - e.x);
+  if (Math.abs(P.x - e.x) > 6) e.face = P.x > e.x ? 1 : -1;
+  e.st = 'atk'; e.n++; e.last = k;
+  if (k === 'zsweep') {   // 물결 후려치기: 앞쪽 넓은 부채꼴 (뒤로 한 걸음 빠지거나 옆으로 돌면 피한다)
+    const wind = 0.62 * m; e.at = { k, t: 0, wind, tot: wind + 0.6 };
+    miniTele(e, { k: 'fan', x: e.x, y: e.y, ang: a, len: ZOM.sw, half: 0.95, dur: wind, aim: wind * 0.55, rgb: '255,60,50', fire: t => {
+      const c = Math.cos(t.ang), s = Math.sin(t.ang); e.x += c * 28; e.y += s * 28;
+      sfx('hit'); shake = Math.max(shake, 6); zFx(e, 'spl', t.x + c * 120, t.y + s * 120 + 12, 0.55, 1); addRing(t.x + c * 110, t.y + s * 110, 8, 120, 0.3, '120,210,255', 7); burst(t.x + c * 130, t.y + s * 130 - 16, 16, ['#bfefff', '#4ac8ff', '#2a6a8a'], 280, 0.5);
+      if (inFanT(t, 8)) miniHit(ZOM.sd); } });
+  } else if (k === 'zwave') {   // 해일: 앞쪽으로 물기둥이 줄지어 터진다 (분노: 두 갈래) — 줄 옆으로 비킨다
+    const wind = 0.75 * m, gap = 0.15 * m, n = ZOM.wn + (e.rage ? 2 : 0);
+    e.at = { k, t: 0, wind, tot: gap * (n - 1) + wind + 0.7 };
+    for (const o of (e.rage ? [-0.38, 0.38] : [0])) for (let i = 0; i < n; i++) {
+      const dd = 120 + i * 118, q = a + o, tx = e.x + Math.cos(q) * dd, ty = e.y + Math.sin(q) * dd;
+      miniTele(e, { k: 'circle', x: tx, y: ty, r: ZOM.wr, t: -gap * i, dur: wind, fire: t => {
+        sfx('hit'); shake = Math.max(shake, 4); zFx(e, 'spl', t.x, t.y + 10, 0.5, (i + (o > 0 ? 1 : 0)) % 2 ? 3 : 0); addRing(t.x, t.y, 8, t.r + 10, 0.3, '120,210,255', 7); burst(t.x, t.y - 18, 12, ['#bfefff', '#4ac8ff'], 240, 0.5);
+        if (Math.hypot(P.x - t.x, P.y - t.y) < t.r + PR()) miniHit(ZOM.wd); } });
+    }
+  } else {   // 익사자의 영혼: 웅크려 유령 구슬을 불러낸다 — 느리게 따라오다 사라진다 (계속 움직이면 피한다)
+    const wind = 0.85 * m; e.at = { k: 'zwisp', t: 0, wind, tot: wind + 0.6 };
+    miniTele(e, { k: 'circle', x: e.x, y: e.y, r: 95, dur: wind, stick: true, rgb: '90,210,255', fire: t => {
+      sfx('skill'); zFx(e, 'spl', e.x, e.y + 8, 0.6, 4); addRing(e.x, e.y - 20, 10, 150, 0.5, '90,210,255', 8);
+      const n = ZOM.wisp + (e.rage ? 2 : 0), b0 = Math.atan2(P.y - e.y, P.x - e.x);
+      for (let i = 0; i < n; i++) { const q = b0 + (i - (n - 1) / 2) * 0.7; eyeBul(e.x + Math.cos(q) * 36, e.y - 24, q, 95, { mini: true, dmg: ZOM.wl, r: 13, k: 'zw', hom: 3.6, turn: e.rage ? 1.35 : 1.1, life: 5.2, zi: i }); } } });
+  }
+}
+function updateZom(e, dt) {
+  e.t += dt; e.flash = Math.max(0, e.flash - dt);
+  for (const f of e.zf) f.t += dt; e.zf = e.zf.filter(f => f.t < f.life);
+  for (const t of e.tele) {
+    t.t += dt;
+    if (t.stick) { t.x = e.x; t.y = e.y; }
+    if (t.follow && t.t < t.follow) { t.x = P.x; t.y = P.y; }
+    if (t.aim && t.t < t.aim) { t.x = e.x; t.y = e.y; t.ang = Math.atan2(P.y - e.y, P.x - e.x); }
+    if (!t.done && t.t >= t.dur) { t.done = true; if (t.fire) t.fire(t); }
+  }
+  e.tele = e.tele.filter(t => !(t.done && t.t >= t.dur + 0.15));
+  const dx = P.x - e.x, dy = P.y - e.y, d = Math.hypot(dx, dy) || 1;
+  if (!e.rage && e.hp <= e.max * 0.4 && e.st === 'chase') { e.rage = true; e.st = 'stag'; e.stT = 0.5; floatNum(e.x, e.y - 150, '분노!', '#7fe0ff'); addRing(e.x, e.y - 30, 14, 240, 0.6, '90,210,255', 10); zFx(e, 'spl', e.x, e.y + 8, 0.6, 4); sfx('skill'); shake = Math.max(shake, 8); }
+  if (e.st === 'stag') { e.stT -= dt; if (e.stT <= 0) zEnd(e); return; }
+  if (e.st === 'chase') {
+    e.cd -= dt; e.chaseT += dt;
+    if (Math.abs(dx) > 6) e.face = dx > 0 ? 1 : -1;
+    let sp = ZOM.sp * (e.rage ? 1.2 : 1); if (e.slowT > 0) { e.slowT -= dt; sp *= 0.6; }
+    if (d > 1100) { const a = Math.atan2(dy, dx) + Math.PI; e.x = P.x + Math.cos(a) * 640; e.y = P.y + Math.sin(a) * 640; }
+    e.mv = d > 120; if (e.mv) { e.x += dx / d * sp * dt; e.y += dy / d * sp * dt; e.moveT += dt; }
+    e.x += e.kx * dt; e.y += e.ky * dt; const kk = Math.exp(-8 * dt); e.kx *= kk; e.ky *= kk;
+    if (e.cd <= 0) {
+      let k;
+      if (d < 250) k = rand() < 0.6 ? 'zsweep' : rand() < 0.5 ? 'zwisp' : 'zwave';
+      else if (d < 620) k = rand() < 0.5 ? 'zwave' : 'zwisp';
+      else if (e.chaseT > 3.2) k = 'zwisp';
+      if (k) { if (k === e.last && k !== 'zsweep') k = k === 'zwave' ? 'zwisp' : 'zwave'; zAtk(e, k); }
+    }
+    return;
+  }
+  const a = e.at; if (!a) { zEnd(e); return; } a.t += dt;
+  if (a.t >= a.tot) zEnd(e);
+}
+function zFrame(e) {   // 지금 그릴 [줄, 칸]
+  if (e.st === 'atk' && e.at) {
+    const a = e.at;
+    if (a.k === 'zsweep') return a.t < a.wind ? ['atk', 0] : a.t < a.wind + 0.14 ? ['atk', 1] : ['atk', 2];
+    if (a.k === 'zwave') return a.t < 0.4 ? ['atk', 0] : a.t < a.wind ? ['atk', 2] : a.t < a.tot - 0.3 ? ['atk', 3] : ['atk', 4];
+    return ['hit', Math.min(2, Math.floor(a.t / a.wind * 3))];
+  }
+  return e.mv ? ['walk', Math.floor(e.moveT * (e.rage ? 10 : 8)) % 5] : ['idle', Math.floor(e.t * 5) % 4];
+}
+function zSpr(row, i, x, y, flip, white, alpha, kk) {
+  const L = ZOMF[row], f = L && L[i]; const src = white ? IMG.zomW : IMG.zom; if (!f || !src) return;
+  const k = ZOM.k * (kk || 1); ctx.save(); ctx.imageSmoothingEnabled = true; ctx.imageSmoothingQuality = 'high'; if (alpha !== undefined) ctx.globalAlpha = Math.max(0, Math.min(1, alpha));
+  ctx.translate(Math.round(x), Math.round(y)); if (flip) ctx.scale(-1, 1);
+  ctx.drawImage(src, f[0], f[1], f[2], f[3], -f[4] * k, -f[5] * k, f[2] * k, f[3] * k); ctx.restore();
+}
+function drawZom(e, x, y) {
+  if (!IMG.zom) return;
+  for (const f of e.zf) { const p = f.t / f.life; zSpr('fx', f.fi, x + (f.x - e.x), y + (f.y - e.y), false, false, 1 - Math.max(0, p - 0.55) / 0.45, f.fi === 4 ? 1.25 : 1.0); }
+  ctx.fillStyle = 'rgba(0,0,0,0.4)'; ctx.beginPath(); ctx.ellipse(x, y - 1, 54, 10, 0, 0, 6.283); ctx.fill();
+  if (e.rage) { ctx.strokeStyle = `rgba(90, 210, 255, ${0.5 + Math.sin(wallT * 7) * 0.3})`; ctx.lineWidth = 3; ctx.beginPath(); ctx.ellipse(x, y - 1, 60, 11, 0, 0, 6.283); ctx.stroke(); }
+  const [an, i] = e.st === 'stag' ? ['hit', Math.min(2, Math.floor((0.5 - e.stT) * 6))] : zFrame(e), fl = e.face < 0;
+  zSpr(an, i, x, y, fl, false, 1);
+  if (e.flash > 0) zSpr(an, i, x, y, fl, true, 0.65);
+  const w = 90, by = y - 172 * ZOM.k - 8;
+  ctx.fillStyle = '#1a0608'; ctx.fillRect(x - w / 2 - 2, by - 2, w + 4, 9); ctx.fillStyle = e.rage ? '#3ac8ff' : '#c8283a'; ctx.fillRect(x - w / 2, by, w * Math.max(0, e.hp / e.max), 5);
+}
+function drawZomDeath(m, x, y) {
+  if (!IMG.zom) return;
+  const f = Math.min(5, Math.floor(m.t * 3.4)), fade = m.t > 1.5 ? Math.max(0, 1 - (m.t - 1.5) / 0.4) : 1;
+  zSpr('death', f, x, y, m.face < 0, false, fade);
+}
+
+/* ============================================================
+ * v8.50 ⚔ 보스 러시 — 지하 20층(모든 층)을 클리어하면 열리는 마왕 연속전
+ *  시작 화면의 선택한 층 기준 · Lv.15에서 시작(카드·진화는 평소처럼 고른다) · 마왕 7종을 등장 순서대로 연달아 · 마왕을 쓰러뜨릴 때마다 체력 회복 + 카드 2장
+ *  출구는 항상 봉인(성 없이 곧장 보스방) · 심장 드랍 없음 · 보상: 마왕마다 50 + 완주 300 (층 배율) · 숨은 보스·챌린지 마왕은 나오지 않는다
+ * ============================================================ */
+const BR_ORDER = ['monkey', 'eye', 'skel', 'angel', 'shk', 'tox', 'adm'], BR_N = BR_ORDER.length;
+const BR_NAME = { monkey: '원숭이 마왕', eye: '심연의 마안군주', skel: '스켈레톤 마왕', angel: '타락천사', shk: '거대 버섯마귀', tox: '이독버섯 마왕', adm: '썩어버린 해군 제독' };
+const BR = { lv: 15, per: 50, clear: 300, up: 2, rest: 3.2 };   // lv = 시작 레벨 · up = 마왕 처치마다 레벨업 횟수 · rest = 다음 마왕 입장 전 쉬는 시간(초)
+const rushOpen = () => !!(SAVE.rush.open || (SAVE.fw.snap && (SAVE.fw.snap.tier | 0) >= MAX_TIER));
+const rushLine = () => rushOpen() ? `⚔ 보스 러시 — 선택한 층에서 마왕 ${BR_N}종 연속전 · Lv.${BR.lv} 시작 · 처치마다 체력 회복 + 카드 ${BR.up}장  ·  최고 ${SAVE.rush.best | 0}/${BR_N} · 완주 ${SAVE.rush.clears | 0}회<br>` : '';
+function rushLevels(n) {   // n번 레벨업할 경험치를 한꺼번에 채우고 카드 선택을 이어서 띄운다 (진화·루트 선택도 평소처럼 끼어든다)
+  let sum = 0; for (let i = 0; i < n; i++) sum += needFor(P.lvl + i);
+  P.exp += sum; if (state === 'play' && P.exp >= P.need) levelUp();
+}
+function startRush(char) {
+  if (char) curChar = char;
+  if (!SAVE.chars[curChar]) curChar = 'wolf';
+  audioInit(); reset(curChar); markDex(curChar + ':0');
+  const t = Math.min(SAVE.diff.sel | 0, SAVE.diff.max | 0);
+  P.tier = t; P.bossK = BR_ORDER[0]; if (floorSet(t) === 'sea') setTimeout(warmSea, 0);
+  P.fset = floorSet(t) === 'gard' && IMG.gfloor && IMG.gprops && MSPECIES.length ? 'gard' : floorSet(t) === 'sea' && IMG.sfloor && IMG.sprops && SSPECIES.length ? 'sea' : floorSet(t) !== 'hell' && IMG.mfloor && IMG.mprops && MSPECIES.length ? 'mush' : 'hell';
+  P.fee = 0; P.miniDone = true; P.poisonSpawned = true; P.exitLeft = 0; P.goal = null; P.spd0 = P.spd; P.hp = P.max;
+  rush = { i: 0, ph: 'prep', wait: 0.6, kills: 0, shards: 0 };
+  setTimeout(() => { try { if (P.fset === 'mush' && IMG.mmap) mmapS(); else if (P.fset === 'hell') arenaS(); } catch (_) {} }, 400);
+  show('startBox', false); show('overBox', false); show('levelBox', false); show('pauseBox', false);
+  banner = { txt: `⚔ 보스 러시!  ${floorName(t)} · 먼저 Lv.${BR.lv}까지 카드를 골라 준비하세요\n마왕 ${BR_N}종을 연달아 쓰러뜨리면 완주`, t: 6, c: '#ffb05a' };
+  state = 'play'; rushLevels(BR.lv - 1);
+}
+function rushEnter() {
+  P.bossK = BR_ORDER[rush.i]; rush.ph = 'fight';
+  skp = []; skSp = []; anOrbs = []; anFx = []; skDeath = null; anDeath = null; shkSp = []; shkFx = []; shkDeath = null; toxFl = []; toxFx = []; toxFog = null; DEBUFF.clearAll(); admFx = []; admBalls = []; admAnc = null; admPull = null; admDeath = null;
+  enterArena();
+}
+function rushTick(dt) {   // 준비(카드 선택 끝) → 입장 · 쉬는 시간 → 다음 마왕
+  if (rush.ph === 'fight' || state !== 'play' || trans || P.exp >= P.need) return;
+  if ((rush.wait -= dt) <= 0) rushEnter();
+}
+function rushWin(e) {
+  const last = rush.i >= BR_N - 1; rush.kills = rush.i + 1; rush.shards += Math.round(BR.per * tierMul());
+  SAVE.rush.best = Math.max(SAVE.rush.best | 0, rush.kills);
+  P.hp = P.max; P.healBank = P.max * 0.12;
+  if (last) {
+    rush.shards += Math.round(BR.clear * tierMul()); SAVE.rush.clears = (SAVE.rush.clears | 0) + 1;
+    P.earned = calcShards() + rush.shards; SAVE.shards += P.earned; saveSave();
+    banner = { txt: `⚔ 보스 러시 완주!  마왕 ${BR_N}종을 모두 쓰러뜨렸다`, t: 6, c: '#ffe28a' }; state = 'win'; winT = 0; return;
+  }
+  saveSave(); rush.i++; rush.ph = 'rest'; rush.wait = BR.rest;
+  banner = { txt: `${BR_NAME[BR_ORDER[rush.i - 1]]} 처치!  (${rush.kills}/${BR_N})  체력 회복 · 카드 ${BR.up}장\n다음: ${BR_NAME[BR_ORDER[rush.i]]}`, t: 5, c: '#ffe28a' };
+  rushLevels(BR.up);
+}
 
 /* ---------- 마왕: 심연의 촉수마왕 (챌린지 맵에서 그대로 싸운다 · 공중에 떠 있다) ---------- */
 const ABF = {"body":[[0,0,231,207,115.5,103]],"eye":[[233,0,55,58,27.5,29]],"eye2":[[290,0,60,57,30.0,28]],"jelly":[[352,0,56,38,28.0,38]],"imp":[[410,0,33,46,16.5,46]],"spiky":[[445,0,36,44,18.0,44]],"tent":[[483,0,43,56,21.5,56],[528,0,36,51,18.0,51],[566,0,37,51,18.5,51]]};
@@ -9191,10 +9361,12 @@ const joy = { on: false, id: null, ox: 0, oy: 0, x: 0, y: 0 };
 const isOpen = id => $(id).classList.contains('show');
 function showOver(win) {
   overShown = true;
-  $('overTitle').textContent = win ? (P.fwRun ? '타락한 혈랑왕을 쓰러뜨렸다!' : '마왕을 쓰러뜨렸다!') : '쓰러졌습니다';
+  $('overTitle').textContent = rush ? (win ? '⚔ 보스 러시 완주!' : '쓰러졌습니다') : win ? (P.fwRun ? '타락한 혈랑왕을 쓰러뜨렸다!' : '마왕을 쓰러뜨렸다!') : '쓰러졌습니다';
   const m = Math.floor(gt / 60), s = Math.floor(gt % 60);
   $('overStats').innerHTML = `생존 시간 ${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')} · 레벨 ${P.lvl} · 처치 ${P.kills}`;
   $('overShards').textContent = `영혼 조각 +${P.earned}  (보유 ${SAVE.shards})` + (P.goalDone ? `  ·  런 목표 ${P.goalDone}개 (+${P.goalShards})` : '') + (P.mimicShards ? `  ·  미믹 +${P.mimicShards}` : '') + (win && P.fee ? `  ·  참가비 ${P.fee} 반환 포함` : '');
+  if (rush) $('overStats').innerHTML += `<br><span style="color:#ffb05a">⚔ 보스 러시 — 처치한 마왕 ${rush.kills}/${BR_N}${rush.kills ? ' (' + BR_ORDER.slice(0, rush.kills).map(k => BR_NAME[k]).join(' · ') + ')' : ''}  ·  ${floorName(P.tier)}</span><br><span style="font-size:13px">러시 보상 +${rush.shards}${win ? '  (완주 보너스 포함)' : ''}  ·  최고 기록 ${SAVE.rush.best | 0}/${BR_N} · 완주 ${SAVE.rush.clears | 0}회</span>`;
+  if (win && P.rushOpen) $('overStats').innerHTML += `<br><span style="color:#ffb05a">🔓 ⚔ 보스 러시 모드 해금!  (시작 화면 [⚔ 보스 러시])</span>`;
   if (win && P.unlocked) $('overStats').innerHTML += `<br><span style="color:var(--gold)">🔓 ${floorName(P.unlocked)} 해금!</span>`;
   if (win && P.dropGot) $('overStats').innerHTML += `<br><span style="color:#ffe28a">✨ ${P.dropGot}</span>`;
   if (win && P.fwOpen) $('overStats').innerHTML += `<br><span style="color:#ff8a9a">☠ 새 난이도 [타락한 혈랑] 추가! (시작 화면 난이도 ▶ 끝)</span>`;
@@ -9223,6 +9395,7 @@ function pickBossK(t) {
 }
 function startGame(char) {
   if (chMode && chOpen()) { startChallenge(char); return; }   // v6.20: 챌린지 모드
+  if (rushMode && rushOpen()) { startRush(char); return; }   // v8.50: 보스 러시
   if (SAVE.diff.fw && SAVE.fw.open && SAVE.fw.snap) { startFw(); return; }   // 숨은 난이도: 곧장 타락한 혈랑왕
   if (char) curChar = char;
   if (!SAVE.chars[curChar]) curChar = 'wolf';
@@ -9274,8 +9447,9 @@ function buildCards() {
   updateDiff(); chMenu();
 }
 function chMenu() {   // v6.20: 시작 화면의 챌린지 버튼 · 룬 · 보물
+  { const ro = rushOpen(); $('rushBtn').textContent = ro ? '⚔ 보스 러시' : '⚔ 보스 러시 🔒'; $('rushBtn').style.opacity = ro ? 1 : 0.6; }
   const o = chOpen(); $('chBtn').textContent = o ? '∞ 챌린지 모드' : '∞ 챌린지 🔒'; $('chBtn').style.opacity = o ? 1 : 0.6;
-  $('chInfo').innerHTML = o ? `∞ 챌린지 — 룬: ${runeLine()}  ·  룬 조각 ${SAVE.ch.frag | 0}/${RUNE_COST}` + (SAVE.ch.best ? `  ·  최고 ${Math.floor(SAVE.ch.best / 60)}분 ${SAVE.ch.best % 60}초` : '') + `<br>보물: ${treasureLine()}` : '';
+  $('chInfo').innerHTML = rushLine() + (o ? `∞ 챌린지 — 룬: ${runeLine()}  ·  룬 조각 ${SAVE.ch.frag | 0}/${RUNE_COST}` + (SAVE.ch.best ? `  ·  최고 ${Math.floor(SAVE.ch.best / 60)}분 ${SAVE.ch.best % 60}초` : '') + `<br>보물: ${treasureLine()}` : '');
 }
 function updateDiff() {
   const m = SAVE.diff.max | 0; SAVE.diff.sel = Math.min(SAVE.diff.sel | 0, m); const t = SAVE.diff.sel, fwo = !!(SAVE.fw.open && SAVE.fw.snap);
@@ -9397,6 +9571,7 @@ function openDex() {
     add(gr, { on: d.kills.cut, name: '절단안의 짐승', sub: (d.kills.cut || 0) + '회 처치', hint: '<br>미니 보스 (∞ 챌린지)', draw: (g, w, h, l) => dexSprite(g, w, h, IMG.cm, c0[0], c0[1], c0[2], c0[3], false, l, true) });
     for (const hk of ['rig', 'nerk']) { const f0 = HRF[hk].idle[0]; add(gr, { on: d.kills[hk], name: HORSE[hk].name, sub: (d.kills[hk] || 0) + '회 처치', hint: '<br>미니 보스 (말 · 판마다 15%씩 등장)', draw: (g, w, h, l) => IMG.horse && dexSprite(g, w, h, IMG.horse, f0[0], f0[1], f0[2], f0[3], false, l, true) }); }
     { const s0 = STF.idle[2]; add(gr, { on: d.kills.stat, name: '부패한 성상', sub: (d.kills.stat || 0) + '회 처치', hint: '<br>미니 보스 (타락천사 판)', draw: (g, w, h, l) => IMG.statue && dexSprite(g, w, h, IMG.statue, s0[0], s0[1], s0[2], s0[3], false, l) }); }
+    { const zp = ZOMF.port[0]; add(gr, { on: d.kills.zom, name: '해저좀비', sub: (d.kills.zom || 0) + '회 처치', hint: '<br>미니 보스 (썩어버린 해군 제독 판)', draw: (g, w, h, l) => IMG.zom && dexSprite(g, w, h, IMG.zom, zp[0], zp[1], zp[2], zp[3], false, l, true) }); }
     add(gr, { on: d.kills.boss5, trophy: true, name: '심연의 촉수마왕', sub: (d.kills.boss5 || 0) + '회 처치', hint: '<br>보스 (∞ 챌린지)', draw: (g, w, h, l) => dexSprite(g, w, h, IMG.ab, a0[0], a0[1], a0[2], a0[3], false, l, true) }); }
   add(gr, { on: d.kills.boss, trophy: true, name: '원숭이 마왕', sub: d.kills.boss + '회 처치', hint: '<br>보스 (지하 1층부터 등장)', draw: (g, w, h, l) => dexSprite(g, w, h, IMG.boss, 88, 138, 100, 94, false, l) });
   gr = sec('유니크 마물 · 저주받은 성유물 (유니크는 한 판에 한 번씩만 등장)');
@@ -9771,7 +9946,8 @@ $('gClose').addEventListener('click', () => { show('gachaBox', false); buildCard
 $('gOne').addEventListener('click', () => gachaPull(1));
 $('gTen').addEventListener('click', () => gachaPull(10));
 $('gBanA').src = SRC.skA_wolfE; $('gBanB').src = SRC.skA_gunH; gachaBtnTxt();
-$('startBtn').addEventListener('click', () => { chMode = false; startGame(selChar); });
+$('startBtn').addEventListener('click', () => { chMode = false; rushMode = false; startGame(selChar); });
+$('rushBtn').addEventListener('click', () => { if (!rushOpen()) { $('hint').textContent = '🔒 보스 러시: 지하 20층 마왕까지 쓰러뜨려 모든 층을 클리어하면 열립니다'; return; } chMode = false; rushMode = true; startGame(selChar); });
 $('chBtn').addEventListener('click', () => { if (!chOpen()) { $('hint').textContent = '🔒 ∞ 챌린지 모드: 지하 6층 마왕을 쓰러뜨리면 열립니다'; return; } chMode = true; startGame(selChar); });
 $('retryBtn').addEventListener('click', () => startGame(curChar));
 $('menuBtn').addEventListener('click', () => { show('overBox', false); show('startBox', true); state = 'menu'; buildCards(); reset(selChar); });
@@ -9798,7 +9974,7 @@ window.addEventListener('keydown', e => {
   else if (e.code === 'Escape' && isOpen('gachaBox')) show('gachaBox', false);
   else if (e.code === 'Escape' && isOpen('heartBox')) show('heartBox', false);
   else if (isOpen('setBox') || isOpen('shopBox') || isOpen('dexBox') || isOpen('gachaBox') || isOpen('heartBox')) return;
-  else if (state === 'menu' && (e.code === 'Enter' || e.code === 'Space')) { chMode = false; startGame(selChar); }
+  else if (state === 'menu' && (e.code === 'Enter' || e.code === 'Space')) { chMode = false; rushMode = false; startGame(selChar); }
   else if (state === 'menu' && e.code === 'Digit1') selectChar('wolf');
   else if (state === 'menu' && e.code === 'Digit2') selectChar('snail');
   else if (state === 'menu' && e.code === 'Digit3') selectChar('archer');
@@ -9881,7 +10057,7 @@ window.__G = { FD, shkAdd, toxAdd, skSpawnPair, phoenixRevive, mirrorBlock, palP
   get rollQ() { return rollQ; }, ADM, admAnchorStart, admFrenzy, admBroad, admSweep, admSlash, admCannonCall, admNC, pickBossK, get admBalls() { return admBalls; }, get admAnc() { return admAnc; }, get admPull() { return admPull; }, gunRollStart, startWhip, get gunDq() { return gunDq; }, chPct, get gunFx() { return gunFx; }, GUN, GUN_AMMO, GUNA, gunLoad, gunRange,
   get anOrbs() { return anOrbs; }, get anFx() { return anFx; }, AMAP, ANB, ANX, AN, anStart, anTrans, pickBossK, floorName, arenaExit, get shkSp() { return shkSp; }, get toxFl() { return toxFl; }, get toxFog() { return toxFog; }, TOX, TOXF, DEBUFF, toxPick, toxReflux, toxCollapse, toxThrow, toxGas, get shkFx() { return shkFx; }, SHK, SHKF, shkStart, shkSummon,
   sizes() { const o = { enemies, orbs, items, shards, fx, nums, arcs, embers, zones, rings, globs, sprFx, blades, lights, ebul, afx, gunFx, cfx, bfx, healFx, allies, slots, cutSaws, airs, octoFx, smokes, skp, mfx }; const r = {}; for (const k in o) if (o[k] && o[k].length != null) r[k] = o[k].length; return r; },
-  get banner() { return banner; }, get perfLv() { return perfLv; }, get NUM_C() { return NUM_C; }, get chal() { return chal; }, chTime, chDmgT, startChallenge, chEvent, chEnterBoss, chFrag, chGoldSpawn, chShelter, inCh, CHM, spawnCut, spawnAb, abStart, RUNES, TREASURES, get cutSaws() { return cutSaws; }, setChMode(v) { chMode = v; }, get W() { return W; }, get H() { return H; }, get species() { return SPECIES; }, get sspecies() { return SSPECIES; }, spawnHorse, hAtk, spawnStat, sAtk, spawnMini, spawnMiniPick, setAngelSkin(v) { angelSkin = !!v; }, drawAnSprite, get ctx() { return ctx; }, get mini() { return mini; }, hurtEnemy, SMAP, isSea, BM, get mspecies() { return MSPECIES; }, spawnUniq, SHR, SHA, MMAP, isMush, floorSet,
+  spawnZom, zAtk, die, startRush, rushOpen, get rush() { return rush; }, BR_ORDER, BR_NAME,  get banner() { return banner; }, get perfLv() { return perfLv; }, get NUM_C() { return NUM_C; }, get chal() { return chal; }, chTime, chDmgT, startChallenge, chEvent, chEnterBoss, chFrag, chGoldSpawn, chShelter, inCh, CHM, spawnCut, spawnAb, abStart, RUNES, TREASURES, get cutSaws() { return cutSaws; }, setChMode(v) { chMode = v; }, get W() { return W; }, get H() { return H; }, get species() { return SPECIES; }, get sspecies() { return SSPECIES; }, spawnHorse, hAtk, spawnStat, sAtk, spawnMini, spawnMiniPick, setAngelSkin(v) { angelSkin = !!v; }, drawAnSprite, get ctx() { return ctx; }, get mini() { return mini; }, hurtEnemy, SMAP, isSea, BM, get mspecies() { return MSPECIES; }, spawnUniq, SHR, SHA, MMAP, isMush, floorSet,
 };
 
 function loadImg1(src) {   // v6.30 프레임 드랍: 미리 해독한 ImageBitmap으로 바꿔 둔다 (Image는 처음 그릴 때 해독·업로드로 큰 시트마다 20~40ms씩 멈췄다)
@@ -9908,8 +10084,8 @@ function silhouette(img, color) {
   g.drawImage(img, 0, 0); g.globalCompositeOperation = 'source-atop'; g.fillStyle = color; g.fillRect(0, 0, c.width, c.height);
   return c;
 }
-const LAZY_IMG = ['adm', 'gfloor', 'gprops', 'gmap', 'drophb', 'droppo', 'chm', 'cm', 'ab', 'an', 'anfx', 'amap', 'mmap', 'smap', 'horse', 'an2', 'shk', 'statue', 'sk_gunH', 'sk_gunE', 'sk_wolfE', 'sk_lizG', 'skA_lizG', 'sk_ghostG', 'skA_ghostG', 'sk_twS', 'skA_twS', 'skA_gunH', 'skA_gunE', 'skA_wolfE', 'sh', 'mimic', 'sktw', 'skelF', 'skelFa', 'tox'];   // 시작하자마자 쓰지 않는 그림은 따로 (시작 화면이 빨리 뜨게): 드랍 아이템 · 챌린지 · 타락천사
-for (const k of LAZY_IMG) loadImg(SRC[k]).then(i => { IMG[k] = i; if (k === 'cm' || k === 'ab' || k === 'horse' || k === 'shk' || k === 'statue' || k === 'tox' || k === 'adm') IMG[k + 'W'] = silhouette(i, '#ffffff'); }).catch(() => {});
+const LAZY_IMG = ['zom', 'adm', 'gfloor', 'gprops', 'gmap', 'drophb', 'droppo', 'chm', 'cm', 'ab', 'an', 'anfx', 'amap', 'mmap', 'smap', 'horse', 'an2', 'shk', 'statue', 'sk_gunH', 'sk_gunE', 'sk_wolfE', 'sk_lizG', 'skA_lizG', 'sk_ghostG', 'skA_ghostG', 'sk_twS', 'skA_twS', 'skA_gunH', 'skA_gunE', 'skA_wolfE', 'sh', 'mimic', 'sktw', 'skelF', 'skelFa', 'tox'];   // 시작하자마자 쓰지 않는 그림은 따로 (시작 화면이 빨리 뜨게): 드랍 아이템 · 챌린지 · 타락천사
+for (const k of LAZY_IMG) loadImg(SRC[k]).then(i => { IMG[k] = i; if (k === 'cm' || k === 'ab' || k === 'horse' || k === 'shk' || k === 'statue' || k === 'tox' || k === 'adm' || k === 'zom') IMG[k + 'W'] = silhouette(i, '#ffffff'); }).catch(() => {});
 const LD_KEYS = Object.keys(SRC).filter(k => !LAZY_IMG.includes(k)); let ldN = 0;   // v8.14 시작 전 꼭 필요한 그림만 기다린다 (진행률 표시)
 Promise.all(LD_KEYS.map(k => loadImg(SRC[k]).then(i => { IMG[k] = i; ldN++; const e = document.getElementById('ldTxt'); if (e) e.textContent = `불러오는 중… ${Math.round(ldN / LD_KEYS.length * 100)}%`; }))).then(() => {   // IMG.이름 = SRC.이름
   { const b = document.getElementById('ldBox'); if (b) b.remove(); }
