@@ -25,6 +25,7 @@ ANCHORS = [
  ('악마 식물원(16~20층)', r'v8\.30 지하 16~20층|^const GMAP|^function gardTile|^const isGard'),
  ('이독버섯 마왕', r'v8\.20 이독버섯 마왕|^function updateToxBoss|^function toxPick|^const DEBUFF'),
  ('해저좀비 (미니 보스)', r'v8\.50 해저좀비|^function updateZom|^function zAtk'),
+ ('식물원 잡몹·네임드(가시덩굴·식인 꽃·거대 달팽이)', r'^let GSPECIES|v8\.53 악마 식물원|^function plantStep|^function drawPlantMob'),
  ('⚔ 보스 러시', r'v8\.50 ⚔ 보스 러시|^function startRush|^function rushWin'),
  ('썩어버린 해군 제독', r'v8\.40 썩어버린 해군 제독|^function updateAdmBoss|^function applyPull|^function updateAdmCannon|^const ADM_L'),
  ('● 층·맵', None),

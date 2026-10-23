@@ -97,7 +97,7 @@ ASSETS = {
     '__HEART__': 'heart/heart.webp',
     '__SKWOLFE__': 'skin/wolfE.webp',
     '__TOX__': 'tox/tox.webp',
-    '__ADM__': 'adm/adm.webp', '__ZOM__': 'zom/zom.webp',
+    '__ADM__': 'adm/adm.webp', '__ZOM__': 'zom/zom.webp', '__GMOB__': 'gard/gmob.webp', '__GNM__': 'gard/gnm.webp',
     '__SKELF__': 'skin/skelF.webp',
     '__SKELFA__': 'skin/skelF_arrow.webp',
     '__SKTWS__': 'skin/twS.webp',
