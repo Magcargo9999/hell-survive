@@ -319,7 +319,7 @@
   <div class="gtop"><span id="hShards" style="color:var(--gold);font-weight:bold"></span><button id="hClose" class="sm">닫기</button></div>
   <div class="hslots" id="hSlots"></div><p id="hSum" class="hsum"></p>
   <div class="hmain"><div class="hinv" id="hInv"></div><div class="hcore" id="hCore"></div></div>
-  <p class="gprob">마왕 5종은 종류마다 심장이 한 번씩만(얻기 전까지 처치 시 20%) 떨어짐 · 챌린지·숨은 보스 제외 · [보스의 심장] (레어) · 떨어질 때 1% 확률로 레전더리 · 재설정 비용은 등급별 레어 ◆500 · 에픽 ◆600 · 유니크 ◆700 · 레전더리 ◆800: 레어→에픽 30% · 에픽→유니크 20% · 유니크→레전더리 5% 등급 상승, 옵션(공격력 · 최대 체력 · 공격 속도 각 1/3)과 수치를 다시 뽑음<br>등급별 수치: 레어 1~3% · 에픽 4~6% · 유니크 7~9% · 레전더리 15~20% · 최대 5개 장착 (효과는 다음 판 시작부터)</p>
+  <p class="gprob">마왕 6종은 종류마다 심장이 한 번씩만(얻기 전까지 처치 시 20%) 떨어짐 · 챌린지·숨은 보스 제외 · [보스의 심장] (레어) · 떨어질 때 1% 확률로 레전더리 · 재설정 비용은 등급별 레어 ◆500 · 에픽 ◆600 · 유니크 ◆700 · 레전더리 ◆800: 레어→에픽 30% · 에픽→유니크 20% · 유니크→레전더리 5% 등급 상승, 옵션(공격력 · 최대 체력 · 공격 속도 각 1/3)과 수치를 다시 뽑음<br>등급별 수치: 레어 1~3% · 에픽 4~6% · 유니크 7~9% · 레전더리 15~20% · 최대 5개 장착 (효과는 다음 판 시작부터)</p>
 </div>
 <div id="hfx"></div>
 
@@ -9120,8 +9120,8 @@ const HG_ORDER = ['rare', 'epic', 'unique', 'legend'];
 const HSTAT = { atk: '공격력', hp: '최대 체력', aspd: '공격 속도' };
 const HEART = { drop: 0.20, legend: 0.01, slots: 5 };
 const heartCost = h => HG[h.g].cost;   // v8.09: 심장 등급(강화 단계)에 따라 레어 500 · 에픽 600 · 유니크 700 · 레전더리 800
-const BH = { angel: '타락천사', shk: '거대 버섯마귀', skel: '스켈레톤 마왕', eye: '마안군주', monkey: '원숭이 마왕' }, BH_ORDER = ['angel', 'shk', 'skel', 'eye', 'monkey'];   // 보스 종류별 심장 (도트 줄 순서)
-const bhKey = e => e.bk === 'angel' || e.bk === 'shk' || e.bk === 'skel' || e.bk === 'eye' ? e.bk : (e.bk ? null : 'monkey');
+const BH = { angel: '타락천사', shk: '거대 버섯마귀', skel: '스켈레톤 마왕', eye: '마안군주', monkey: '원숭이 마왕', tox: '이독버섯 마왕' }, BH_ORDER = ['angel', 'shk', 'skel', 'eye', 'monkey', 'tox'];   // 보스 종류별 심장 (도트 줄 순서)
+const bhKey = e => e.bk === 'angel' || e.bk === 'shk' || e.bk === 'skel' || e.bk === 'eye' || e.bk === 'tox' ? e.bk : (e.bk ? null : 'monkey');
 const hRand = (a, b) => a + Math.floor(Math.random() * (b - a + 1));
 const hOpt = h => `${HSTAT[h.st]} +${h.v}%`;
 function heartMake(g, b) { const S = SAVE.heart, G = HG[g]; return { id: ++S.n, g, b: b || 'angel', st: ['atk', 'hp', 'aspd'][(Math.random() * 3) | 0], v: hRand(G.min, G.max) }; }
@@ -9208,7 +9208,7 @@ function renderHeart() {
   $('hSum').textContent = `장착 효과 합계 (다음 판부터): ${heartSum()}`;
   const inv = $('hInv'); inv.innerHTML = '';
   const L = S.inv.slice().sort((a, b) => HG_ORDER.indexOf(b.g) - HG_ORDER.indexOf(a.g) || b.v - a.v);
-  if (!L.length) inv.innerHTML = '<p class="hnone">아직 심장이 없어요.<br>마왕 5종(타락천사·거대 버섯마귀·스켈레톤·마안군주·원숭이)을 처음 쓰러뜨릴 때 종류마다 20% 확률로 그 마왕의 [심장]이 한 번씩 떨어집니다. (챌린지·숨은 보스 제외)</p>';
+  if (!L.length) inv.innerHTML = '<p class="hnone">아직 심장이 없어요.<br>마왕 6종(타락천사·거대 버섯마귀·이독버섯·스켈레톤·마안군주·원숭이)을 처음 쓰러뜨릴 때 종류마다 20% 확률로 그 마왕의 [심장]이 한 번씩 떨어집니다. (챌린지·숨은 보스 제외)</p>';
   for (const q of L) { const d = document.createElement('div'); d.className = `hcell ${q.g}` + (q.id === hSel ? ' sel' : ''); d.innerHTML = `<img src="${heartImg(q.g, 56, q.b)}"><small>${HSTAT[q.st].replace('최대 ', '').replace('공격 속도', '공속')} +${q.v}%</small>` + (S.eq.includes(q.id) ? '<b class="heq">E</b>' : ''); d.onclick = () => { hSel = q.id; hLast = null; renderHeart(); }; inv.appendChild(d); }
   const core = $('hCore');
   if (!h) { core.innerHTML = '<div class="horb"><p class="hnone">왼쪽 목록에서 심장을 고르세요</p></div>'; return; }
