@@ -879,7 +879,7 @@ const CHARS = {
   chimera: { role: '진화 루트형 근접 딜러', weak: '진화 전 화력이 약하다', name: '키메라', price: 300, desc: '날렵한 짐승형 근접 캐릭터.<br>Lv.10 진화 루트 선택: 바람(관통 에어슬래시 · Lv.20 천공 강하) / 화염(넓은 화상 발톱 · Lv.20 화염 브레스) / 몽환(촉수 · Lv.20 천안 난무, 0단계에서 이공벌레를 잡아야 열림).', ally: '특징: 진화 루트 3개 (바람 · 화염 · 몽환)' },
   lizard: { role: '단단한 대검 브루저', weak: '가장 느린 이동·공격 속도', name: '리자드', price: 260, desc: '느리지만 단단하고 한 방이 묵직한 대검 전사.<br>Lv.10 리자드 검사 · Lv.20 버서커(광란) / 물의 전사(자힐) 중 선택.', ally: '특징: 이속 느림 · 받는 피해 -15% · 강한 기본 공격' },
   twins: { role: '기동형 사슬 근접', weak: '멈추면 딜이 안 나온다 (자동 공격 없음)', name: '사슬 악마', price: 0, cond: '벨리아·셀리아 둘 다 처치하면 해금', desc: '부서진 사슬을 쥔 작고 불완전한 악마.<br>직접 공격하지 않고, 움직일수록 사슬 끝 창날이 휘둘리며 적을 친다. 창날은 적 최대 체력 비례 추가 피해도 준다.', ally: '특징: 자동 공격 없음 · 이속이 곧 공격력 · Lv.10 사슬 두 가닥 + 스킬' },
-  ghost: { role: '부채꼴 다발 사격', weak: '구슬 하나하나가 약하고 멀면 약하다', name: '연보라 구슬 유령', price: 0, cond: '지하 2~6층 마왕을 쓰러뜨리면 10% 확률로 떨어지는 [보라구슬]을 먹는다', desc: '저승의 기운이 맺힌 연보라 구슬을 앞쪽으로 흩뿌리는 유령.<br>구슬 하나는 약하지만 여러 개가 한꺼번에 날아간다.<br>Lv.10 연보라 총령 (큰 구슬 · 차지 샷) → Lv.20 수호령의 총령 (대신 맞고 터지는 수호령)', ally: '특징: 부채꼴 다발 사격 · 가까울수록 많이 맞힌다 · (진화는 아직 없음)' },
+  ghost: { role: '부채꼴 다발 사격', weak: '구슬 하나하나가 약하고 멀면 약하다', name: '연보라 구슬 유령', price: 0, cond: '지하 2층 이상의 마왕을 쓰러뜨리면 10% 확률로 떨어지는 [보라구슬]을 먹는다', desc: '저승의 기운이 맺힌 연보라 구슬을 앞쪽으로 흩뿌리는 유령.<br>구슬 하나는 약하지만 여러 개가 한꺼번에 날아간다.<br>Lv.10 연보라 총령 (큰 구슬 · 차지 샷) → Lv.20 수호령의 총령 (대신 맞고 터지는 수호령)', ally: '특징: 부채꼴 다발 사격 · 가까울수록 많이 맞힌다 · (진화는 아직 없음)' },
   octo: { role: '직선 마법 · 구체 성장형', weak: '직선 탄이라 빗나가기 쉽고 초반이 약하다', name: '문어 마법사', price: 0, hidden: true, cond: '지하 3층 이상에서 나오는 히든 마물 [문어 마법사]를 쓰러뜨리면 해금', desc: '책과 등불을 든 어린 문어 마법사.<br>곧게 날아가는 마법탄을 쏘고, 증강(스킬 카드)을 고를 때마다 몸 주위를 도는 마력 구체가 하나씩 늘어난다.', ally: '특징: 구체가 점점 늘어남 · Lv.10 진화 + 스킬 [코끼리 돌진] · Lv.20 스킬이 [문어의 심연]으로 바뀜' },
   gun: { role: '한 발이 강한 리볼버 (보스에 강함)', weak: '느리고 체력이 낮다 · 몹 무리에 약하다', name: '악마 총잡이', price: 0, cond: '지하 6층 마왕을 쓰러뜨리면 해금', desc: '아무것도 기억하지 못하는 어린 악마. 리볼버 6발을 한 발씩 쏘고, 다 쓰면 1초 동안 재장전한다.<br>재장전할 때마다 탄 6발이 무작위로 정해진다: 일반탄 55% · 도탄 25%(튕김 · 피해 80%) · 불씨탄 15%(2배 · 관통 · 화상) · 공포탄 5%(꽝).<br>Lv.10 지옥의 무법자 → Lv.20 악마처형자 (스킬 [구르기])', ally: '특징: 한 발이 강한 원거리 · 탄 운 · Lv.20 스킬 구르기 3회' },
 };
@@ -1228,6 +1228,7 @@ function exitArena() {
   P.exitLeft = 0;
   startTrans(() => {
     arena = null; boss = null; enemies = []; orbs = []; zones = []; shards = []; globs = []; ebul = []; skp = []; skSp = []; anOrbs = []; anFx = [];
+    shkSp = []; shkFx = []; shkDeath = null; toxFl = []; toxFx = []; toxFog = null; DEBUFF.clearAll(); mini = null; mdeath = null;   // v8.22: 성 밖으로 나오면 마왕 이펙트·디버프도 정리
     P.x = castle.x; P.y = castle.base + 46; cam.x = P.x; cam.y = P.y - 20; placeAllies();
     castle.force = REGRACE; castle.re = true;
     banner = { txt: `성 밖으로 나왔다!  마왕은 체력을 모두 회복했다\n${REGRACE}초 뒤 강제로 다시 입장하며, 이번엔 출구가 봉인된다 (성문으로 가면 바로 입장)`, t: 9, c: '#ffe28a' };
@@ -2526,6 +2527,7 @@ function shkSummon(e) {   // 필수 기믹 B: 체력 75 · 50 · 25% → 무적 
 function shkAdd(e, x, y) {   // 작은 버섯 몬스터 (버섯형 악마 작은 4종 중 하나)
   const q = spawnEnemy(0, 10), sm = MSPECIES.filter(s => s.scale <= 4);
   if (sm.length) { const s = sm[(rand() * sm.length) | 0]; q.spec = s; q.sc = s.scale; q.r = 4.2 * s.scale; q.sp = s.speed * 1.1; q.dmg = s.dmg * (1 + 0.1 * P.tier); }
+  if (q.elite) { q.max /= 7.5; q.exp /= 4; }   // v8.22: 정예로 뽑혀도 작은 버섯 체력(정예 ×7.5 제거)
   q.elite = false; q.x = x; q.y = y; q.hp = q.max = q.max * 0.55; q.exp *= 0.4; q.shkAdd = true; q.ai = 0;
   shkFx.push({ k: 'erupt', x, y, t: 0, life: 0.6 }); return q;
 }
@@ -2716,6 +2718,7 @@ function toxMiniBoom(e) {
 function toxAdd(x, y) {   // 독 안개 중 화면 밖에서 몰려오는 작은 버섯 (버섯형 악마 작은 4종 중 하나)
   const q = spawnEnemy(0, 10), sm = MSPECIES.filter(s => s.scale <= 4);
   if (sm.length) { const s = sm[(rand() * sm.length) | 0]; q.spec = s; q.sc = s.scale; q.r = 4.2 * s.scale; q.sp = s.speed * 1.1; q.dmg = s.dmg * (1 + 0.1 * P.tier); }
+  if (q.elite) { q.max /= 7.5; q.exp /= 4; }   // v8.22: 정예로 뽑혀도 작은 버섯 체력(정예 ×7.5 제거)
   q.elite = false; q.x = x; q.y = y; q.hp = q.max = q.max * 0.5; q.exp *= 0.4; q.toxAdd = true; q.ai = 0; return q;
 }
 function toxGas(e) {   // 3. 혈관 폭발 → 맹독성 가스 안개: 이속·재생 -50% + 화면 밖에서 작은 버섯 떼
@@ -3305,6 +3308,7 @@ function bossDefeated() {
 function drawBossTele(wx, wy) {
   const TL = (boss ? boss.tele : []).concat(mini && mini.hp > 0 ? mini.tele : []).concat(mini && mini.pair && mini.pair.hp > 0 ? mini.pair.tele : []);
   for (const q of enemies) if (q.kind === 'skm' && q.hp > 0) for (const t of q.tele) TL.push(t);
+  for (const q of enemies) if (q.kind === 'mini' && q.adds && q.hp > 0 && q.tele !== (mini && mini.tele)) for (const t of q.tele) if (!TL.includes(t)) TL.push(t);   // v8.22: 결계 단계 해골 전사 둘의 공격 예고
   for (const q of enemies) if (q.kind === 'uniq' && q.hp > 0) for (const t of q.tele) TL.push(t);
   const eye = boss && (boss.bk === 'eye' || boss.bk === 'ab'), fwb = boss && boss.bk === 'fw', skb = boss && boss.bk === 'skel', CF = eye ? '190,60,255' : fwb ? '255,190,60' : skb ? '255,50,150' : '255,40,40', CS = eye ? '215,120,255' : fwb ? '255,236,160' : skb ? '255,130,210' : '255,80,70', CP = eye ? '205,90,255' : fwb ? '255,150,40' : skb ? '255,60,170' : '255,60,50';   // 혈랑왕 제단은 바닥이 붉어서 경고를 금빛으로
   for (const t of TL) {
@@ -5047,7 +5051,7 @@ function palPop() {   // 맨 앞의 수호령이 대신 맞고 터진다
   const n = P.pals.length, q = P.pals.shift(), [x, y] = palPos(q, 0, n), R = 135, dm = P.dmg * 2.8;   // v5.11: 수호령 폭발 대폭 상향 (200% → 280%)
   P.palFx = P.palFx || []; P.palFx.push({ x, y, t: 0 });
   addRing(x, y, 10, R, 0.45, '255,150,255', 14); addRing(x, y, 6, R * 0.6, 0.3, '255,255,255', 8); burst(x, y, 34, ['#ff8cff', '#ffd6f4', '#ffffff', '#c060ff'], 360, 0.7); shake = Math.max(shake, 10); sfx('boom'); floatNum(x, y - 40, '펑!', '#ffb8ff');
-  for (const e of enemies) { if (e.hp <= 0) continue; const dx = e.x - x, dy = e.y - e.r - y, d = Math.hypot(dx, dy) || 1; if (d < R + e.r) hurtEnemy(e, dm, dx / d, dy / d, 300); }
+  for (const e of enemies) { if (e.hp <= 0) continue; const dx = e.x - x, dy = e.y - e.r - y, d = Math.hypot(dx, dy) || 1; if (d < R + e.r) withSrc('palBoom', () => hurtEnemy(e, dm, dx / d, dy / d, 300)); }
 }
 function stepPals(dt) {
   P.palA = (P.palA || 0) + dt * 2.2;
@@ -6202,14 +6206,14 @@ function mirrorBlock(dmg) {
   P.inv = 0.5; const R = 150, ref = dmg * 3 + 10;
   addRing(P.x, P.y - 40, 10, R, 0.4, '200,150,255', 8); addRing(P.x, P.y - 40, 6, R * 0.6, 0.3, '255,255,255', 5); sfx('zap');
   burst(P.x, P.y - 40, 14, ['#d8b8ff', '#ffffff', '#8a4fd6'], 260, 0.5); floatNum(P.x, P.y - 100, '반사!', '#d8b8ff');
-  for (const e of enemies.slice()) { if (e.hp <= 0) continue; const dx = e.x - P.x, dy = e.y - P.y, d = Math.hypot(dx, dy) || 1; if (d < R + e.r) hurtEnemy(e, ref, dx / d, dy / d, 160); }
+  for (const e of enemies.slice()) { if (e.hp <= 0) continue; const dx = e.x - P.x, dy = e.y - P.y, d = Math.hypot(dx, dy) || 1; if (d < R + e.r) withSrc('mirror', () => hurtEnemy(e, ref, dx / d, dy / d, 160)); }
 }
 function phoenixRevive() {
   P.phxUsed = true; P.hp = P.max * 0.6; P.shield = 3; P.inv = 1.2; P.stunT = 0; P.dotT = 0; shake = 18;
   floatNum(P.x, P.y - 96, '피닉스의 심장!', '#ffb060'); sfx('evolve');
   addRing(P.x, P.y - 20, 10, 420, 0.8, '255,150,60', 14); addRing(P.x, P.y - 20, 6, 260, 0.6, '255,226,138', 10);
   burst(P.x, P.y - 30, 44, ['#ff9a2e', '#ffe36a', '#ff4a3a', '#ffffff'], 380, 1.0);
-  for (const e of enemies.slice()) { if (e.hp <= 0) continue; const dx = e.x - P.x, dy = e.y - P.y, d = Math.hypot(dx, dy) || 1; if (d < 360 + e.r) { hurtEnemy(e, P.dmg * 6 + 80, dx / d, dy / d, 560); e.slowT = 2; } }
+  for (const e of enemies.slice()) { if (e.hp <= 0) continue; const dx = e.x - P.x, dy = e.y - P.y, d = Math.hypot(dx, dy) || 1; if (d < 360 + e.r) { withSrc('phoenix', () => hurtEnemy(e, P.dmg * 6 + 80, dx / d, dy / d, 560)); e.slowT = 2; } }
   banner = { txt: '🔥 피닉스의 심장이 불타올랐다!  체력 60%로 부활', t: 4, c: '#ffb060' };
 }
 function fangGain(e) {
@@ -7731,7 +7735,7 @@ function render() {
 }
 let skillBtn = { x: 0, y: 0, w: 0, h: 0 };
 const hudCards = { t: 0, L: [] };
-const dmName = k => k === '?' ? '기타 (출처 없음)' : k === 'bugBoom' ? '이공벌레 폭발' : k === 'burn' ? '화상 (불꽃 지속 피해)' : k === 'ignite' ? '점화 (지속 피해)' : k === 'twTip' ? '창날 타격' : k === 'twChain' ? '사슬 몸통 타격' : String(k).startsWith('g:') ? GUN_AMMO[k.slice(2)].name + (k === 'g:F' ? ' (화상 포함)' : '') : k === 'basic' ? '기본 공격' : String(k).startsWith('sk:') ? '【스킬】' + (SKILLS[k.slice(3)] ? skillName(k.slice(3)) : k.slice(3)) : k === 'trail' ? (P.route === 'lava' ? '용암 흔적 (장판)' : P.route === 'bomb' ? '불웅덩이 (장판)' : '독 자국 (장판)') : (SYNERGIES.find(x => x.id === k) ? '★' + (a => a ? a[0] : SYNERGIES.find(x => x.id === k).name)(altOf(SYNERGIES.find(x => x.id === k))) : upName(k));
+const dmName = k => k === '?' ? '기타 (출처 없음)' : k === 'bugBoom' ? '이공벌레 폭발' : k === 'phoenix' ? '피닉스의 심장 폭발' : k === 'mirror' ? '저주받은 거울 반사' : k === 'palBoom' ? '수호령 폭발' : k === 'burn' ? '화상 (불꽃 지속 피해)' : k === 'ignite' ? '점화 (지속 피해)' : k === 'twTip' ? '창날 타격' : k === 'twChain' ? '사슬 몸통 타격' : String(k).startsWith('g:') ? GUN_AMMO[k.slice(2)].name + (k === 'g:F' ? ' (화상 포함)' : '') : k === 'basic' ? '기본 공격' : String(k).startsWith('sk:') ? '【스킬】' + (SKILLS[k.slice(3)] ? skillName(k.slice(3)) : k.slice(3)) : k === 'trail' ? (P.route === 'lava' ? '용암 흔적 (장판)' : P.route === 'bomb' ? '불웅덩이 (장판)' : '독 자국 (장판)') : (SYNERGIES.find(x => x.id === k) ? '★' + (a => a ? a[0] : SYNERGIES.find(x => x.id === k).name)(altOf(SYNERGIES.find(x => x.id === k))) : upName(k));
 function drawDmeter() { dmeterBox(DMETER, '딜 미터기', chal ? 124 : 90); if (DBOSS && boss && boss.hp > 0 && Object.keys(DBOSS).length) dmeterBox(DBOSS, '보스 딜 미터기', Math.min(H - 220, (chal ? 124 : 90) + 24 + Math.min(8, Object.keys(DMETER).length) * 22 + 14), 6); }
 function dmeterBox(M, title, y0, maxN) {   // v5.11: 딜 미터기 (설정에서 켜기) — 기본 공격과 스킬 카드별 누적 피해
   const L = Object.entries(M).sort((a, b) => b[1] - a[1]).slice(0, maxN || 8), tot = L.reduce((a, b) => a + b[1], 0); if (!tot) return;
@@ -8117,17 +8121,20 @@ function chChaserStep(dt) {
     burst(P.x, P.y - 30, 24, ['#000000', '#3a1a4a', '#8a4aff'], 260, 0.7);
   }
 }
-function chUpdate(dt) {
-  if (!chal) return;
-  if (chal.retT > 0) { chal.retT -= dt; if (chal.retT <= 0) chReturn(); }
-  if (chal.bossT > 0) { chal.bossT -= dt; if (chal.bossT <= 0 && !trans) chEnterBoss(chal.bossK); }
-  if (chal.abDeath) { chal.abDeath.t += dt; if (chal.abDeath.t > 1.6) chal.abDeath = null; }
-  for (const q of chal.abFx) q.t += dt; chal.abFx = chal.abFx.filter(q => q.t < q.life);
+function updateCutSaws(dt) {   // v8.22: 챌린지 밖(어인섬 11~15층)에서도 톱날이 움직이도록 chUpdate에서 분리
   for (const s of cutSaws) {   // 절단안의 짐승: 던진 톱날이 경고 줄을 따라 갔다가 돌아온다
     s.t += dt; s.rot += dt * 22; const p = Math.sin(Math.PI * clamp(s.t / s.life, 0, 1)) * s.len; s.x = s.x0 + Math.cos(s.ang) * p; s.y = s.y0 + Math.sin(s.ang) * p; s.hitCd -= dt;
     if (s.hitCd <= 0 && Math.hypot(P.x - s.x, P.y - s.y) < 28 + PR()) { s.hitCd = 0.6; miniHit(22); }
   }
   cutSaws = cutSaws.filter(s => s.t < s.life);
+}
+function chUpdate(dt) {
+  updateCutSaws(dt);
+  if (!chal) return;
+  if (chal.retT > 0) { chal.retT -= dt; if (chal.retT <= 0) chReturn(); }
+  if (chal.bossT > 0) { chal.bossT -= dt; if (chal.bossT <= 0 && !trans) chEnterBoss(chal.bossK); }
+  if (chal.abDeath) { chal.abDeath.t += dt; if (chal.abDeath.t > 1.6) chal.abDeath = null; }
+  for (const q of chal.abFx) q.t += dt; chal.abFx = chal.abFx.filter(q => q.t < q.life);
   for (const z of chal.abZ) {   // 심연의 저주 영역: 퍼지는 0.6초 뒤부터 0.5초마다 피해
     z.t += dt;
     if (z.t > 0.6 && Math.hypot(P.x - z.x, (P.y - z.y) * 1.15) < z.r + PR()) { z.tick -= dt; if (z.tick <= 0) { z.tick = 0.5; bossHit(6); } }
@@ -8854,7 +8861,7 @@ function updateDiff() {
     return;
   }
   $('diffTxt').textContent = floorName(t);
-  $('diffDesc').textContent = m <= 0 ? '' : t ? `몹 체력 +${15 * t}% · 몹 공격 +${10 * t}% · 보스 체력 +${30 * t}% · 보스 패턴 강화 · 영혼 조각 ×${(1 + 0.3 * t).toFixed(1)} · 참가비 ${25 * t} (클리어하면 반환)` : '마왕을 쓰러뜨리면 다음 층이 열립니다 (최대 지하 10층)';
+  $('diffDesc').textContent = m <= 0 ? '' : t ? `몹 체력 +${15 * t}% · 몹 공격 +${10 * t}% · 보스 체력 +${30 * t}% · 보스 패턴 강화 · 영혼 조각 ×${(1 + 0.3 * t).toFixed(1)} · 참가비 ${25 * t} (클리어하면 반환)` : '마왕을 쓰러뜨리면 다음 층이 열립니다 (최대 지하 15층)';
 }
 function selectChar(c) {
   if (!SAVE.chars[c]) { $('hint').textContent = CHARS[c].cond ? `🔒 ${CHARS[c].name}: ${CHARS[c].cond}${c === 'ghost' ? '' : ' (유니크 마물은 한 판에 한 번씩 등장)'}` : `🔒 ${CHARS[c].name}: 영혼 상점에서 영혼 조각 ${CHARS[c].price}개로 구매할 수 있어요.`; return; }
@@ -9411,7 +9418,7 @@ stepDive = skWrap(stepDive, 'dive'); stepRush = skWrap(stepRush, 'rush'); rushSt
 updateAirs = (f => function (...a) { return withSrc('basic', () => f.apply(this, a)); })(updateAirs);   // v6.22: 에어슬래시는 평타 (v6.30: 바로 뒤 천안 난무·브레스 감싸기가 주석에 묻혀 딜미터기에서 빠지던 것 수정)
 { const _tb = thornBlast, _sb = smashBlow; thornBlast = function (...a) { return withSrc('scale', () => _tb.apply(this, a)); }; smashBlow = function (...a) { return withSrc('smash', () => _sb.apply(this, a)); }; }
 shellReflect = skWrap(shellReflect, 'shell'); updateBsig = skWrap(updateBsig, 'bsigil');
-window.__G = { FD,
+window.__G = { FD, shkAdd, toxAdd, skSpawnPair, phoenixRevive, mirrorBlock, palPop, updateCutSaws, get shkSp() { return shkSp; }, get toxFl() { return toxFl; }, get zonesRef() { return zones; },
   bossDefeated, get IMG() { return IMG; },
   get ready() { return !!IMG.floorD; }, get state() { return state; }, get P() { return P; }, get enemies() { return enemies; }, get orbs() { return orbs; },
   get zones() { return zones; }, get ebul() { return ebul; }, get EYE() { return EYE; }, get shards() { return shards; }, get bigQ() { return bigQ; }, get bombQ() { return bombQ; }, get holyQ() { return holyQ; }, get afx() { return afx; }, get dashQ() { return dashQ; }, get beam() { return beam; }, get evo() { return evo; }, get choices() { return choices; },
