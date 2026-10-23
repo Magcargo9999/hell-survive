@@ -1238,6 +1238,7 @@ function startTrans(cb) { if (!trans) trans = { t: 0, dur: 1.0, cb, done: false 
 function placeAllies() { allies.forEach((a, i) => { a.x = P.x + (i - 1.5) * 40; a.y = P.y + 30; }); if (P.pet) { P.pet.x = P.x - 56; P.pet.y = P.y + 24; P.pet.act = null; } }
 function clearField() {   // 마왕전 입장처럼 맵을 옮길 때: 필드의 적 · 탄 · 장판 · 진행 중인 스킬 · 보스 이펙트를 모두 비운다
   toxFl = []; toxFog = null; toxFx = []; DEBUFF.clearAll();   // v8.20 이독버섯 마왕
+  admFx = []; admBalls = []; admAnc = null; admPull = null;   // v8.40 썩어버린 해군 제독
   mini = null; mdeath = null; enemies = []; orbs = []; items = []; zones = []; shards = []; globs = []; beam = null; meteorQ = null; cerbQ = null; rainQ = null; bigQ = null; darkQ = null; dashQ = null; ebul = []; airs = []; diveQ = null; breathQ = null; rushQ = null; bombQ = null; holyQ = null; afx = []; bombT = []; slots = []; lasers = []; udeath = []; bsig = null; cutSaws = []; fwFx = []; fwd = null; anOrbs = []; anFx = []; gunFx = []; rollQ = null; gunDq = null;
 }
 function enterArena() {
@@ -1253,6 +1254,7 @@ function enterArena() {
     let tx = sealed ? '출구가 봉인되었다!  이제 마왕을 쓰러뜨리는 수밖에 없다' : '마왕전 시작!  성 밖으로 나갈 수 있는 기회는 딱 1번\n맵 아래쪽 출구 ▼ 에 잠시 머물면 나갈 수 있어요 (나가면 마왕은 체력 회복)';
     if (boss && boss.bk === 'skel') tx += '\n스켈레톤 마왕: 정면에 서 있으면 대검으로 내려찍는다 · 체력 66%·33%에 결계(무적) · 첨탑 20초 방치 시 체력 15% 회복 · 해골 전사 2마리 소환';
     if (boss && boss.bk === 'shk') tx += '\n거대 버섯마귀: 바닥에 그림자가 생기면 거대 포자가 떨어진다 (독 장판이 남는다) · 체력 75%·50%·25%에 버섯 군단 소환 — 다 잡을 때까지 받는 피해 -50%';
+    if (boss && boss.bk === 'adm') tx += '\n썩어버린 해군 제독: 가까이 붙으면 녹슨 군도로 빠르게 벤다(한 번 피하고 다시 붙기) · 파란 줄 = 닻(맞으면 기절 + 끌려감) · 파란 원 = 포탄이 떨어질 자리 · 유령 함포는 부술 수 있다 · 체력 60%에 어인 수병 · 30%에 발악(함포 6문 일제 사격)';
     if (boss && boss.bk === 'tox') tx += '\n이독버섯 마왕: 지나간 자리에 맹독 웅덩이가 오래 남는다 · 분홍 원 = 살점이 떨어질 자리(돌연변이 버섯이 튀어나와 자폭) · 혈관 폭발 = 독 안개(이속·재생 -50%) · 체력 70%·50%에 독 역류 · 25%에 본체가 녹아 독 늪 + 핵심 포자 돌진';
     if (boss && boss.bk === 'angel') tx += '\n타락천사: 붉은 함정은 박자를 어기고 늦게 터진다 · 방패를 들면 등 뒤에서 공격 · 체력 70%에 흑화(원거리)';
     banner = { txt: tx, t: 9, c: sealed ? '#ff8a7a' : '#ffe28a' };
@@ -1263,7 +1265,7 @@ function exitArena() {
   P.exitLeft = 0;
   startTrans(() => {
     arena = null; boss = null; enemies = []; orbs = []; zones = []; shards = []; globs = []; ebul = []; skp = []; skSp = []; anOrbs = []; anFx = [];
-    shkSp = []; shkFx = []; shkDeath = null; toxFl = []; toxFx = []; toxFog = null; DEBUFF.clearAll(); mini = null; mdeath = null;   // v8.22: 성 밖으로 나오면 마왕 이펙트·디버프도 정리
+    shkSp = []; shkFx = []; shkDeath = null; toxFl = []; toxFx = []; toxFog = null; DEBUFF.clearAll(); mini = null; mdeath = null; admFx = []; admBalls = []; admAnc = null; admPull = null;   // v8.22: 성 밖으로 나오면 마왕 이펙트·디버프도 정리
     P.x = castle.x; P.y = castle.base + 46; cam.x = P.x; cam.y = P.y - 20; placeAllies();
     castle.force = REGRACE; castle.re = true;
     banner = { txt: `성 밖으로 나왔다!  마왕은 체력을 모두 회복했다\n${REGRACE}초 뒤 강제로 다시 입장하며, 이번엔 출구가 봉인된다 (성문으로 가면 바로 입장)`, t: 9, c: '#ffe28a' };
@@ -1537,6 +1539,7 @@ function spawnBoss() {
   if (P.bossK === 'angel') initAnBoss(boss);
   if (P.bossK === 'shk') initShkBoss(boss);   // v7.20 거대 버섯마귀
   if (P.bossK === 'tox') initToxBoss(boss);   // v8.20 이독버섯 마왕
+  if (P.bossK === 'adm') initAdmBoss(boss);   // v8.40 썩어버린 해군 제독
   if (P.bossK === 'eye') { boss.bk = 'eye'; boss.hp *= EYE.hp; boss.max *= EYE.hp; boss.r = 72; boss.n = 0; boss.k = ''; boss.emT = 0; boss.ang = 0; boss.side = 1; boss.sideT = 4; boss.glow = 0; }
   chBossHp(boss); if (chal && !arena) chFieldPlace(boss); enemies.push(boss);
   if (P.pet) { const q = P.pet; q.hp = q.max; q.down = false; q.act = null; q.inv = 0; q.intro = 0; q.cd1 = 1.2; q.cd2 = 4; q.cd3 = 7; }   // 마왕전: 동료 체력이 가득 찬 채로 시작
@@ -1639,13 +1642,14 @@ function bossLand(e) {
 function updateBoss(e, dt) {
   if (e.bk === 'ab') { updateAbBoss(e, dt); return; }
   if (e.ex === undefined) tierExInit(e);
-  if (!(e.bk === 'tox' && (toxFog || e.st === 'collapse'))) tierEx(e, dt);   // v8.20: 독 안개(이속 -50%)·붕괴 중에는 난이도 추가 패턴을 멈춘다 (규칙 9)
+  if (!(e.bk === 'tox' && (toxFog || e.st === 'collapse')) && !(e.bk === 'adm' && (e.st === 'frenzy' || admPull || admNC() >= 5))) tierEx(e, dt);   // v8.40: 제독 발악 포효·끌려가는 중·함포 5문 이상이면 멈춘다 (규칙 9)   // v8.20: 독 안개(이속 -50%)·붕괴 중에는 난이도 추가 패턴을 멈춘다 (규칙 9)
   if (e.bk === 'eye') { updateEyeBoss(e, dt); return; }
   if (e.bk === 'fw') { updateFwBoss(e, dt); return; }
   if (e.bk === 'skel') { updateSkBoss(e, dt); return; }
   if (e.bk === 'angel') { updateAnBoss(e, dt); return; }
   if (e.bk === 'shk') { updateShkBoss(e, dt); return; }
   if (e.bk === 'tox') { updateToxBoss(e, dt); return; }
+  if (e.bk === 'adm') { updateAdmBoss(e, dt); return; }
   e.t += dt; e.flash = Math.max(0, e.flash - dt); e.swing = Math.max(0, e.swing - dt);
   if (state !== 'play' || trans) return;
   if (!e.rage && e.hp <= e.max * (P.tier >= 3 ? 0.6 : 0.5) && e.st !== 'roar') {   // 체력 절반: 분노 전환
@@ -2956,6 +2960,346 @@ function drawToxTop(wx, wy) {   // 날아가는 살점 · 폭발 · 독 안개 (
     ctx.restore();
   }
 }
+/* ---------- v8.40 썩어버린 해군 제독 (지하 11·12층 70% · 13층부터 다른 마왕과 7종 균등 · 어인섬 보스맵) ----------
+   상태(switch): intro → chase → (가까우면) slash 녹슨 군도 베기 / anchor 닻 투척(aim → throw: 맞으면 기절 0.5초 + 제독 앞으로 끌려옴 → 곧바로 베기)
+                 / cannon 유령 함포 소환 / broad 측면 일제 포격(한 줄) / sweep 닻사슬 휘두르기(도넛) → recover → chase
+   체력 60% crew(어인 수병 소집, 한 번) · 30% frenzy(포효 2.2초 무적 + 함포 6문 원형 일제 사격 → 닻 쿨 절반 · 닻 크기 ×1.4 · 사거리 ×1.3 · 이속 ×1.25)
+   함포(kind 'adc')는 보스와 따로 움직이는 고정 포탑: 짧은 주기로 내 자리(발악 함포는 내 주변 무작위)를 노려 포탄을 쏜다 → 떨어질 자리에 원 예고 → 원형 폭발.
+   정해진 발수를 다 쏘거나 시간이 지나면 스스로 부서진다 (공격해서 먼저 부술 수도 있다)
+   규칙 9: 포탄은 쏘는 순간의 자리를 노리고 1초 넘게 날아간다 · 함포 최대 8문 · 함포가 5문 이상이거나 끌려가는 중·포효 중에는 난이도 추가 패턴을 멈춘다 (tools/tests/adm840.py)
+   그림: 도트 시트가 아직 없어 코드로 그린 임시 모습(drawAdmBody · drawAdmCannon) — 시트가 오면 아틀라스로 바꾼다 */
+const ADM = { hp: 1.15, dm: 1.05, sp: 52, r: 64,   // v8.40 밸런스: 봇 측정(지하 11층) 첫 값이 이독버섯 마왕보다 3배 빨리 죽어서 피해·빈도를 낮춤
+  slashR: 170, slashHalf: 0.9, slashWind: 0.55, slashPull: 1.0, slashCd: 3.2, slashDm: 15,
+  anCd: 9.5, anSp: 1250, anRange: 640, anR: 30, anAim: 0.85, anLock: 0.3, anDm: 18, pullSp: 1500, stun: 0.5,
+  caCd: 14, caN: 2, caHp: 0.018, caFire: 1.8, caShots: 5, caLife: 13, caMax: 8, ballR: 80, ballFl: 1.05, ballDm: 13,
+  swR: 150, swR2: 340, swDm: 15, swCd: 12, swWind: 1.1,
+  brCd: 12, brN: 7, brGap: 105, brR: 72, brDm: 15,
+  crewAt: 0.6, crewN: 6, fz: 0.3, fzN: 6, fzRing: 280 };
+let admFx = [], admBalls = [], admAnc = null, admPull = null;
+const admM = () => (1 - 0.04 * TP()) / bossTempo();
+const admHit = d => bossHit(d * ADM.dm);
+const admNC = () => { let n = 0; for (const q of enemies) if (q.kind === 'adc' && q.hp > 0) n++; return n; };
+function admAoE(x, y, r, d) { const p = P.pet; if (p && !p.down && shkIn(p.x, p.y, x, y, r, 8)) petHurt(p, d); if (state === 'play' && shkIn(P.x, P.y, x, y, r, 10 + PR())) admHit(d); }
+function admSpot(x, y) {   // 바닥 밖이면 보스방 가운데 쪽으로 당겨 넣는다
+  const c = arena && arena.mush ? [BM().cx, BM().cy] : boss ? [boss.x, boss.y] : [P.x, P.y];
+  for (let k = 1; k > 0; k -= 0.08) { const qx = c[0] + (x - c[0]) * k, qy = c[1] + (y - c[1]) * k; if (inPoly(qx, qy)) return [qx, qy]; }
+  return c;
+}
+const admInFan = (t, x, y, pad) => { const dx = x - t.x, dy = y - t.y, d = Math.hypot(dx, dy); return d < t.len + pad && (d < pad + 24 || Math.abs(angDiff(Math.atan2(dy, dx), t.ang)) < t.half + pad / Math.max(60, d)); };
+/* 음수 넉백: 플레이어를 (tx, ty) 쪽으로 force(px/초)로 끌어당긴다 — 조작은 P.stunT(기절)로 막고, 좌표만 부드럽게 옮긴다 */
+function applyPull(tx, ty, force) {
+  const d = Math.hypot(tx - P.x, ty - P.y); if (d < 4) return;
+  admPull = { x0: P.x, y0: P.y, x1: tx, y1: ty, t: 0, dur: Math.max(0.12, d / force) };
+}
+function stepPull(dt) {
+  const q = admPull; if (!q) return;
+  if (state !== 'play' || !boss) { admPull = null; return; }
+  q.t += dt; const k = Math.min(1, q.t / q.dur), s = 1 - (1 - k) * (1 - k);
+  const nx = q.x0 + (q.x1 - q.x0) * s, ny = q.y0 + (q.y1 - q.y0) * s;
+  if (inPoly(nx, ny)) { P.x = nx; P.y = ny; }
+  P.vx = 0; P.vy = 0;
+  if (fx.length < 600) fx.push({ x: P.x + (rand() - 0.5) * 30, y: P.y - 10 - rand() * 40, vx: (q.x0 - q.x1) * 0.3, vy: -30, life: 0.3, max: 0.3, c: rand() < 0.5 ? '#9ad8ff' : '#4a6a7a', s: 4 });
+  if (k >= 1) admPull = null;
+}
+function initAdmBoss(b) {
+  b.bk = 'adm'; b.hp *= ADM.hp; b.max *= ADM.hp; b.r = ADM.r; b.stT = 2.4;
+  Object.assign(b, { an: 'idle', anT: 0, face: -1, moving: false, fz: false, crew: false, slCd: 1.2, anCd: 3.5, caCd: 7, swCd: 6, brCd: 9, bumpCd: 0, pulled: false, fired: false, swing: 0 });
+  admFx = []; admBalls = []; admAnc = null; admPull = null;
+}
+function admClear() {   // 보스방을 나가거나 쓰러뜨리면 함포·수병·포탄·닻 정리
+  admBalls = []; admAnc = null; admPull = null;
+  for (const q of enemies) if ((q.kind === 'adc' || q.admAdd) && q.hp > 0) { q.hp = 0; burst(q.x, q.y - 20, 8, ['#4a6a7a', '#9ad8ff'], 160, 0.5); }
+  enemies = enemies.filter(q => q.kind !== 'adc' && !q.admAdd);
+}
+function admChase(e, t) { e.st = 'chase'; e.an = 'walk'; e.anT = 0; e.stT = (t === undefined ? 0.6 : t) * admM(); }
+function admRecover(e, t) { e.st = 'recover'; e.an = 'idle'; e.anT = 0; e.stT = t * admM(); }
+function admTele(e, o) { e.tele.push(Object.assign({ t: 0, dur: 1, done: false }, o)); }
+function admSlash(e, wind) {   // 1. 녹슨 군도 베기: 가까이 붙으면 앞 부채꼴을 빠르게 한 번 (잠깐 따라오다 고정) → 쿨타임 동안은 다시 붙을 수 있다
+  const m = admM(), dur = Math.max(0.48, (wind || ADM.slashWind) * m);
+  e.st = 'slash'; e.an = 'slash'; e.anT = 0; e.stT = dur + 0.28; e.slCd = ADM.slashCd * m; e.swing = 0;
+  admTele(e, { k: 'fan', x: e.x, y: e.y, ang: Math.atan2(P.y - e.y, P.x - e.x), half: ADM.slashHalf, len: ADM.slashR, dur, fol: dur * 0.35, aim: dur * 0.35, rgb: '110,220,200', fire: t => {
+    e.swing = 0.25; admFx.push({ k: 'slash', x: t.x, y: t.y, ang: t.ang, t: 0, life: 0.28 }); sfx('hit'); shake = Math.max(shake, 5);
+    const p = P.pet; if (p && !p.down && admInFan(t, p.x, p.y, 8)) petHurt(p, ADM.slashDm);
+    if (state === 'play' && admInFan(t, P.x, P.y, 10 + PR())) admHit(ADM.slashDm);
+  } });
+}
+function admAnchorStart(e) {   // 2. 닻 투척: 멈춰 서서 내 쪽으로 겨눔(파란 줄이 따라오다 고정) → 아주 빠르게 날아간다
+  const m = admM(), dur = ADM.anAim * m, fz = e.fz;
+  e.st = 'aim'; e.an = 'throw'; e.anT = 0; e.stT = dur; e.anCd = ADM.anCd * (fz ? 0.5 : 1);
+  admTele(e, { k: 'rect', x: e.x, y: e.y, ang: Math.atan2(P.y - e.y, P.x - e.x), len: ADM.anRange * (fz ? 1.3 : 1), w: ADM.anR * (fz ? 1.4 : 1) * 2 + 20, dur, fol: Math.max(0.1, dur - Math.max(0.3, ADM.anLock * m)), rgb: '90,200,255', anc: true });
+  floatNum(e.x, e.y - 230, '닻 투척!', '#9ad8ff'); sfx('skill');
+}
+function admLaunch(e) {
+  const t = e.tele.find(q => q.anc), ang = t ? t.ang : Math.atan2(P.y - e.y, P.x - e.x), fz = e.fz;
+  admAnc = { x: e.x + Math.cos(ang) * 50, y: e.y + Math.sin(ang) * 50, ang, go: 0, max: ADM.anRange * (fz ? 1.3 : 1), r: ADM.anR * (fz ? 1.4 : 1), ret: false, hit: false, spin: 0 };
+  e.st = 'throw'; e.an = 'throw'; e.anT = 0; shake = Math.max(shake, 4); sfx('shoot');
+}
+function admAnchorHit(e) {   // 닻에 맞으면: 큰 피해 + 기절 0.5초 + 제독 코앞으로 끌려간다 (방어막·회피 등으로 피해를 안 받으면 끌려가지 않는다)
+  const h0 = P.hp; admHit(ADM.anDm);
+  burst(P.x, P.y - 40, 14, ['#9ad8ff', '#4a6a7a', '#ffffff'], 260, 0.5); shake = Math.max(shake, 9); sfx('boom');
+  if (P.hp < h0 && P.hp > 0) {
+    if (P.stunImm <= 0) { P.stunT = Math.max(P.stunT, ADM.stun); P.stunImm = 1.5; }
+    const ux = P.x - e.x, uy = P.y - e.y, d = Math.hypot(ux, uy) || 1, g = e.r + 58;
+    let tx = e.x + ux / d * g, ty = e.y + uy / d * g; if (!inPoly(tx, ty)) [tx, ty] = admSpot(tx, ty);
+    applyPull(tx, ty, ADM.pullSp); e.pulled = true; floatNum(P.x, P.y - 116, '끌려간다!', '#9ad8ff');
+  }
+}
+function admAnchorStep(e, dt) {   // 날아가다 사거리 끝·벽·명중 → 부메랑처럼 제독에게 되돌아온다
+  const a = admAnc; if (!a) return; a.spin += dt * 16;
+  if (!a.ret) {
+    const st = ADM.anSp * dt; a.x += Math.cos(a.ang) * st; a.y += Math.sin(a.ang) * st; a.go += st;
+    const p = P.pet; if (p && !p.down && !a.pet && Math.hypot(p.x - a.x, p.y - a.y) < a.r + 10) { a.pet = true; petHurt(p, ADM.anDm); }
+    if (!a.hit && state === 'play' && Math.hypot(P.x - a.x, P.y - a.y) < a.r + 10 + PR()) { a.hit = true; a.ret = true; admAnchorHit(e); }
+    if (a.go >= a.max || !inPoly(a.x, a.y)) a.ret = true;
+    if (rand() < 0.5 && fx.length < 600) fx.push({ x: a.x, y: a.y - 40, vx: 0, vy: -20, life: 0.3, max: 0.3, c: '#7ab0c0', s: 4 });
+  } else if (admPull) { a.x = P.x; a.y = P.y; }   // 끌려가는 동안 닻이 플레이어를 붙잡고 있다
+  else {
+    const dx = e.x - a.x, dy = e.y - a.y, d = Math.hypot(dx, dy), st = ADM.anSp * 0.85 * dt;
+    if (d <= st + 40) admAnc = null; else { a.x += dx / d * st; a.y += dy / d * st; }
+  }
+}
+function admCannonSpawn(x, y, o) {
+  if (admNC() >= ADM.caMax) return null;
+  const hp = (boss ? boss.max : 60000) * ADM.caHp;
+  const q = { kind: 'adc', x, y, kx: 0, ky: 0, sp: 0, spec: null, sc: 1, r: 30, hp, max: hp, dmg: 0, exp: EXPK * 4, elite: false, flash: 0, t: 0, orbCd: 0, slowT: 0, noKB: true, kres: 0, face: 1,
+    ang: Math.atan2(P.y - y, P.x - x), pop: 0.6, fireT: 0.9 + (o.delay || 0), shots: 0, maxS: o.shots || ADM.caShots, life: o.life || ADM.caLife, wild: !!o.wild, rec: 0, brk: 0 };
+  enemies.push(q); admFx.push({ k: 'spawn', x, y, t: 0, life: 0.6 }); return q;
+}
+function admCannonCall(e) {   // 3. 유령 함포 소환: 내 주변(가깝지 않게)에 2~3문
+  const n = ADM.caN + (TP() >= 3 ? 1 : 0);
+  for (let i = 0; i < n; i++) {
+    let s = null;
+    for (let k = 0; k < 12; k++) { const a = rand() * 6.283, d = 280 + rand() * 220, q = admSpot(P.x + Math.cos(a) * d, P.y + Math.sin(a) * d * 0.8); if (Math.hypot(q[0] - P.x, q[1] - P.y) > 200 && Math.hypot(q[0] - e.x, q[1] - e.y) > 140) { s = q; break; } }
+    if (s) admCannonSpawn(s[0], s[1], { delay: i * 0.5 });
+  }
+  floatNum(e.x, e.y - 230, '유령 함포 소환!', '#9ad8ff'); addRing(e.x, e.y - 60, 10, 260, 0.6, '90,200,255', 10); sfx('skill');
+}
+function updateAdmCannon(e, dt) {
+  e.t += dt; e.flash = Math.max(0, e.flash - dt); e.orbCd = Math.max(0, e.orbCd - dt); e.rec = Math.max(0, e.rec - dt);
+  if (e.pop > 0) { e.pop -= dt; return; }
+  if (state !== 'play' || trans) return;
+  e.ang = Math.atan2(P.y - e.y, P.x - e.x); e.face = Math.cos(e.ang) >= 0 ? 1 : -1; e.life -= dt;
+  if (e.shots < e.maxS && (e.fireT -= dt) <= 0) { admCannonFire(e); e.shots++; e.fireT = ADM.caFire * admM() * (e.wild ? 1.25 : 1); if (e.shots >= e.maxS) e.brk = 0.8; }
+  if (e.life <= 0 || (e.brk > 0 && (e.brk -= dt) <= 0)) admCannonBreak(e);
+}
+function admCannonFire(e) {   // 쏘는 순간의 내 자리(발악 함포는 내 주변 무작위)로 포탄 — 1초 남짓 날아간 뒤 원형 폭발
+  let tx = P.x, ty = P.y;
+  if (e.wild) { const a = rand() * 6.283, d = rand() * 170; tx += Math.cos(a) * d; ty += Math.sin(a) * d * 0.7; }
+  [tx, ty] = admSpot(tx, ty);
+  admBalls.push({ x0: e.x + Math.cos(e.ang) * 40, y0: e.y - 30 + Math.sin(e.ang) * 20, x1: tx, y1: ty, t: 0, fl: ADM.ballFl, r: ADM.ballR, dm: ADM.ballDm, h: 230 });
+  e.rec = 0.25; burst(e.x + Math.cos(e.ang) * 44, e.y - 30 + Math.sin(e.ang) * 22, 6, ['#9ad8ff', '#ffffff', '#4a6a7a'], 160, 0.3); sfx('shoot');
+}
+function admCannonBreak(e) { e.hp = 0; admFx.push({ k: 'boom', x: e.x, y: e.y, t: 0, life: 0.5 }); burst(e.x, e.y - 20, 14, ['#4a3a2a', '#9ad8ff', '#7a5a3a'], 220, 0.6); sfx('hit'); }
+function admBroad(e) {   // 4. 측면 일제 포격: 제독 → 나 방향으로 포탄이 한 줄로 차례차례 떨어진다 (옆으로 비켜서기)
+  e.st = 'broad'; e.an = 'cast'; e.anT = 0; e.fired = false; e.stT = 1.1 * admM(); e.brCd = ADM.brCd * admM();
+  floatNum(e.x, e.y - 230, '측면 포격!', '#9ad8ff'); sfx('skill');
+}
+function admBroadFire(e) {
+  const ang = Math.atan2(P.y - e.y, P.x - e.x), side = rand() < 0.5 ? -1 : 1;
+  for (let i = 0; i < ADM.brN; i++) {
+    const d = 90 + i * ADM.brGap, x = e.x + Math.cos(ang) * d, y = e.y + Math.sin(ang) * d; if (!inPoly(x, y)) continue;
+    admBalls.push({ x0: x + side * 420, y0: y - 520, x1: x, y1: y, t: -0.12 * i, fl: 0.95, r: ADM.brR, dm: ADM.brDm, h: 120 });
+  }
+}
+function admSweep(e) {   // 5. 닻사슬 휘두르기: 몸 주변 도넛 — 제독 품 안(바짝 붙기)이나 바깥으로 피한다 (붙으면 베기가 기다린다)
+  const m = admM(), dur = ADM.swWind * m, r2 = ADM.swR2 * (e.fz ? 1.12 : 1);
+  e.st = 'sweep'; e.an = 'spin'; e.anT = 0; e.stT = dur + 0.45; e.swCd = ADM.swCd * m;
+  admTele(e, { k: 'donut', x: e.x, y: e.y, r: ADM.swR, r2, dur, stick: true, rgb: '90,200,255', fire: t => {
+    addRing(t.x, t.y, t.r, t.r2, 0.35, '120,220,255', 10); shake = Math.max(shake, 8); sfx('boom'); petDonut(t.x, t.y, t.r, t.r2, ADM.swDm);
+    const d = Math.hypot(P.x - t.x, P.y - t.y); if (state === 'play' && d > t.r - 10 - PR() && d < t.r2 + 10 + PR()) admHit(ADM.swDm);
+  } });
+  floatNum(e.x, e.y - 230, '닻사슬 휘두르기!', '#9ad8ff');
+}
+function admCrew(e) {   // 체력 60%: 어인 수병 소집 (한 번) — 보스방 가장자리 쪽에서 수병이 몰려온다
+  e.crew = true; e.st = 'crew'; e.an = 'cast'; e.anT = 0; e.fired = false; e.stT = 1.3 * admM();
+  banner = { txt: '썩어버린 해군 제독: "총원, 승선하라!"\n어인 수병들이 몰려온다', t: 3.5, c: '#9ad8ff' }; sfx('skill');
+}
+function admCrewSpawn(e) {
+  const n = ADM.crewN + Math.floor(TP() / 2);
+  for (let i = 0; i < n; i++) {
+    const a = (i / n) * 6.283 + rand() * 0.4, [x, y] = admSpot(P.x + Math.cos(a) * (420 + rand() * 120), P.y + Math.sin(a) * (380 + rand() * 100));
+    const q = spawnEnemy(0, 10); if (q.elite) { q.max /= 7.5; q.exp /= 4; }
+    q.elite = false; q.x = x; q.y = y; q.hp = q.max = q.max * 0.6; q.exp *= 0.4; q.admAdd = true; q.ai = 0;
+    admFx.push({ k: 'spawn', x, y, t: 0, life: 0.6 });
+  }
+}
+function admFrenzy(e) {   // 체력 30%: 발악 — 포효(무적) + 함포 6문 원형 일제 사격 · 이후 닻 쿨 절반 · 크기·사거리 증가
+  e.fz = true; e.rage = true; e.st = 'frenzy'; e.an = 'roar'; e.anT = 0; e.stT = 2.2; e.invul = true; e.tele = []; e.pulled = false; admAnc = null;
+  for (let i = 0; i < ADM.fzN; i++) { const a = (i / ADM.fzN) * 6.283, [x, y] = admSpot(e.x + Math.cos(a) * ADM.fzRing, e.y + Math.sin(a) * ADM.fzRing * 0.8); admCannonSpawn(x, y, { wild: true, delay: 1.4 + i * 0.3, shots: 6, life: 18 }); }
+  e.anCd = Math.min(e.anCd, 3);
+  addRing(e.x, e.y - 60, 20, 520, 0.9, '90,200,255', 14); burst(e.x, e.y - 90, 40, ['#9ad8ff', '#4a6a7a', '#ffffff'], 360, 0.9); shake = 14; sfx('evolve');
+  banner = { txt: '썩어버린 해군 제독 발악!  함포 6문 일제 사격 — 포탄이 떨어질 원을 피하기 (함포는 부술 수 있다)\n닻 투척이 두 배로 잦아지고, 더 크고 멀리 날아온다', t: 5, c: '#9ad8ff' };
+}
+function updateAdmBoss(e, dt) {
+  e.t += dt; e.anT += dt; e.flash = Math.max(0, e.flash - dt); e.swing = Math.max(0, e.swing - dt);
+  if (state !== 'play' || trans) return;
+  for (const t of e.tele) {
+    t.t += dt; if (t.t < 0) continue;
+    if (t.fol && t.t < t.fol) { t.x = e.x; t.y = e.y; t.ang = Math.atan2(P.y - e.y, P.x - e.x); }
+    if (t.stick) { t.x = e.x; t.y = e.y; }
+    if (!t.done && t.t >= t.dur) { t.done = true; if (t.fire) t.fire(t); }
+  }
+  e.tele = e.tele.filter(t => !(t.done && t.t >= t.dur + 0.15));
+  e.stT -= dt; e.slCd -= dt; e.anCd -= dt; e.caCd -= dt; e.swCd -= dt; e.brCd -= dt; e.bumpCd -= dt; if (e.slowT > 0) e.slowT -= dt;
+  admAnchorStep(e, dt);
+  const dx = P.x - e.x, dy = P.y - e.y, d = Math.hypot(dx, dy) || 1, m = admM();
+  if (!e.fz && e.st !== 'intro' && e.hp <= e.max * ADM.fz) { admFrenzy(e); return; }
+  if (!e.crew && e.st === 'chase' && e.hp <= e.max * ADM.crewAt) admCrew(e);
+  if (e.st !== 'slash' && e.st !== 'aim' && e.st !== 'throw' && Math.abs(dx) > 8) e.face = dx > 0 ? 1 : -1;
+  e.moving = false;
+  switch (e.st) {
+    case 'intro': e.invul = true; e.an = 'idle'; if (e.stT <= 0) { e.invul = false; admChase(e, 1.0); } break;
+    case 'chase': {
+      const sp = ADM.sp * (e.fz ? 1.25 : 1) * (1 + (bossTempo() - 1) * 0.7) * (e.slowT > 0 ? 0.7 : 1);
+      if (d > e.r + 60) e.moving = bossMove(e, e.x + dx / d * sp * dt, e.y + dy / d * sp * dt);
+      e.an = e.moving ? 'walk' : 'idle';
+      if (d < ADM.slashR + 20 && e.slCd <= 0) { admSlash(e); break; }   // 지근거리: 빠른 베기가 먼저
+      if (e.stT > 0) break;
+      if (e.anCd <= 0 && d > 220) admAnchorStart(e);
+      else if (e.caCd <= 0) { e.st = 'cannon'; e.an = 'cast'; e.anT = 0; e.fired = false; e.stT = 1.0 * m; e.caCd = ADM.caCd * m; }
+      else if (e.brCd <= 0 && d > 240 && admNC() < 5) admBroad(e);   // 함포가 많을 때는 측면 포격을 쉬어 간다 (규칙 9)
+      else if (e.swCd <= 0 && d < ADM.swR2 + 30) admSweep(e);
+      break; }
+    case 'slash': if (e.stT <= 0) admChase(e, 0.35); break;
+    case 'aim': if (e.stT <= 0) admLaunch(e); break;
+    case 'throw': if (!admAnc && !admPull) { if (e.pulled) { e.pulled = false; admSlash(e, ADM.slashPull); } else admRecover(e, 0.5); } break;
+    case 'cannon': if (!e.fired && e.anT >= 0.6 * m) { e.fired = true; admCannonCall(e); } if (e.stT <= 0) admRecover(e, 0.4); break;
+    case 'broad': if (!e.fired && e.anT >= 0.4 * m) { e.fired = true; admBroadFire(e); } if (e.stT <= 0) admRecover(e, 0.3); break;
+    case 'sweep': if (e.stT <= 0) admRecover(e, 0.3); break;
+    case 'crew': if (!e.fired && e.anT >= 0.6 * m) { e.fired = true; admCrewSpawn(e); } if (e.stT <= 0) admChase(e, 0.6); break;
+    case 'frenzy': e.invul = true; if (e.stT <= 0) { e.invul = false; admChase(e, 0.4); } break;
+    case 'recover': e.an = 'idle'; if (e.stT <= 0) admChase(e); break;
+  }
+  if (d < e.r + 22 + PR() && e.bumpCd <= 0 && !e.invul) { e.bumpCd = 1.3; admHit(7); }   // 몸통에 닿으면
+  if (rand() < dt * 3) burst(e.x + (rand() - 0.5) * 80, e.y - 40 - rand() * 120, 1, ['#7a9a6a', '#4a6a7a', '#9ad8ff'], 50, 0.8);   // 썩은 물방울
+}
+function updateAdmFx(dt) {
+  stepPull(dt);
+  for (const q of admFx) q.t += dt; admFx = admFx.filter(q => q.t < q.life);
+  for (const s of admBalls) { s.t += dt; if (!s.done && s.t >= s.fl) { s.done = true; if (state === 'play') admLand(s); } }
+  admBalls = admBalls.filter(s => !s.done);
+}
+function admLand(s) { admAoE(s.x1, s.y1, s.r, s.dm); admFx.push({ k: 'splash', x: s.x1, y: s.y1, r: s.r, t: 0, life: 0.5 }); burst(s.x1, s.y1 - 16, 12, ['#3a3a3a', '#9ad8ff', '#ffb05a', '#ffffff'], 240, 0.5); shake = Math.max(shake, 5); sfx('boom'); }
+/* --- 그리기 (임시: 코드로 그린 모습 · 오른쪽을 봄, 발 = (0, 0)) --- */
+function drawAnchorShape(g, x, y, s, rot, white) {   // 녹슨 닻
+  g.save(); g.translate(x, y); g.rotate(rot); g.scale(s, s); g.lineCap = 'round'; g.lineJoin = 'round';
+  const dark = white ? '#ffffff' : '#2a1f18', rust = white ? '#ffffff' : '#7a5e48', hi = white ? '#ffffff' : '#a07a5a';
+  g.strokeStyle = dark; g.lineWidth = 11; g.beginPath(); g.moveTo(0, -38); g.lineTo(0, 30); g.moveTo(-18, -24); g.lineTo(18, -24); g.moveTo(-30, 14); g.quadraticCurveTo(-26, 36, 0, 38); g.quadraticCurveTo(26, 36, 30, 14); g.stroke();
+  g.beginPath(); g.arc(0, -46, 9, 0, 6.283); g.stroke();
+  g.strokeStyle = rust; g.lineWidth = 6; g.beginPath(); g.moveTo(0, -38); g.lineTo(0, 30); g.moveTo(-18, -24); g.lineTo(18, -24); g.moveTo(-30, 14); g.quadraticCurveTo(-26, 36, 0, 38); g.quadraticCurveTo(26, 36, 30, 14); g.stroke();
+  g.beginPath(); g.arc(0, -46, 9, 0, 6.283); g.stroke();
+  g.fillStyle = rust; for (const sx of [-1, 1]) { g.beginPath(); g.moveTo(sx * 30, 14); g.lineTo(sx * 40, 4); g.lineTo(sx * 34, 22); g.closePath(); g.fill(); }
+  if (!white) { g.fillStyle = hi; g.fillRect(-1.5, -30, 3, 20); g.fillStyle = '#5a7a5a'; for (const [bx, by] of [[4, 6], [-3, 20], [10, 33], [-20, 30]]) { g.beginPath(); g.arc(bx, by, 3, 0, 6.283); g.fill(); } }
+  g.restore();
+}
+function drawAdmBody(g, x, y, k, o) {   // o: { face, t, an, anT, swing, anchor(손에 닻), white(피격 섬광), glow(발악) }
+  const W_ = o.white, C = c => W_ ? '#ffffff' : c, t = o.t || 0, walk = o.an === 'walk', bob = walk ? Math.abs(Math.sin(t * 5)) * 3 : Math.sin(t * 2) * 1.5;
+  g.save(); g.translate(x, y); g.scale(k * (o.face < 0 ? -1 : 1), k); g.lineJoin = 'round'; g.lineCap = 'round';
+  if (o.glow && !W_) { g.save(); g.globalCompositeOperation = 'lighter'; const gr = g.createRadialGradient(0, -110, 10, 0, -110, 150); gr.addColorStop(0, 'rgba(80,190,255,0.28)'); gr.addColorStop(1, 'rgba(80,190,255,0)'); g.fillStyle = gr; g.beginPath(); g.ellipse(0, -110, 150, 150, 0, 0, 6.283); g.fill(); g.restore(); }
+  // 다리 · 장화
+  const lg = walk ? Math.sin(t * 5) * 9 : 0;
+  for (const [lx, sw] of [[-16, lg], [12, -lg]]) { g.fillStyle = C('#1a2238'); g.fillRect(lx - 10 + sw * 0.4, -70, 20, 56); g.fillStyle = C('#20160f'); g.beginPath(); g.moveTo(lx - 12 + sw, -18); g.lineTo(lx + 14 + sw, -18); g.lineTo(lx + 18 + sw, 0); g.lineTo(lx - 12 + sw, 0); g.closePath(); g.fill(); }
+  g.translate(0, -bob);
+  // 뒷팔 (닻을 든 팔)
+  const ang2 = o.an === 'throw' && o.anT < 0.8 ? -2.2 + Math.min(1, o.anT / 0.6) * 0.4 : o.an === 'spin' ? t * 12 : o.an === 'roar' || o.an === 'cast' ? -2.4 : 0.35;
+  const bx = -32, by = -140, hx = bx + Math.cos(ang2 + 1.571) * 44, hy = by + Math.sin(ang2 + 1.571) * 44;
+  g.strokeStyle = C('#142039'); g.lineWidth = 17; g.beginPath(); g.moveTo(bx, by); g.lineTo(hx, hy); g.stroke();
+  g.fillStyle = C('#7f9a72'); g.beginPath(); g.arc(hx, hy, 7, 0, 6.283); g.fill();
+  if (o.anchor) drawAnchorShape(g, hx, hy + 44, 0.85, o.an === 'spin' ? t * 12 : 0, W_);
+  // 코트 (해진 자락)
+  g.fillStyle = C('#1d2b4f'); g.beginPath(); g.moveTo(-36, -152); g.lineTo(36, -152); g.lineTo(50, -46);
+  for (let i = 0; i <= 8; i++) { const xx = 50 - i * 12.5, yy = -46 + (i % 2 ? 10 : -2) + Math.sin(t * 3 + i) * 1.5; g.lineTo(xx, yy); }
+  g.lineTo(-48, -46); g.closePath(); g.fill();
+  g.fillStyle = C('#142039'); g.beginPath(); g.moveTo(-36, -152); g.lineTo(-6, -152); g.lineTo(-14, -42); g.lineTo(-48, -46); g.closePath(); g.fill();
+  g.fillStyle = C('#3a2a1a'); g.fillRect(-42, -92, 86, 9); g.fillStyle = C('#c9a24a'); g.fillRect(-4, -93, 10, 11);
+  g.strokeStyle = C('#c9a24a'); g.lineWidth = 3; g.beginPath(); g.moveTo(-4, -150); g.lineTo(8, -96); g.moveTo(14, -150); g.lineTo(8, -96); g.stroke();
+  g.fillStyle = C('#e0c060'); for (let i = 0; i < 4; i++) { g.beginPath(); g.arc(-2 + (i % 2) * 18, -136 + Math.floor(i / 2) * 18 + (i % 2) * 2, 3, 0, 6.283); g.fill(); g.beginPath(); g.arc(-4, -128 + i * 9, 0, 0, 6.283); g.fill(); }
+  g.fillStyle = C('#3a5a4a'); for (const [px, py, pr] of [[24, -70, 7], [-30, -110, 6], [36, -120, 5]]) { g.beginPath(); g.ellipse(px, py, pr, pr * 0.7, 0, 0, 6.283); g.fill(); }   // 이끼·물때 얼룩
+  // 견장
+  for (const sx of [-34, 30]) { g.fillStyle = C('#c9a24a'); g.beginPath(); g.ellipse(sx, -152, 16, 7, 0, 0, 6.283); g.fill(); g.strokeStyle = C('#e8c870'); g.lineWidth = 2; for (let i = -3; i <= 3; i++) { g.beginPath(); g.moveTo(sx + i * 4, -147); g.lineTo(sx + i * 4, -138); g.stroke(); } }
+  // 머리 (썩은 얼굴)
+  g.fillStyle = C('#8aa37a'); g.beginPath(); g.ellipse(4, -172, 21, 23, 0, 0, 6.283); g.fill();
+  g.fillStyle = C('#5f7a55'); g.beginPath(); g.ellipse(-6, -166, 9, 11, 0.3, 0, 6.283); g.fill();
+  g.fillStyle = C('#1a1410'); g.beginPath(); g.ellipse(-2, -174, 5, 6, 0, 0, 6.283); g.fill();   // 빈 눈구멍
+  g.fillStyle = W_ ? '#ffffff' : o.glow ? '#ff5a6a' : '#7ff0ff'; g.beginPath(); g.arc(14, -175, 4.5, 0, 6.283); g.fill();
+  g.fillStyle = C('#2a1a14'); g.beginPath(); g.moveTo(4, -160); g.lineTo(22, -160); g.lineTo(18, -150); g.lineTo(6, -151); g.closePath(); g.fill();   // 벌어진 턱
+  g.fillStyle = C('#d8d0b0'); for (let i = 0; i < 4; i++) g.fillRect(6 + i * 4, -160, 2.5, 3.5);
+  // 이각모
+  g.fillStyle = C('#12141c'); g.beginPath(); g.moveTo(-34, -186); g.quadraticCurveTo(4, -230, 42, -186); g.quadraticCurveTo(4, -196, -34, -186); g.fill();
+  g.strokeStyle = C('#c9a24a'); g.lineWidth = 3; g.beginPath(); g.moveTo(-34, -186); g.quadraticCurveTo(4, -196, 42, -186); g.stroke();
+  g.fillStyle = C('#e8e0d0'); g.beginPath(); g.arc(4, -205, 5, 0, 6.283); g.fill(); g.fillStyle = C('#12141c'); g.fillRect(1.5, -206, 2, 2); g.fillRect(5, -206, 2, 2);
+  // 앞팔 + 녹슨 군도
+  const sl = o.an === 'slash', wind = sl && !(o.swing > 0), ang = sl ? (wind ? -2.5 : 0.9 - (o.swing / 0.25) * 0.6) : o.an === 'roar' ? -2.0 : o.an === 'cast' ? -1.6 : 0.5 + Math.sin(t * 2) * 0.05;
+  const sx0 = 30, sy0 = -140, ex = sx0 + Math.cos(ang) * 44, ey = sy0 + Math.sin(ang) * 44;
+  g.strokeStyle = C('#1d2b4f'); g.lineWidth = 17; g.beginPath(); g.moveTo(sx0, sy0); g.lineTo(ex, ey); g.stroke();
+  g.fillStyle = C('#7f9a72'); g.beginPath(); g.arc(ex, ey, 7, 0, 6.283); g.fill();
+  g.save(); g.translate(ex, ey); g.rotate(ang);
+  g.fillStyle = C('#c9a24a'); g.fillRect(-3, -9, 6, 18);
+  g.fillStyle = C('#9aa3a8'); g.beginPath(); g.moveTo(4, -4); g.quadraticCurveTo(44, -10, 78, 6); g.quadraticCurveTo(44, 4, 4, 4); g.closePath(); g.fill();
+  g.fillStyle = C('#8a5a3a'); g.beginPath(); g.arc(30, -2, 3, 0, 6.283); g.arc(52, 1, 2.5, 0, 6.283); g.fill();
+  g.restore();
+  g.restore();
+}
+function drawAdmBoss(e, x, y) {
+  const k = 1.05;
+  ctx.fillStyle = 'rgba(0,0,0,0.35)'; ctx.beginPath(); ctx.ellipse(x, y - 2, 70, 20, 0, 0, 6.283); ctx.fill();
+  const o = { face: e.face, t: e.t, an: e.an, anT: e.anT, swing: e.swing, anchor: !admAnc, glow: e.fz };
+  drawAdmBody(ctx, x, y, k, o);
+  if (e.flash > 0 && !e.invul) { ctx.save(); ctx.globalAlpha = Math.min(0.35, e.flash * 3); drawAdmBody(ctx, x, y, k, Object.assign({}, o, { white: true })); ctx.restore(); }
+}
+function drawAdmCannon(g, e, x, y, k, white) {   // 녹슨 유령 함포 (포신이 나를 향해 돈다)
+  const C = c => white ? '#ffffff' : c, s = k * (e.pop > 0 ? 1 - e.pop / 0.6 : 1); if (s <= 0.02) return;
+  g.save(); g.translate(x, y); g.scale(s, s);
+  if (!white) { g.save(); g.globalCompositeOperation = 'lighter'; g.fillStyle = `rgba(90,200,255,${0.16 + 0.08 * Math.sin((e.t || 0) * 6)})`; g.beginPath(); g.ellipse(0, -10, 50, 18, 0, 0, 6.283); g.fill(); g.restore(); }
+  g.fillStyle = C('#4a3424'); g.fillRect(-28, -26, 56, 18); g.fillStyle = C('#2a1d14'); g.fillRect(-28, -12, 56, 5);
+  for (const wx_ of [-18, 18]) { g.fillStyle = C('#2a1d14'); g.beginPath(); g.arc(wx_, -6, 9, 0, 6.283); g.fill(); g.fillStyle = C('#6a4a34'); g.beginPath(); g.arc(wx_, -6, 4, 0, 6.283); g.fill(); }
+  const a = e.ang || 0, fl = Math.cos(a) < 0 ? -1 : 1, rec = (e.rec || 0) * 30;
+  g.save(); g.translate(0, -28); g.scale(fl, 1); g.rotate(fl > 0 ? Math.atan2(Math.sin(a) * 0.5, Math.cos(a)) : Math.atan2(Math.sin(a) * 0.5, -Math.cos(a)));
+  g.fillStyle = C('#3c4246'); g.beginPath(); g.moveTo(-16 - rec, -11); g.lineTo(38 - rec, -8); g.lineTo(38 - rec, 8); g.lineTo(-16 - rec, 11); g.closePath(); g.fill();
+  g.fillStyle = C('#2a2e30'); g.fillRect(34 - rec, -10, 8, 20); g.beginPath(); g.arc(-17 - rec, 0, 9, 0, 6.283); g.fill();
+  g.fillStyle = C('#8a5a3a'); g.fillRect(6 - rec, -9, 5, 18); g.fillRect(20 - rec, -6, 3, 4);
+  g.restore();
+  if (e.brk > 0 && !white) { g.fillStyle = `rgba(255,120,60,${0.5 + 0.5 * Math.sin((e.t || 0) * 30)})`; g.beginPath(); g.arc(0, -52, 5, 0, 6.283); g.fill(); }
+  g.restore();
+}
+function drawAdmCannonE(e, x, y) {
+  if (x < -120 || x > W + 120 || y < -80 || y > H + 120) return;
+  ctx.fillStyle = 'rgba(0,0,0,0.35)'; ctx.beginPath(); ctx.ellipse(x, y - 1, 34, 9, 0, 0, 6.283); ctx.fill();
+  drawAdmCannon(ctx, e, x, y, 1.15, false);
+  if (e.flash > 0) { ctx.save(); ctx.globalAlpha = 0.45; drawAdmCannon(ctx, e, x, y, 1.15, true); ctx.restore(); }
+  if (e.hp < e.max && e.pop <= 0) { const w = 44; ctx.fillStyle = '#0a1418'; ctx.fillRect(x - w / 2 - 1, y - 70, w + 2, 6); ctx.fillStyle = '#6ac8e8'; ctx.fillRect(x - w / 2, y - 69, w * Math.max(0, e.hp / e.max), 4); }
+}
+function drawAdmFloor(wx, wy) {   // 포탄이 떨어질 자리 (캐릭터 아래) — 바닥 타원 = 피해 범위
+  for (const s of admBalls) {
+    const x = wx(s.x1), y = wy(s.y1); if (x < -200 || x > W + 200 || y < -200 || y > H + 200) continue;
+    const p = clamp(s.t / s.fl, 0, 1), pre = s.t < 0, pu = 0.5 + 0.5 * Math.sin(wallT * 16);
+    ctx.save(); ctx.fillStyle = `rgba(90,200,255,${pre ? 0.08 : 0.12 + 0.24 * p})`; ctx.beginPath(); ctx.ellipse(x, y, s.r * (pre ? 1 : p), s.r / 1.5 * (pre ? 1 : p), 0, 0, 6.283); ctx.fill();
+    ctx.strokeStyle = `rgba(150,225,255,${pre ? 0.4 : 0.6 + 0.35 * pu})`; ctx.lineWidth = 3; ctx.beginPath(); ctx.ellipse(x, y, s.r, s.r / 1.5, 0, 0, 6.283); ctx.stroke(); ctx.restore();
+  }
+}
+function drawAdmTop(wx, wy) {   // 날아가는 포탄 · 닻과 사슬 · 베기 궤적 · 폭발 (캐릭터 위)
+  for (const s of admBalls) {
+    if (s.t < 0) continue; const p = clamp(s.t / s.fl, 0, 1), x = wx(s.x0 + (s.x1 - s.x0) * p), y = wy(s.y0 + (s.y1 - s.y0) * p) - Math.sin(p * Math.PI) * s.h;
+    ctx.fillStyle = '#1a1c1e'; ctx.beginPath(); ctx.arc(x, y, 11, 0, 6.283); ctx.fill(); ctx.fillStyle = '#5a6066'; ctx.beginPath(); ctx.arc(x - 3, y - 3, 4, 0, 6.283); ctx.fill();
+    ctx.fillStyle = Math.floor(wallT * 30) % 2 ? '#ffd27a' : '#ff7a3a'; ctx.beginPath(); ctx.arc(x + 8, y - 9, 3, 0, 6.283); ctx.fill();
+  }
+  const b = boss, a = admAnc;
+  if (a && b && b.bk === 'adm') {
+    const hx = wx(b.x) - b.face * 30, hy = wy(b.y) - 110, ax = wx(a.x), ay = wy(a.y) - 40;
+    ctx.save(); ctx.strokeStyle = '#2a2420'; ctx.lineWidth = 6; ctx.beginPath(); ctx.moveTo(hx, hy); ctx.lineTo(ax, ay); ctx.stroke();
+    ctx.strokeStyle = '#8a7a6a'; ctx.lineWidth = 3; ctx.setLineDash([7, 5]); ctx.lineDashOffset = -wallT * 60; ctx.beginPath(); ctx.moveTo(hx, hy); ctx.lineTo(ax, ay); ctx.stroke(); ctx.setLineDash([]); ctx.restore();
+    drawAnchorShape(ctx, ax, ay, (a.r / ADM.anR) * 1.05, a.ret ? a.spin : a.ang + 1.571, false);
+  }
+  for (const q of admFx) {
+    const x = wx(q.x), y = wy(q.y), p = q.t / q.life, al = Math.max(0, 1 - p);
+    ctx.save();
+    if (q.k === 'slash') { ctx.globalCompositeOperation = 'lighter'; ctx.strokeStyle = `rgba(170,240,230,${al})`; ctx.lineWidth = 14 * al + 2; ctx.beginPath(); ctx.arc(x, y - 60, ADM.slashR * (0.6 + 0.4 * p), q.ang - ADM.slashHalf, q.ang + ADM.slashHalf); ctx.stroke(); }
+    else if (q.k === 'splash') { ctx.strokeStyle = `rgba(150,225,255,${al})`; ctx.lineWidth = 6; ctx.beginPath(); ctx.ellipse(x, y, q.r * (0.5 + 0.7 * p), q.r / 1.5 * (0.5 + 0.7 * p), 0, 0, 6.283); ctx.stroke(); ctx.fillStyle = `rgba(255,190,110,${0.5 * al})`; ctx.beginPath(); ctx.ellipse(x, y - 10, q.r * 0.6 * (1 - p * 0.5), q.r * 0.4, 0, 0, 6.283); ctx.fill(); }
+    else if (q.k === 'spawn') { ctx.strokeStyle = `rgba(90,200,255,${al})`; ctx.lineWidth = 4; ctx.beginPath(); ctx.ellipse(x, y, 20 + 50 * p, 8 + 18 * p, 0, 0, 6.283); ctx.stroke(); }
+    else if (q.k === 'boom') { ctx.fillStyle = `rgba(255,170,90,${0.6 * al})`; ctx.beginPath(); ctx.arc(x, y - 20, 20 + 40 * p, 0, 6.283); ctx.fill(); }
+    ctx.restore();
+  }
+}
 /* ---------- v6.30 타락천사 (지하 4층부터 · 전용 보스맵) ---------- */
 // 시트(an): 프레임마다 [x, y, 너비, 높이, 기준x(발 가운데), 기준y(발)] · 원본은 오른쪽을 본다 · 받은 도트를 정수 2배(nearest)로 그린다
 // 이펙트(anfx): tw 경고 원형 · tm 타이밍 마커 · tf 최종 경고 · te 폭발(마지막 = 붉은 지연 폭발) · s0 방패 생성 · s1 방패 정면 · s2 방패 옆 · s4 방패 파괴 · pm 추적 표시 · pf 낙하 준비 · pi 충격 · pa 잔상 · x0 타락 에너지 · x2 변환의 폭발 · x3 주변 파동 · ob 검은 구체 · ow 흰 구체
@@ -3317,6 +3661,7 @@ function bossDefeated() {
   const e = boss; boss = null; ebul = [];
   if (e.bk === 'skel') { skDeath = { x: e.x, y: e.y, face: e.face, t: 0 }; enemies = enemies.filter(q => q.kind !== 'skh' && q.kind !== 'skm' && !q.adds); skp = []; }
   if (e.bk === 'angel') { anDeath = { x: e.x, y: e.y, face: e.face, t: 0 }; anOrbs = []; }
+  if (e.bk === 'adm') admClear();   // v8.40
   if (e.bk === 'tox') { toxFl = []; toxFog = null; DEBUFF.clear('toxFog'); for (const q of enemies) if ((q.toxAdd || q.kind === 'toxm') && q.hp > 0) { q.hp = 0; burst(q.x, q.y - 20, 8, ['#ff2a8a', '#b6ff6a'], 160, 0.5); } enemies = enemies.filter(q => !q.toxAdd && q.kind !== 'toxm'); zones = zones.filter(z => z.type !== 'tpool' && z.type !== 'tswamp'); }   // v8.20
   if (e.bk === 'shk') { shkDeath = { x: e.x, y: e.y, t: 0 }; shkSp = []; for (const q of enemies) if (q.shkAdd && q.hp > 0) { q.hp = 0; burst(q.x, q.y - 20, 8, ['#ff2a5a', '#ffb0c8'], 160, 0.5); } enemies = enemies.filter(q => !q.shkAdd); }
   if (arena) arena.cleared = true;
@@ -3389,6 +3734,7 @@ function drawBoss(e, x, y) {
   if (e.bk === 'angel') { drawAnBoss(e, x, y); return; }
   if (e.bk === 'shk') { drawShkBoss(e, x, y); return; }
   if (e.bk === 'tox') { drawToxBoss(e, x, y); return; }
+  if (e.bk === 'adm') { drawAdmBoss(e, x, y); return; }
   const B = BSP, R = B.rows; let row = 'idle', f = Math.floor(e.t * 5) % 4, k = 1.8, sy = 1, sx = 1, up = e.jh || 0, alpha = 1;
   switch (e.st) {
     case 'intro': case 'roar': row = 'roar'; f = 0; k = 0.8; break;
@@ -3813,7 +4159,7 @@ function reset(char) {
   { const n = rand() < 0.5 ? 2 : 3; slotPlan = []; let t0 = 75 + rand() * 40; for (let i = 0; i < n; i++) { slotPlan.push(t0); t0 += 120 + rand() * 60; } }   // 잭팟 머신: 판당 2~3번
   embers = Array.from({ length: 70 }, () => ({ x: rand() * W, y: rand() * H, v: 12 + rand() * 30, d: rand() * 6.28, s: 1 + ((rand() * 2) | 0) }));
   fwd = null; fwFx = []; bsig = null; chal = null; cutSaws = [];
-  gt = 0; darkT = 0; smokes = []; mini = null; mdeath = null; mfx = []; skDead = []; skp = []; skSp = []; skDeath = null; anOrbs = []; anFx = []; anDeath = null; shkFx = []; shkSp = []; shkDeath = null; toxFx = []; toxFl = []; toxFog = null; DEBUFF.clearAll(); gunFx = []; rollQ = null; gunDq = null; spawnT = 0.4; deadT = 0; overShown = false; shake = 0; castle = null; arena = null; trans = null; banner = null; boss = null; winT = 0;
+  gt = 0; darkT = 0; smokes = []; mini = null; mdeath = null; mfx = []; skDead = []; skp = []; skSp = []; skDeath = null; anOrbs = []; anFx = []; anDeath = null; shkFx = []; shkSp = []; shkDeath = null; toxFx = []; toxFl = []; toxFog = null; DEBUFF.clearAll(); admFx = []; admBalls = []; admAnc = null; admPull = null; gunFx = []; rollQ = null; gunDq = null; spawnT = 0.4; deadT = 0; overShown = false; shake = 0; castle = null; arena = null; trans = null; banner = null; boss = null; winT = 0;
   cam.x = 0; cam.y = 0;
   nextGoal();
 }
@@ -3936,7 +4282,7 @@ function skWrap(fn, key) {
   };
 }
 const withSrc = (k, f) => { const o = DSRC; DSRC = k; try { return f(); } finally { DSRC = o; } };
-const dexBoss = e => ({ eye: 'boss2', fw: 'boss3', skel: 'boss4', ab: 'boss5', angel: 'boss6', shk: 'boss7', tox: 'boss8' })[e.bk] || 'boss';   // 도감 키 (원숭이 마왕 = boss)
+const dexBoss = e => ({ eye: 'boss2', fw: 'boss3', skel: 'boss4', ab: 'boss5', angel: 'boss6', shk: 'boss7', tox: 'boss8', adm: 'boss9' })[e.bk] || 'boss';   // 도감 키 (원숭이 마왕 = boss)
 function hurtEnemy(e, dmg, kx, ky, kn, quiet) {
   if (e.hp <= 0 || e.invul) return;
   if (e.bk === 'angel' && anFront(e)) { anBlock(e); return; }   // v6.30: 타락천사의 성스러운 방패 — 정면에서는 막힌다
@@ -3963,7 +4309,7 @@ function hurtEnemy(e, dmg, kx, ky, kn, quiet) {
   if (e.hp <= 0) {
     P.kills++; if (P.up.gBounty) gunBounty();
     if (SAVE.ch.tr.rat && P.kills % 100 === 0) { P.max += 1; P.hp = Math.min(P.max, P.hp + 1); floatNum(P.x, P.y - 100, '쥐 이빨 목걸이  최대 체력 +1', '#ffd0a0'); }   // 보물
-    dexKill(e.kind === 'boss' ? dexBoss(e) : e.kind === 'mini' ? (e.bk === 'rig' ? 'rig' : e.bk === 'nerk' ? 'nerk' : e.bk === 'eye' ? 'mini2' : e.bk === 'cut' ? 'cut' : e.bk === 'stat' ? 'stat' : e.sk ? 'skw' : 'mini') : e.kind === 'abm' ? 'abm' : e.kind === 'toxm' ? 'toxm' : e.kind === 'bug' ? 'bug' : e.kind === 'uniq' ? 'uq:' + e.uk : e.kind === 'mimic' ? 'mimic' : (e.kind === 'skh' || e.kind === 'skm') ? 'skx' : 'm' + e.spec.idx);
+    dexKill(e.kind === 'boss' ? dexBoss(e) : e.kind === 'mini' ? (e.bk === 'rig' ? 'rig' : e.bk === 'nerk' ? 'nerk' : e.bk === 'eye' ? 'mini2' : e.bk === 'cut' ? 'cut' : e.bk === 'stat' ? 'stat' : e.sk ? 'skw' : 'mini') : e.kind === 'abm' ? 'abm' : e.kind === 'toxm' ? 'toxm' : e.kind === 'adc' ? 'adc' : e.kind === 'bug' ? 'bug' : e.kind === 'uniq' ? 'uq:' + e.uk : e.kind === 'mimic' ? 'mimic' : (e.kind === 'skh' || e.kind === 'skm') ? 'skx' : 'm' + e.spec.idx);
     if (e.kind === 'boss') { markDex(dexBoss(e), 1); if (e.bk === 'fw') fwBossDefeated(e); else bossDefeated(); return; }
     if (e.kind === 'skh' || e.kind === 'skm') { skMinorDead(e); return; }
     fangGain(e);
@@ -6857,6 +7203,7 @@ function update(dt) {
     if (e.kind === 'skm') { updateSkMinion(e, dt); continue; }
     if (e.kind === 'abm') { updateAbMinion(e, dt); continue; }
     if (e.kind === 'toxm') { updateToxMini(e, dt); continue; }
+    if (e.kind === 'adc') { updateAdmCannon(e, dt); continue; }
     if (e.gold) { chGoldStep(e, dt); continue; }
     e.t += dt; e.flash = Math.max(0, e.flash - dt); e.orbCd = Math.max(0, e.orbCd - dt);
     const dx = P.x - e.x, dy = P.y - e.y, d = Math.hypot(dx, dy) || 1;
@@ -6891,7 +7238,7 @@ function update(dt) {
     }
   }
   chUpdate(dt);   // v6.20: 챌린지 모드 (강적 · 황금 도망자 · 쉼터 · 추격자 · 맵 경계)
-  enemies = enemies.filter(e => e.hp > 0 && (e.kind === 'mini' || e.kind === 'uniq' || e.kind === 'boss' || e.kind === 'mimic' || Math.hypot(e.x - P.x, e.y - P.y) < 1800));
+  enemies = enemies.filter(e => e.hp > 0 && (e.kind === 'adc' || e.kind === 'mini' || e.kind === 'uniq' || e.kind === 'boss' || e.kind === 'mimic' || Math.hypot(e.x - P.x, e.y - P.y) < 1800));
 
   // --- 영혼 구슬 ---
   for (const o of orbs) {
@@ -6933,7 +7280,7 @@ function update(dt) {
   }
 }
 function updateFx(dt) {
-  darkT = Math.max(0, darkT - dt); updateFwFx(dt); updateSkFx(dt); updateAnFx(dt); updateShkFx(dt); updateToxFx(dt); updateGunFx(dt);
+  darkT = Math.max(0, darkT - dt); updateFwFx(dt); updateSkFx(dt); updateAnFx(dt); updateShkFx(dt); updateToxFx(dt); updateAdmFx(dt); updateGunFx(dt);
   for (const q of smokes) { q.x += q.vx * dt; q.y += q.vy * dt; q.life -= dt; }
   smokes = smokes.filter(q => q.life > 0);
   if (P && P.contractN > 0 && state === 'play' && smokes.length < 40 && rand() < dt * (3 + 2 * P.contractN)) smokes.push({ x: P.x + (rand() - 0.5) * 40, y: P.y - 8 - rand() * 20, vx: (rand() - 0.5) * 16, vy: -22 - rand() * 18, r: 14 + rand() * 10, life: 1.2, max: 1.2 });   // 계약 오라: 검은 연기가 피어오른다
@@ -7520,7 +7867,7 @@ function render() {
   if (arena && arena.k !== 'blood') drawArenaExit(wx, wy);
   drawBsig(wx, wy);
   drawSkFloor(wx, wy);
-  drawBossTele(wx, wy); drawAnFloor(wx, wy); drawShkFloor(wx, wy); drawToxFloor(wx, wy);
+  drawBossTele(wx, wy); drawAnFloor(wx, wy); drawShkFloor(wx, wy); drawToxFloor(wx, wy); drawAdmFloor(wx, wy);
   drawFwFx(wx, wy);
 
   for (const it of items) drawItem(it, wx(it.x), wy(it.y));
@@ -7608,6 +7955,7 @@ function render() {
       if (e.kind === 'skm') { drawSkMinion(e, x, y); continue; }
       if (e.kind === 'abm') { drawAbMinion(e, x, y); continue; }
       if (e.kind === 'toxm') { drawToxMini(e, x, y); continue; }
+      if (e.kind === 'adc') { drawAdmCannonE(e, x, y); continue; }
       if (x < -170 || x > W + 170 || y < -60 || y > H + 260) continue;   // v6.30: 화면 밖 몹은 그리지 않는다
       if (e.kind === 'bug') {
         ctx.fillStyle = 'rgba(0,0,0,0.4)'; ctx.beginPath(); ctx.ellipse(x, y - 1, 56, 10, 0, 0, 6.283); ctx.fill();
@@ -7634,7 +7982,7 @@ function render() {
 
   drawZonesTop(wx, wy);
   drawUniqFx(wx, wy); drawOctoFx(wx, wy); drawLasers(wx, wy);
-  drawLights(wx, wy); drawBlades(wx, wy); drawChimFx(wx, wy); drawAfx(wx, wy); drawHolyCharge(wx, wy); drawEbul(wx, wy); drawSkTop(wx, wy); drawAnTop(wx, wy); drawShkTop(wx, wy); drawToxTop(wx, wy); drawGunFx(wx, wy); drawChTop(wx, wy);
+  drawLights(wx, wy); drawBlades(wx, wy); drawChimFx(wx, wy); drawAfx(wx, wy); drawHolyCharge(wx, wy); drawEbul(wx, wy); drawSkTop(wx, wy); drawAnTop(wx, wy); drawShkTop(wx, wy); drawToxTop(wx, wy); drawAdmTop(wx, wy); drawGunFx(wx, wy); drawChTop(wx, wy);
   for (const q of mfx) miniFrame('D9', wx(q.x), wy(q.y), 1, 0.95, false, Math.max(0, 1 - q.t / q.life));   // 내려찍기 충격파
   drawBeam(wx, wy); drawBigQ(wx, wy);
   for (const g of globs) {   // 날아가는 독 침 / 용암탄
@@ -7855,7 +8203,7 @@ function drawHud() {
   if (boss && boss.hp > 0 && (arena || chal)) {   // 보스 체력바
     const bw = Math.min(560, W - 80), bx = W / 2 - bw / 2, by = 44;
     ctx.fillStyle = 'rgba(10,4,16,0.75)'; ctx.fillRect(bx - 4, by - 22, bw + 8, 40);
-    ctx.fillStyle = '#ffd36a'; ctx.font = 'bold 14px sans-serif'; ctx.textAlign = 'center'; ctx.fillText((boss.bk === 'ab' ? '심연의 촉수마왕' : boss.bk === 'eye' ? '심연의 마안군주' : boss.bk === 'fw' ? '타락한 혈랑왕' + (boss.giant ? '  ·  거대화' : '') : boss.bk === 'skel' ? '스켈레톤 마왕' + (boss.shield ? `  ·  결계 (첨탑 ${boss.tow} / 3)` : '') : boss.bk === 'angel' ? '타락천사' + (boss.ph === 2 ? '  ·  흑화' : '') + (boss.shT > 0 ? '  ·  성스러운 방패 (등 뒤에서 공격!)' : '') : boss.bk === 'shk' ? '거대 버섯마귀' + (boss.guard ? '  ·  포자 갑옷 (받는 피해 -50%)' : '') : boss.bk === 'tox' ? '이독버섯 마왕' + (boss.ph2 ? '  ·  핵심 포자' : '') + (toxFog ? '  ·  맹독성 가스' : '') : '원숭이 마왕') + (boss.rage ? '  ·  분노' : ''), W / 2, by - 6);
+    ctx.fillStyle = '#ffd36a'; ctx.font = 'bold 14px sans-serif'; ctx.textAlign = 'center'; ctx.fillText((boss.bk === 'ab' ? '심연의 촉수마왕' : boss.bk === 'eye' ? '심연의 마안군주' : boss.bk === 'fw' ? '타락한 혈랑왕' + (boss.giant ? '  ·  거대화' : '') : boss.bk === 'skel' ? '스켈레톤 마왕' + (boss.shield ? `  ·  결계 (첨탑 ${boss.tow} / 3)` : '') : boss.bk === 'angel' ? '타락천사' + (boss.ph === 2 ? '  ·  흑화' : '') + (boss.shT > 0 ? '  ·  성스러운 방패 (등 뒤에서 공격!)' : '') : boss.bk === 'shk' ? '거대 버섯마귀' + (boss.guard ? '  ·  포자 갑옷 (받는 피해 -50%)' : '') : boss.bk === 'adm' ? '썩어버린 해군 제독' + (boss.fz ? '  ·  발악 (총공세)' : '') : boss.bk === 'tox' ? '이독버섯 마왕' + (boss.ph2 ? '  ·  핵심 포자' : '') + (toxFog ? '  ·  맹독성 가스' : '') : '원숭이 마왕') + (boss.rage ? '  ·  분노' : ''), W / 2, by - 6);
     ctx.fillStyle = '#2a0a0e'; ctx.fillRect(bx, by, bw, 12);
     ctx.fillStyle = boss.shield ? '#8a6a9a' : boss.rage ? '#ff3a2a' : '#c8283a'; ctx.fillRect(bx, by, bw * Math.max(0, boss.hp / boss.max), 12);
     if (boss.bk === 'skel') { ctx.fillStyle = 'rgba(255,255,255,0.45)'; for (const q of SK_PH) ctx.fillRect(bx + bw * q - 1, by - 2, 2, 16); }
@@ -8824,12 +9172,13 @@ function showOver(win) {
   show('overBox', true);
 }
 /* v6.30 보스 등장 확률: 층마다 그 층에서 처음 나오는 보스가 70% · 나머지 30%는 앞 층까지 나온 보스 중 균등
-   (지하 1층 원숭이 100% · 2층 마안군주 70% · 3층 스켈레톤 70% · 4층 타락천사 70% · 5층 4종 균등 · 6층 거대 버섯마귀 70% · 7층 5종 균등 · 8·9층 이독버섯 마왕 70% · 10층부터 6종 균등) — 다음 층부터 나오는 보스는 그 전 층에 나오지 않는다 */
+   (지하 1층 원숭이 100% · 2층 마안군주 70% · 3층 스켈레톤 70% · 4층 타락천사 70% · 5층 4종 균등 · 6층 거대 버섯마귀 70% · 7층 5종 균등 · 8·9층 이독버섯 마왕 70% · 10층 6종 균등 · 11·12층 썩어버린 해군 제독 70% · 13층부터 7종 균등) — 다음 층부터 나오는 보스는 그 전 층에 나오지 않는다 */
 const TOX_L = ['tox', 'monkey', 'eye', 'skel', 'angel', 'shk'];   // v8.20
-const BOSS_TBL = [['monkey'], ['eye', 'monkey'], ['skel', 'monkey', 'eye'], ['angel', 'monkey', 'eye', 'skel'], null, ['shk', 'monkey', 'eye', 'skel', 'angel'], null, TOX_L, TOX_L];   // null = 앞 층 보스 균등
+const ADM_L = ['adm', 'tox', 'monkey', 'eye', 'skel', 'angel', 'shk'];   // v8.40
+const BOSS_TBL = [['monkey'], ['eye', 'monkey'], ['skel', 'monkey', 'eye'], ['angel', 'monkey', 'eye', 'skel'], null, ['shk', 'monkey', 'eye', 'skel', 'angel'], null, TOX_L, TOX_L, null, ADM_L, ADM_L];   // null = 앞 층 보스 균등
 function pickBossK(t) {
   const last = BOSS_TBL[BOSS_TBL.length - 1];
-  if (t >= BOSS_TBL.length) return last[(rand() * last.length) | 0];   // v8.20: 지하 10층부터 6종 균등
+  if (t >= BOSS_TBL.length) return last[(rand() * last.length) | 0];   // v8.40: 지하 13층부터 7종 균등 (10층 = 앞 6종 균등)
   const L = BOSS_TBL[t];
   if (!L) { const Q = BOSS_TBL[t - 1]; return Q[(rand() * Q.length) | 0]; }   // 지하 5층: 앞의 4종 균등
   if (L.length === 1 || rand() < 0.7) return L[0];
@@ -9003,6 +9352,10 @@ function openDex() {
     add(gr, { on: d.kills.boss7, trophy: true, name: '거대 버섯마귀', sub: (d.kills.boss7 || 0) + '회 처치', hint: '<br>보스 (지하 6층부터 등장)', draw: (g, w, h, l) => IMG.shk && dexSprite(g, w, h, IMG.shk, a0[0], a0[1], a0[2], a0[3], false, l, false) }); }
   { const a0 = TOXF.idle[0];   // v8.20
     add(gr, { on: d.kills.boss8, trophy: true, name: '이독버섯 마왕', sub: (d.kills.boss8 || 0) + '회 처치', hint: '<br>보스 (지하 8층부터 등장 · 8·9층에서 자주)', draw: (g, w, h, l) => IMG.tox && dexSprite(g, w, h, IMG.tox, a0[0], a0[1], a0[2], a0[3], false, l, false) }); }
+  {   // v8.40 썩어버린 해군 제독 · 녹슨 유령 함포 (도트 시트가 오기 전: 코드로 그린 임시 모습)
+    const lockFx = (g, w, h, l) => { if (l) { g.save(); g.globalCompositeOperation = 'source-atop'; g.fillStyle = '#0c0508'; g.fillRect(0, 0, w, h); g.restore(); } };
+    add(gr, { on: d.kills.boss9, trophy: true, name: '썩어버린 해군 제독', sub: (d.kills.boss9 || 0) + '회 처치', hint: '<br>보스 (지하 11층부터 등장 · 11·12층에서 자주)', draw: (g, w, h, l) => { const k = (h - 6) / 232; drawAdmBody(g, w / 2, h - 3, k, { face: 1, t: 0, an: 'idle', anchor: true }); lockFx(g, w, h, l); } });
+    add(gr, { on: d.kills.adc, name: '녹슨 유령 함포', sub: (d.kills.adc || 0) + '회 파괴', hint: '<br>썩어버린 해군 제독이 소환하는 포탑 (부술 수 있다)', draw: (g, w, h, l) => { drawAdmCannon(g, { ang: -0.3, t: 0 }, w / 2, h - 4, Math.min(w / 80, h / 70), false); lockFx(g, w, h, l); } }); }
   { const c0 = CMF.idle[0], a0 = ABF.body[0];
     add(gr, { on: d.kills.cut, name: '절단안의 짐승', sub: (d.kills.cut || 0) + '회 처치', hint: '<br>미니 보스 (∞ 챌린지)', draw: (g, w, h, l) => dexSprite(g, w, h, IMG.cm, c0[0], c0[1], c0[2], c0[3], false, l, true) });
     for (const hk of ['rig', 'nerk']) { const f0 = HRF[hk].idle[0]; add(gr, { on: d.kills[hk], name: HORSE[hk].name, sub: (d.kills[hk] || 0) + '회 처치', hint: '<br>미니 보스 (말 · 판마다 15%씩 등장)', draw: (g, w, h, l) => IMG.horse && dexSprite(g, w, h, IMG.horse, f0[0], f0[1], f0[2], f0[3], false, l, true) }); }
@@ -9488,7 +9841,7 @@ window.__G = { FD, shkAdd, toxAdd, skSpawnPair, phoenixRevive, mirrorBlock, palP
   get SAVE() { return SAVE; }, render, get boss() { return boss; }, get mini() { return mini; }, get skp() { return skp; }, SK_PH, SKB, get mdeath() { return mdeath; }, spawnMini, miniDefeated, spawnBoss, raiseCastle, enterArena, exitArena, get castle() { return castle; }, get arena() { return arena; }, get trans() { return trans; }, openChest, openShop, buildCards, get joy() { return joy; }, get gt() { return gt; }, get allies() { return allies; }, get items() { return items; }, spawnItem, get globs() { return globs; }, recruit, keys, tick, needFor, pick: pickChoice, cast: castSkill, uniqueSkills, skillName, spawnBug,
   get slots() { return slots; }, spawnMimic, slotRoll, get MIM() { return MIM; },  get slotUI() { return slotUI; }, get udeath() { return udeath; }, get lasers() { return lasers; }, get eyeF() { return eyeF; }, get uniqCd() { return uniqCd; }, spawnSlot, spawnUniq, gainRelic, useTeleport, closeSlot, slotSpin, slotKey, updateSlotUI, SLOT_FX, SLOT_APPLY, UNIQ, RELICS, trySpawnUniq, UNIQ_P, setState(v) { state = v; }, spawnEnemy,
   get DMETER() { return DMETER; }, get DBOSS() { return DBOSS; }, get DUNK() { return DUNK; }, setDbg(v) { DDBG = v; }, dmName, gachaRoll, gachaPools, rollHeartDrop, heartGain, rerollHeart, heartCost, equipHeart, unequipHeart, disHeart, heartBonus, playUpgradeEffect, openHeart, HG, HEART, bossDefeated, skinCraft, skinToggle, skinOn, SKINS, GACHA, openGacha, gachaPull, UPGRADES, UNIQUE, SYNERGIES, SKILLS, skillName, get eleQ() { return eleQ; }, fwStart, setT(v) { gt = v; }, calcShards, FD, LIZ_FORMS, TWIN_FORMS, startFw, snapP, get fwFx() { return fwFx; }, get bsig() { return bsig; }, BMAP, inBlood, twLen, availSyn, SYNERGIES, UPGRADES, inPoly, hurtEnemy, startGame, addExp, hurt: hurtPlayer, rebuild: buildSpecies,
-  get rollQ() { return rollQ; }, gunRollStart, startWhip, get gunDq() { return gunDq; }, chPct, get gunFx() { return gunFx; }, GUN, GUN_AMMO, GUNA, gunLoad, gunRange,
+  get rollQ() { return rollQ; }, ADM, admAnchorStart, admFrenzy, admBroad, admSweep, admSlash, admCannonCall, admNC, pickBossK, get admBalls() { return admBalls; }, get admAnc() { return admAnc; }, get admPull() { return admPull; }, gunRollStart, startWhip, get gunDq() { return gunDq; }, chPct, get gunFx() { return gunFx; }, GUN, GUN_AMMO, GUNA, gunLoad, gunRange,
   get anOrbs() { return anOrbs; }, get anFx() { return anFx; }, AMAP, ANB, ANX, AN, anStart, anTrans, pickBossK, floorName, arenaExit, get shkSp() { return shkSp; }, get toxFl() { return toxFl; }, get toxFog() { return toxFog; }, TOX, TOXF, DEBUFF, toxPick, toxReflux, toxCollapse, toxThrow, toxGas, get shkFx() { return shkFx; }, SHK, SHKF, shkStart, shkSummon,
   sizes() { const o = { enemies, orbs, items, shards, fx, nums, arcs, embers, zones, rings, globs, sprFx, blades, lights, ebul, afx, gunFx, cfx, bfx, healFx, allies, slots, cutSaws, airs, octoFx, smokes, skp, mfx }; const r = {}; for (const k in o) if (o[k] && o[k].length != null) r[k] = o[k].length; return r; },
   get banner() { return banner; }, get perfLv() { return perfLv; }, get NUM_C() { return NUM_C; }, get chal() { return chal; }, chTime, chDmgT, startChallenge, chEvent, chEnterBoss, chFrag, chGoldSpawn, chShelter, inCh, CHM, spawnCut, spawnAb, abStart, RUNES, TREASURES, get cutSaws() { return cutSaws; }, setChMode(v) { chMode = v; }, get W() { return W; }, get H() { return H; }, get species() { return SPECIES; }, get sspecies() { return SSPECIES; }, spawnHorse, hAtk, spawnStat, sAtk, spawnMini, spawnMiniPick, setAngelSkin(v) { angelSkin = !!v; }, drawAnSprite, get ctx() { return ctx; }, get mini() { return mini; }, hurtEnemy, SMAP, isSea, BM, get mspecies() { return MSPECIES; }, spawnUniq, SHR, SHA, MMAP, isMush, floorSet,

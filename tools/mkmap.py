@@ -24,6 +24,7 @@ ANCHORS = [
  ('거대 버섯마귀', r'v7\.20 거대 버섯마귀|^function updateShkBoss|^function shkStart|^function shkSummon'),
  ('악마 식물원(16~20층)', r'v8\.30 지하 16~20층|^const GMAP|^function gardTile|^const isGard'),
  ('이독버섯 마왕', r'v8\.20 이독버섯 마왕|^function updateToxBoss|^function toxPick|^const DEBUFF'),
+ ('썩어버린 해군 제독', r'v8\.40 썩어버린 해군 제독|^function updateAdmBoss|^function applyPull|^function updateAdmCannon|^const ADM_L'),
  ('● 층·맵', None),
  ('층 세트(지옥/버섯/어인섬)', r'^function floorSet|^const isSea|^const isMush'), ('버섯 세트', r'^const MSPECIES|^const MMAP'), ('어인섬 세트', r'^const SSPECIES|^const SMAP|^function warmSea'),
  ('챌린지 모드', r'v6\.20 ∞ 챌린지|^function startChallenge'),
