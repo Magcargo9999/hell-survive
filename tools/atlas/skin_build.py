@@ -9,7 +9,8 @@ from PIL import Image
 from scipy import ndimage as nd
 ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 OUT = os.path.join(ROOT, 'src/assets/skin'); os.makedirs(OUT, exist_ok=True)
-def build(src, name, rows, art, thr=34, close=0, valley=0, holemax=0, thin=False):   # thr: 배경으로 볼 최대 밝기(어두운 옷이 잘리지 않게 낮게 · v8.04부터 16~22)
+def build(src, name, rows, art, thr=34, close=0, valley=0, holemax=0, thin=False, hline=False):   # thr: 배경으로 볼 최대 밝기(어두운 옷이 잘리지 않게 낮게 · v8.04부터 16~22)
+    if src == '-': return   # 시트를 '-'로 주면 건너뛴다
     A = np.array(Image.open(src).convert('RGBA')); RGB = A[:, :, :3].astype(int)
     tiles, frames = [], {}
     if valley:   # v8.04: 칸 경계를 '그림이 가장 비어 있는 세로줄'로 옮긴다 — 이웃 칸과 붙은 몸·꼬리·이펙트가 잘리지 않게 (경계 ±valley px 안에서)
@@ -31,13 +32,19 @@ def build(src, name, rows, art, thr=34, close=0, valley=0, holemax=0, thin=False
             mx = sz.max(); ok = []
             for i, sl in enumerate(nd.find_objects(lab)):   # 칸 가장자리에 걸린 이웃 그림 조각(작은 것)은 버린다
                 edge = sl[1].start == 0 or sl[1].stop == m.shape[1]
-                thin = (sl[1].stop - sl[1].start) <= 4 and (sl[0].stop - sl[0].start) >= 20   # 패널 테두리 선
-                if sz[i] >= 25 and not thin and not (edge and sz[i] < 0.2 * mx): ok.append(i + 1)
+                thin = (sl[1].stop - sl[1].start) <= (8 if hline else 4) and (sl[0].stop - sl[0].start) >= (25 if hline else 20)   # 패널 테두리 선
+                near = hline and (sl[1].stop <= 14 or sl[1].start >= m.shape[1] - 14) and sz[i] < 0.05 * mx   # v8.51: 칸 가장자리 14px 안의 작은 조각(이웃 칸 이펙트·글자 부스러기)
+                if sz[i] >= 25 and not thin and not near and not (edge and sz[i] < 0.2 * mx): ok.append(i + 1)
             keep = np.isin(lab, ok)
             if close: keep = nd.binary_closing(np.pad(keep, close + 2), structure=np.ones((3, 3)), iterations=close)[close + 2:-(close + 2), close + 2:-(close + 2)] | keep   # 닫기: 가는 틈을 메워 구멍 메우기가 잘 되게
             if thin:   # 패널 테두리 조각(가는 가로·세로 선) 지우기
                 th = nd.binary_dilation(nd.binary_opening(keep, structure=np.ones((3, 3))), iterations=1)
                 keep &= ~((nd.binary_opening(keep, structure=np.ones((1, 12))) | nd.binary_opening(keep, structure=np.ones((12, 1)))) & ~th)
+            if hline:   # v8.51: 칸 폭의 80% 넘게 이어지는 얇은 가로줄(패널 구분선·바닥선)은 발에 붙어 있어도 지운다
+                cov = keep.sum(axis=1) / keep.shape[1]; H = len(cov)
+                for yy in range(H):   # 줄은 칸 폭 거의 전부 + 위아래 4px 밖은 훨씬 비어 있다 (몸통은 이런 모양이 아니다)
+                    up = cov[yy - 4] if yy >= 4 else 0; dn = cov[yy + 4] if yy + 4 < H else 0
+                    if cov[yy] > 0.93 and keep.shape[1] > 120 and (up < 0.6 or dn < 0.6) and min(up, dn) < 0.6: keep[yy] = False
             if holemax:   # 작은 구멍만 메운다 (이펙트 사이 큰 빈 곳이 까맣게 채워지지 않게)
                 hole = nd.binary_fill_holes(keep) & ~keep; hl, hn = nd.label(hole); hs = nd.sum(hole, hl, range(1, hn + 1)); keep = keep | np.isin(hl, [i + 1 for i in range(hn) if hs[i] <= holemax])
             else: keep = nd.binary_fill_holes(keep)
@@ -56,7 +63,7 @@ def build(src, name, rows, art, thr=34, close=0, valley=0, holemax=0, thin=False
     json.dump(frames, open(os.path.join(OUT, name + '.json'), 'w'))
     Image.open(src).convert('RGB').crop(art).save(os.path.join(OUT, name + '_art.webp'), quality=90)
     print(name, out.size, {k: len(v) for k, v in frames.items()})
-hunter, wolf, hunterE = sys.argv[1], sys.argv[2], sys.argv[3]
+hunter, wolf, hunterE = sys.argv[1], sys.argv[2], sys.argv[3]   # '-' 이면 그 스킨은 다시 만들지 않는다 (예: python3 skin_build.py - - - 현무시트.png)
 lizG = sys.argv[4] if len(sys.argv) > 4 else None
 ghostG = sys.argv[5] if len(sys.argv) > 5 else None
 # 악마 사냥꾼 (악마 총잡이 최종 진화 스킨): 원본은 오른쪽을 본다 — 게임 키 i2 w2 a2 r2 h2 d2 s2
@@ -89,13 +96,13 @@ build(hunterE, 'gunE', {
 }, (10, 10, 345, 668), thr=20, close=1)
 # 현무 리저드 (리저드 수호의 길 최종 진화 스킨, 레어): 시트 1448x1086, 원본은 오른쪽을 본다 · 키 = 게임 동작 이름
 if lizG: build(lizG, 'lizG', {
-    'idle':   (402, 498, [(140,338),(338,545),(545,757),(757,962),(962,1188),(1188,1420)]),
+    'idle':   (402, 498, [(140,338),(338,545),(545,757),(757,962),(962,1188),(1188,1405)]),
     'walk':   (502, 598, [(140,305),(305,467),(467,623),(623,770),(770,930),(930,1085),(1085,1268),(1268,1435)]),
     'attack': (602, 698, [(140,318),(318,520),(520,792),(792,1030),(1030,1232),(1232,1435)]),
-    'skill':  (703, 838, [(100,262),(262,522),(522,752),(752,962),(962,1160),(1160,1440)]),
-    'hit':    (848, 942, [(100,252),(252,380),(380,545)]),
+    'skill':  (700, 836, [(128,335),(335,580),(580,825),(825,1048),(1048,1240),(1240,1438)]),   # v8.51: 방어 6칸 — 둥근 등껍질 이펙트가 칸 경계에서 잘리던 것을 몸 중심 사이 가운데로 옮김
+    'hit':    (848, 942, [(108,252),(252,380),(380,528)]),
     'death':  (848, 948, [(652,800),(800,935),(935,1085),(1085,1235),(1235,1405)]),
-}, (120, 50, 850, 402), thr=24, close=1, valley=30, holemax=160, thin=True)
+}, (120, 50, 850, 402), thr=24, close=1, valley=45, holemax=160, thin=True, hline=True)
 if ghostG:   # v8.13 연보라 총령 최종 레어 스킨 (수호령의 총령, 시트는 오른쪽을 봄 · 어두운 남색 배경 thr 30)
     def cells(b): return [(b[i], b[i + 1]) for i in range(len(b) - 1)]
     build(ghostG, 'ghostG', {'idle': (548, 622, cells([172, 315, 475, 635, 795, 950, 1110, 1270])),
