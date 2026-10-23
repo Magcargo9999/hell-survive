@@ -296,6 +296,10 @@
     <div class="setrow">쿠폰 <span><input id="cpIn" type="text" placeholder="쿠폰 번호" autocomplete="off" style="width:150px;font-size:15px;padding:4px 6px"> <button id="cpBtn" class="sm">적용</button></span></div>
     <div class="setrow">누적 플레이 시간 <b id="setPlay" style="color:var(--gold)"></b></div>
     <div id="cpMsg" style="font-size:13px;min-height:18px;color:#ffd27a;text-align:center"></div>
+    <div class="setrow" style="flex-wrap:wrap;gap:6px">세이브 옮기기 <span><button id="svFile" class="sm">파일로 저장</button> <button id="svCopy" class="sm">코드 복사</button> <button id="svLoadF" class="sm">파일 불러오기</button></span></div>
+    <div class="setrow" style="gap:6px"><textarea id="svCode" placeholder="복사한 세이브 코드를 여기에 붙여 넣기" autocomplete="off" spellcheck="false" style="flex:1;height:44px;font-size:12px;padding:4px 6px;resize:none"></textarea> <button id="svLoadC" class="sm">코드로 불러오기</button></div>
+    <input type="file" id="svPick" accept=".json,application/json,text/plain" style="display:none">
+    <div id="svMsg" style="font-size:13px;min-height:18px;color:#ffd27a;text-align:center"></div>
   </div>
   <button id="setClose" class="sm">닫기</button>
 </div>
@@ -837,6 +841,7 @@ function mkCanvas(w, h) { const c = document.createElement('canvas'); c.width = 
  * 0-1. 저장(영혼 조각 · 영구 강화 · 설정) / 캐릭터 목록 / 소리
  * ============================================================ */
 const SAVE_KEY = 'hellSurvivorSave1';
+const GAME_VER = 'v8.55';
 const SAVE_DEF = () => ({
   shards: 0,
   perks: { hp: 0, spd: 0, dmg: 0, exp: 0, magnet: 0, banish: 0, revive: 0, regen: 0, shard: 0, critd: 0, choice: 0 },
@@ -863,7 +868,8 @@ function loadSave() {
     delete SAVE.chars.mage;
   } catch (e) { /* 저장소를 못 쓰는 환경이면 기본값으로 진행 */ }
 }
-function saveSave() { try { localStorage.setItem(SAVE_KEY, JSON.stringify(SAVE)); } catch (e) { /* 무시 */ } }
+let saveLock = false;   // v8.55 세이브 불러오는 중에는 덮어쓰지 않는다
+function saveSave() { if (saveLock) return; try { localStorage.setItem(SAVE_KEY, JSON.stringify(SAVE)); } catch (e) { /* 무시 */ } }
 loadSave();
 function markDex(key, route) {
   const d = SAVE.dex; let ch = false;
@@ -10075,6 +10081,62 @@ function bindSettings() {
     else $('cpMsg').textContent = v ? '올바르지 않은 쿠폰입니다' : '';
   };
   $('cpBtn').onclick = useCoupon; $('cpIn').addEventListener('keydown', e => { e.stopPropagation(); if (e.key === 'Enter') useCoupon(); });
+  bindSaveIO();
+}
+/* ---------- v8.55 세이브 옮기기: 파일 / 코드로 내보내기 · 불러오기 (서버 없이 기기·브라우저 사이를 옮긴다) ----------
+   형식 { game:'hellSurvive', fmt:1, ts, ver, save:{…} } · 코드 = 'HS1z:' + gzip(base64) (gzip을 못 쓰면 'HS1:' + base64) · 불러오기 전에 지금 세이브를 SAVE_KEY+'_bak'에 백업 */
+const svMsg = (t, ok) => { const m = $('svMsg'); m.textContent = t; m.style.color = ok === false ? '#ff8a8a' : '#ffd27a'; };
+const b64e = u8 => { let s = ''; for (let i = 0; i < u8.length; i += 0x8000) s += String.fromCharCode.apply(null, u8.subarray(i, i + 0x8000)); return btoa(s); };
+const b64d = t => Uint8Array.from(atob(t), c => c.charCodeAt(0));
+async function svPack() { saveSave(); return JSON.stringify({ game: 'hellSurvive', fmt: 1, ts: Date.now(), ver: GAME_VER, save: SAVE }); }
+async function svCode() {
+  const txt = await svPack(), raw = new TextEncoder().encode(txt);
+  try { if (typeof CompressionStream === 'function') { const z = new Blob([raw]).stream().pipeThrough(new CompressionStream('gzip')); return 'HS1z:' + b64e(new Uint8Array(await new Response(z).arrayBuffer())); } } catch (_) {}
+  return 'HS1:' + b64e(raw);
+}
+async function svParse(text) {   // 파일 내용 또는 코드 → 세이브 객체 (잘못된 것이면 예외)
+  text = String(text || '').trim();
+  if (text.startsWith('HS1z:') || text.startsWith('HS1:')) {
+    const gz = text.startsWith('HS1z:'), u8 = b64d(text.slice(gz ? 5 : 4).replace(/\s/g, ''));
+    if (gz) { if (typeof DecompressionStream !== 'function') throw new Error('이 브라우저는 압축 코드를 읽을 수 없습니다 (파일로 옮겨 주세요)'); text = await new Response(new Blob([u8]).stream().pipeThrough(new DecompressionStream('gzip'))).text(); }
+    else text = new TextDecoder().decode(u8);
+  }
+  const j = JSON.parse(text);
+  if (!j || j.game !== 'hellSurvive' || !j.save || typeof j.save !== 'object' || !j.save.chars || !j.save.perks) throw new Error('지옥의 생존자 세이브가 아닙니다');
+  return j;
+}
+function svApply(j) {
+  const sv = j.save, nm = (sv.chars ? Object.keys(sv.chars).filter(k => sv.chars[k]).length : 0);
+  const info = `영혼 조각 ${+sv.shards || 0} · 해금 캐릭터 ${nm}명 · 최고 ${floorName((sv.diff && sv.diff.max) || 0)} · 플레이 ${fmtPlay(sv.playT || 0)}` + (j.ts ? `\n저장한 시각: ${new Date(j.ts).toLocaleString('ko-KR')}` : '');
+  if (!confirm(`이 세이브로 바꿀까요?\n\n${info}\n\n지금 세이브는 자동으로 백업해 둡니다.`)) { svMsg('취소했습니다'); return; }
+  try { const cur = localStorage.getItem(SAVE_KEY); if (cur) localStorage.setItem(SAVE_KEY + '_bak', cur); } catch (_) {}
+  saveLock = true;
+  try { localStorage.setItem(SAVE_KEY, JSON.stringify(sv)); } catch (e) { saveLock = false; svMsg('저장하지 못했습니다 (저장 공간을 확인해 주세요)', false); return; }
+  svMsg('✔ 불러왔습니다. 곧 다시 시작합니다…'); setTimeout(() => location.reload(), 600);
+}
+function bindSaveIO() {
+  const stamp = () => { const d = new Date(), z = n => String(n).padStart(2, '0'); return `${d.getFullYear()}${z(d.getMonth() + 1)}${z(d.getDate())}-${z(d.getHours())}${z(d.getMinutes())}`; };
+  $('svFile').onclick = async () => {
+    try { const a = document.createElement('a'), url = URL.createObjectURL(new Blob([await svPack()], { type: 'application/json' })); a.href = url; a.download = `hell-survive-save-${stamp()}.json`; document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(url), 4000); svMsg('✔ 파일로 저장했습니다 (다운로드 폴더 확인)'); }
+    catch (e) { svMsg('파일을 만들지 못했습니다: ' + e.message, false); }
+  };
+  $('svCopy').onclick = async () => {
+    try {
+      const c = await svCode(); $('svCode').value = c;
+      try { await navigator.clipboard.writeText(c); svMsg('✔ 코드를 복사했습니다. 다른 기기에서 아래 칸에 붙여 넣으세요'); }
+      catch (_) { $('svCode').focus(); $('svCode').select(); svMsg('아래 칸의 코드를 직접 복사해 주세요 (전체 선택됨)'); }
+    } catch (e) { svMsg('코드를 만들지 못했습니다: ' + e.message, false); }
+  };
+  $('svLoadF').onclick = () => { $('svPick').value = ''; $('svPick').click(); };
+  $('svPick').onchange = async e => {
+    const f = e.target.files && e.target.files[0]; if (!f) return;
+    try { svApply(await svParse(await f.text())); } catch (er) { svMsg('불러오지 못했습니다: ' + er.message, false); }
+  };
+  $('svLoadC').onclick = async () => {
+    const v = $('svCode').value; if (!v.trim()) { svMsg('먼저 코드를 붙여 넣어 주세요', false); return; }
+    try { svApply(await svParse(v)); } catch (er) { svMsg('불러오지 못했습니다: 코드가 올바르지 않습니다 (' + er.message + ')', false); }
+  };
+  $('svCode').addEventListener('keydown', e => e.stopPropagation());
 }
 /* 일시정지 */
 function fmt(v, d = 0) { return Number(v).toFixed(d); }
@@ -10216,7 +10278,7 @@ stepDive = skWrap(stepDive, 'dive'); stepRush = skWrap(stepRush, 'rush'); rushSt
 updateAirs = (f => function (...a) { return withSrc('basic', () => f.apply(this, a)); })(updateAirs);   // v6.22: 에어슬래시는 평타 (v6.30: 바로 뒤 천안 난무·브레스 감싸기가 주석에 묻혀 딜미터기에서 빠지던 것 수정)
 { const _tb = thornBlast, _sb = smashBlow; thornBlast = function (...a) { return withSrc('scale', () => _tb.apply(this, a)); }; smashBlow = function (...a) { return withSrc('smash', () => _sb.apply(this, a)); }; }
 shellReflect = skWrap(shellReflect, 'shell'); updateBsig = skWrap(updateBsig, 'bsigil');
-window.__G = { spawnPlant, PL, get GSPECIES() { return GSPECIES; }, get plBalls() { return plBalls; }, synCard, freezeE, availSyn, SYNERGIES, dmName, FD, shkAdd, toxAdd, skSpawnPair, phoenixRevive, mirrorBlock, palPop, updateCutSaws, get shkSp() { return shkSp; }, get toxFl() { return toxFl; }, get zonesRef() { return zones; },
+window.__G = { saveSave, svParse, spawnPlant, PL, get GSPECIES() { return GSPECIES; }, get plBalls() { return plBalls; }, synCard, freezeE, availSyn, SYNERGIES, dmName, FD, shkAdd, toxAdd, skSpawnPair, phoenixRevive, mirrorBlock, palPop, updateCutSaws, get shkSp() { return shkSp; }, get toxFl() { return toxFl; }, get zonesRef() { return zones; },
   bossDefeated, get IMG() { return IMG; },
   get ready() { return !!IMG.floorD; }, get state() { return state; }, get P() { return P; }, get enemies() { return enemies; }, get orbs() { return orbs; },
   get zones() { return zones; }, get ebul() { return ebul; }, get EYE() { return EYE; }, get shards() { return shards; }, get bigQ() { return bigQ; }, get bombQ() { return bombQ; }, get holyQ() { return holyQ; }, get afx() { return afx; }, get dashQ() { return dashQ; }, get beam() { return beam; }, get evo() { return evo; }, get choices() { return choices; },
