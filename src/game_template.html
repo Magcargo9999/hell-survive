@@ -291,6 +291,7 @@
     <label class="setrow">모바일 조이스틱 <input type="checkbox" id="setJoy"></label>
     <label class="setrow">딜 미터기 (기본 공격 · 스킬 카드) <input type="checkbox" id="setDm"></label>
     <div class="setrow">쿠폰 <span><input id="cpIn" type="text" placeholder="쿠폰 번호" autocomplete="off" style="width:150px;font-size:15px;padding:4px 6px"> <button id="cpBtn" class="sm">적용</button></span></div>
+    <div class="setrow">누적 플레이 시간 <b id="setPlay" style="color:var(--gold)"></b></div>
     <div id="cpMsg" style="font-size:13px;min-height:18px;color:#ffd27a;text-align:center"></div>
   </div>
   <button id="setClose" class="sm">닫기</button>
@@ -838,6 +839,7 @@ const SAVE_DEF = () => ({
   set: { nums: true, calm: false, sfx: 0.7, bgm: 0.35, speed: 1, joy: ('ontouchstart' in window) },
   skin: { own: {}, frag: {}, on: {}, pity: 0, pulls: 0 },   // v7.30 스킨 가챠
   cp: {},   // v8.11 한 번 쓰는 쿠폰 사용 기록
+  playT: 0,   // v8.25 누적 플레이 시간(초) — 판 진행 중(일시정지·메뉴 제외)만 더한다
   heart: { inv: [], eq: [], n: 0, got: {} },   // v8.01 보스 심장 (인벤토리 · 장착 슬롯 · 다음 id)
 });
 let SAVE = SAVE_DEF();
@@ -846,6 +848,7 @@ function loadSave() {
     const j = JSON.parse(localStorage.getItem(SAVE_KEY) || 'null'), d = SAVE_DEF();
     if (j && j.chars && j.chars.mage && !('archer' in j.chars)) j.chars.archer = true;   // 예전 뼈 마법사를 샀다면 궁수로 이어받는다
     if (j) SAVE = { shards: +j.shards || 0, perks: Object.assign(d.perks, j.perks), chars: Object.assign(d.chars, j.chars), dex: { seen: Object.assign({}, j.dex && j.dex.seen), kills: Object.assign({}, j.dex && j.dex.kills), final: Object.assign({}, j.dex && j.dex.final), goals: +(j.dex && j.dex.goals) || 0 }, diff: Object.assign(d.diff, j.diff), holyBlood: !!j.holyBlood, fw: Object.assign(d.fw, j.fw), set: Object.assign(d.set, j.set), ch: Object.assign(d.ch, j.ch, { rune: Object.assign({}, j.ch && j.ch.rune), tr: Object.assign(d.ch.tr, j.ch && j.ch.tr) }), skin: Object.assign(d.skin, j.skin, { own: Object.assign({}, j.skin && j.skin.own), frag: Object.assign({}, j.skin && j.skin.frag) }), heart: { inv: (j.heart && Array.isArray(j.heart.inv)) ? j.heart.inv : [], eq: (j.heart && Array.isArray(j.heart.eq)) ? j.heart.eq.slice(0, 5) : [], n: (j.heart && +j.heart.n) || 0, got: (j.heart && j.heart.got && typeof j.heart.got === 'object') ? j.heart.got : {} }, cp: (j.cp && typeof j.cp === 'object') ? j.cp : {} };
+    if (j) SAVE.playT = Math.max(0, +j.playT || 0);
     delete SAVE.chars.mage;
   } catch (e) { /* 저장소를 못 쓰는 환경이면 기본값으로 진행 */ }
 }
@@ -9274,7 +9277,9 @@ function openShop(kind) {   // v5.11: 캐릭터 상점 / 강화 상점 분리
   show('shopBox', true);
 }
 /* 설정 */
+const fmtPlay = sec => { sec = Math.floor(sec); const h = Math.floor(sec / 3600), m = Math.floor(sec % 3600 / 60), q = sec % 60; return (h ? h + '시간 ' : '') + (h || m ? m + '분 ' : '') + q + '초'; };
 function openSettings() {
+  $('setPlay').textContent = fmtPlay(SAVE.playT || 0);
   const t = SAVE.set;
   $('setNums').checked = t.nums; $('setCalm').checked = t.calm; $('setSfx').value = t.sfx; $('setBgm').value = t.bgm; $('setSpeed').value = String(t.speed); $('setJoy').checked = t.joy; $('setDm').checked = !!t.dmeter;
   show('setBox', true);
@@ -9411,7 +9416,8 @@ function tick(dt) {
   else if (state === 'slot') { updateSlotUI(dt); updateFx(dt); }
   else if (state === 'win') { updateFx(dt); winT += dt; stepDropItems(dt); if (winT > 2.4 && !overShown && (!items.some(isDropItem) || winT > 9)) showOver(true); }
 }
-let last = performance.now();
+let last = performance.now(), playSv = 0;
+addEventListener('pagehide', () => saveSave()); document.addEventListener('visibilitychange', () => { if (document.hidden) saveSave(); });
 let perfLv = 0, perfEma = 16.7, perfHold = 0;   // v6.45: 프레임이 느려지면 장식(입자·숫자)부터 자동으로 줄인다 (0 정상 · 1 · 2)
 function perfWatch(ms) {
   if (ms > 250) return;   // 탭 전환 등 한 번 크게 멈춘 것은 무시
@@ -9424,6 +9430,7 @@ function perfWatch(ms) {
 function loop(now) {
   const dt = Math.min(0.05, (now - last) / 1000); perfWatch(now - last); last = now; wallT = now / 1000;
   requestAnimationFrame(loop);   // 한 프레임에서 오류가 나도 다음 프레임은 이어진다 (화면이 멈추지 않게)
+  if (state !== 'menu' && state !== 'pause') { SAVE.playT = (SAVE.playT || 0) + dt; if ((playSv += dt) > 20) { playSv = 0; saveSave(); } }   // v8.25: 누적 플레이 시간 (실제 시간, 배속과 무관)
   try { tick(dt * SAVE.set.speed); } catch (e) { if (!window.__errT || now - window.__errT > 3000) { window.__errT = now; console.error(e); } }
   try { render(); } catch (e) { if (!window.__errT || now - window.__errT > 3000) { window.__errT = now; console.error(e); } }
 }
