@@ -14,6 +14,7 @@ async def main():
         print('heart open', await pg.evaluate("document.getElementById('heartBox').classList.contains('show')"), await pg.evaluate("__G.state"))
         await pg.keyboard.press('Escape')
         txt=await pg.evaluate("(()=>{const f=[...document.querySelectorAll('button')].find(x=>x.id==='dexBtn');f&&f.click();return document.getElementById('dexBox').innerText})()")
+        await pg.evaluate("document.querySelector('.dextabs button[data-dt=mon]').click()"); txt=await pg.evaluate("document.getElementById('dexBox').innerText")
         print('rig' , '혈혼마 리고르' in txt, '네르칸' in txt, errs)
         await b.close()
 asyncio.run(main())

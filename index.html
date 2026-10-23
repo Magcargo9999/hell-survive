@@ -145,6 +145,7 @@
   .shoph { margin: 10px 0 2px; color: var(--ember); font-weight: 700; text-align: left; }
   #dexBox { background: rgba(10, 2, 4, 0.97); z-index: 5; }
   .dexlist { max-height: 62vh; overflow-y: auto; width: min(860px, 94vw); box-sizing: border-box; }
+  .dextabs { display: flex; gap: 8px; justify-content: center; margin-bottom: 6px; } .dextabs button.on { background: var(--ember); color: #1a0a0c; }
   .dexh { margin: 8px 0 6px; color: var(--ember); font-weight: 700; text-align: left; }
   .dexgrid { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 8px; }
   .dex { position: relative; width: 120px; padding: 8px 6px 6px; border: 1px solid #5a3028; border-radius: 6px; background: #1a0a0c; text-align: center; font-size: 12px; color: var(--muted); }
@@ -296,7 +297,8 @@
 </div>
 
 <div class="overlay" id="dexBox">
-  <h2>몬스터 도감</h2>
+  <h2>도감</h2>
+  <div class="dextabs"><button class="sm" data-dt="char">캐릭터 도감</button><button class="sm" data-dt="mon">몬스터 도감</button><button class="sm" data-dt="heart">심장 도감</button></div>
   <p id="dexSum" style="color:var(--gold)"></p>
   <div class="panel dexlist" id="dexList"></div>
   <button id="dexClose" class="sm">닫기</button>
@@ -8878,12 +8880,22 @@ function dexSprite(g, w, h, img, sx, sy, sw, sh, flip, lock, smooth) {
   if (lock) { g.globalCompositeOperation = 'source-atop'; g.fillStyle = '#0c0508'; g.fillRect(0, 0, w, h); }
   g.restore();
 }
+let dexTab = 'char', dexST = null;
+const HSTAT_TXT = g => `${HG[g].min}~${HG[g].max}%`;
+function dexShow(t, ST) {   // 도감 탭 전환
+  dexTab = t; if (ST) dexST = ST; const S3 = dexST[t];
+  for (const e of $('dexList').children) e.style.display = e.dataset.t === t ? '' : 'none';
+  for (const b of document.querySelectorAll('.dextabs button')) b.classList.toggle('on', b.dataset.dt === t);
+  $('dexSum').textContent = `발견 ${S3[0]} / ${S3[1]} · 트로피 ${S3[2]}` + (t === 'char' ? ` · 런 목표 달성 ${SAVE.dex.goals || 0}회 · 해금 ${floorName(SAVE.diff.max)}` : '');
+  $('dexList').scrollTop = 0;
+}
 function openDex() {
   buildSpecies();
-  const d = SAVE.dex, list = $('dexList'); list.innerHTML = ''; let got = 0, tot = 0, trophies = 0;
-  const sec = t => { const e = document.createElement('div'); e.className = 'dexh'; e.textContent = t; list.appendChild(e); const gr = document.createElement('div'); gr.className = 'dexgrid'; list.appendChild(gr); return gr; };
+  const d = SAVE.dex, list = $('dexList'); list.innerHTML = ''; const ST = { char: [0, 0, 0], mon: [0, 0, 0], heart: [0, 0, 0] }; let curT = 'char';   // v8.24: 캐릭터 · 몬스터 · 심장 도감 탭 (새 항목은 해당 구역 sec() 아래에 add)
+  for (const h of SAVE.heart.inv) d.seen['heart:' + (h.b || 'angel') + ':' + h.g] = 1;   // 이미 가진 심장 기록
+  const sec = t => { const e = document.createElement('div'); e.className = 'dexh'; e.dataset.t = curT; e.textContent = t; list.appendChild(e); const gr = document.createElement('div'); gr.className = 'dexgrid'; gr.dataset.t = curT; list.appendChild(gr); return gr; };
   const add = (gr, o) => {
-    if (!o.soon) tot++; const on = !!o.on; if (on) got++; if (on && o.trophy) trophies++;
+    const S3 = ST[curT]; if (!o.soon) S3[1]++; const on = !!o.on; if (on) S3[0]++; if (on && o.trophy) S3[2]++;
     const b = document.createElement('div'); b.className = 'dex' + (on ? '' : ' lock') + (on && o.trophy ? ' trophy' : '') + (!on && o.trophy ? ' gold' : '');
     b.innerHTML = `<canvas width="104" height="84"></canvas><b>${on ? o.name : '???'}</b>${on ? o.sub : (o.hint || '')}`;
     o.draw(b.querySelector('canvas').getContext('2d'), 104, 84, !on); gr.appendChild(b);
@@ -8932,6 +8944,7 @@ function openDex() {
   gr = sec('사슬 악마 계열');
   [['twins:0', TWIN_FORMS[0], '시작', '<br>조건: 벨리아·셀리아 처치'], ['twins:1', TWIN_FORMS[1], '진화 · 두 가닥 사슬 · 사슬 휘두르기', '<br>Lv.10 진화'], ['twins:2', TWIN_FORMS[2], '최종 진화 · 사슬의 폭군', '<br>Lv.20 진화', 1]].forEach(([key, D, sub, hint, tr]) => add(gr, { on: d.seen[key], trophy: !!tr, name: D.name, sub, hint,
     draw: (g, w, h, l) => dexSprite(g, w, h, IMG[D.src], D.pv[0], D.pv[1], D.pv[2], D.pv[3], false, l, true) }));
+  curT = 'mon';
   gr = sec('마물 (처치 수)');
   SPECIES.concat(MSPECIES, SSPECIES).forEach(sp => add(gr, { on: d.kills['m' + sp.idx], name: sp.name, sub: d.kills['m' + sp.idx] + '마리 처치', draw: (g, w, h, l) => dexSprite(g, w, h, sp.frames[0].img, 0, 0, MOB.cw, MOB.ch, false, l) }));
   add(gr, { on: d.kills.bug, name: '이공벌레', sub: d.kills.bug + '마리 처치', draw: (g, w, h, l) => dexSprite(g, w, h, IMG.bug, 0, BUGDEF.ch, BUGDEF.cw, BUGDEF.ch, false, l) });
@@ -8961,7 +8974,13 @@ function openDex() {
   { const ud = (g, w, h, l, row) => { const sw = 150, sh = 134, f = Math.min((w - 4) / sw, (h - 2) / sh), dw = sw * f, dh = sh * f; g.save(); g.imageSmoothingEnabled = true; g.imageSmoothingQuality = 'high'; g.drawImage(IMG.uniq, 25, row * 176 + 18, sw, sh, (w - dw) / 2, h - 2 - dh, dw, dh); if (l) { g.globalCompositeOperation = 'source-atop'; g.fillStyle = '#0c0508'; g.fillRect(0, 0, w, h); } g.restore(); };
     for (const k of Object.keys(UNIQ)) { const U = UNIQ[k]; add(gr, { on: d.seen['uq:' + k], trophy: !!d.kills['uq:' + k], name: U.name, sub: (d.kills['uq:' + k] || 0) + '회 처치 · ' + U.sub, hint: k === 'octo' ? '<br>히든 마물 (지하 3층부터 · 직선 마법)' : k === 'shroom' ? '<br>히든 마물 (지하 6~10층 · 뛰어다니며 독 웅덩이)' : '<br>유니크 마물 (긴 불꽃채찍)', draw: (g, w, h, l) => k === 'shroom' ? (IMG.sh && dexSprite(g, w, h, IMG.sh, ...SHA.idle[0].slice(0, 4), false, l, true)) : k === 'octo' ? dexSprite(g, w, h, IMG.oc, ...OCA.a_idle[0].slice(0, 4), false, l, true) : ud(g, w, h, l, U.row) }); }
     for (const k of Object.keys(RELICS)) add(gr, { on: d.seen['relic:' + k], name: RELICS[k].name, sub: RELICS[k].sub, hint: '<br>유니크 · 미니 보스가 드롭 (이공벌레는 1.2%)', draw: (g, w, h, l) => { relicIcon(g, k, (w - 64) / 2, (h - 64) / 2 - 2, 64); if (l) { g.save(); g.globalCompositeOperation = 'source-atop'; g.fillStyle = '#0c0508'; g.fillRect(0, 0, w, h); g.restore(); } } }); }
-  $('dexSum').textContent = `발견 ${got} / ${tot} · 트로피 ${trophies} · 런 목표 달성 ${SAVE.dex.goals || 0}회 · 해금 ${floorName(SAVE.diff.max)}`;
+  curT = 'heart';   // v8.24: 보스 심장 도감 — 보스 × 등급, 한 번이라도 얻은(재설정으로 올린 등급 포함) 심장이 밝아진다
+  for (const bk of BH_ORDER) {
+    gr = sec(BH[bk] + '의 심장');
+    for (const g of HG_ORDER) add(gr, { on: d.seen['heart:' + bk + ':' + g], trophy: g === 'legend', name: BH[bk] + '의 심장', sub: HG[g].name + ' (' + HSTAT_TXT(g) + ')', hint: g === 'rare' ? '<br>' + BH[bk] + ' 처치 시 20% (종류당 처음 한 번)' : '<br>재설정으로 등급 상승',
+      draw: (c, w, h, l) => { const ic = heartIcon(g, 72, bk); c.drawImage(ic, (w - 72) / 2, (h - 72) / 2); if (l) { c.globalCompositeOperation = 'source-atop'; c.fillStyle = 'rgba(8,4,6,0.85)'; c.fillRect(0, 0, w, h); c.globalCompositeOperation = 'source-over'; } } });
+  }
+  dexShow(dexTab, ST);
   show('dexBox', true);
 }
 /* 상점 */
@@ -9129,13 +9148,13 @@ function rollHeartDrop(bk) {   // 마왕 처치 시: 그 보스 심장을 아직
   if (!BH[bk] || SAVE.heart.got[bk] || Math.random() >= HEART.drop) return null;
   return Math.random() < HEART.legend ? 'legend' : 'rare';
 }
-function heartGain(g, b) { const h = heartMake(g, b); if (b) SAVE.heart.got[b] = true; SAVE.heart.inv.push(h); if (SAVE.heart.eq.length < HEART.slots) SAVE.heart.eq.push(h.id); saveSave(); return h; }   // 빈 슬롯이 있으면 바로 장착
+function heartGain(g, b) { const h = heartMake(g, b); if (b) SAVE.heart.got[b] = true; SAVE.dex.seen['heart:' + h.b + ':' + g] = 1; SAVE.heart.inv.push(h); if (SAVE.heart.eq.length < HEART.slots) SAVE.heart.eq.push(h.id); saveSave(); return h; }   // 빈 슬롯이 있으면 바로 장착
 function rerollHeart(id) {   // 재설정: 조각 500 → 등급업 판정 → 스탯 종류·수치 재배정
   const h = SAVE.heart.inv.find(q => q.id === id); if (!h) return { err: '심장이 없습니다' };
   const cost = heartCost(h); if (SAVE.shards < cost) return { err: '영혼 조각이 부족합니다' };
   SAVE.shards -= cost;
   const before = { g: h.g, st: h.st, v: h.v }, G = HG[h.g]; let up = false;
-  if (G.next && Math.random() < G.up) { h.g = G.next; up = true; }
+  if (G.next && Math.random() < G.up) { h.g = G.next; up = true; SAVE.dex.seen['heart:' + (h.b || 'angel') + ':' + h.g] = 1; }
   const N = HG[h.g]; h.st = ['atk', 'hp', 'aspd'][(Math.random() * 3) | 0]; h.v = hRand(N.min, N.max);
   saveSave(); return { before, after: { g: h.g, st: h.st, v: h.v }, up };
 }
@@ -9328,6 +9347,7 @@ $('menuBtn').addEventListener('click', () => { show('overBox', false); show('sta
 $('shopBtn').addEventListener('click', () => openShop('char'));
 $('perkBtn').addEventListener('click', () => openShop('perk'));
 $('dexBtn').addEventListener('click', openDex);
+for (const b of document.querySelectorAll('.dextabs button')) b.addEventListener('click', () => dexShow(b.dataset.dt));
 $('dexClose').addEventListener('click', () => show('dexBox', false));
 $('shopClose').addEventListener('click', () => show('shopBox', false));
 $('setBtn').addEventListener('click', () => { audioInit(); openSettings(); });
