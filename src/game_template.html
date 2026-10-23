@@ -4179,7 +4179,7 @@ function newPlayer(char) {
   const sn = char === 'snail', ar = char === 'archer';
   const p = {
     char, bossK: rand() < 0.5 ? 'eye' : 'monkey', shield: 0, boost: 0, armor: char === 'snail' ? 0.9 : 1, trailAcc: 0, tx: 0, ty: 0,
-    syn: {}, aspd: 1, knock: 0.7, crit: 0, critD: 1.7, vx: 0, vy: 0, lavaT: 0, lavaTick: 0, banish: 0, banned: {}, cdT: { th: 1.5, bl: 1, nv: 2.5, au: 0, nv2: 0 }, vampCd: 0, expMul: 1, named: 0, bolts: 1, killHeal: 0, trailBonus: 0, orbR: 80, orbW: 3.2, orbD: 0.55, revived: false, earned: 0,
+    syn: {}, aspd: 1, knock: 0.7, crit: 0.05, critD: 1.7, vx: 0, vy: 0, lavaT: 0, lavaTick: 0, banish: 0, banned: {}, cdT: { th: 1.5, bl: 1, nv: 2.5, au: 0, nv2: 0 }, vampCd: 0, expMul: 1, named: 0, bolts: 1, killHeal: 0, trailBonus: 0, orbR: 80, orbW: 3.2, orbD: 0.55, revived: false, earned: 0,
     x: 0, y: 0, hp: sn ? 125 : ar ? 92 : 100, max: sn ? 125 : ar ? 92 : 100, spd: sn ? 175 : ar ? 215 : 200, face: 1,
     anim: 'idle', animT: 0, inv: 0, hitT: 0,
     atkTimer: -1, atkCd: 0, atkHitN: 0, ax: 1, ay: 0,
@@ -4864,7 +4864,7 @@ const UPGRADES = [
   { id: 'shard',  name: '뼈 투사체',     txt: () => '뼈 투사체 +1발 (공격력의 88%) · 적에게 1회 튕김', apply: p => { p.shardN++; },
     alt: { octo: ['먹물 탄', '먹물 탄 +1발 (공격력의 88%) · 적에게 1회 튕김'], lava: ['용암 파편', '용암 파편 +1발 (공격력의 88%) · 적에게 1회 튕김'], snail: ['독가시', '독가시 +1발 (공격력의 88%) · 적에게 1회 튕김'], archer: ['추적 화살', '추적 화살 +1발 (공격력의 70%) · 적에게 1회 튕김'] } },
   { id: 'knock',  name: '밀치기',        txt: () => '넉백 +25%p (기본 70%)', apply: p => { p.knock += 0.25; }, alt: { octo: ['마력 충격', '넉백 +25%p (기본 70%)'] } },
-  { id: 'crit',   name: '급소 노리기',   txt: () => '치명타 +6.5%',     apply: p => { p.crit += 0.065; }, alt: { octo: ['약점 간파', '치명타 +6.5%'] } },
+  { id: 'crit',   name: '급소 노리기',   txt: () => '치명타 +7.5%',     apply: p => { p.crit += 0.075; }, alt: { octo: ['약점 간파', '치명타 +7.5%'] } },
   { id: 'guard',  name: '수호의 방어막', txt: n => `피격 1회 무효 · ${GD(n)}초마다 재충전`, apply: p => { if (!p.up.guard) p.guardT = 0; } },
   { id: 'armor',  name: '단단한 피부',   txt: () => '받는 피해 -6%',    apply: p => { p.armor *= 0.94; }, alt: { octo: ['단단한 비늘', '받는 피해 -6%'] } },   // v6.22: -10% → -6%
   { id: 'exp',    name: '배움의 눈',     txt: () => '경험치 +10%',      apply: p => { p.expMul += 0.1; }, alt: { octo: ['고서 해독', '경험치 +10%'] } },
