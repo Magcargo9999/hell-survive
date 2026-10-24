@@ -871,7 +871,7 @@ function mkCanvas(w, h) { const c = document.createElement('canvas'); c.width = 
  * 0-1. 저장(영혼 조각 · 영구 강화 · 설정) / 캐릭터 목록 / 소리
  * ============================================================ */
 const SAVE_KEY = 'hellSurvivorSave1';
-const GAME_VER = 'v8.90';
+const GAME_VER = 'v8.91';
 const SAVE_DEF = () => ({
   shards: 0,
   perks: { hp: 0, spd: 0, dmg: 0, exp: 0, magnet: 0, banish: 0, revive: 0, regen: 0, shard: 0, critd: 0, choice: 0 },
@@ -4890,7 +4890,7 @@ function startFw() {
   state = 'play'; enterBloodArena();
 }
 function bossDefeated() {
-  const e = boss; boss = null; ebul = [];
+  const e = boss; boss = null; ebul = []; try { achSync(); } catch (_) {}   // v8.91 마왕 토벌 업적 표시
   if (e.bk === 'skel') { skDeath = { x: e.x, y: e.y, face: e.face, t: 0 }; enemies = enemies.filter(q => q.kind !== 'skh' && q.kind !== 'skm' && !q.adds); skp = []; }
   if (e.bk === 'angel') { anDeath = { x: e.x, y: e.y, face: e.face, t: 0 }; anOrbs = []; }
   if (e.bk === 'adm') { admDeath = { x: e.x, y: e.y, face: e.face, t: 0 }; admClear(); }   // v8.40
@@ -11723,9 +11723,11 @@ const ACH = [
   { id: 'h4', icon: '🌊', name: '어인섬의 지배자', desc: '지하 20층 마왕(타락한 어인왕) 처치 — 4지옥 어인섬 정복', tier: 19, reward: 12000 },
   { id: 'br', icon: '⚔', name: '마왕 학살자', desc: '⚔ 보스 러시 완주 — 마왕 10종을 연달아 쓰러뜨리기', tier: -1, rush: true, reward: 15000 },
 ];
+const HB_KILL = { angel: 'boss6', shk: 'boss7', skel: 'boss4', eye: 'boss2', monkey: 'boss', tox: 'boss8', adm: 'boss9', qn: 'boss10' };   // 심장이 있는 마왕 8종의 도감 처치 키
+for (const bk of BH_ORDER) ACH.push({ id: 'hb_' + bk, icon: '💗', name: BH[bk] + ' 토벌', desc: `${BH[bk]} 처치 — 보상으로 ${BH[bk]}의 심장 (레어)`, kill: HB_KILL[bk], heart: bk });   // v8.91 마왕마다 하나씩: 처음 쓰러뜨리면 그 보스의 심장
 function achSync() {   // 예전 기록으로 이미 깬 지옥도 달성 처리
   const d = SAVE.ach.done; let ch = false;
-  for (const a of ACH) if (!d[a.id] && (a.rush ? (SAVE.rush.clears | 0) > 0 : a.tier < MAX_TIER ? (SAVE.diff.max | 0) > a.tier : rushOpen())) { d[a.id] = 1; ch = true; }
+  for (const a of ACH) if (!d[a.id] && (a.kill ? (SAVE.dex.kills[a.kill] | 0) > 0 : a.rush ? (SAVE.rush.clears | 0) > 0 : a.tier < MAX_TIER ? (SAVE.diff.max | 0) > a.tier : rushOpen())) { d[a.id] = 1; ch = true; }
   if (ch) saveSave(); achBadge();
 }
 const achReady = () => ACH.filter(a => SAVE.ach.done[a.id] && !SAVE.ach.got[a.id]).length;
@@ -11746,10 +11748,10 @@ function openAch() {
   for (const a of ACH) {
     const done = !!SAVE.ach.done[a.id], got = !!SAVE.ach.got[a.id], r = document.createElement('div');
     r.className = 'achrow' + (done ? ' done' : '') + (got ? ' got' : '');
-    r.innerHTML = `<span class="ai">${a.icon}</span><span class="at"><b>${a.name}</b><small>${a.desc}</small></span><span class="ar">보상 · 영혼 조각 ${a.reward.toLocaleString()}</span>`;
+    r.innerHTML = `<span class="ai">${a.icon}</span><span class="at"><b>${a.name}</b><small>${a.desc}</small></span><span class="ar">보상 · ${a.heart ? BH[a.heart] + '의 심장 (레어)' : '영혼 조각 ' + a.reward.toLocaleString()}</span>`;
     const b = document.createElement('button'); b.className = 'sm';
     if (got) { b.textContent = '✔ 받음'; b.disabled = true; }
-    else if (done) { b.textContent = '보상 받기'; b.onclick = () => { if (SAVE.ach.got[a.id]) return; SAVE.ach.got[a.id] = 1; SAVE.shards += a.reward; saveSave(); sfx('chest'); $('shardTxt').textContent = `보유 영혼 조각 ${SAVE.shards}`; openAch(); }; }
+    else if (done) { b.textContent = '보상 받기'; b.onclick = () => { if (SAVE.ach.got[a.id]) return; SAVE.ach.got[a.id] = 1; if (a.heart) { const h = heartGain('rare', a.heart); playUpgradeEffect('rare', `💗 ${BH[a.heart]}의 심장  ${hOpt(h)}`); } else SAVE.shards += a.reward; saveSave(); sfx('chest'); $('shardTxt').textContent = `보유 영혼 조각 ${SAVE.shards}`; openAch(); }; }
     else { b.textContent = '🔒 미달성'; b.disabled = true; }
     r.appendChild(b); L.appendChild(r);
   }
@@ -11757,6 +11759,7 @@ function openAch() {
 }
 /* v8.71 간략 패치노트 (최근 버전만, 새 버전마다 맨 위에 한 줄 추가) */
 const PATCH = [
+  ['v8.91', '업적 추가 — 심장이 있는 마왕 8종을 처음 쓰러뜨릴 때마다 업적 달성, 보상으로 그 보스의 심장(레어)'],
   ['v8.90', '합성된 심장 도트 적용 · 예전에 합성한(옵션 2줄) 심장은 합성된 심장으로 변환 · 카드 선택지에서 Shift+1~4로 해당 카드 삭제'],
   ['v8.89', '심장 합성 변경 — 레전더리 3개가 모두 사라지고 [합성된 심장](레어 · 옵션 2줄 · 보스 무관 · 여러 개 가능)이 생김'],
   ['v8.88', '심장 합성으로 어떤 보스의 심장이 모두 사라지면 그 보스 심장이 다시 드랍 · 옛 심장(타락천사 취급)을 가진 경우 타락천사 심장이 중복 드랍되지 않게 수정'],
