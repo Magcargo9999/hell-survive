@@ -9,6 +9,7 @@ ANCHORS = [
  ('캐릭터 목록(소개·역할·약점)', r'^const CHARS = '),
  ('스킬 목록(이름·설명)', r'^const SKILLS = '), ('스킬 쿨타임·스킬 이름 함수', r'^const SKILL_CD|^const skillName'),
  ('공용 카드', r'^const UPGRADES = '), ('캐릭터 전용 카드', r'^const UNIQUE = '), ('조합 카드', r'^const SYNERGIES = '),
+ ('팔한지옥 세트(v8.99: 바닥·소품·미끄러운 얼음·잡몹)', r'^const IF = |^function iceTile|^function isIceSlip|^function buildIceSpecies|^const OPEN_TIER'),
  ('유령 기사·듀라한 폼(v8.98)', r'^const KNIGHT_FORMS'), ('유령 기사·잃어버린 머리 로직', r'^class SeveredHeadSummon|^function knightSlash|^function openGhostRoute'),
  ('강화 상점', r'^const PERKS = '), ('진화 루트 데이터', r'^const ROUTE_FORMS|^const CHIM_ROUTES|^const GUN_FORMS'),
  ('진화 스탯 적용', r'^function applyEvo'), ('진화 조건(ROUTE_COND)', r'^const ROUTE_COND'),
