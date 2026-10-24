@@ -871,7 +871,7 @@ function mkCanvas(w, h) { const c = document.createElement('canvas'); c.width = 
  * 0-1. 저장(영혼 조각 · 영구 강화 · 설정) / 캐릭터 목록 / 소리
  * ============================================================ */
 const SAVE_KEY = 'hellSurvivorSave1';
-const GAME_VER = 'v8.84';
+const GAME_VER = 'v8.85';
 const SAVE_DEF = () => ({
   shards: 0,
   perks: { hp: 0, spd: 0, dmg: 0, exp: 0, magnet: 0, banish: 0, revive: 0, regen: 0, shard: 0, critd: 0, choice: 0 },
@@ -3775,6 +3775,7 @@ function drawKgBoss(e, x, y) {
   if (e.flash > 0 && IMG.kngW && !e.invul) kgSpr(ctx, key, f, x, y, k, flip, Math.min(0.35, e.flash * 3) * al, IMG.kngW);
 }
 function drawKgFloor(wx, wy, over) {
+  if (!kgOn()) return;   // v8.85: 어인왕전이 아닐 때는 산소 간헐천·사슬·파도 고리를 그리지 않는다
   if (!over) for (const g of KGW.geysers) g.drawFloor(wx, wy);
   const T = KGW.tether;
   if (T) {   // 사슬 반경 (가까이 갈수록 붉게)
@@ -3798,8 +3799,9 @@ function drawKgFloor(wx, wy, over) {
   }
 }
 function drawKgTop(wx, wy) {
-  for (const g of KGW.geysers) g.drawTop(wx, wy);
   if (KGW.death && IMG.kng) { const q = KGW.death, f = Math.min(4, Math.floor(q.t * 2.2)); kgSpr(ctx, 'death', f, wx(q.x), wy(q.y), KG.K, q.face < 0, q.t > 4.5 ? Math.max(0, 1 - (q.t - 4.5) / 1.5) : 1); }
+  if (!kgOn()) return;   // v8.85: 보스전이 아니면 죽는 연출 말고는 그리지 않는다
+  for (const g of KGW.geysers) g.drawTop(wx, wy);
   const R = KGW.ring;
   if (R) for (const f of R.fx) {   // 솟아오른 원형 파도 (물기둥 고리)
     if (f.t > 0.5) continue; const x = wx(R.x), y = wy(R.y), p = f.t / 0.5, rm = (f.ro + f.ri) / 2, h = 120 * Math.sin(p * Math.PI);
@@ -5393,6 +5395,7 @@ function heartBonus() {   // v8.01: 장착한 보스 심장 합계 (%)
 function reset(char) {
   buildSpecies(); try { buildMushSpecies(); buildSeaSpecies(); } catch (_) {}
   chal = null; rush = null;   // v6.62: 경험치통 계산이 이전 판의 챌린지 상태를 보지 않게
+  try { kgClear(); KGW.fx = []; KGW.death = null; } catch (_) {}   // v8.85: 어인왕전 도중 죽고 새 판을 시작해도 산소 간헐천 등이 남지 않게
   P = newPlayer(char || curChar);
   DMETER = {}; DBOSS = {}; bfx = []; enemies = []; orbs = []; shards = []; fx = []; nums = []; arcs = []; zones = []; plBalls = []; rings = []; beam = null; meteorQ = null; cerbQ = null; rainQ = null; bigQ = null; darkQ = null; dashQ = null; evo = null; airs = []; diveQ = null; breathQ = null; rushQ = null; bombQ = null; holyQ = null; afx = []; bombT = []; holyPtr = null; cfx = []; ebul = []; allies = []; items = []; globs = []; sprFx = []; whipQ = null; ambT = 1.5; itemT = 9; blades = []; lights = []; waveT = 80 + rand() * 20;
   eleQ = null; tentQ = null; octoFx = [];
@@ -11383,6 +11386,7 @@ function openAch() {
 }
 /* v8.71 간략 패치노트 (최근 버전만, 새 버전마다 맨 위에 한 줄 추가) */
 const PATCH = [
+  ['v8.85', '버그 수정 — 20층 어인왕전이 아닌 맵에 산소 간헐천·사슬 이펙트가 남아 보이던 문제'],
   ['v8.84', '지옥엘프 궁수 기본 이속 215→195 · 기본 공격력 22→19 너프 · 심장 합성: 레전더리 심장 3개로 변경 (재료 2개 사라짐)'],
   ['v8.83', '달팽이 장판(독 자국·용암 웅덩이)도 빙결·점화 발동(적마다 1.2초 쿨) · 용암 대분출이 용암 흔적을 터뜨리지 않음 · 보스 러시 시작 증강 5개만 무작위(나머지 직접 선택) · 토끼 후드 늑대 스킨은 0진화에서만'],
   ['v8.82', '보스 러시 개편 — 선택한 층과 무관한 독립 시행 · Lv.20 시작 + 증강 5개 무작위 · 마왕 10종 무작위 순서(처치할수록 난이도 상승) · 처치마다 +5레벨 · 완주 업적 추가'],
