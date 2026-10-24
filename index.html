@@ -849,7 +849,7 @@ function mkCanvas(w, h) { const c = document.createElement('canvas'); c.width = 
  * 0-1. 저장(영혼 조각 · 영구 강화 · 설정) / 캐릭터 목록 / 소리
  * ============================================================ */
 const SAVE_KEY = 'hellSurvivorSave1';
-const GAME_VER = 'v8.61';
+const GAME_VER = 'v8.62';
 const SAVE_DEF = () => ({
   shards: 0,
   perks: { hp: 0, spd: 0, dmg: 0, exp: 0, magnet: 0, banish: 0, revive: 0, regen: 0, shard: 0, critd: 0, choice: 0 },
@@ -4505,18 +4505,27 @@ function skWrap(fn, key) {
 }
 const withSrc = (k, f) => { const o = DSRC; DSRC = k; try { return f(); } finally { DSRC = o; } };
 const dexBoss = e => ({ eye: 'boss2', fw: 'boss3', skel: 'boss4', ab: 'boss5', angel: 'boss6', shk: 'boss7', tox: 'boss8', adm: 'boss9' })[e.bk] || 'boss';   // 도감 키 (원숭이 마왕 = boss)
+/* v8.62 체력비례 피해: 약한 근접 최종 진화(사슬의 폭군 · 삼두 늑대 · 지옥 군주 늑대 · 혈랑 진화형 · 업화의 사자 · 물의 도마뱀 전사 · 버서커 리자드)는
+   보스·미니 보스·유니크를 때릴 때 최대 체력의 0.10%를 더 입힌다 (대상마다 0.25초에 한 번, 추가분은 그 타격 피해의 ×4까지). 달팽이(맹독·용암)는 독·용암 장판 틱에도 같은 식으로 (상한은 내 공격력 ×4, 장판 감쇠 없음) */
+const PCT_RATE = 0.001, PCT_CAP = 4, PCT_CD = 0.25;
+const pctMelee = () => P.form === 2 && (P.char === 'twins' || (P.char === 'wolf' && (P.route === 'twin' || P.route === 'abyss' || (P.route === 'crimson' && P.fin !== 'holy' && P.fin !== 'fallen'))) || (P.char === 'chimera' && P.route === 'flame') || (P.char === 'lizard' && (P.fin === 'water' || P.fin === 'rage')));
+const pctZone = isLava => P.char === 'snail' && (isLava ? P.route === 'lava' : P.route === 'venom' || P.route === 'lava');
+const pctTarget = e => e.kind === 'boss' || e.kind === 'mini' || e.kind === 'uniq';
+function pctZoneHit(e) { if (!pctTarget(e) || e.hp <= 0) return; hurtEnemy(e, Math.min(e.max * PCT_RATE, P.dmg * PCT_CAP), 0, 0, 0, 'pct'); }   // 장판은 기본 피해가 작아서 상한을 내 공격력 ×4로
 function hurtEnemy(e, dmg, kx, ky, kn, quiet) {
   if (e.hp <= 0 || e.invul) return;
+  const pctQ = quiet === 'pct'; if (pctQ) quiet = true;   // 장판 체력비례분: 장판 감쇠(보스 ×0.12 등)를 받지 않는다
   if (e.bk === 'angel' && anFront(e)) { anBlock(e); return; }   // v6.30: 타락천사의 성스러운 방패 — 정면에서는 막힌다
-  if (e.kind === 'mini' && quiet) dmg *= 0.5;   // 미니 보스: 장판 같은 지속 피해는 약하게 (v5.01: 한 방 피해 상한은 없앴다)
-  if (e.kind === 'uniq') { if (quiet) dmg *= 0.6; const cap = e.max * 0.07; if (dmg > cap) dmg = cap + (dmg - cap) * 0.4; }   // 유니크: 미니 보스보다 약하지만 한 방 폭딜은 깎는다
-  if (e.kind === 'boss' && quiet) dmg *= 0.12;
+  if (e.kind === 'mini' && quiet && !pctQ) dmg *= 0.5;   // 미니 보스: 장판 같은 지속 피해는 약하게 (v5.01: 한 방 피해 상한은 없앴다)
+  if (e.kind === 'uniq') { if (quiet && !pctQ) dmg *= 0.6; const cap = e.max * 0.07; if (dmg > cap) dmg = cap + (dmg - cap) * 0.4; }   // 유니크: 미니 보스보다 약하지만 한 방 폭딜은 깎는다
+  if (e.kind === 'boss' && quiet && !pctQ) dmg *= 0.12;
   if (e.bk === 'shk' && e.guard) dmg *= 0.5;   // v7.20 포자 갑옷 (소환된 버섯이 남아 있는 동안)   // 장판 같은 지속 피해는 보스에게 약하게
    // v5.00: 마왕의 '한 방 피해 상한'은 없앴다 (대신 마왕 체력을 올렸다)
   let crit = false;
   if (e.gazeT > gt) dmg *= 1.2;   // 광기의 시선: 촉수에 맞은 적
   if (e.frzT > gt) dmg *= P.syn.glacier ? 1.25 : 1.1;   /* v7.05 빙결 */
-  if (!quiet && P.crit + critAdd > 0 && rand() < P.crit + critAdd) { dmg *= P.critD; crit = true; } else if (!quiet && P.rel.coin) dmg *= 0.92;   // 치명타 카드 (+ 저격수의 표식) · 도박꾼의 동전: 치명타가 아니면 -8%
+  if (!quiet && P.crit + critAdd > 0 && rand() < P.crit + critAdd) { dmg *= P.critD; crit = true; } else if (!quiet && P.rel.coin) dmg *= 0.92;
+  if (!quiet && pctTarget(e) && !(e.pctT > gt) && pctMelee()) { e.pctT = gt + PCT_CD; dmg += Math.min(e.max * PCT_RATE, dmg * PCT_CAP); }   // v8.62 체력비례 피해   // 치명타 카드 (+ 저격수의 표식) · 도박꾼의 동전: 치명타가 아니면 -8%
   if (e.shd > 0) { const ab = Math.min(e.shd, dmg); e.shd -= ab; dmg -= ab; if (e.shd <= 0) addRing(e.x, e.y - e.r, 6, 44, 0.3, '120,200,255', 4); if (dmg <= 0) { e.flash = 0.06; return; } }   // 보호막 접두사
   { const dd = Math.min(dmg, Math.max(0, e.hp)), k = DSRC || '?';   // v6.49: 출처 없는 피해도 '기타'로 집계 + 보스 전용 미터기
     DMETER[k] = (DMETER[k] || 0) + dd; if (e.kind === 'boss') DBOSS[k] = (DBOSS[k] || 0) + dd;
@@ -7187,7 +7196,7 @@ function updateSkills(dt) {
       z.tick -= dt; const tk = z.tick <= 0; if (tk) z.tick = 0.3;
       for (const e of enemies) {
         if (e.hp <= 0) continue;
-        if (Math.hypot(e.x - z.x, e.y - z.y) < z.r + e.r * 0.5) { e.slowT = 0.2; if (tk && !(e.tzT > gt)) { e.tzT = gt + 0.3; DSRC = z.src || null; hurtEnemy(e, Math.max(3, P.dmg * z.dm), 0, 0, 0, true); DSRC = null; } }
+        if (Math.hypot(e.x - z.x, e.y - z.y) < z.r + e.r * 0.5) { e.slowT = 0.2; if (tk && !(e.tzT > gt)) { e.tzT = gt + 0.3; DSRC = z.src || null; { const bd = Math.max(3, P.dmg * z.dm); hurtEnemy(e, bd, 0, 0, 0, true); if (pctZone(true)) pctZoneHit(e); } DSRC = null; } }
       }
       if (rand() < 0.05) fx.push({ x: z.x + (rand() - 0.5) * z.r * 1.4, y: z.y, vx: 0, vy: -60 - rand() * 50, life: 0.45, max: 0.45, c: ['#ff6a1c', '#ffb030'][(rand() * 2) | 0], s: 3 });
     } else if (z.type === 'trail') {
@@ -7195,7 +7204,7 @@ function updateSkills(dt) {
       for (const e of enemies) {
         if (e.hp <= 0) continue;
         if (Math.hypot(e.x - z.x, e.y - z.y) < z.r + e.r * 0.4) {
-          e.slowT = 0.3; if (tk && !(e.tzT > gt)) { e.tzT = gt + 0.3; DSRC = 'trail'; hurtEnemy(e, Math.max(3, P.dmg * 0.18 * z.dm), 0, 0, 0, true); DSRC = null; }
+          e.slowT = 0.3; if (tk && !(e.tzT > gt)) { e.tzT = gt + 0.3; DSRC = 'trail'; { const bd = Math.max(3, P.dmg * 0.18 * z.dm); hurtEnemy(e, bd, 0, 0, 0, true); if (pctZone(false)) pctZoneHit(e); } DSRC = null; }
           if (P.syn.snare && !(e.snareT > gt) && (e.kind === 'mob' || e.kind === 'bug')) { e.rootT = gt + 0.7; e.snareT = gt + 3; burst(e.x, e.y - 4, 4, [FD().c1 || '#b45aff', '#ffffff'], 70, 0.35); }   // 끈적한 덫
         }
       }
@@ -10218,6 +10227,7 @@ function pauseStats() {
   let h = rows.map(r => `<div class="setrow"><span>${r[0]}</span><b>${r[1]}</b></div>`).join('');
   const cards = Object.keys(P.up).filter(id => P.up[id] > 0 && !SYNERGIES.some(x => x.id === id)).map(id => `${upName(id)} Lv.${P.up[id]}`).join(' · ');
   h += `<div class="pnote"><b>보유 카드</b><br>${cards || '아직 없음'}</div>`;
+  if (pctMelee() || pctZone(false)) h += `<div class="pnote"><b>체력비례 피해</b><br>${pctMelee() ? '보스 · 미니 보스 · 유니크를 때릴 때 최대 체력의 0.10%를 추가로 입힙니다 (대상마다 0.25초에 한 번 · 추가분은 타격 피해의 최대 ×4)' : '독 · 용암 장판이 보스 · 미니 보스 · 유니크에게 틱마다 최대 체력의 0.10%를 추가로 입힙니다 (추가분은 내 공격력의 최대 ×4)'}</div>`;
   { const rl = Object.keys(RELICS).filter(k => P.rel[k]);
     if (rl.length) h += `<div class="pnote"><b>저주받은 성유물</b><br>` + rl.map(k => `<b>${RELICS[k].name}</b> : ${RELICS[k].desc}` + (k === 'key' ? ` (남은 ${P.teleN}회 · E 키)` : k === 'phoenix' && P.phxUsed ? ' (사용함)' : k === 'fang' ? ` (${P.fangN}/10)` : '')).join('<br>') + '</div>';
     const st = []; if (P.slowT > 0) st.push(`둔화 ${Math.ceil(P.slowT)}초`); if (P.curseCard > 0) st.push('다음 레벨업 카드 선택 불가'); if (P.dotT > 0) st.push('화상'); if (P.slotN) st.push(`잭팟 머신 ${P.slotN}회 사용`);
@@ -10348,7 +10358,7 @@ stepDive = skWrap(stepDive, 'dive'); stepRush = skWrap(stepRush, 'rush'); rushSt
 updateAirs = (f => function (...a) { return withSrc('basic', () => f.apply(this, a)); })(updateAirs);   // v6.22: 에어슬래시는 평타 (v6.30: 바로 뒤 천안 난무·브레스 감싸기가 주석에 묻혀 딜미터기에서 빠지던 것 수정)
 { const _tb = thornBlast, _sb = smashBlow; thornBlast = function (...a) { return withSrc('scale', () => _tb.apply(this, a)); }; smashBlow = function (...a) { return withSrc('smash', () => _sb.apply(this, a)); }; }
 shellReflect = skWrap(shellReflect, 'shell'); updateBsig = skWrap(updateBsig, 'bsigil');
-window.__G = { updateDiff, skinG, bhKey, BH_ORDER, heartIcon, relicMaskOn, calcShards, isSlow, isLava, saveSave, svParse, spawnPlant, PL, get GSPECIES() { return GSPECIES; }, get plBalls() { return plBalls; }, synCard, freezeE, availSyn, SYNERGIES, dmName, FD, shkAdd, toxAdd, skSpawnPair, phoenixRevive, mirrorBlock, palPop, updateCutSaws, get shkSp() { return shkSp; }, get toxFl() { return toxFl; }, get zonesRef() { return zones; },
+window.__G = { pctMelee, pctZone, updateDiff, skinG, bhKey, BH_ORDER, heartIcon, relicMaskOn, calcShards, isSlow, isLava, saveSave, svParse, spawnPlant, PL, get GSPECIES() { return GSPECIES; }, get plBalls() { return plBalls; }, synCard, freezeE, availSyn, SYNERGIES, dmName, FD, shkAdd, toxAdd, skSpawnPair, phoenixRevive, mirrorBlock, palPop, updateCutSaws, get shkSp() { return shkSp; }, get toxFl() { return toxFl; }, get zonesRef() { return zones; },
   bossDefeated, get IMG() { return IMG; },
   get ready() { return !!IMG.floorD; }, get state() { return state; }, get P() { return P; }, get enemies() { return enemies; }, get orbs() { return orbs; },
   get zones() { return zones; }, get ebul() { return ebul; }, get EYE() { return EYE; }, get shards() { return shards; }, get bigQ() { return bigQ; }, get bombQ() { return bombQ; }, get holyQ() { return holyQ; }, get afx() { return afx; }, get dashQ() { return dashQ; }, get beam() { return beam; }, get evo() { return evo; }, get choices() { return choices; },
