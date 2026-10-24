@@ -841,7 +841,7 @@ function mkCanvas(w, h) { const c = document.createElement('canvas'); c.width = 
  * 0-1. 저장(영혼 조각 · 영구 강화 · 설정) / 캐릭터 목록 / 소리
  * ============================================================ */
 const SAVE_KEY = 'hellSurvivorSave1';
-const GAME_VER = 'v8.57';
+const GAME_VER = 'v8.58';
 const SAVE_DEF = () => ({
   shards: 0,
   perks: { hp: 0, spd: 0, dmg: 0, exp: 0, magnet: 0, banish: 0, revive: 0, regen: 0, shard: 0, critd: 0, choice: 0 },
@@ -9948,8 +9948,8 @@ const HG_ORDER = ['rare', 'epic', 'unique', 'legend'];
 const HSTAT = { atk: '공격력', hp: '최대 체력', aspd: '공격 속도' };
 const HEART = { drop: 0.20, legend: 0.01, slots: 5 };
 const heartCost = h => HG[h.g].cost;   // v8.09: 심장 등급(강화 단계)에 따라 레어 500 · 에픽 600 · 유니크 700 · 레전더리 800
-const BH = { angel: '타락천사', shk: '거대 버섯마귀', skel: '스켈레톤 마왕', eye: '마안군주', monkey: '원숭이 마왕', tox: '이독버섯 마왕' }, BH_ORDER = ['angel', 'shk', 'skel', 'eye', 'monkey', 'tox'];   // 보스 종류별 심장 (도트 줄 순서)
-const bhKey = e => e.bk === 'angel' || e.bk === 'shk' || e.bk === 'skel' || e.bk === 'eye' || e.bk === 'tox' ? e.bk : (e.bk ? null : 'monkey');
+const BH = { angel: '타락천사', shk: '거대 버섯마귀', skel: '스켈레톤 마왕', eye: '마안군주', monkey: '원숭이 마왕', tox: '이독버섯 마왕', adm: '썩어버린 해군 제독' }, BH_ORDER = ['angel', 'shk', 'skel', 'eye', 'monkey', 'tox', 'adm'];   // 보스 종류별 심장 (도트 줄 순서)
+const bhKey = e => e.bk === 'angel' || e.bk === 'shk' || e.bk === 'skel' || e.bk === 'eye' || e.bk === 'tox' || e.bk === 'adm' ? e.bk : (e.bk ? null : 'monkey');
 const hRand = (a, b) => a + Math.floor(Math.random() * (b - a + 1));
 const hOpt = h => `${HSTAT[h.st]} +${h.v}%`;
 function heartMake(g, b) { const S = SAVE.heart, G = HG[g]; return { id: ++S.n, g, b: b || 'angel', st: ['atk', 'hp', 'aspd'][(Math.random() * 3) | 0], v: hRand(G.min, G.max) }; }
@@ -10310,7 +10310,7 @@ stepDive = skWrap(stepDive, 'dive'); stepRush = skWrap(stepRush, 'rush'); rushSt
 updateAirs = (f => function (...a) { return withSrc('basic', () => f.apply(this, a)); })(updateAirs);   // v6.22: 에어슬래시는 평타 (v6.30: 바로 뒤 천안 난무·브레스 감싸기가 주석에 묻혀 딜미터기에서 빠지던 것 수정)
 { const _tb = thornBlast, _sb = smashBlow; thornBlast = function (...a) { return withSrc('scale', () => _tb.apply(this, a)); }; smashBlow = function (...a) { return withSrc('smash', () => _sb.apply(this, a)); }; }
 shellReflect = skWrap(shellReflect, 'shell'); updateBsig = skWrap(updateBsig, 'bsigil');
-window.__G = { relicMaskOn, calcShards, isSlow, isLava, saveSave, svParse, spawnPlant, PL, get GSPECIES() { return GSPECIES; }, get plBalls() { return plBalls; }, synCard, freezeE, availSyn, SYNERGIES, dmName, FD, shkAdd, toxAdd, skSpawnPair, phoenixRevive, mirrorBlock, palPop, updateCutSaws, get shkSp() { return shkSp; }, get toxFl() { return toxFl; }, get zonesRef() { return zones; },
+window.__G = { bhKey, BH_ORDER, heartIcon, relicMaskOn, calcShards, isSlow, isLava, saveSave, svParse, spawnPlant, PL, get GSPECIES() { return GSPECIES; }, get plBalls() { return plBalls; }, synCard, freezeE, availSyn, SYNERGIES, dmName, FD, shkAdd, toxAdd, skSpawnPair, phoenixRevive, mirrorBlock, palPop, updateCutSaws, get shkSp() { return shkSp; }, get toxFl() { return toxFl; }, get zonesRef() { return zones; },
   bossDefeated, get IMG() { return IMG; },
   get ready() { return !!IMG.floorD; }, get state() { return state; }, get P() { return P; }, get enemies() { return enemies; }, get orbs() { return orbs; },
   get zones() { return zones; }, get ebul() { return ebul; }, get EYE() { return EYE; }, get shards() { return shards; }, get bigQ() { return bigQ; }, get bombQ() { return bombQ; }, get holyQ() { return holyQ; }, get afx() { return afx; }, get dashQ() { return dashQ; }, get beam() { return beam; }, get evo() { return evo; }, get choices() { return choices; },
