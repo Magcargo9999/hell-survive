@@ -33,6 +33,7 @@ ANCHORS = [
  ('● 층·맵', None),
  ('층 세트(지옥/버섯/어인섬)', r'^function floorSet|^const isSea|^const isMush'), ('버섯 세트', r'^const MSPECIES|^const MMAP'), ('어인섬 세트', r'^const SSPECIES|^const SMAP|^function warmSea'),
  ('챌린지 모드', r'v6\.20 ∞ 챌린지|^function startChallenge'),
+ ('챌린지: 시련의 제단(v8.87)', r'v8\.87 시련의 제단|^function chAltarTick'), ('챌린지 마왕: 영원의 온실주(v8.87)', r'v8\.87 마왕: 영원의 온실주|^function updateGrnBoss'),
  ('● 화면·UI', None),
  ('카드 선택 창', r'^function openChoice|^function openUpgrade|^function cardView'), ('HUD', r'^function drawHud'),
  ('부패한 성상(타락천사 판 미니 보스)', r'v8\.06 부패한 성상|^function spawnStat|^function sAtk|^function updateStat|^function drawStat'),

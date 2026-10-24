@@ -63,6 +63,7 @@ ASSETS = {
     '__FWFX__': 'v404/fwfx.webp',
     '__BMAP__': 'v404/bmap.webp',
     '__GH__': 'gh/gh.webp',
+    '__GRN__': 'grn/grn.webp',
     '__GG__': 'gg/gg.webp',
     '__OC__': 'oc/oc.webp',
     '__LG__': 'lg/lg.webp',
