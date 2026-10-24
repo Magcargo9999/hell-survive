@@ -304,6 +304,8 @@
     <label class="setrow">모바일 조이스틱 <input type="checkbox" id="setJoy"></label>
     <label class="setrow">딜 미터기 (기본 공격 · 스킬 카드) <input type="checkbox" id="setDm"></label>
     <div class="setrow">쿠폰 <span><input id="cpIn" type="text" placeholder="쿠폰 번호" autocomplete="off" style="width:150px;font-size:15px;padding:4px 6px"> <button id="cpBtn" class="sm">적용</button></span></div>
+    <div class="setrow">버전 <span><b id="setVer" style="color:var(--gold)"></b> <button id="patchBtn" class="sm">패치노트</button></span></div>
+    <div id="patchList" style="display:none;font-size:13px;line-height:1.55;max-height:170px;overflow:auto;padding:6px 8px;background:rgba(0,0,0,.35);border-radius:6px"></div>
     <div class="setrow">누적 플레이 시간 <b id="setPlay" style="color:var(--gold)"></b></div>
     <div id="cpMsg" style="font-size:13px;min-height:18px;color:#ffd27a;text-align:center"></div>
     <div class="setrow" style="flex-wrap:wrap;gap:6px">세이브 옮기기 <span><button id="svFile" class="sm">파일로 저장</button> <button id="svCopy" class="sm">코드 복사</button> <button id="svLoadF" class="sm">파일 불러오기</button></span></div>
@@ -852,7 +854,7 @@ function mkCanvas(w, h) { const c = document.createElement('canvas'); c.width = 
  * 0-1. 저장(영혼 조각 · 영구 강화 · 설정) / 캐릭터 목록 / 소리
  * ============================================================ */
 const SAVE_KEY = 'hellSurvivorSave1';
-const GAME_VER = 'v8.70';
+const GAME_VER = 'v8.71';
 const SAVE_DEF = () => ({
   shards: 0,
   perks: { hp: 0, spd: 0, dmg: 0, exp: 0, magnet: 0, banish: 0, revive: 0, regen: 0, shard: 0, critd: 0, choice: 0 },
@@ -10874,7 +10876,18 @@ function openShop(kind) {   // v5.11: 캐릭터 상점 / 강화 상점 분리
 }
 /* 설정 */
 const fmtPlay = sec => { sec = Math.floor(sec); const h = Math.floor(sec / 3600), m = Math.floor(sec % 3600 / 60), q = sec % 60; return (h ? h + '시간 ' : '') + (h || m ? m + '분 ' : '') + q + '초'; };
+/* v8.71 간략 패치노트 (최근 버전만, 새 버전마다 맨 위에 한 줄 추가) */
+const PATCH = [
+  ['v8.71', '설정에 버전 표시 · 패치노트 추가'],
+  ['v8.70', '파리지옥 마왕 추가 (지하 11층 100% · 12층 70%)'],
+  ['v8.67', '마왕은 처음 나오는 층에서 100%, 다음 층에서 70%'],
+  ['v8.66', '타락한 원예의 여왕 심장 · 심장 합성 (4개 → 옵션 2줄)'],
+  ['v8.65', '해군 제독 16·17층 배치'],
+  ['v8.64', '11~15층 악마 식물원 · 16~20층 어인섬으로 순서 교체'],
+];
 function openSettings() {
+  $('setVer').textContent = GAME_VER;
+  $('patchList').innerHTML = PATCH.map(([v, t]) => `<div><b style="color:var(--gold)">${v}</b> ${t}</div>`).join('');
   $('setPlay').textContent = fmtPlay(SAVE.playT || 0);
   const t = SAVE.set;
   $('setNums').checked = t.nums; $('setCalm').checked = t.calm; $('setSfx').value = t.sfx; $('setBgm').value = t.bgm; $('setSpeed').value = String(t.speed); $('setJoy').checked = t.joy; $('setDm').checked = !!t.dmeter;
@@ -10891,6 +10904,7 @@ function bindSettings() {
   $('setJoy').onchange = e => { t.joy = e.target.checked; sv(); };
   $('setDm').onchange = e => { t.dmeter = e.target.checked; sv(); };
   $('setClose').onclick = () => show('setBox', false);
+  $('patchBtn').onclick = () => { const d = $('patchList'); d.style.display = d.style.display === 'none' ? 'block' : 'none'; };
   const useCoupon = () => {   // 저장하지 않는다: 새로 접속하면 다시 입력해야 한다
     const v = $('cpIn').value.replace(/\s/g, '').toLowerCase();
     if (v === 'ai소프트웨어학과') { octoSkin = true; angelSkin = true; $('cpMsg').textContent = '✔ 쿠폰 적용! 문어 마법사 최종 진화 · 타락천사 모습이 바뀝니다 (이번 접속 동안)'; sfx('chest'); }
