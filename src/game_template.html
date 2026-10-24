@@ -871,7 +871,7 @@ function mkCanvas(w, h) { const c = document.createElement('canvas'); c.width = 
  * 0-1. 저장(영혼 조각 · 영구 강화 · 설정) / 캐릭터 목록 / 소리
  * ============================================================ */
 const SAVE_KEY = 'hellSurvivorSave1';
-const GAME_VER = 'v8.85';
+const GAME_VER = 'v8.86';
 const SAVE_DEF = () => ({
   shards: 0,
   perks: { hp: 0, spd: 0, dmg: 0, exp: 0, magnet: 0, banish: 0, revive: 0, regen: 0, shard: 0, critd: 0, choice: 0 },
@@ -5365,7 +5365,7 @@ function newPlayer(char) {
     x: 0, y: 0, hp: sn ? 125 : ar ? 70 : 100, max: sn ? 125 : ar ? 70 : 100, spd: sn ? 175 : ar ? 195 : 200, face: 1,
     anim: 'idle', animT: 0, inv: 0, hitT: 0,
     atkTimer: -1, atkCd: 0, atkHitN: 0, ax: 1, ay: 0,
-    dmg: sn ? 18 : ar ? 19 : 18, rng: sn || ar ? 100 : 96, cd: sn ? 0.85 : ar ? 0.51 : 0.9, pickup: ar ? 95 : 90,
+    dmg: sn ? 18 : ar ? 19 : 18, rng: sn ? 100 : ar ? 94 : 96, cd: sn ? 0.85 : ar ? 0.51 : 0.9, pickup: ar ? 95 : 90,
     pierce: 1, fin: null, regen: 0, arrowScale: 1, far: ar ? 0.15 : 0, dodge: 0, kite: 0, fireArrow: 0, moving: false,
     orbsN: 0, orbAng: 0, shardN: 0, shardCd: 0,
     exp: 0, need: needFor(1), lvl: 1, kills: 0, up: {},
@@ -6050,8 +6050,8 @@ const UPGRADES = [
   { id: 'heart',  name: '지옥의 심장',   txt: () => '최대 체력 +16',    apply: p => { p.max += 16; p.hp = Math.min(p.max, p.hp + 24); },
     alt: { octo: ['두꺼운 먹물막', '최대 체력 +16'], snail: ['단단한 껍질', '최대 체력 +16'], archer: ['엘프의 끈기', '최대 체력 +16'] } },
   { id: 'magnet', name: '영혼 자석',     txt: () => '흡수 범위 +60% · 끌어당기는 속도 +60%',   apply: p => { p.pickup *= 1.6; p.magPull = (p.magPull || 1) + 0.6; }, alt: { octo: ['마력 끌림', '흡수 범위 +60% · 끌어당기는 속도 +60%'] } },
-  { id: 'range',  name: '넓은 발톱',     txt: () => '범위 +12%',        apply: p => { p.rng *= 1.12; },
-    alt: { gun: ['긴 총열', '사거리 +12%'], octo: ['먼 마법진', '마력탄 사거리 +12%'], lava: ['넓은 용암탄', '용암탄이 터지는 범위 +12%'], bomb: ['큰 화약', '폭탄 폭발 범위 +12%'], snail: ['넓은 독 침', '독 침이 터지는 범위 +12%'], archer: ['먼 곳 조준', '사거리 +12%'], lizard: ['넓은 휘두르기', '범위 +12%'], twins: ['긴 사슬', '사슬 길이 +12%'], ghost: ['멀리 뿌리기', '사거리 +12%'] } },
+  { id: 'range',  name: '넓은 발톱',     txt: () => '범위 +12%',        apply: p => { p.rng *= 1.12; if (p.char === 'archer' && (p.up.range | 0) < 3) p.far += 0.3; },   // v8.86: 지옥엘프 궁수는 저격 시선과 합쳐져 먼 거리 피해도 오른다 (3장까지)
+    alt: { gun: ['긴 총열', '사거리 +12%'], octo: ['먼 마법진', '마력탄 사거리 +12%'], lava: ['넓은 용암탄', '용암탄이 터지는 범위 +12%'], bomb: ['큰 화약', '폭탄 폭발 범위 +12%'], snail: ['넓은 독 침', '독 침이 터지는 범위 +12%'], archer: ['저격 시선', '사거리 +12% · 먼 거리(260+) 피해 +30% (피해는 3장까지)'], lizard: ['넓은 휘두르기', '범위 +12%'], twins: ['긴 사슬', '사슬 길이 +12%'], ghost: ['멀리 뿌리기', '사거리 +12%'] } },
   { id: 'orb',    noChar: 'octo', name: '지옥불 구슬',   txt: () => '불꽃 구슬 +1 (공격력의 55%)', apply: p => { p.orbsN++; } },
   { id: 'shard',  name: '뼈 투사체',     txt: () => '뼈 투사체 +1발 (공격력의 88%) · 적에게 1회 튕김', apply: p => { p.shardN++; },
     alt: { octo: ['먹물 탄', '먹물 탄 +1발 (공격력의 88%) · 적에게 1회 튕김'], lava: ['용암 파편', '용암 파편 +1발 (공격력의 88%) · 적에게 1회 튕김'], snail: ['독가시', '독가시 +1발 (공격력의 88%) · 적에게 1회 튕김'], archer: ['추적 화살', '추적 화살 +1발 (공격력의 70%) · 적에게 1회 튕김'] } },
@@ -6113,7 +6113,6 @@ const UNIQUE = {
     { id: 'multi',   name: '다발 사격',   max: 3, txt: () => '화살 +1발 (추가분 80%)', apply: p => { p.bolts++; } },
     { id: 'pierceA', name: '관통 화살',   max: 3, txt: () => '관통 +1', apply: p => { p.pierce++; } },
     { id: 'kite',    name: '카이팅 사격', max: 3, txt: () => '이동 중 사격 피해 +20%', apply: p => { p.kite++; } },
-    { id: 'snipe',   name: '저격 시선',   max: 3, w: 0.8, txt: () => '먼 거리(260+) 피해 +25%', apply: p => { p.far += 0.25; } },
     { id: 'fireArrow', name: '지옥불 화살', max: 2, w: 0.8, txt: () => '명중 시 작은 폭발', apply: p => { p.fireArrow++; } },
   ],
 };
@@ -6148,7 +6147,7 @@ const SYNERGIES = [
     alt: { lava: ['용암 파편 웅덩이', '용암 파편이 맞은 자리에 용암 흔적이 생긴다'] } },
   { id: 'snare',     name: '끈적한 덫',   txt: '독 자국을 밟은 적이 0.7초 묶인다 (적마다 3초에 한 번)', need: ['sticky', 'knock'], only: 'snail',
     alt: { lava: ['굳는 용암', '용암 흔적을 밟은 적이 0.7초 묶인다 (적마다 3초에 한 번)'] } },
-  { id: 'mark',      name: '저격수의 표식', txt: '먼 거리(260+) 화살의 치명타 확률 +30%', need: ['snipe', 'crit'], only: 'archer' },
+  { id: 'mark',      name: '저격수의 표식', txt: '먼 거리(260+) 화살의 치명타 확률 +30%', need: ['range', 'crit'], only: 'archer' },
   { id: 'gust',      name: '바람의 궤적', txt: '이동 중 쏜 화살이 적을 1.2초 둔화 · 넉백 +60%', need: ['kite', 'move'], only: 'archer' },
   { id: 'blaze',     name: '업화 연쇄',   txt: '화상 입은 적이 죽으면 터지며 주변에 화상을 옮긴다', need: ['flameA', 'flameB'], only: 'chimera' },
   { id: 'gaze',      name: '광기의 시선', txt: '촉수에 맞은 적은 3초간 받는 피해 +20%', need: ['dreamA', 'dreamB'], only: 'chimera' },
@@ -11386,6 +11385,7 @@ function openAch() {
 }
 /* v8.71 간략 패치노트 (최근 버전만, 새 버전마다 맨 위에 한 줄 추가) */
 const PATCH = [
+  ['v8.86', '지옥엘프 궁수 — 사거리 카드와 저격 시선을 하나로 합침(사거리 +12% · 먼 거리 피해 +30%) · 기본 사거리 100→94 너프'],
   ['v8.85', '버그 수정 — 20층 어인왕전이 아닌 맵에 산소 간헐천·사슬 이펙트가 남아 보이던 문제'],
   ['v8.84', '지옥엘프 궁수 기본 이속 215→195 · 기본 공격력 22→19 너프 · 심장 합성: 레전더리 심장 3개로 변경 (재료 2개 사라짐)'],
   ['v8.83', '달팽이 장판(독 자국·용암 웅덩이)도 빙결·점화 발동(적마다 1.2초 쿨) · 용암 대분출이 용암 흔적을 터뜨리지 않음 · 보스 러시 시작 증강 5개만 무작위(나머지 직접 선택) · 토끼 후드 늑대 스킨은 0진화에서만'],
@@ -11630,7 +11630,7 @@ stepDive = skWrap(stepDive, 'dive'); stepRush = skWrap(stepRush, 'rush'); rushSt
 updateAirs = (f => function (...a) { return withSrc('basic', () => f.apply(this, a)); })(updateAirs);   // v6.22: 에어슬래시는 평타 (v6.30: 바로 뒤 천안 난무·브레스 감싸기가 주석에 묻혀 딜미터기에서 빠지던 것 수정)
 { const _tb = thornBlast, _sb = smashBlow; thornBlast = function (...a) { return withSrc('scale', () => _tb.apply(this, a)); }; smashBlow = function (...a) { return withSrc('smash', () => _sb.apply(this, a)); }; }
 shellReflect = skWrap(shellReflect, 'shell'); updateBsig = skWrap(updateBsig, 'bsigil');
-window.__G = { ACH, achSync, achClear, openAch, KG, KGW, get kg() { return kg; }, AirGeyser, WaterMirror, MirrorBolt, kgIce, get shards() { return shards; }, set shards(v) { shards = v; }, VF, VFW, get vf() { return vf; }, VfTrap, VfSkull, VfHeart, vfLeech, fuseHearts, rerollHeart, heartBonus, renderFuse, setFu(v) { hFu = v; }, QN, QNW, get qn() { return qn; }, RootBind, SporeSack, QnMush, pickBossK, pctMelee, pctZone, updateDiff, skinG, bhKey, BH_ORDER, heartIcon, relicMaskOn, calcShards, isSlow, isLava, saveSave, svParse, spawnPlant, PL, get GSPECIES() { return GSPECIES; }, get plBalls() { return plBalls; }, synCard, freezeE, availSyn, SYNERGIES, dmName, FD, shkAdd, toxAdd, skSpawnPair, phoenixRevive, mirrorBlock, palPop, updateCutSaws, get shkSp() { return shkSp; }, get toxFl() { return toxFl; }, get zonesRef() { return zones; },
+window.__G = { cardDefs, cardView, ACH, achSync, achClear, openAch, KG, KGW, get kg() { return kg; }, AirGeyser, WaterMirror, MirrorBolt, kgIce, get shards() { return shards; }, set shards(v) { shards = v; }, VF, VFW, get vf() { return vf; }, VfTrap, VfSkull, VfHeart, vfLeech, fuseHearts, rerollHeart, heartBonus, renderFuse, setFu(v) { hFu = v; }, QN, QNW, get qn() { return qn; }, RootBind, SporeSack, QnMush, pickBossK, pctMelee, pctZone, updateDiff, skinG, bhKey, BH_ORDER, heartIcon, relicMaskOn, calcShards, isSlow, isLava, saveSave, svParse, spawnPlant, PL, get GSPECIES() { return GSPECIES; }, get plBalls() { return plBalls; }, synCard, freezeE, availSyn, SYNERGIES, dmName, FD, shkAdd, toxAdd, skSpawnPair, phoenixRevive, mirrorBlock, palPop, updateCutSaws, get shkSp() { return shkSp; }, get toxFl() { return toxFl; }, get zonesRef() { return zones; },
   bossDefeated, get IMG() { return IMG; },
   get ready() { return !!IMG.floorD; }, get state() { return state; }, get P() { return P; }, get enemies() { return enemies; }, get orbs() { return orbs; },
   get zones() { return zones; }, get ebul() { return ebul; }, get EYE() { return EYE; }, get shards() { return shards; }, get bigQ() { return bigQ; }, get bombQ() { return bombQ; }, get holyQ() { return holyQ; }, get afx() { return afx; }, get dashQ() { return dashQ; }, get beam() { return beam; }, get evo() { return evo; }, get choices() { return choices; },

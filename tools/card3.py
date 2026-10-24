@@ -21,7 +21,7 @@ COMMON = {'fireBone': ['shard', 'orb'], 'soulStorm': ['orb', 'magnet'], 'rush': 
 ONLY = {'wolf:crimson': {'vamp': ['claw', 'heart'], 'frenzy': ['claw', 'move']},
         'snail:venom': {'corpse': ['range', 'claw'], 'spore': ['shard', 'spread'], 'snare': ['sticky', 'knock']},
         'snail:bomb': {'corpse': ['range', 'claw'], 'spore': ['shard', 'spread'], 'snare': ['sticky', 'knock']},
-        'archer:red': {'ricochet': ['claw', 'shard'], 'mark': ['snipe', 'crit'], 'gust': ['kite', 'move']},
+        'archer:red': {'ricochet': ['claw', 'shard'], 'mark': ['range', 'crit'], 'gust': ['kite', 'move']},
         'chimera': {'galeWing': ['airA', 'airB']}, 'chimera:flame': {'blaze': ['flameA', 'flameB']}, 'chimera:dream': {'gaze': ['dreamA', 'dreamB']},
         'lizard:rage': {'regen': ['scale', 'heart'], 'quake': ['smash', 'knock']}, 'twins': {'pendulum': ['heavy', 'knock'], 'vortex': ['whirl', 'move']},
         'octo': {'oBig': ['range', 'claw'], 'oReso': ['knock', 'speed'], 'oDrain': ['exp', 'heart']}}

@@ -4,7 +4,7 @@
 **이 문서를 먼저 다 읽고 작업할 것.** 답변은 한국어로 짧고 간결하게.
 
 ## 꼭 지킬 규칙 (사용자 지시)
-1. **파일 이름:** 매 빌드 `hell survive v.N.NN.html`, 버전은 매번 올린다. 마지막 배포 = **v8.85** → 다음은 v8.86. (v6.01부터 6대 · v7.01부터 7대: 지하 10층·버섯 맵 개편 · **v8.01부터 8대: 보스 심장 시스템 기준, 사용자 지시**)
+1. **파일 이름:** 매 빌드 `hell survive v.N.NN.html`, 버전은 매번 올린다. 마지막 배포 = **v8.86** → 다음은 v8.87. (v6.01부터 6대 · v7.01부터 7대: 지하 10층·버섯 맵 개편 · **v8.01부터 8대: 보스 심장 시스템 기준, 사용자 지시**)
    - 끝자리: 작은 수정 · 가운데 자리: 캐릭터·보스 추가 같은 큰 변화.
 2. **도트는 절대 수정·재색칠 금지.** 자르기·배경 제거·마스크·배율 조정만 허용.
 3. 기능은 **단순하게**. 서로 복사한 듯한 중복 스킬/카드 금지.
@@ -72,6 +72,7 @@ git add -A && git commit -m "v6.10: 변경점 한 줄" && git push origin main
 - **해골 궁수 최종 (v8.16):** Lv.20 `startEvolve(2)`(skel 루트, 능력치 그대로) → `SKEL_FIN`(`SKELF_FR` 프레임 사각형, 아틀라스 `IMG.skelF` — `tools/atlas/skelf_build.py`) → 스킬 칠흑의 대궁(`darkarrow`, 해골 궁수의 스킬은 이것 하나뿐). 화살 그림 `IMG.skelFa`(`s.black`, 'lighter'). 둘 다 `LAZY_IMG`라 그림이 없으면 옛 skel 형태로 그림. 테스트 `tools/tests/skelfin816.py`
 - **열충격 (v8.52, `SYNERGIES` id `shock`, 점화+빙결 Lv.3):** 점화·빙결이 동시에 걸린 적이 터짐(`thermalCheck`, 반경 110 · 공격력 220% · 적마다 3초 · 점화 소모) + 반대 상태 확률 ×2. 테스트 `tools/tests/shock852.py`
 - **달팽이 장판 빙결·점화 (v8.83):** 독 자국(`trail`)·용암/폭탄 웅덩이(`lavapool`) 틱이 `zoneElem(e)`로 `procElem`을 굴린다(적마다 1.2초 `ZONE_ELEM_CD`). 용암 대분출은 흔적을 터뜨리지 않는다(독 달팽이 `blast`는 그대로). 테스트 `tools/tests/zone883.py`
+- **지옥엘프 궁수 사거리 카드 (v8.86):** 공용 `range` 카드의 archer 이름이 '저격 시선'(사거리 +12% · 먼 거리(260+) 피해 +30%, 피해는 3장까지 — `range` apply에서 `p.char==='archer'` 분기). 예전 고유 카드 `snipe`는 삭제, 조합 `mark`(저격수의 표식)는 `range`+`crit` 재료. 기본 사거리 `rng` 100→94. 테스트 `tools/tests/snipe886.py`
 - **스킬:** `SKILLS`, `SKILL_CD`(쿨타임 초), `uniqueSkill(s)()`, `castSkill()`.
 - **카드:** `UPGRADES`(공용, `alt: {캐릭터/루트: [이름, 문구]}`로 캐릭터별 이름), `UNIQUE`(캐릭터 전용), `SYNERGIES`(★조합, 재료 2장 Lv.3, `only:` 전용). `cardView`, `openChoice`(카드 앞면=효과, 누르면 뒷면=조합 / 진화 갈림길이면 이후 최종 진화), `openUpgrade`(기본 3장, 상점 '넓어진 선택지'면 4장).
 - **강화 상점** `PERKS` (캐릭터 상점과 분리): hp/spd/dmg/exp/magnet 각 10, banish 5, regen 3(초당 +0.1), shard 5(+5%), critd 5(+10%p), choice 1(5000), revive 1.
