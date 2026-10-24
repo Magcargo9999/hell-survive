@@ -21,7 +21,7 @@ async def main():
             print('prep',ch,r)
         await pg.evaluate("()=>{__G.SAVE.chars.wolf=true;__G.startRush('wolf');let g=0;while(g++<400&&(__G.state==='levelup'||__G.state==='evolve'))__s();}")
         out=[]
-        for k in range(7):
+        for k in range(9):   # BR_ORDER 9종 (v8.70)
             # 입장 대기
             ok=await pg.evaluate("""()=>{const G=__G;for(let i=0;i<400;i++){G.P.inv=99;G.P.hp=G.P.max;G.tick(1/30);if(G.boss&&G.boss.st!=='intro')break}return [G.boss&&G.boss.bk||'monkey',G.rush.i,G.rush.ph,!!(G.arena&&G.arena.sealed),G.P.bossK,Math.round(G.boss?G.boss.max:0)]}""")
             if k in (0,3,6): await pg.screenshot(path=B+f'rush_{k}.png')
