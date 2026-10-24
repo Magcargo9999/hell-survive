@@ -1,8 +1,8 @@
 #!/bin/bash
-# 티어 재측정 러너: 이어 돌리기(끝난 판 건너뜀) · 다시 실행해도 안전. 사용: nohup bash tools/tier3_run.sh &
+# 티어 재측정 러너: 이어 돌리기(끝난 판 건너뜀) · 다시 실행해도 안전. 사용: nohup bash tools/tier3_run.sh &   (STOP=<끝낼 시각 epoch> 로 바꿀 수 있음, 기본 12시간)
 cd "$(dirname "$0")/.."
-export STOP=${STOP:-1792707000} PAR=${PAR:-2} PYTHONPATH=tools
-exec 9>build/tier3/.lock; flock -n 9 || { echo "already running"; exit 0; }
+export STOP=${STOP:-$(( $(date +%s) + 43200 ))} PAR=${PAR:-2} PYTHONPATH=tools   # STOP 기본: 지금부터 12시간
+mkdir -p build/tier3/cards; exec 9>build/tier3/.lock; flock -n 9 || { echo "already running"; exit 0; }
 log=build/tier3/run.log
 now(){ date +%s; }
 st(){ [ "$(now)" -lt "$STOP" ]; }

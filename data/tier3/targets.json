@@ -3,9 +3,9 @@
  "commit": "363b78f",
  "count": {
   "stage0": 9,
-  "stage1": 17,
-  "stage2": 21,
-  "total": 47
+  "stage1": 18,
+  "stage2": 22,
+  "total": 49
  },
  "bosses": [
   {
@@ -356,7 +356,7 @@
    "site_id": "ghost1",
    "name": "연보라 총령",
    "family": "ghost",
-   "route": null,
+   "route": "orb",
    "fin": null,
    "field_L": 15,
    "boss": false,
@@ -602,7 +602,7 @@
    "site_id": "ghost2",
    "name": "수호령의 총령",
    "family": "ghost",
-   "route": null,
+   "route": "orb",
    "fin": null,
    "field_L": 24,
    "boss": true,
@@ -655,6 +655,30 @@
    "field_L": 24,
    "boss": true,
    "note": ""
+  },
+  {
+   "variant": "ghost:knight",
+   "stage": 1,
+   "site_id": "ghost:knight1",
+   "name": "유령 기사",
+   "family": "ghost",
+   "route": "knight",
+   "fin": null,
+   "field_L": 15,
+   "boss": false,
+   "note": "v8.98 구슬 유령 새 루트"
+  },
+  {
+   "variant": "ghost:knight",
+   "stage": 2,
+   "site_id": "ghost:knight2",
+   "name": "듀라한",
+   "family": "ghost",
+   "route": "knight",
+   "fin": null,
+   "field_L": 24,
+   "boss": true,
+   "note": "v8.98 구슬 유령 새 루트 · 보스전 + 필드 Lv.24"
   }
  ]
 }

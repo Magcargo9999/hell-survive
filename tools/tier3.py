@@ -3,7 +3,7 @@
   환경변수: PAR(병렬, 기본 2) NA(A 판수, 기본 20) NB(B 판수 12) NE(E 판수 10) ND(D 판수 6) BATCH(1) ONLY(variant 쉼표목록)
 로그: build/tier2/raw_boss.jsonl(A·D·F) raw_field.jsonl(B) raw_growth.jsonl(E)
 게임 로직·봇 로직은 건드리지 않고 로그만 붙인다."""
-import asyncio, sys, json, os, hashlib, subprocess, time
+import asyncio, sys, json, os, hashlib, subprocess, time, re
 from playwright.async_api import async_playwright
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 OUT = os.path.join(ROOT, 'build', 'tier3')
@@ -11,11 +11,19 @@ URL = 'file://' + os.path.join(ROOT, 'build', 'hell_survive.html')
 T = json.load(open(os.path.join(OUT, 'targets.json')))
 BD = {b['variant']: b for b in json.load(open(os.path.join(OUT, 'build_defs.json')))['builds']}
 COND = {'wolf:crimson': {'thirst': 1}, 'wolf:holy': {'thirst': 1, 'heart': 2}, 'wolf:fallen': {'thirst': 1}, 'wolf:twin': {'speed': 2}, 'archer:holy': {'snipe': 1}}
-VAR = {'gun': ('gun','',''), 'wolf:fallen': ('wolf', 'crimson', 'fallen')}
+VAR = {'gun': ('gun','',''), 'wolf:fallen': ('wolf', 'crimson', 'fallen'), 'ghost': ('ghost', 'orb', ''), 'ghost:knight': ('ghost', 'knight', '')}
 S6 = open(os.path.join(ROOT, 'tools', 'sim600.py'), encoding='utf8').read()
 BLOODS = {'wolf:crimson': ('wolf', 'crimson', 'blood')}
-GAME_COMMIT = subprocess.run(['git', '-C', ROOT, 'log', '-1', '--format=%h', '--', 'src', 'index.html'], capture_output=True, text=True).stdout.strip()
-GAME_VER = '8.20'
+try: GAME_COMMIT = subprocess.run(['git', '-C', ROOT, 'log', '-1', '--format=%h', '--', 'src', 'index.html'], capture_output=True, text=True).stdout.strip()
+except Exception: GAME_COMMIT = ''   # git 없는 환경(묶음 파일로 옮겨 돌릴 때)
+def _ver():   # 게임 버전은 빌드 파일에서 읽는다 (예전엔 '8.20' 고정)
+    for f in (os.path.join(ROOT, 'build', 'hell_survive.html'), os.path.join(ROOT, 'src', 'game_template.html')):
+        try:
+            m = re.search(r"const GAME_VER = 'v?([\d.]+)'", open(f, encoding='utf8').read())
+            if m: return m.group(1)
+        except Exception: pass
+    return '?'
+GAME_VER = _ver()
 
 CHOOSE = r""" function choose(){ const c=G.choices, title=document.getElementById('levelTitle').textContent;
    if(title.indexOf('갈림길')>=0||title.indexOf('최종')>=0){ const want=title.indexOf('최종')>=0?fin:route; let i=c.findIndex(u=>u.key===want); if(i>=0&&c[i].locked) c[i].locked=false; if(i<0)i=c.findIndex(u=>!u.locked); return i<0?0:i; }

@@ -524,7 +524,6 @@
    ],
    "보조카드우선순위": [
     "gmore",
-    "gwide",
     "speed",
     "armor",
     "guard",
@@ -590,6 +589,33 @@
     "move"
    ],
    "근거": "총잡이 고유 카드 위주"
+  },
+  {
+   "variant": "ghost:knight",
+   "진화조건": [],
+   "목표시너지": "deadeye",
+   "재료카드": [
+    "crit",
+    "claw"
+   ],
+   "보조카드우선순위": [
+    "kStep",
+    "kRip",
+    "kHead",
+    "dmg",
+    "speed",
+    "armor",
+    "guard"
+   ],
+   "비추천카드": [
+    "exp",
+    "magnet",
+    "knock",
+    "orb",
+    "shard",
+    "move"
+   ],
+   "근거": "유령 기사 전용 카드(유령 보법·되받아 베기·분노한 머리) + 급소 사냥꾼"
   }
  ]
 }
