@@ -352,7 +352,7 @@
   <div class="hslots" id="hSlots"></div><p id="hSum" class="hsum"></p>
   <div class="hfuse" id="hFuse"></div>
   <div class="hmain"><div class="hinv" id="hInv"></div><div class="hcore" id="hCore"></div></div>
-  <p class="gprob">마왕 8종은 종류마다 심장이 한 번씩만(얻기 전까지 처치 시 20%) 떨어짐 · 챌린지·숨은 보스 제외 · [보스의 심장] (레어) · 떨어질 때 1% 확률로 레전더리 · 재설정 비용은 등급별 레어 ◆500 · 에픽 ◆600 · 유니크 ◆700 · 레전더리 ◆800: 레어→에픽 30% · 에픽→유니크 20% · 유니크→레전더리 5% 등급 상승, 옵션(공격력 · 최대 체력 · 공격 속도 각 1/3)과 수치를 다시 뽑음<br>등급별 수치: 레어 1~3% · 에픽 4~6% · 유니크 7~9% · 레전더리 15~20% · 최대 5개 장착 (효과는 다음 판 시작부터)<br>합성: 레전더리 심장 3개를 합성 칸에 넣으면 첫 번째 칸 심장이 옵션 2줄(2번째 옵션은 레전더리 범위에서 새로 뽑음)이 되고 나머지 2개는 사라짐 · 옵션 2줄 심장은 재설정할 때 두 줄을 모두 다시 뽑음</p>
+  <p class="gprob">마왕 8종은 종류마다 심장이 한 번씩만(얻기 전까지 처치 시 20%) 떨어짐 · 챌린지·숨은 보스 제외 · [보스의 심장] (레어) · 떨어질 때 1% 확률로 레전더리 · 재설정 비용은 등급별 레어 ◆500 · 에픽 ◆600 · 유니크 ◆700 · 레전더리 ◆800: 레어→에픽 30% · 에픽→유니크 20% · 유니크→레전더리 5% 등급 상승, 옵션(공격력 · 최대 체력 · 공격 속도 각 1/3)과 수치를 다시 뽑음<br>등급별 수치: 레어 1~3% · 에픽 4~6% · 유니크 7~9% · 레전더리 15~20% · 최대 5개 장착 (효과는 다음 판 시작부터)<br>합성: 레전더리 심장 3개를 합성 칸에 넣으면 모두 사라지고 [합성된 심장] 1개(레어 · 옵션 2줄 · 보스 무관 · 여러 개 가능)가 생김 · 옵션 2줄 심장은 재설정할 때 두 줄을 모두 다시 뽑음</p>
 </div>
 <div id="hfx"></div>
 
@@ -871,7 +871,7 @@ function mkCanvas(w, h) { const c = document.createElement('canvas'); c.width = 
  * 0-1. 저장(영혼 조각 · 영구 강화 · 설정) / 캐릭터 목록 / 소리
  * ============================================================ */
 const SAVE_KEY = 'hellSurvivorSave1';
-const GAME_VER = 'v8.88';
+const GAME_VER = 'v8.89';
 const SAVE_DEF = () => ({
   shards: 0,
   perks: { hp: 0, spd: 0, dmg: 0, exp: 0, magnet: 0, banish: 0, revive: 0, regen: 0, shard: 0, critd: 0, choice: 0 },
@@ -11562,17 +11562,18 @@ function rerollHeart(id) {   // 재설정: 조각 500 → 등급업 판정 → �
   saveSave(); return { before, after: { g: h.g, st: h.st, v: h.v, st2: h.st2, v2: h.v2 }, up };
 }
 const HFUSE_N = 3;   // v8.83: 레전더리 심장 3개
-function fuseHearts(ids) {   // v8.66 합성 → v8.83: 레전더리 심장 3개 → 첫 번째 심장에 2번째 옵션 (나머지 2개는 사라짐)
+function fuseHearts(ids) {   // v8.89 합성: 레전더리 심장 3개가 모두 사라지고 '합성된 심장'(레어 · 옵션 2줄 · 보스 무관 · 여러 개 가능) 1개가 생긴다
   const S = SAVE.heart, L = ids.map(id => S.inv.find(q => q.id === id));
   if (L.length !== HFUSE_N || L.some(q => !q) || new Set(ids).size !== HFUSE_N) return { err: `심장 ${HFUSE_N}개가 필요해요` };
   if (L.some(q => q.g !== 'legend')) return { err: '레전더리 등급 심장만 합성할 수 있어요' };
   if (L.some(q => q.lock)) return { err: '잠긴 심장은 합성 재료로 쓸 수 없어요' };
-  const b = L[0]; if (b.st2) return { err: '첫 번째 칸 심장은 이미 옵션이 2줄이에요' };
-  const G = HG[b.g]; b.st2 = ['atk', 'hp', 'aspd'][(Math.random() * 3) | 0]; b.v2 = hRand(G.min, G.max);
-  const gone = new Set(ids.slice(1)); S.inv = S.inv.filter(q => !gone.has(q.id)); S.eq = S.eq.filter(q => !gone.has(q));
-  for (const q of L.slice(1)) { const k = q.b || 'angel'; if (!S.inv.some(w => (w.b || 'angel') === k)) delete S.got[k]; }   // v8.88: 합성으로 그 보스 심장이 하나도 안 남으면 다시 드랍된다
-  saveSave(); return { h: b };
+  const G = HG.rare, gone = new Set(ids), A = ['atk', 'hp', 'aspd'];
+  S.inv = S.inv.filter(q => !gone.has(q.id)); S.eq = S.eq.filter(q => !gone.has(q));
+  for (const q of L) { const k = q.b || 'angel'; if (!S.inv.some(w => (w.b || 'angel') === k)) delete S.got[k]; }   // 그 보스 심장이 하나도 안 남으면 다시 드랍된다
+  const h = { id: ++S.n, g: 'rare', b: 'fuse', st: A[(Math.random() * 3) | 0], v: hRand(G.min, G.max), st2: A[(Math.random() * 3) | 0], v2: hRand(G.min, G.max) };
+  S.inv.push(h); SAVE.dex.seen['heart:fuse:rare'] = 1; saveSave(); return { h };
 }
+const hTitle = h => h.b === 'fuse' ? '합성된 심장' : `${BH[h.b || 'angel']}의 심장`;
 function equipHeart(id) {   // 장착 (최대 5개) — 성공 true
   const S = SAVE.heart; if (!S.inv.some(q => q.id === id) || S.eq.includes(id)) return false;
   if (S.eq.length >= HEART.slots) return false;
@@ -11587,7 +11588,7 @@ function disHeart(id) {   // 분해: 등급별 영혼 조각으로 돌려받는�
 const HICON = {};
 function heartIcon(g, s, b) {   // v8.09: 보스별 도트 (IMG.heart 4열=등급 × 5줄=보스)
   const key = g + s + (b || ''); if (HICON[key]) return HICON[key];
-  if (IMG.heart) { const c = mkCanvas(s, s), x = c.getContext('2d'); x.imageSmoothingQuality = 'high'; x.drawImage(IMG.heart, HG_ORDER.indexOf(g) * 256, Math.max(0, BH_ORDER.indexOf(b || 'angel')) * 256, 256, 256, 0, 0, s, s); return (HICON[key] = c); }
+  if (IMG.heart && b !== 'fuse') { const c = mkCanvas(s, s), x = c.getContext('2d'); x.imageSmoothingQuality = 'high'; x.drawImage(IMG.heart, HG_ORDER.indexOf(g) * 256, Math.max(0, BH_ORDER.indexOf(b || 'angel')) * 256, 256, 256, 0, 0, s, s); return (HICON[key] = c); }
   const c = mkCanvas(s, s), x = c.getContext('2d'), G = HG[g], k = s / 100;
   const glow = x.createRadialGradient(50 * k, 52 * k, 4 * k, 50 * k, 52 * k, 50 * k); glow.addColorStop(0, `rgba(${G.rgb},0.55)`); glow.addColorStop(1, `rgba(${G.rgb},0)`);
   x.fillStyle = glow; x.fillRect(0, 0, s, s);
@@ -11648,7 +11649,7 @@ function renderHeart() {
   const core = $('hCore');
   if (!h) { core.innerHTML = '<div class="horb"><p class="hnone">왼쪽 목록에서 심장을 고르세요</p></div>'; return; }
   const G = HG[h.g], nx = G.next && HG[G.next], eq = S.eq.includes(h.id);
-  core.innerHTML = `<div class="hname" style="color:${G.col}">${BH[h.b || 'angel']}의 심장 · ${G.name}</div>
+  core.innerHTML = `<div class="hname" style="color:${G.col}">${hTitle(h)} · ${G.name}</div>
     <div class="harrow">${nx ? `<b style="color:${G.col}">${G.name}</b> <i>▶▶▶</i> <b style="color:${nx.col}">${nx.name}</b> <span>등급 상승 ${Math.round(G.up * 100)}%</span>` : `<b style="color:${G.col}">최고 등급</b> <span>수치만 다시 뽑아요 (${G.min}~${G.max}%)</span>`}</div>
     <div class="horb ${h.g}"><div class="hring"></div><img src="${heartImg(h.g, 150, h.b)}"></div>
     <div class="hopt">${hOpt(h)} <small>(${G.name} 범위 ${G.min}~${G.max}%)</small></div>
@@ -11670,14 +11671,14 @@ function renderFuse() {   // v8.66 합성 칸: 4개를 넣으면 첫 번째 칸 
   const S = SAVE.heart, box = $('hFuse'); if (!box) return;
   const L = hFu.map(id => S.inv.find(q => q.id === id)).filter(Boolean), b = L[0];
   let cells = '';
-  for (let i = 0; i < HFUSE_N; i++) { const q = L[i]; cells += `<div class="hslot fz${q ? ' ' + q.g : ''}" data-i="${i}">${q ? `<img src="${heartImg(q.g, 48, q.b)}"><small>${hShort(q)}</small>` : `<span>${i ? '재료' : '기준'}</span>`}<small>${i ? '사라짐' : '남음'}</small></div>${i < HFUSE_N - 1 ? '<i>+</i>' : ''}`; }
-  const why = L.length < HFUSE_N ? `레전더리 심장 ${HFUSE_N - L.length}개 더 넣기` : L.some(q => q.g !== 'legend') ? '레전더리만 가능' : b.st2 ? '기준 심장은 이미 옵션 2줄' : '';
-  box.innerHTML = `<div class="hfh">⚗ 심장 합성 <small>레전더리 심장 3개 → 첫 번째 칸(기준) 심장에 옵션 1줄 추가 (레전더리 범위 · 재료 2개는 사라짐 · 그 보스 심장이 하나도 안 남으면 다시 드랍)</small></div><div class="hfrow">${cells}<i>➜</i><button id="hFuseGo" ${why ? 'disabled' : ''}>${why || '합성'}</button></div>`;
+  for (let i = 0; i < HFUSE_N; i++) { const q = L[i]; cells += `<div class="hslot fz${q ? ' ' + q.g : ''}" data-i="${i}">${q ? `<img src="${heartImg(q.g, 48, q.b)}"><small>${hShort(q)}</small>` : `<span>재료</span>`}<small>사라짐</small></div>${i < HFUSE_N - 1 ? '<i>+</i>' : ''}`; }
+  const why = L.length < HFUSE_N ? `레전더리 심장 ${HFUSE_N - L.length}개 더 넣기` : L.some(q => q.g !== 'legend') ? '레전더리만 가능' : '';
+  box.innerHTML = `<div class="hfh">⚗ 심장 합성 <small>레전더리 심장 3개가 모두 사라지고 [합성된 심장] 1개 (레어 · 옵션 2줄 · 여러 개 가능) · 그 보스 심장이 하나도 안 남으면 다시 드랍</small></div><div class="hfrow">${cells}<i>➜</i><button id="hFuseGo" ${why ? 'disabled' : ''}>${why || '합성'}</button></div>`;
   box.querySelectorAll('.fz').forEach(d => d.onclick = () => { const id = hFu[+d.dataset.i]; if (id) { hFu = hFu.filter(q => q !== id); renderHeart(); } });
   const go = $('hFuseGo'); if (go) go.onclick = () => {
-    if (go.dataset.ok !== '1') { go.dataset.ok = '1'; go.textContent = '정말 합성? (재료 2개 사라짐)'; return; }
+    if (go.dataset.ok !== '1') { go.dataset.ok = '1'; go.textContent = '정말 합성? (재료 3개 사라짐)'; return; }
     const r = fuseHearts(hFu.slice()); if (r.err) { $('hSum').textContent = r.err; return; }
-    hFu = []; hSel = r.h.id; hLast = null; renderHeart(); playUpgradeEffect(r.h.g, '⚗ 합성 성공! 옵션 2줄');
+    hFu = []; hSel = r.h.id; hLast = null; renderHeart(); playUpgradeEffect(r.h.g, '⚗ 합성된 심장 (레어 · 옵션 2줄)');
   };
 }
 function confirmDis(h) { const b = $('hDis'); if (b.dataset.ok === '1') return true; b.dataset.ok = '1'; b.textContent = `정말 분해? (+${HG[h.g].dis})`; return false; }
@@ -11750,6 +11751,7 @@ function openAch() {
 }
 /* v8.71 간략 패치노트 (최근 버전만, 새 버전마다 맨 위에 한 줄 추가) */
 const PATCH = [
+  ['v8.89', '심장 합성 변경 — 레전더리 3개가 모두 사라지고 [합성된 심장](레어 · 옵션 2줄 · 보스 무관 · 여러 개 가능)이 생김'],
   ['v8.88', '심장 합성으로 어떤 보스의 심장이 모두 사라지면 그 보스 심장이 다시 드랍 · 옛 심장(타락천사 취급)을 가진 경우 타락천사 심장이 중복 드랍되지 않게 수정'],
   ['v8.87', '∞ 챌린지 — 새 마왕 영원의 온실주(최면 화분·가시 채찍·유리 씨앗 비·뿌리 종복·꽃 원) · 🔥 시련의 제단(40초 버티면 룬 조각+카드) · 난이도 +15% · 토끼 후드 늑대 스킨 크기 축소'],
   ['v8.86', '지옥엘프 궁수 — 사거리 카드와 저격 시선을 하나로 합침(사거리 +12% · 먼 거리 피해 +30%) · 기본 사거리 100→94 너프'],
