@@ -28,6 +28,7 @@ ANCHORS = [
  ('식물원 잡몹·네임드(가시덩굴·식인 꽃·거대 달팽이)', r'^let GSPECIES|v8\.53 악마 식물원|^function plantStep|^function drawPlantMob'),
  ('⚔ 보스 러시', r'v8\.50 ⚔ 보스 러시|^function startRush|^function rushWin'),
  ('썩어버린 해군 제독', r'v8\.40 썩어버린 해군 제독|^function updateAdmBoss|^function applyPull|^function updateAdmCannon|^const ADM_L'),
+ ('타락한 원예의 여왕', r'v8\.63 타락한 원예의 여왕|^class QueenAI|^class RootBind|^class SporeSack|^class QnMush|^function drawQnScreen'),
  ('● 층·맵', None),
  ('층 세트(지옥/버섯/어인섬)', r'^function floorSet|^const isSea|^const isMush'), ('버섯 세트', r'^const MSPECIES|^const MMAP'), ('어인섬 세트', r'^const SSPECIES|^const SMAP|^function warmSea'),
  ('챌린지 모드', r'v6\.20 ∞ 챌린지|^function startChallenge'),
