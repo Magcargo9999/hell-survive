@@ -871,7 +871,7 @@ function mkCanvas(w, h) { const c = document.createElement('canvas'); c.width = 
  * 0-1. 저장(영혼 조각 · 영구 강화 · 설정) / 캐릭터 목록 / 소리
  * ============================================================ */
 const SAVE_KEY = 'hellSurvivorSave1';
-const GAME_VER = 'v8.81';
+const GAME_VER = 'v8.82';
 const SAVE_DEF = () => ({
   shards: 0,
   perks: { hp: 0, spd: 0, dmg: 0, exp: 0, magnet: 0, banish: 0, revive: 0, regen: 0, shard: 0, critd: 0, choice: 0 },
@@ -1328,7 +1328,7 @@ function enterArena() {
     const S0 = arena.mush ? BM().start : an ? AMAP.start : ARENA.start; P.x = S0[0]; P.y = S0[1]; cam.x = P.x; cam.y = P.y - 20; placeAllies();
     P.hp = P.max; P.healBank = P.max * 0.12;   // 마왕전은 체력을 가득 채우고 시작한다
     spawnBoss(); itemT = 14;
-    let tx = rush ? `⚔ 보스 러시 ${rush.i + 1}/${BR_N} — ${BR_NAME[P.bossK]}\n출구는 봉인되었다 · 쓰러뜨리면 체력이 회복되고 카드 2장을 고른다` : sealed ? '출구가 봉인되었다!  이제 마왕을 쓰러뜨리는 수밖에 없다' : '마왕전 시작!  성 밖으로 나갈 수 있는 기회는 딱 1번\n맵 아래쪽 출구 ▼ 에 잠시 머물면 나갈 수 있어요 (나가면 마왕은 체력 회복)';
+    let tx = rush ? `⚔ 보스 러시 ${rush.i + 1}/${BR_N} — ${BR_NAME[P.bossK]} (난이도 ${P.tier + 1})\n출구는 봉인되었다 · 쓰러뜨리면 체력이 회복되고 ${BR.up}레벨 올라 증강을 ${BR.up}번 고른다` : sealed ? '출구가 봉인되었다!  이제 마왕을 쓰러뜨리는 수밖에 없다' : '마왕전 시작!  성 밖으로 나갈 수 있는 기회는 딱 1번\n맵 아래쪽 출구 ▼ 에 잠시 머물면 나갈 수 있어요 (나가면 마왕은 체력 회복)';
     if (boss && boss.bk === 'skel') tx += '\n스켈레톤 마왕: 정면에 서 있으면 대검으로 내려찍는다 · 체력 66%·33%에 결계(무적) · 첨탑 20초 방치 시 체력 15% 회복 · 해골 전사 2마리 소환';
     if (boss && boss.bk === 'shk') tx += '\n거대 버섯마귀: 바닥에 그림자가 생기면 거대 포자가 떨어진다 (독 장판이 남는다) · 체력 75%·50%·25%에 버섯 군단 소환 — 다 잡을 때까지 받는 피해 -50%';
     if (boss && boss.bk === 'vft') tx += '\n파리지옥 마왕: 나에게 입힌 피해만큼 체력을 흡혈한다 · 붉은 포자 = 부채꼴 다발(맞으면 출혈) · 하트 = 닿으면 매혹(보스 쪽으로 끌려감) · 붉은 원 = 내 이동 경로를 예측한 포식의 덫(멈추거나 방향을 바꾸기) · 해골은 달려와 자폭(붙기 전에 베기) · 체력 30% 끝없는 갈증(하트 파동은 밝은 통로로)';
@@ -6269,7 +6269,12 @@ function levelUp() {
   }
   openUpgrade();
 }
+function takeCard(u) {   // 카드 한 장을 적용한다 (고른 경우 · 보스 러시 시작 증강처럼 무작위로 정해진 경우 공통)
+  u.apply(P); if ((!u.cls || u.cls === 'finc') && !u.noLv) P.up[u.id] = (P.up[u.id] || 0) + 1;
+  if (P.char === 'octo' && !u.cls && !u.noLv && u.def && P.orbsN < OCTO_ORB_MAX) { P.orbsN++; floatNum(P.x, P.y - 100, `마력 구체 ${P.orbsN}개`, '#e0b0ff'); }
+}
 function openUpgrade() {
+  if (rush && rush.init) { state = 'play'; if (P.exp >= P.need) levelUp(); return; }   // v8.82: 보스 러시 시작 레벨업에서는 카드를 고르지 않는다 (끝난 뒤 증강 5개가 무작위로 정해진다)
   const NC = 3 + ((SAVE.perks.choice | 0) > 0 ? 1 : 0);   // v5.24: 강화 상점 [넓어진 선택지] → 4장
   const items = rollCards(NC, []).map(cardView);
   while (items.length < NC) items.push(items.length ? shardCard() : restCard());
@@ -6285,8 +6290,7 @@ function openUpgrade() {
   const show1 = () => {
     items.forEach((u, i) => { u.ban = (u.def && P.banish > 0) ? () => banCard(i) : null; });
     openChoice(`레벨 업!  Lv.${P.lvl}`, items, u => {
-      u.apply(P); if ((!u.cls || u.cls === 'finc') && !u.noLv) P.up[u.id] = (P.up[u.id] || 0) + 1;
-      if (P.char === 'octo' && !u.cls && !u.noLv && u.def && P.orbsN < OCTO_ORB_MAX) { P.orbsN++; floatNum(P.x, P.y - 100, `마력 구체 ${P.orbsN}개`, '#e0b0ff'); }
+      takeCard(u);
       state = 'play';
       if (P.exp >= P.need) levelUp();   // 경험치가 남아 있으면 연속 레벨업
     });
@@ -9583,7 +9587,7 @@ function drawHud() {
   // 시간 · 처치
   ctx.textAlign = 'right'; ctx.font = 'bold 16px "Malgun Gothic", monospace';
   const m = Math.floor(gt / 60), s = Math.floor(gt % 60);
-  const t1 = `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}` + (chal ? '  ·  ∞ 챌린지' : rush ? `  ·  ⚔ 보스 러시 ${Math.min(BR_N, rush.i + 1)}/${BR_N} · ${floorName(P.tier)}` : '  ·  ' + floorName(P.tier));
+  const t1 = `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}` + (chal ? '  ·  ∞ 챌린지' : rush ? `  ·  ⚔ 보스 러시 ${Math.min(BR_N, rush.i + 1)}/${BR_N} · 난이도 ${P.tier + 1}` : '  ·  ' + floorName(P.tier));
   ctx.strokeText(t1, W - 12, 32); ctx.fillStyle = '#f3d9c6'; ctx.fillText(t1, W - 12, 32);
   {
     let sy2 = 76 + (Object.keys(P.rel).length ? 38 : 0); ctx.textAlign = 'left';
@@ -10453,14 +10457,17 @@ function drawZomDeath(m, x, y) {
 
 /* ============================================================
  * v8.50 ⚔ 보스 러시 — 지하 20층(모든 층)을 클리어하면 열리는 마왕 연속전
- *  시작 화면의 선택한 층 기준 · Lv.15에서 시작(카드·진화는 평소처럼 고른다) · 마왕 8종(v8.63 타락한 원예의 여왕 추가)을 등장 순서대로 연달아 · 마왕을 쓰러뜨릴 때마다 체력 회복 + 카드 2장
- *  출구는 항상 봉인(성 없이 곧장 보스방) · 심장 드랍 없음 · 보상: 마왕마다 50 + 완주 300 (층 배율) · 숨은 보스·챌린지 마왕은 나오지 않는다
+ *  v8.82 개편: 시작 화면의 선택한 층과 무관한 독립 시행 · Lv.20에서 시작(루트·진화는 직접 고르고 증강 카드 5장은 무작위로 정해진다) · 마왕 10종이 무작위 순서로 연달아
+ *  난이도(P.tier)는 처치한 마왕 수만큼 오른다(0→9) · 마왕을 쓰러뜨릴 때마다 체력 회복 + 5레벨(증강 5번 선택) · 마왕마다 그 마왕의 지옥 맵에서 싸운다
+ *  출구는 항상 봉인(성 없이 곧장 보스방) · 심장 드랍 없음 · 보상: 마왕마다 50 + 완주 300 (난이도 배율) · 완주하면 업적 · 숨은 보스·챌린지 마왕은 나오지 않는다
  * ============================================================ */
 const BR_ORDER = ['monkey', 'eye', 'skel', 'angel', 'shk', 'tox', 'vft', 'adm', 'qn', 'kng'], BR_N = BR_ORDER.length;
 const BR_NAME = { monkey: '원숭이 마왕', eye: '심연의 마안군주', skel: '스켈레톤 마왕', angel: '타락천사', shk: '거대 버섯마귀', tox: '이독버섯 마왕', adm: '썩어버린 해군 제독', qn: '타락한 원예의 여왕', vft: '파리지옥 마왕', kng: '타락한 어인왕' };
-const BR = { lv: 15, per: 50, clear: 300, up: 2, rest: 3.2 };   // lv = 시작 레벨 · up = 마왕 처치마다 레벨업 횟수 · rest = 다음 마왕 입장 전 쉬는 시간(초)
+const BR = { lv: 20, per: 50, clear: 300, up: 5, rest: 3.2, auto: 5 };   // lv = 시작 레벨 · up = 마왕 처치마다 레벨업 횟수 · rest = 다음 마왕 입장 전 쉬는 시간(초) · auto = 시작할 때 무작위로 정해지는 증강 수
+const BR_SET = { monkey: 'hell', eye: 'hell', skel: 'hell', angel: 'hell', shk: 'mush', tox: 'mush', vft: 'gard', qn: 'gard', adm: 'sea', kng: 'sea' };   // 마왕이 나오는 지옥의 맵
+const rushFset = bk => { const q = BR_SET[bk]; return q === 'gard' && IMG.gfloor && IMG.gprops && MSPECIES.length ? 'gard' : q === 'sea' && IMG.sfloor && IMG.sprops && SSPECIES.length ? 'sea' : q !== 'hell' && IMG.mfloor && IMG.mprops && MSPECIES.length ? 'mush' : 'hell'; };
 const rushOpen = () => !!(SAVE.rush.open || (SAVE.fw.snap && (SAVE.fw.snap.tier | 0) >= MAX_TIER));
-const rushLine = () => rushOpen() ? `⚔ 보스 러시 — 선택한 층에서 마왕 ${BR_N}종 연속전 · Lv.${BR.lv} 시작 · 처치마다 체력 회복 + 카드 ${BR.up}장  ·  최고 ${SAVE.rush.best | 0}/${BR_N} · 완주 ${SAVE.rush.clears | 0}회<br>` : '';
+const rushLine = () => rushOpen() ? `⚔ 보스 러시 — 마왕 ${BR_N}종 무작위 연속전(선택한 층과 무관) · Lv.${BR.lv} 시작 · 증강 ${BR.auto}개 무작위 · 처치마다 체력 회복 + ${BR.up}레벨  ·  최고 ${SAVE.rush.best | 0}/${BR_N} · 완주 ${SAVE.rush.clears | 0}회<br>` : '';
 function rushLevels(n) {   // n번 레벨업할 경험치를 한꺼번에 채우고 카드 선택을 이어서 띄운다 (진화·루트 선택도 평소처럼 끼어든다)
   let sum = 0; for (let i = 0; i < n; i++) sum += needFor(P.lvl + i);
   P.exp += sum; if (state === 'play' && P.exp >= P.need) levelUp();
@@ -10469,24 +10476,35 @@ function startRush(char) {
   if (char) curChar = char;
   if (!SAVE.chars[curChar]) curChar = 'wolf';
   audioInit(); reset(curChar); markDex(curChar + ':0');
-  const t = Math.min(SAVE.diff.sel | 0, SAVE.diff.max | 0);
-  P.tier = t; P.bossK = BR_ORDER[0]; if (floorSet(t) === 'sea') setTimeout(warmSea, 0);
+  const ord = BR_ORDER.slice().sort(() => rand() - 0.5);   // v8.82: 마왕 순서는 무작위 · 난이도는 선택한 층과 무관하게 처치 수로 오른다
+  P.tier = 0; P.bossK = ord[0]; if (ord.some(k => BR_SET[k] === 'sea')) setTimeout(warmSea, 0);
   try { buildGardSpecies(); } catch (_) {}
-  P.fset = floorSet(t) === 'gard' && IMG.gfloor && IMG.gprops && MSPECIES.length ? 'gard' : floorSet(t) === 'sea' && IMG.sfloor && IMG.sprops && SSPECIES.length ? 'sea' : floorSet(t) !== 'hell' && IMG.mfloor && IMG.mprops && MSPECIES.length ? 'mush' : 'hell';
+  P.fset = rushFset(ord[0]);
   P.fee = 0; P.miniDone = true; P.poisonSpawned = true; P.exitLeft = 0; P.goal = null; P.spd0 = P.spd; P.hp = P.max;
-  rush = { i: 0, ph: 'prep', wait: 0.6, kills: 0, shards: 0 };
-  setTimeout(() => { try { if (P.fset === 'mush' && IMG.mmap) mmapS(); else if (P.fset === 'hell') arenaS(); } catch (_) {} }, 400);
+  rush = { i: 0, ph: 'prep', wait: 0.6, kills: 0, shards: 0, ord, init: true };
+  setTimeout(() => { try { if (IMG.mmap) mmapS(); arenaS(); } catch (_) {} }, 400);
   show('startBox', false); show('overBox', false); show('levelBox', false); show('pauseBox', false);
-  banner = { txt: `⚔ 보스 러시!  ${floorName(t)} · 먼저 Lv.${BR.lv}까지 카드를 골라 준비하세요\n마왕 ${BR_N}종을 연달아 쓰러뜨리면 완주`, t: 6, c: '#ffb05a' };
+  banner = { txt: `⚔ 보스 러시!  Lv.${BR.lv}까지 올린 뒤 증강 ${BR.auto}개가 무작위로 정해집니다 (루트·진화는 직접 선택)\n마왕 ${BR_N}종이 무작위 순서로 나옵니다 · 하나씩 쓰러뜨릴 때마다 난이도가 오릅니다`, t: 6, c: '#ffb05a' };
   state = 'play'; rushLevels(BR.lv - 1);
 }
+function rushAuto() {   // 시작 증강: 카드 BR.auto장을 골라 주지 않고 무작위로 적용한다
+  const got = [];
+  for (let i = 0; i < BR.auto; i++) {
+    const items = rollCards(3, []).map(cardView); if (!items.length) break;
+    const u = items[(rand() * items.length) | 0]; takeCard(u); got.push(u.name);
+  }
+  P.hp = P.max; P.healBank = 0;
+  banner = { txt: `⚔ 시작 증강 ${got.length}개: ${got.join(' · ')}`, t: 6, c: '#ffe28a' };
+}
 function rushEnter() {
-  P.bossK = BR_ORDER[rush.i]; rush.ph = 'fight';
+  P.bossK = rush.ord[rush.i]; rush.ph = 'fight'; P.tier = Math.min(9, rush.i); P.fset = rushFset(P.bossK);   // 난이도 = 지금까지 쓰러뜨린 마왕 수
+  if (BR_SET[P.bossK] === 'sea') warmSea(); try { if (P.fset === 'mush' && IMG.mmap) mmapS(); } catch (_) {}
   skp = []; skSp = []; anOrbs = []; anFx = []; skDeath = null; anDeath = null; shkSp = []; shkFx = []; shkDeath = null; toxFl = []; toxFx = []; toxFog = null; DEBUFF.clearAll(); admFx = []; admBalls = []; admAnc = null; admPull = null; admDeath = null;
   enterArena();
 }
 function rushTick(dt) {   // 준비(카드 선택 끝) → 입장 · 쉬는 시간 → 다음 마왕
   if (rush.ph === 'fight' || state !== 'play' || trans || P.exp >= P.need) return;
+  if (rush.init) { rush.init = false; rushAuto(); rush.wait = 1.2; return; }   // 레벨 20까지 올린 직후 증강 5개를 정한다
   if ((rush.wait -= dt) <= 0) rushEnter();
 }
 function rushWin(e) {
@@ -10496,10 +10514,11 @@ function rushWin(e) {
   if (last) {
     rush.shards += Math.round(BR.clear * tierMul()); SAVE.rush.clears = (SAVE.rush.clears | 0) + 1;
     P.earned = calcShards() + rush.shards; SAVE.shards += P.earned; saveSave();
-    banner = { txt: `⚔ 보스 러시 완주!  마왕 ${BR_N}종을 모두 쓰러뜨렸다`, t: 6, c: '#ffe28a' }; state = 'win'; winT = 0; return;
+    const a = achRush(); rush.ach = a;
+    banner = { txt: `⚔ 보스 러시 완주!  마왕 ${BR_N}종을 모두 쓰러뜨렸다` + (a ? `\n🏆 업적 달성: ${a.name}` : ''), t: 6, c: '#ffe28a' }; state = 'win'; winT = 0; return;
   }
   saveSave(); rush.i++; rush.ph = 'rest'; rush.wait = BR.rest;
-  banner = { txt: `${BR_NAME[BR_ORDER[rush.i - 1]]} 처치!  (${rush.kills}/${BR_N})  체력 회복 · 카드 ${BR.up}장\n다음: ${BR_NAME[BR_ORDER[rush.i]]}`, t: 5, c: '#ffe28a' };
+  banner = { txt: `${BR_NAME[rush.ord[rush.i - 1]]} 처치!  (${rush.kills}/${BR_N})  체력 회복 · ${BR.up}레벨 (증강 ${BR.up}번 선택)\n다음: ${BR_NAME[rush.ord[rush.i]]} · 난이도 ${Math.min(9, rush.i) + 1}/10`, t: 5, c: '#ffe28a' };
   rushLevels(BR.up);
 }
 
@@ -10747,7 +10766,8 @@ function showOver(win) {
   const m = Math.floor(gt / 60), s = Math.floor(gt % 60);
   $('overStats').innerHTML = `생존 시간 ${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')} · 레벨 ${P.lvl} · 처치 ${P.kills}`;
   $('overShards').textContent = `영혼 조각 +${P.earned}  (보유 ${SAVE.shards})` + (P.goalDone ? `  ·  런 목표 ${P.goalDone}개 (+${P.goalShards})` : '') + (P.mimicShards ? `  ·  미믹 +${P.mimicShards}` : '') + (win && P.fee ? `  ·  참가비 ${P.fee} 반환 포함` : '');
-  if (rush) $('overStats').innerHTML += `<br><span style="color:#ffb05a">⚔ 보스 러시 — 처치한 마왕 ${rush.kills}/${BR_N}${rush.kills ? ' (' + BR_ORDER.slice(0, rush.kills).map(k => BR_NAME[k]).join(' · ') + ')' : ''}  ·  ${floorName(P.tier)}</span><br><span style="font-size:13px">러시 보상 +${rush.shards}${win ? '  (완주 보너스 포함)' : ''}  ·  최고 기록 ${SAVE.rush.best | 0}/${BR_N} · 완주 ${SAVE.rush.clears | 0}회</span>`;
+  if (rush) $('overStats').innerHTML += `<br><span style="color:#ffb05a">⚔ 보스 러시 — 처치한 마왕 ${rush.kills}/${BR_N}${rush.kills ? ' (' + rush.ord.slice(0, rush.kills).map(k => BR_NAME[k]).join(' · ') + ')' : ''}  ·  난이도 ${P.tier + 1}</span><br><span style="font-size:13px">러시 보상 +${rush.shards}${win ? '  (완주 보너스 포함)' : ''}  ·  최고 기록 ${SAVE.rush.best | 0}/${BR_N} · 완주 ${SAVE.rush.clears | 0}회</span>`;
+  if (rush && rush.ach) $('overStats').innerHTML += `<br><span style="color:var(--gold)">🏆 업적 달성: ${rush.ach.name}  (시작 화면 🏆 업적에서 보상 받기)</span>`;
   if (win && P.rushOpen) $('overStats').innerHTML += `<br><span style="color:#ffb05a">🔓 ⚔ 보스 러시 모드 해금!  (시작 화면 [⚔ 보스 러시])</span>`;
   if (win && P.unlocked) $('overStats').innerHTML += `<br><span style="color:var(--gold)">🔓 ${floorName(P.unlocked)} 해금!</span>`;
   if (win && P.dropGot) $('overStats').innerHTML += `<br><span style="color:#ffe28a">✨ ${P.dropGot}</span>`;
@@ -11344,16 +11364,21 @@ const ACH = [
   { id: 'h2', icon: '🍄', name: '버섯 동굴의 지배자', desc: '지하 10층 마왕 처치 — 2지옥 버섯 동굴 정복', tier: 9, reward: 4000 },
   { id: 'h3', icon: '🌿', name: '악마 식물원의 지배자', desc: '지하 15층 마왕(타락한 원예의 여왕) 처치 — 3지옥 악마 식물원 정복', tier: 14, reward: 7000 },
   { id: 'h4', icon: '🌊', name: '어인섬의 지배자', desc: '지하 20층 마왕(타락한 어인왕) 처치 — 4지옥 어인섬 정복', tier: 19, reward: 12000 },
+  { id: 'br', icon: '⚔', name: '마왕 학살자', desc: '⚔ 보스 러시 완주 — 마왕 10종을 연달아 쓰러뜨리기', tier: -1, rush: true, reward: 15000 },
 ];
 function achSync() {   // 예전 기록으로 이미 깬 지옥도 달성 처리
   const d = SAVE.ach.done; let ch = false;
-  for (const a of ACH) if (!d[a.id] && (a.tier < MAX_TIER ? (SAVE.diff.max | 0) > a.tier : rushOpen())) { d[a.id] = 1; ch = true; }
+  for (const a of ACH) if (!d[a.id] && (a.rush ? (SAVE.rush.clears | 0) > 0 : a.tier < MAX_TIER ? (SAVE.diff.max | 0) > a.tier : rushOpen())) { d[a.id] = 1; ch = true; }
   if (ch) saveSave(); achBadge();
 }
 const achReady = () => ACH.filter(a => SAVE.ach.done[a.id] && !SAVE.ach.got[a.id]).length;
 function achBadge() { const b = $('achBtn'); if (b) b.classList.toggle('new', achReady() > 0); }
 function achClear(t) {   // 마왕 처치 시 (일반 판만): 그 층이 지옥의 마지막 층이면 달성
   const a = ACH.find(q => q.tier === t); if (!a || SAVE.ach.done[a.id]) return null;
+  SAVE.ach.done[a.id] = 1; achBadge(); return a;
+}
+function achRush() {   // 보스 러시 완주 시
+  const a = ACH.find(q => q.rush); if (!a || SAVE.ach.done[a.id]) return null;
   SAVE.ach.done[a.id] = 1; achBadge(); return a;
 }
 function openAch() {
@@ -11375,6 +11400,7 @@ function openAch() {
 }
 /* v8.71 간략 패치노트 (최근 버전만, 새 버전마다 맨 위에 한 줄 추가) */
 const PATCH = [
+  ['v8.82', '보스 러시 개편 — 선택한 층과 무관한 독립 시행 · Lv.20 시작 + 증강 5개 무작위 · 마왕 10종 무작위 순서(처치할수록 난이도 상승) · 처치마다 +5레벨 · 완주 업적 추가'],
   ['v8.81', '지옥엘프 궁수 체력 대폭 너프 (진화한 지옥엘프 최종 체력 약 -25%)'],
   ['v8.80', '20층 최종 마왕 타락한 어인왕 추가 · 업적(시작 화면 오른쪽 위) 추가'],
   ['v8.71', '설정에 버전 표시 · 패치노트 추가'],

@@ -1,4 +1,4 @@
-"""v8.50 보스 러시: 잠금/해금 · 준비 레벨업 연쇄 · 7종 순서대로 입장 · 처치 후 회복+카드 · 완주 보상 · 사망 결과 · 20층 해금 조건 · 스크린샷"""
+"""v8.50 보스 러시 (v8.82 개편: 독립 난이도·Lv.20·시작 증강 5개·+5레벨·무작위 순서·업적): 잠금/해금 · 준비 레벨업 연쇄 · 7종 순서대로 입장 · 처치 후 회복+카드 · 완주 보상 · 사망 결과 · 20층 해금 조건 · 스크린샷"""
 import asyncio,sys,json
 sys.path.insert(0,'/home/claude/hell-survive/tools')
 from playwright.async_api import async_playwright
@@ -16,21 +16,22 @@ async def main():
         r=await pg.evaluate("""()=>{const G=__G;G.hurtEnemy(G.boss,1e12,0,0,0);for(let i=0;i<5;i++)G.tick(1/30);return [G.state,G.rushOpen(),G.P.rushOpen]}""")
         print('unlock by 20F clear', r)
         for ch in ['wolf','snail','lizard']:
-            r=await pg.evaluate("""(ch)=>{const G=__G;G.SAVE.chars[ch]=true;G.SAVE.diff.max=19;G.SAVE.diff.sel=0;G.startRush(ch);const P=G.P;let g=0;while(g++<400&&(G.state==='levelup'||G.state==='evolve'))__s();
-              return [G.state,P.lvl,P.form,G.rush.ph,Math.round(P.exp),P.need,P.char]}""",ch)
+            r=await pg.evaluate("""(ch)=>{const G=__G;G.SAVE.chars[ch]=true;G.SAVE.diff.max=19;G.SAVE.diff.sel=7;G.startRush(ch);const P=G.P;let g=0;while(g++<400&&(G.state==='levelup'||G.state==='evolve'||G.rush.init)){if(G.state==='play')G.tick(1/30);else __s()}
+              return [G.state,P.lvl,P.form,G.rush.ph,P.tier,G.rush.ord.join(','),Object.keys(P.up).length,P.char]}""",ch)
             print('prep',ch,r)
-        await pg.evaluate("()=>{__G.SAVE.chars.wolf=true;__G.startRush('wolf');let g=0;while(g++<400&&(__G.state==='levelup'||__G.state==='evolve'))__s();}")
+        await pg.evaluate("()=>{__G.SAVE.chars.wolf=true;__G.startRush('wolf');let g=0;while(g++<400&&(__G.state==='levelup'||__G.state==='evolve'||__G.rush.init)){if(__G.state==='play')__G.tick(1/30);else __s()}}")
         out=[]
         for k in range(10):   # BR_ORDER 10종 (v8.80)
             # 입장 대기
-            ok=await pg.evaluate("""()=>{const G=__G;for(let i=0;i<400;i++){G.P.inv=99;G.P.hp=G.P.max;G.tick(1/30);if(G.boss&&G.boss.st!=='intro')break}return [G.boss&&G.boss.bk||'monkey',G.rush.i,G.rush.ph,!!(G.arena&&G.arena.sealed),G.P.bossK,Math.round(G.boss?G.boss.max:0)]}""")
+            ok=await pg.evaluate("""()=>{const G=__G;for(let i=0;i<400;i++){G.P.inv=99;G.P.hp=G.P.max;G.tick(1/30);if(G.boss&&G.boss.st!=='intro')break}return [G.boss&&G.boss.bk||'?',G.rush.i,G.P.tier,G.P.fset,G.rush.ph,!!(G.arena&&G.arena.sealed),G.P.bossK,Math.round(G.boss?G.boss.max:0)]}""")
             if k in (0,3,6): await pg.screenshot(path=B+f'rush_{k}.png')
             r=await pg.evaluate("""()=>{const G=__G,P=G.P;P.hp=1;const e=G.boss;e.invul=false;e.shield=0;e.st='chase';G.hurtEnemy(e,1e13,0,0,0);for(let i=0;i<3;i++)G.tick(1/30);const o=[G.state,G.rush.i,G.rush.kills,Math.round(G.rush.shards),P.lvl,Math.round(P.hp===P.max?1:0)];let g=0;while(g++<400&&(G.state==='levelup'||G.state==='evolve'))__s();return o.concat([G.state,P.lvl,G.rush.ph])}""")
             out.append((ok,r)); print(k,json.dumps(ok),json.dumps(r))
         r=await pg.evaluate("""()=>{const G=__G;for(let i=0;i<200;i++){G.tick(1/30)}return [G.state,G.SAVE.rush,G.P.earned]}""")
         print('final',json.dumps(r))
+        print('ach',await pg.evaluate("()=>[__G.SAVE.ach.done.br, __G.SAVE.rush.clears]"))
         # 사망
-        r=await pg.evaluate("""()=>{const G=__G;G.SAVE.chars.wolf=true;G.startRush('wolf');let g=0;while(g++<400&&(G.state==='levelup'||G.state==='evolve'))__s();for(let i=0;i<300;i++){G.P.inv=99;G.tick(1/30);if(G.boss)break}const s0=G.SAVE.shards;G.P.inv=0;G.P.shield=0;G.P.hp=0;G.die?0:0;return [!!G.boss,G.rush.i]}""")
+        r=await pg.evaluate("""()=>{const G=__G;G.SAVE.chars.wolf=true;G.startRush('wolf');let g=0;while(g++<400&&(G.state==='levelup'||G.state==='evolve'||G.rush.init)){if(G.state==='play')G.tick(1/30);else __s()}for(let i=0;i<300;i++){G.P.inv=99;G.tick(1/30);if(G.boss)break}const s0=G.SAVE.shards;G.P.inv=0;G.P.shield=0;G.P.hp=0;G.die?0:0;return [!!G.boss,G.rush.i]}""")
         print('death-prep',r)
         print('errs',pg.errs[:6]); await b.close()
 asyncio.run(main())
