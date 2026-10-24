@@ -14,7 +14,7 @@ async def main():
             o['t'+t]={fset:G.P.fset,slow:+(100*sl/n).toFixed(1),lava:+(100*lv/n).toFixed(1),both}}
           return o}""")
         print(json.dumps(R))
-        R=await pg.evaluate("""()=>{const G=__G;G.SAVE.diff.sel=11;G.startGame('wolf');const P=G.P;let T=null;
+        R=await pg.evaluate("""()=>{const G=__G;G.SAVE.diff.sel=16;G.startGame('wolf');const P=G.P;let T=null;
           for(let r=5;r<40&&!T;r++)for(let a=0;a<64&&!T;a++){const x=Math.round(Math.cos(a/10)*r),y=Math.round(Math.sin(a/10)*r);if(G.isSlow(x,y)&&G.isSlow(x+1,y)&&!G.isLava(x,y))T=[x,y]}
           const out={T};P.x=(T[0]+0.5)*64;P.y=(T[1]+0.5)*64;G.enemies.length=0;
           const TS=64;G.tick(1/30);out.inSlow=P.slowT;

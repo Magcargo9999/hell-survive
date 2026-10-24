@@ -849,7 +849,7 @@ function mkCanvas(w, h) { const c = document.createElement('canvas'); c.width = 
  * 0-1. 저장(영혼 조각 · 영구 강화 · 설정) / 캐릭터 목록 / 소리
  * ============================================================ */
 const SAVE_KEY = 'hellSurvivorSave1';
-const GAME_VER = 'v8.63';
+const GAME_VER = 'v8.64';
 const SAVE_DEF = () => ({
   shards: 0,
   perks: { hp: 0, spd: 0, dmg: 0, exp: 0, magnet: 0, banish: 0, revive: 0, regen: 0, shard: 0, critd: 0, choice: 0 },
@@ -4937,13 +4937,13 @@ function hurtPlayer(dmg) {
   if (P.hp <= 0) { P.hp = 0; die(); }
 }
 const tierMul = () => 1 + 0.3 * (P.tier || 0);
-const MAX_TIER = 19;   // v8.30: 난이도 0~19 = 지하 1~20층 (16~20층 악마 식물원)
+const MAX_TIER = 19;   // v8.30: 난이도 0~19 = 지하 1~20층 (v8.64: 11~15층 악마 식물원 · 16~20층 어인섬)
 const floorName = t => '지하 ' + ((t | 0) + 1) + '층';
 /* v6.50 지하 6~10층 준비: 몹 체력·공격·보스 체력·영혼 조각·참가비는 층마다 그대로 늘어난다 (몹 +10% · 보스 +30% · 조각 ×(1+0.3층) · 참가비 25×층).
    보스 패턴의 속도·횟수·추가 패턴은 5단계(지하 6층) 값에서 멈춘다 → 규칙 9(최고 단계에도 피할 곳이 남아야 함) 보장. 새 패턴은 새 맵·몹 시트가 오면 여기에 단계를 더한다. */
 const TP = () => Math.min(P.tier | 0, 5);
 /* 층별 맵·잡몹 세트: 지하 1~10층 모두 지금은 같은 지옥 맵·몹(자리만 잡아 둠). 지하 6~10층 새 도트 시트가 오면 여기서 갈라 쓴다. */
-const floorSet = t => (t | 0) >= 15 ? 'gard' : (t | 0) >= 10 ? 'sea' : (t | 0) >= 5 ? 'mush' : 'hell';   // v7.10: 지하 11~15층 = 어인섬
+const floorSet = t => (t | 0) >= 15 ? 'sea' : (t | 0) >= 10 ? 'gard' : (t | 0) >= 5 ? 'mush' : 'hell';   // v7.10: 어인섬 · v8.64: 지하 11~15층 = 악마 식물원, 16~20층 = 어인섬
    // v6.52: 지하 6~10층 = 버섯 군락 맵 · 버섯형 악마 · 버섯 보스맵
 /* v7.13 어인섬 첫 장면 끊김 방지: 바닥 타일·소품·잡몹 그림을 한 번씩 미리 그려 GPU에 올려 둔다 */
 function warmSea() {
@@ -4953,8 +4953,8 @@ function warmSea() {
     for (const sp of SSPECIES) for (const f of sp.frames) { g.drawImage(f.img, 0, 0, 8, 8); g.drawImage(f.white, 0, 0, 8, 8); }
   } catch (_) {}
 }
-const isSea = () => !!(P && P.fset === 'sea');   // v7.10 어인섬 (지하 11~15층)
-const isGard = () => !!(P && P.fset === 'gard');   // v8.30 악마 식물원 (지하 16~20층) — v8.53 잡몹 식물형 악마 8종(GSPECIES) + 네임드 3종(PL)
+const isSea = () => !!(P && P.fset === 'sea');   // v7.10 어인섬 (v8.64: 지하 16~20층)
+const isGard = () => !!(P && P.fset === 'gard');   // v8.30 악마 식물원 (v8.64: 지하 11~15층) — v8.53 잡몹 식물형 악마 8종(GSPECIES) + 네임드 3종(PL)
 const isMush = () => !!(P && (P.fset === 'mush' || P.fset === 'sea' || P.fset === 'gard'));   // 버섯 · 어인섬: 바닥·소품·잡몹·보스맵이 따로 있는 층 (아래 isSea로 갈라 씀)
 function calcShards() { return Math.round((Math.floor(P.kills / 20) + Math.floor(gt / 30) + Math.floor(P.lvl * 1.5) + P.named * 2 + P.goalShards) * tierMul() * (1 + 0.05 * (SAVE.perks.shard | 0) + (P.rel.pouch ? 0.5 : 0))) + (P.mimicShards | 0); }   /* v7.02: 미믹 영혼 조각은 배율 없이 그대로 */   // v4.06: 한 번 더 상향 (판이 짧아진 만큼 + α)   // v4.02: 약 1.5배 상향
 /* ---------- 런 목표: 한 판 안에서 순서대로 나오는 작은 목표. 달성하면 영혼 조각을 추가로 받는다 ---------- */
@@ -10133,7 +10133,7 @@ function openDex() {
   curT = 'mon';
   gr = sec('마물 (처치 수)');
   SPECIES.concat(MSPECIES, SSPECIES, GSPECIES).forEach(sp => add(gr, { on: d.kills['m' + sp.idx], name: sp.name, sub: d.kills['m' + sp.idx] + '마리 처치', draw: (g, w, h, l) => dexSprite(g, w, h, sp.frames[0].img, 0, 0, MOB.cw, MOB.ch, false, l) }));
-  for (const pk of PL_KEYS) { const kk = 'pl:' + pk, pr = GNMF[pk + '_port'][0]; add(gr, { on: d.kills[kk], name: PL[pk].name, sub: (d.kills[kk] || 0) + '마리 처치', hint: '<br>네임드 마물 (지하 16~20층)', draw: (g, w, h, l) => IMG.gnm && dexSprite(g, w, h, IMG.gnm, pr[0], pr[1], pr[2], pr[3], false, l, true) }); }
+  for (const pk of PL_KEYS) { const kk = 'pl:' + pk, pr = GNMF[pk + '_port'][0]; add(gr, { on: d.kills[kk], name: PL[pk].name, sub: (d.kills[kk] || 0) + '마리 처치', hint: '<br>네임드 마물 (지하 11~15층)', draw: (g, w, h, l) => IMG.gnm && dexSprite(g, w, h, IMG.gnm, pr[0], pr[1], pr[2], pr[3], false, l, true) }); }
   add(gr, { on: d.kills.bug, name: '이공벌레', sub: d.kills.bug + '마리 처치', draw: (g, w, h, l) => dexSprite(g, w, h, IMG.bug, 0, BUGDEF.ch, BUGDEF.cw, BUGDEF.ch, false, l) });
   { const f = MINI_FR.B9, g2 = MINI_FR.E1;
     add(gr, { on: d.kills.mini, name: '원숭이 전사', sub: d.kills.mini + '회 처치', hint: '<br>미니 보스 (Lv.15)', draw: (g, w, h, l) => dexSprite(g, w, h, IMG.mini, f[0], f[1], f[2], f[3], false, l, true) });

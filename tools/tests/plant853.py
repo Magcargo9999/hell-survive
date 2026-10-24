@@ -5,7 +5,7 @@ from playwright.async_api import async_playwright
 import h301
 h301.URL='file:///home/claude/hell-survive/build/hell_survive.html'
 B='/home/claude/hell-survive/build/'
-START="G.SAVE.diff.max=19;G.SAVE.diff.sel=15;G.SAVE.shards=1e6;G.startGame('wolf');"
+START="G.SAVE.diff.max=19;G.SAVE.diff.sel=10;G.SAVE.shards=1e6;G.startGame('wolf');"
 async def main():
     async with async_playwright() as pw:
         b=await pw.chromium.launch(); pg=await h301.newpage(b,1280,720)

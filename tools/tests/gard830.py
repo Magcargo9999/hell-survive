@@ -7,7 +7,7 @@ async def main():
         pg.on('pageerror',lambda e:errs.append(str(e))); pg.on('console',lambda m: m.type=='error' and errs.append(m.text))
         await pg.goto('file:///home/claude/hell-survive/build/hell_survive.html'); await pg.wait_for_function('window.__G&&__G.ready',timeout=90000)
         await pg.wait_for_function('__G.IMG&&__G.IMG.gfloor&&__G.IMG.gprops&&__G.IMG.gmap',timeout=60000)
-        for t in (15,19):
+        for t in (10,14):
             await pg.evaluate(f"()=>{{const G=__G;G.SAVE.diff.max=19;G.SAVE.shards=99999;G.SAVE.diff.sel={t};G.startGame('wolf');}}")
             await pg.wait_for_timeout(1200)
             print(t, await pg.evaluate("[__G.P.tier,__G.P.fset,__G.P.bossK]"))
