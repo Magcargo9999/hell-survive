@@ -871,7 +871,7 @@ function mkCanvas(w, h) { const c = document.createElement('canvas'); c.width = 
  * 0-1. 저장(영혼 조각 · 영구 강화 · 설정) / 캐릭터 목록 / 소리
  * ============================================================ */
 const SAVE_KEY = 'hellSurvivorSave1';
-const GAME_VER = 'v8.94';
+const GAME_VER = 'v8.95';
 const SAVE_DEF = () => ({
   shards: 0,
   perks: { hp: 0, spd: 0, dmg: 0, exp: 0, magnet: 0, banish: 0, revive: 0, regen: 0, shard: 0, critd: 0, choice: 0 },
@@ -6055,7 +6055,7 @@ const UPGRADES = [
   { id: 'magnet', name: '영혼 자석',     txt: () => '흡수 범위 +60% · 끌어당기는 속도 +60%',   apply: p => { p.pickup *= 1.6; p.magPull = (p.magPull || 1) + 0.6; }, alt: { octo: ['마력 끌림', '흡수 범위 +60% · 끌어당기는 속도 +60%'] } },
   { id: 'range',  name: '넓은 발톱',     txt: () => '범위 +12%',        apply: p => { p.rng *= 1.12; if (p.char === 'archer' && (p.up.range | 0) < 3) p.far += 0.3; },   // v8.86: 지옥엘프 궁수는 저격 시선과 합쳐져 먼 거리 피해도 오른다 (3장까지)
     alt: { gun: ['긴 총열', '사거리 +12%'], octo: ['먼 마법진', '마력탄 사거리 +12%'], lava: ['넓은 용암탄', '용암탄이 터지는 범위 +12%'], bomb: ['큰 화약', '폭탄 폭발 범위 +12%'], snail: ['넓은 독 침', '독 침이 터지는 범위 +12%'], archer: ['저격 시선', '사거리 +12% · 먼 거리(260+) 피해 +30% (피해는 3장까지)'], lizard: ['넓은 휘두르기', '범위 +12%'], twins: ['긴 사슬', '사슬 길이 +12%'], ghost: ['멀리 뿌리기', '사거리 +12%'] } },
-  { id: 'orb',    noChar: 'octo', name: '지옥불 구슬',   txt: () => '불꽃 구슬 +1 (공격력의 55%)', apply: p => { p.orbsN++; } },
+  { id: 'orb',    name: '지옥불 구슬',   txt: () => P.char === 'octo' ? `불꽃 구슬 +1 (공격력의 ${Math.round(P.orbD * 100)}% · 최대 ${OCTO_ORB_MAX}개)` : '불꽃 구슬 +1 (공격력의 55%)', apply: p => { p.orbsN = p.char === 'octo' ? Math.min(OCTO_ORB_MAX, p.orbsN + 1) : p.orbsN + 1; } },   // v8.95 문어 마법사도 선택 가능
   { id: 'shard',  name: '뼈 투사체',     txt: () => '뼈 투사체 +1발 (공격력의 88%) · 적에게 1회 튕김', apply: p => { p.shardN++; },
     alt: { octo: ['먹물 탄', '먹물 탄 +1발 (공격력의 88%) · 적에게 1회 튕김'], lava: ['용암 파편', '용암 파편 +1발 (공격력의 88%) · 적에게 1회 튕김'], snail: ['독가시', '독가시 +1발 (공격력의 88%) · 적에게 1회 튕김'], archer: ['추적 화살', '추적 화살 +1발 (공격력의 70%) · 적에게 1회 튕김'] } },
   { id: 'knock',  name: '밀치기',        txt: () => '넉백 +25%p (기본 70%)', apply: p => { p.knock += 0.25; }, alt: { octo: ['마력 충격', '넉백 +25%p (기본 70%)'] } },
@@ -6123,7 +6123,7 @@ const SYNERGIES = [
   { id: 'fireBone',  name: '불타는 뼈',   txt: '투사체가 명중하면 불꽃 폭발',      need: ['shard', 'orb'],
     alt: { lava: ['타오르는 용암 파편', '파편이 명중하면 불꽃 폭발'], snail: ['타오르는 독가시', '독가시가 명중하면 불꽃 폭발'], archer: ['불타는 추적 화살', '추적 화살이 명중하면 불꽃 폭발'] } },
   { id: 'vamp',      name: '흡혈 발톱',   txt: '공격 적중 시 체력 회복',           need: ['claw', 'heart'], only: 'wolf' },
-  { id: 'soulStorm', name: '영혼 폭풍',   txt: '불꽃 구슬이 더 크고 빠르고 아픔',  need: ['orb', 'magnet'], apply: p => { p.orbR = 112; p.orbW = 4.6; p.orbD = 0.95; } },
+  { id: 'soulStorm', name: '영혼 폭풍',   txt: '불꽃 구슬이 더 크고 빠르고 아픔',  need: ['orb', 'magnet'], apply: p => { p.orbR = 112; p.orbW = 4.6; p.orbD = p.char === 'octo' ? p.orbD * 1.7 : 0.95; } },   // v8.95 문어 마법사는 기본 구체 피해(40%)의 ×1.7
   { id: 'rush',      name: '질주 공격',   txt: '이동 중 공속 +50%',                need: ['move', 'speed'] },
   { id: 'frenzy',    name: '사냥의 광란', txt: '처치 시 2.5초간 공속 +40%',        need: ['claw', 'move'], only: 'wolf' },
   { id: 'corpse',    name: '부패 폭발',   txt: '독 자국 위에서 죽은 적이 폭발',    need: ['range', 'claw'], only: 'snail',
@@ -11773,6 +11773,7 @@ function openAch() {
 }
 /* v8.71 간략 패치노트 (최근 버전만, 새 버전마다 맨 위에 한 줄 추가) */
 const PATCH = [
+  ['v8.95', '문어 마법사도 [지옥불 구슬] 카드를 고를 수 있음 (구슬 +1, 최대 12개)'],
   ['v8.94', '업적 추가 — 타락한 혈랑왕 300번 처치 시 [타락한 혈랑의 심장](레어 · 옵션 3줄) 보상'],
   ['v8.93', '성유물 광기의 가면 도트 적용'],
   ['v8.92', '심장 옵션 추가 — 영혼 조각 획득 +%(레전더리 최대 40%) · 합성된 심장(옵션 2줄) 3개를 합치면 옵션 3줄 [3줄 합성 심장]'],
