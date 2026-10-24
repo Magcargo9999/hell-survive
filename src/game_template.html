@@ -871,7 +871,7 @@ function mkCanvas(w, h) { const c = document.createElement('canvas'); c.width = 
  * 0-1. 저장(영혼 조각 · 영구 강화 · 설정) / 캐릭터 목록 / 소리
  * ============================================================ */
 const SAVE_KEY = 'hellSurvivorSave1';
-const GAME_VER = 'v8.95';
+const GAME_VER = 'v8.96';
 const SAVE_DEF = () => ({
   shards: 0,
   perks: { hp: 0, spd: 0, dmg: 0, exp: 0, magnet: 0, banish: 0, revive: 0, regen: 0, shard: 0, critd: 0, choice: 0 },
@@ -6104,7 +6104,6 @@ const UNIQUE = {
   ],
   ghost: [
     { id: 'gmore', name: '구슬 늘리기', max: 3, txt: () => '한 번에 뿌리는 구슬 +1개 · 구슬 피해 +5%', apply: () => {} },
-    { id: 'gwide', name: '넓게 흩뿌리기', max: 2, txt: () => '구슬 사거리 +16% · 퍼지는 폭 +22%', apply: () => {} },
   ],
   twins: [
     { id: 'heavy',   name: '무거운 창날', max: 3, txt: () => '창날 타격 피해 +20% · 크기 +12% · 넉백 +30%', apply: () => {} },
@@ -6904,12 +6903,12 @@ function pushArrow(ox, oy, a, o) {
   const sp = o.sp || 720;
   shards.push(Object.assign({ x: ox, y: oy, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp, life: 0.8, pierce: 1, hit: new Set(), arrow: true, sz: 1, kb: 200, ox, oy, src: DSRC }, o));
 }
-const ghostRange = () => 400 * Math.min(1.8, Math.max(1, P.rng / 100)) * (1 + 0.16 * (P.up.gwide | 0));
+const ghostRange = () => 400 * Math.min(1.8, Math.max(1, P.rng / 100));
 function ghostSpray() {   // 연보라 구슬 다발: 앞쪽 부채꼴로 약한 구슬 여러 개 (가까이 있을수록 많이 맞는다)
   const R = ghostRange(), t = nearestEnemy(R + 60), D = FD(), ox = P.x + P.face * 30 * D.ws, oy = P.y - 40 * D.ws;
   const tx = t ? t.x : P.x + P.face * 200, ty = t ? t.y - t.r : oy;
   if (Math.abs(tx - P.x) > 6) P.face = tx > P.x ? 1 : -1;
-  const base = Math.atan2(ty - oy, tx - ox), n = P.gOrbs + (P.up.gmore | 0), spread = 0.09 * (1 + 0.22 * (P.up.gwide | 0));
+  const base = Math.atan2(ty - oy, tx - ox), n = P.gOrbs + (P.up.gmore | 0), spread = 0.09;
   for (let i = 0; i < n; i++) {
     const a = base + (i - (n - 1) / 2) * spread + (rand() - 0.5) * 0.04, sp = 500 + rand() * 80;
     shards.push({ src: DSRC, x: ox, y: oy, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp, life: R / sp, pierce: 1, hit: new Set(), dmg: P.dmg * 0.8 * (1 + 0.05 * (P.up.gmore | 0)), gorb: true, sz: 0.9 * [1, 1.3, 1.6][P.form | 0], kb: 70, ph: rand() * 6 });
@@ -11773,6 +11772,7 @@ function openAch() {
 }
 /* v8.71 간략 패치노트 (최근 버전만, 새 버전마다 맨 위에 한 줄 추가) */
 const PATCH = [
+  ['v8.96', '연보라 총령 — 카드 [넓게 흩뿌리기] 삭제'],
   ['v8.95', '문어 마법사도 [지옥불 구슬] 카드를 고를 수 있음 (구슬 +1, 최대 12개)'],
   ['v8.94', '업적 추가 — 타락한 혈랑왕 300번 처치 시 [타락한 혈랑의 심장](레어 · 옵션 3줄) 보상'],
   ['v8.93', '성유물 광기의 가면 도트 적용'],

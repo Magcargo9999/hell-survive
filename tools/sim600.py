@@ -13,7 +13,7 @@ JS="""([ch,route,fin,prof,L,gt0,win,boss,seed,tier,god,bk])=>{
  let PRI=(PROF[prof]||PROF.std).slice(); if(window.__NOSPD) PRI=PRI.filter(x=>x!=='질주');
  if(ch==='lizard') PRI=['★','대검 단련','가벼운 휘두르기','대검 내려찍기','가시 비늘','피에 굶주린 광기','끝없는 광란','깊은 물결','지옥의 심장','단단한 피부',...PRI.filter(x=>x!=='질주')];
  if(ch==='chimera') PRI=['★','날 선 바람','날카로운 발톱','날렵한 발톱','쌍날 바람','멀리 나는 바람','더 높은 하늘','불씨 강화','넓은 불길','끓는 숨결','늘어난 촉수','뜬 눈','끝없는 난무',...PRI];
- if(ch==='ghost') PRI=['★','구슬 늘리기','진한 저승 기운','빠른 손짓','넓게 흩뿌리기','멀리 뿌리기',...PRI];
+ if(ch==='ghost') PRI=['★','구슬 늘리기','진한 저승 기운','빠른 손짓','멀리 뿌리기',...PRI];
  if(ch==='gun') PRI=['★','강화 화약','빠른 방아쇠','특수탄 강화','빠른 장전','불씨 각인','현상금 사냥','지옥의 심장','긴 총열',...PRI];
  if(ch==='twins') PRI=['★','무거운 동생','무거운 창날','원심력','달군 사슬','쌍둥이의 호흡','폭군의 사슬','쌍둥이의 분노','악마의 분노','빠른 손놀림','긴 사슬',...PRI];
  if(bk) P.bossK=bk; if(window.__EYE) Object.assign(G.EYE,window.__EYE); if(window.__AN) Object.assign(G.AN,window.__AN);
