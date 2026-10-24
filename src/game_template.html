@@ -424,7 +424,7 @@ const SKEL_FIN = { src: 'skelF', name: '저주받은 해골 궁수 (최종 진�
 const archerForm = (route, form) => (form >= 2 && route === 'skel' && IMG.skelF && SKEL_FIN) || (form >= 2 && route === 'elf' && P && ARCHER_FIN[P.fin || 'red']) || (form > 0 && ARCHER_ROUTE_FORMS[route]) || ARCHER_FORMS[0];
 // 궁수 진화 루트 (최종 진화는 아직 없음)
 const ARCHER_ROUTES = {
-  elf:  { name: '지옥엘프', title: '성장한 지옥엘프', desc: '화살 2발 동시 발사 · 공격력 +48% · 공속 +25% · 이속 +12% · 회피 20% · 체력 +30', later: 'Lv.20 : 최종 진화 2갈래 (진화한 지옥엘프 · 폭발 화살 / 성화된 지옥엘프 · 신성화살)' },
+  elf:  { name: '지옥엘프', title: '성장한 지옥엘프', desc: '화살 2발 동시 발사 · 공격력 +48% · 공속 +25% · 이속 +12% · 회피 20% · 체력 +22', later: 'Lv.20 : 최종 진화 2갈래 (진화한 지옥엘프 · 폭발 화살 / 성화된 지옥엘프 · 신성화살)' },
   skel: { name: '해골 궁수', title: '저주받은 해골 궁수', desc: '받는 피해 -25% · 공속 -33% · 화살 피해 ×2.8 · 관통 +3 · 아주 강한 넉백 (한 방이 묵직한 저격형)', later: 'Lv.20 : 최종 진화 (저주받은 해골 궁수) + 특수 스킬 (칠흑의 대궁 · 거대한 검은 화살 4발로 몹을 밀어냄)' },
 };
 // 루트 전용 형태: 혈랑(1단계) / 쌍두(1단계) -> 삼두(최종). flip: 원본이 바라보는 방향(-1 = 왼쪽), hits: 공격 한 번에 타격이 들어가는 프레임, hm: 타격당 피해 배율
@@ -871,7 +871,7 @@ function mkCanvas(w, h) { const c = document.createElement('canvas'); c.width = 
  * 0-1. 저장(영혼 조각 · 영구 강화 · 설정) / 캐릭터 목록 / 소리
  * ============================================================ */
 const SAVE_KEY = 'hellSurvivorSave1';
-const GAME_VER = 'v8.80';
+const GAME_VER = 'v8.81';
 const SAVE_DEF = () => ({
   shards: 0,
   perks: { hp: 0, spd: 0, dmg: 0, exp: 0, magnet: 0, banish: 0, revive: 0, regen: 0, shard: 0, critd: 0, choice: 0 },
@@ -5360,7 +5360,7 @@ function newPlayer(char) {
   const p = {
     char, bossK: rand() < 0.5 ? 'eye' : 'monkey', shield: 0, boost: 0, armor: char === 'snail' ? 0.9 : 1, trailAcc: 0, tx: 0, ty: 0,
     syn: {}, aspd: 1, knock: 0.7, crit: 0.05, critD: 1.7, vx: 0, vy: 0, lavaT: 0, lavaTick: 0, banish: 0, banned: {}, cdT: { th: 1.5, bl: 1, nv: 2.5, au: 0, nv2: 0 }, vampCd: 0, expMul: 1, named: 0, bolts: 1, killHeal: 0, trailBonus: 0, orbR: 80, orbW: 3.2, orbD: 0.55, revived: false, earned: 0,
-    x: 0, y: 0, hp: sn ? 125 : ar ? 92 : 100, max: sn ? 125 : ar ? 92 : 100, spd: sn ? 175 : ar ? 215 : 200, face: 1,
+    x: 0, y: 0, hp: sn ? 125 : ar ? 70 : 100, max: sn ? 125 : ar ? 70 : 100, spd: sn ? 175 : ar ? 215 : 200, face: 1,
     anim: 'idle', animT: 0, inv: 0, hitT: 0,
     atkTimer: -1, atkCd: 0, atkHitN: 0, ax: 1, ay: 0,
     dmg: sn ? 18 : ar ? 22 : 18, rng: sn || ar ? 100 : 96, cd: sn ? 0.85 : ar ? 0.51 : 0.9, pickup: ar ? 95 : 90,
@@ -6463,7 +6463,7 @@ function drawArcherFinPrev(c, k) {
   g.drawImage(H, d.pv[0] * K, 0, d.pv[1] * K, d.ch * K, (c.width - d.pv[1] * f) / 2, c.height - 2 - d.ch * f, d.pv[1] * f, d.ch * f);
 }
 function openArcherFinal() {
-  const L = [['red', '진화한 지옥엘프 궁수', '체력 +45 후 최대 체력 ×0.85 · 공격력 +12% · 공속 +10% · 이속 +5% · 회피 25% · 이동 중 사격 피해 +20%', '전용 스킬 : 폭발 화살 (무적 백스텝 + 폭발 · 여진 2회)', null],
+  const L = [['red', '진화한 지옥엘프 궁수', '체력 +30 후 최대 체력 ×0.88 · 공격력 +12% · 공속 +10% · 이속 +5% · 회피 25% · 이동 중 사격 피해 +20%', '전용 스킬 : 폭발 화살 (무적 백스텝 + 폭발 · 여진 2회)', null],
              ['holy', '성화된 지옥엘프 궁수', '체력 +63 · 공격력 +15% · 사거리 +10% · 먼 거리 피해 +25% · 받는 피해 -10%', '전용 스킬 : 신성화살 (오래 모을수록 강한 차징 · 풀차지 명중 시 쿨타임 -50%)', 'holy']];
   const items = L.map(([k, nm, ds, sb, ck]) => Object.assign({ key: k, name: nm, desc: ds, sub: sb, preview: c => drawArcherFinPrev(c, k) }, ck ? condItem('archerFin', ck) : { tag: ' · 기본 진화' }));
   openChoice(`최종 진화  Lv.${P.lvl}`, items, u => { P.fin = u.key; ensureTint(2); startEvolve(2); }, 'route');
@@ -6583,12 +6583,12 @@ function applyEvo(to) {
   if (P.char === 'archer' && to === 2 && P.route === 'skel') { P.hp = Math.min(P.max, P.hp + P.max * 0.3); markDex('archer:2:skel', P.route); return; }   // v8.16: 능력치는 그대로, 모습 + 스킬(칠흑의 대궁)
   if (P.char === 'archer' && to === 2) {
     if (P.fin === 'holy') { P.max += 63; P.dmg *= 1.15; P.rng *= 1.1; P.far += 0.25; P.armor *= 0.9; }   // 성화: 멀리서 모아 쏘는 저격수 · v6.22: 0진화 체력 -8을 진화 때 되돌려 줌 (+55 → +63)
-    else { P.max = Math.round((P.max + 45) * 0.85); P.dmg *= 1.12; P.aspd += 0.1; P.spd *= 1.05; P.dodge = 0.25; P.kite += 1; }   // 진화: 움직이며 싸우는 전술형 · v6.22: 진화한 지옥엘프 체력 -15%
+    else { P.max = Math.round((P.max + 30) * 0.88); P.dmg *= 1.12; P.aspd += 0.1; P.spd *= 1.05; P.dodge = 0.25; P.kite += 1; }   // 진화: 움직이며 싸우는 전술형 · v6.22: 진화한 지옥엘프 체력 -15%
     P.hp = P.max; markDex('archer:2:' + (P.fin === 'holy' ? 'holy' : 'red'), P.route);
     return;
   }
   if (P.char === 'archer') {
-    if (P.route === 'elf') { P.max += 30; P.spd *= 1.12; P.aspd += 0.25; P.dmg *= 1.48; P.bolts++; P.dodge = 0.2; }   // 두 발 동시 사격 (v5.00: 관통은 '관통 화살' 카드로만)
+    if (P.route === 'elf') { P.max += 22; P.spd *= 1.12; P.aspd += 0.25; P.dmg *= 1.48; P.bolts++; P.dodge = 0.2; }   // 두 발 동시 사격 (v5.00: 관통은 '관통 화살' 카드로만)
     else { P.max += 23; P.armor *= 0.75; P.cd *= 1.5; P.dmg *= 2.95; P.pierce += 4; P.arrowScale = 1.6; P.far += 0.1; P.knock += 0.75; }   // 저주: 체력·공속 감소, 한 방이 강해진다 · v6.22: 0진화 체력 -8 보전 (+15 → +23)
     P.hp = P.max; markDex('archer:1:' + P.route, P.route);
     return;
@@ -11375,6 +11375,7 @@ function openAch() {
 }
 /* v8.71 간략 패치노트 (최근 버전만, 새 버전마다 맨 위에 한 줄 추가) */
 const PATCH = [
+  ['v8.81', '지옥엘프 궁수 체력 대폭 너프 (진화한 지옥엘프 최종 체력 약 -25%)'],
   ['v8.80', '20층 최종 마왕 타락한 어인왕 추가 · 업적(시작 화면 오른쪽 위) 추가'],
   ['v8.71', '설정에 버전 표시 · 패치노트 추가'],
   ['v8.70', '파리지옥 마왕 추가 (지하 11층 100% · 12층 70%)'],
