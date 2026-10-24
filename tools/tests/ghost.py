@@ -6,7 +6,7 @@ from h301 import newpage
 async def main():
     async with async_playwright() as pw:
         b=await pw.chromium.launch(); pg=await newpage(b,1000,620)
-        await pg.evaluate("()=>{__G.SAVE.chars.ghost=true;__G.startGame('ghost')}")
+        await pg.evaluate("()=>{window.__rt=0;__G.SAVE.chars.ghost=true;__G.startGame('ghost')}")
         await pg.evaluate("()=>{const G=__G,P=G.P;window.__lv(12);P.skillTipT=0;G.enemies.length=0;for(let i=0;i<20;i++){P.inv=9;G.tick(1/30)};for(let i=0;i<8;i++)G.spawnEnemy(Math.random()*6.28,260);for(let i=0;i<14;i++){P.inv=9;G.tick(1/30)};P.skT=0;G.cast();for(let i=0;i<9;i++){P.inv=9;G.tick(1/30)}}")
         r1=await pg.evaluate("()=>({f:__G.P.form,sk:__G.P.skill,lv:__G.P.lvl})")
         await pg.screenshot(path='build/audit/gg/t1.png')

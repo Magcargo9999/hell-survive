@@ -100,6 +100,7 @@ ASSETS = {
     '__HFUSE3__': 'heart/hfuse3.webp',
     '__RELMASK__': 'final/relmask.webp',
     '__HFW__': 'heart/hfw.webp',
+    '__DK__': 'dk/dk.webp',
     '__SKWOLFE__': 'skin/wolfE.webp',
     '__TOX__': 'tox/tox.webp',
     '__KNG__': 'kng/kng.webp', '__VFT__': 'vft/vft.webp', '__QN__': 'qn/qn.webp', '__ADM__': 'adm/adm.webp', '__ZOM__': 'zom/zom.webp', '__GMOB__': 'gard/gmob.webp', '__GNM__': 'gard/gnm.webp',
