@@ -22,7 +22,7 @@ async def main():
           T.x=P.x+1100;T.y=P.y;h.retarget=0;for(let i=0;i<120;i++){P.inv=9;T.hp=999999;T.x=P.x+1100;T.y=P.y;if(!G.enemies.includes(T))G.enemies.push(T);G.tick(1/30)}
           out.leash=[Math.round(h.x-P.x),Math.round(h.y-P.y)];out.view=[G.W,G.H];out.tdist=Math.round(Math.hypot(T.x-P.x,T.y-P.y));out.tg=h.tgt===T;
           const dm=G.DMETER;out.dm=Object.keys(dm).filter(k=>k.includes('lhead')).map(k=>[k,G.dmName(k),Math.round(dm[k])]);
-          h.hurt(h.max*2);out.back=h.st;for(let i=0;i<60;i++){P.inv=9;G.tick(1/30)};out.gone=!G.lhead;
+          h.life=0;G.tick(1/30);out.back=h.st;for(let i=0;i<60;i++){P.inv=9;G.tick(1/30)};out.gone=!G.lhead;
           return out}""")
         await pg.evaluate("()=>{const G=__G,P=G.P;G.enemies.length=0;for(let i=0;i<6;i++)G.spawnEnemy(Math.random()*6.28,250);P.skT=0;G.cast();for(let i=0;i<25;i++){P.inv=9;G.tick(1/30)}}")
         await pg.screenshot(path='build/dk_t2.png')

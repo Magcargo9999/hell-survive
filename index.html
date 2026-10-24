@@ -512,9 +512,9 @@ const CHIM_FORMS = [
 const CHIM_FX = {"eyeboss": [0, 0, 157, 192], "eyeorb": [161, 0, 64, 90], "rslash0": [229, 0, 53, 70], "rslash1": [286, 0, 69, 71], "rslash2": [359, 0, 64, 68], "impact0": [427, 0, 39, 73], "impact1": [470, 0, 53, 73], "impact2": [527, 0, 45, 58], "impact3": [576, 0, 53, 78], "cres": [0, 196, 90, 67]};   // chimfx 그림 안의 위치 [x, y, 너비, 높이]
 // 키메라 진화 루트: 바람(에어슬래시 -> 천공 강하) / 화염(화상 발톱 -> 화염 브레스). Lv.10에서 고른다
 const CHIM_ROUTES = {
-  wind:  { name: '바람', title: '바람의 길', desc: '적을 관통하는 에어슬래시 · 체력 +25 · 공격력 +20% · 이속 +4%', later: 'Lv.20 : 각성체 (스킬 천공 강하)' },
-  flame: { name: '화염', title: '화염의 길', desc: '넓은 화염 발톱 + 화상 · 체력 +35 · 공격력 +25% · 사거리 +15%', later: 'Lv.20 : 업화의 사자 (스킬 화염 브레스)' },
-  dream: { name: '몽환', title: '몽환의 길', desc: '발톱에 촉수가 따라붙어 함께 공격 · 체력 +30 · 공격력 +30% · 공속 +8% · 사거리 +12% · 초반엔 평범하지만 최종 진화에서 크게 강해짐', later: 'Lv.20 : 천안의 군주 (스킬 천안 난무)' },
+  wind:  { name: '바람', title: '바람의 길', desc: '적을 관통하는 에어슬래시 · 체력 +25 · 공격력 +29% · 이속 +4%', later: 'Lv.20 : 각성체 (스킬 천공 강하)' },
+  flame: { name: '화염', title: '화염의 길', desc: '넓은 화염 발톱 + 화상 · 체력 +40 · 공격력 +45% · 사거리 +15%', later: 'Lv.20 : 업화의 사자 (스킬 화염 브레스)' },
+  dream: { name: '몽환', title: '몽환의 길', desc: '발톱에 촉수가 따라붙어 함께 공격 · 체력 +30 · 공격력 +30% · 공속 +12% · 사거리 +16% · 초반엔 평범하지만 최종 진화에서 크게 강해짐', later: 'Lv.20 : 천안의 군주 (스킬 천안 난무)' },
 };
 const FLM_FX = {"fcres1": [0, 0, 65, 55], "fcres2": [0, 59, 69, 61], "stream": [0, 124, 435, 92]};   // flmfx 그림 안의 위치 [x, y, 너비, 높이]
 const FLAME_FORMS = {
@@ -573,7 +573,7 @@ const GHOST_FORMS = [
 const DKF = {"k1_idle":[[0,0,76,106,40,106],[78,0,74,106,34,106],[154,0,72,104,32,104],[228,0,71,104,33,104],[301,0,86,102,26,102],[389,0,122,102,34,102]],"k1_walk":[[513,0,93,99,55,99],[608,0,79,89,57,89],[689,0,82,92,48,92],[773,0,80,94,48,94],[855,0,81,92,55,92],[938,0,83,100,57,100],[1023,0,93,100,50,100],[1118,0,88,99,52,99]],"k1_atk":[[1208,0,91,103,58,103],[1301,0,114,98,82,98],[1417,0,117,99,49,99],[0,108,120,112,55,112],[122,108,117,97,57,97],[241,108,114,98,52,98],[357,108,140,95,50,95],[499,108,116,99,73,99]],"k1_hit":[[617,108,79,99,47,99],[698,108,79,100,41,100],[779,108,75,96,49,96],[856,108,69,97,39,97]],"k1_death":[[927,108,81,116,42,116],[1010,108,75,109,39,109],[1087,108,78,107,50,107],[1167,108,86,113,53,113],[1255,108,76,112,51,112],[1333,108,108,109,31,109]],"k2_idle":[[1443,108,118,91,66,91],[0,226,121,91,71,91],[123,226,114,90,65,90],[239,226,114,91,63,91],[355,226,97,91,51,91],[454,226,122,91,66,91]],"k2_walk":[[578,226,112,86,65,86],[692,226,106,87,56,87],[800,226,101,88,52,88],[903,226,99,87,52,87],[1004,226,101,88,52,88],[1107,226,98,89,54,89],[1207,226,97,88,54,88],[1306,226,103,91,63,91]],"k2_atk":[[1411,226,114,86,55,86],[0,319,138,85,81,85],[140,319,116,86,70,86],[258,319,150,86,63,86],[410,319,120,86,50,86],[532,319,124,86,36,86],[658,319,123,86,67,86],[783,319,93,83,41,83]],"k2_hit":[[878,319,101,86,55,86],[981,319,107,86,42,86],[1090,319,126,86,60,86],[1218,319,106,86,46,86]],"k2_sum":[[1326,319,92,88,56,88],[1420,319,103,88,54,88],[0,409,99,88,36,88],[101,409,108,88,50,88],[211,409,104,88,59,88],[317,409,102,88,76,88],[421,409,116,88,58,88],[539,409,111,88,38,88]],"k2_death":[[652,409,86,82,60,82],[740,409,84,86,60,86],[826,409,79,85,46,85],[907,409,72,81,25,81],[981,409,114,84,86,84],[1097,409,84,88,30,88]],"hd_idle":[[1183,409,51,63,25,31],[1236,409,55,63,27,31],[1293,409,54,63,27,31],[1349,409,54,63,27,31]],"hd_move":[[1405,409,57,52,28,26],[1464,409,59,51,29,25],[1525,409,52,53,26,26],[0,499,41,49,20,24],[43,499,73,64,36,32],[118,499,47,47,23,23]],"hd_atk":[[167,499,46,61,23,30],[215,499,48,58,24,29],[265,499,34,58,17,29],[301,499,34,59,17,29],[337,499,40,64,20,32],[379,499,52,63,26,31]],"k2_idle_nh":[[433,499,118,91,64,91],[553,499,121,91,67,91],[676,499,114,90,60,90],[792,499,114,91,59,91],[908,499,97,91,42,91],[1007,499,122,91,66,91]],"k2_walk_nh":[[1131,499,112,86,60,86],[1245,499,106,87,55,87],[1353,499,101,88,50,88],[1456,499,99,87,48,87],[0,592,101,88,49,88],[103,592,98,89,49,89],[203,592,97,88,47,88],[302,592,103,91,53,91]]};
 const dkA = (k, o) => Object.assign({ n: DKF[k].length, fr: DKF[k] }, o);
 const KN = { reach: 1.3, hm: 0.8, hits: [3, 6], dodgeMax: 0.25,   // 사브르: 앞쪽 반원 반지름 = 사거리 × 1.3 · 한 번 휘두를 때 두 번 벤다 (타당 공격력의 80%)
-  lh: { dur: 10, hpK: 0.3, spd: 330, leash: 560, r: 92, dm: 1.1, tick: 0.6, cast: 0.44 } };   // 잃어버린 머리: 지속 · 머리 체력(내 최대 체력 비율) · 이속 · 나에게서 벗어날 수 있는 거리 · 폭발 반경 · 피해 배율 · 폭발 간격 · 시전 동작
+  lh: { dur: 10, spd: 330, leash: 560, r: 92, dm: 1.8, tick: 0.5, cast: 0.44 } };   // 잃어버린 머리 (v9.02: 피해 v8.98 값으로 롤백 · 머리 체력 없음 = 시간으로만 돌아옴): 지속 · 이속 · 나에게서 벗어날 수 있는 거리 · 폭발 반경 · 피해 배율 · 폭발 간격 · 시전 동작
 const KNIGHT_FORMS = [null,
   { src: 'dk', name: '유령 기사', kn: 1, ws: 0.8, flip: -1, hitF: 3, sh: 20, hy: 62, pv: DKF.k1_idle[0].slice(0, 4), rgb: '190,120,255', c1: '#b878ff', c2: '#ecd6ff',
     anim: { idle: dkA('k1_idle', { fps: 8 }), walk: dkA('k1_walk', { fps: 12 }), attack: dkA('k1_atk', { fps: 22, fl: -1 }), hit: dkA('k1_hit', { fps: 12 }), death: dkA('k1_death', { fps: 7 }) } },
@@ -610,6 +610,7 @@ const GUN_AMMO = {
   F: { name: '불씨탄', p: 0.15, dm: 2.0, rgb: '255,60,50', spr: 'bF', hit: 'xF', burn: 3 },    // 2배 피해 · 관통 · 3초 지속 피해
   B: { name: '공포탄', p: 0.05, dm: 0.1, rgb: '190,90,255', spr: 'bB', hit: 'xB' },          // 꽝 (10%)
 };
+const gunMagN = () => GUN.mag + (P.up.gMag | 0);   // v9.02 확장 탄창: 1장마다 +1발 (6 → 9)
 const GUN = { mag: 6, reload: 1.0, sp: 900, burnK: 0.18 };   // 탄창 · 재장전(초) · 탄 속도 · 불씨 지속 피해(0.5초마다 공격력 비율)
 const GUN_FORMS = [
   { src: 'gun', name: '악마 총잡이', ws: 0.82, flip: 1, hitF: 0, sh: 20, hy: 62, pv: GUNA.i0[0].slice(0, 4), rgb: '255,90,110', c1: '#ff5a6e', c2: '#ffd0d8',
@@ -624,10 +625,13 @@ const gunRange = () => (P.rng * 3.2 + 40) * (P.form >= 2 ? 1.06 : 1);   // 보�
 const gunReload = () => GUN.reload * (1 - 0.15 * (P.up.gReload | 0));
 const gunSpec = k => (k === 'R' || k === 'F') ? 1 + 0.12 * (P.up.gSpec | 0) : 1;   // v6.46: 15% → 12%
 function gunRoll1() {   // 탄 하나 뽑기
-  const f = GUN_AMMO.F.p + 0.05 * (P.up.gEmber | 0), r = rand();
+  const f = GUN_AMMO.F.p + 0.06 * (P.up.gEmber | 0), r = rand();   // v9.02 불씨 각인 +5%p → +6%p
   return r < f ? 'F' : r < f + GUN_AMMO.R.p ? 'R' : r < f + GUN_AMMO.R.p + GUN_AMMO.B.p ? 'B' : 'N';
 }
-function gunLoad() { P.mag = []; for (let i = 0; i < GUN.mag; i++) P.mag.push(gunRoll1()); P.magI = 0; }
+function gunLoad() {
+  const n = gunMagN(); P.mag = []; for (let i = 0; i < n; i++) P.mag.push(gunRoll1()); P.magI = 0;
+  if (P.syn.gEmberMag && !P.mag.includes('F')) P.mag[(rand() * n) | 0] = 'F';   // v9.02 ★불씨 탄띠: 불씨탄 최소 1발 보장
+}
 function gunMuzzle() { const D = FD(); return [P.x + P.face * 34 * D.ws * 1.2, P.y - 50 * D.ws]; }
 function gunFire(k, ang, src) {   // 탄 한 발 발사
   const A = GUN_AMMO[k], [ox, oy] = gunMuzzle(), sp = GUN.sp;
@@ -643,9 +647,9 @@ function gunShot() {   // 평타: 탄창의 다음 탄을 쏜다 · 6발을 다 
   gunFire(k, Math.atan2(ty - oy, tx - ox), 'g:' + k);
   sfx(k === 'B' ? 'hit' : 'shoot');
   if (k === 'B' && rand() < 0.5) floatNum(P.x, P.y - 96, '공포탄…', '#d0a0ff');
-  if (P.magI >= GUN.mag) gunStartReload();
+  if (P.magI >= P.mag.length) gunStartReload();
 }
-function gunStartReload() { P.reloadT = P.reloadMax = gunReload(); P.magI = GUN.mag; }
+function gunStartReload() { P.reloadT = P.reloadMax = gunReload(); P.magI = P.mag ? P.mag.length : GUN.mag; }
 function gunStep(dt) {   // 재장전 · 현상금 사냥 · 구르기
   gunDumpStep(dt);
   if (P.reloadT > 0) { P.reloadT -= dt; if (P.reloadT <= 0) { P.reloadT = 0; gunLoad(); sfx('item'); } }
@@ -686,11 +690,11 @@ function gunEdge(s) {   // 도탄: 화면 끝에 닿으면 튕긴다 (최대 2�
   if (s.y < y0 + 6 && s.vy < 0 || s.y > y1 - 6 && s.vy > 0) { s.vy = -s.vy; b = true; }
   if (b) { s.eb++; s.life = Math.max(s.life, 0.5); if (gunFx.length < 80) gunFx.push({ k: 'xR', x: s.x, y: s.y, t: 0, life: 0.25, i: 2 }); }
 }
-/* 최종 스킬: 구르기 — 4초 안에 3번 · 구를 때마다 탄창의 탄을 전부 쏘고 재장전 */
-const ROLL = { n: 3, win: 4, dur: 0.26 };
+/* 최종 스킬: 구르기 — 4초 안에 2번 (v9.02: 3 → 2) · 구를 때마다 탄창의 탄을 전부 쏘고 재장전 */
+const ROLL = { n: 2, win: 4, dur: 0.26 };
 function gunRollStart() {
   rollQ = { n: ROLL.n, t: ROLL.win, d: null, first: true };
-  banner = { txt: '구르기!  4초 안에 SPACE로 2번 더 구를 수 있어요', t: 2.2, c: '#ffb0c0' };
+  banner = { txt: '구르기!  4초 안에 SPACE로 1번 더 구를 수 있어요', t: 2.2, c: '#ffb0c0' };
   gunRoll();
 }
 function gunRoll() {
@@ -701,7 +705,7 @@ function gunRoll() {
   rollQ.n--; rollQ.d = { t: 0, dur: ROLL.dur, ux, uy };
   P.inv = Math.max(P.inv, ROLL.dur + 0.1); P.atkTimer = -1; sfx('roll');
   if (gunFx.length < 80) gunFx.push({ k: 'roll', x: P.x, y: P.y, t: 0, life: 0.35, f: P.face });
-  rollQ.first = false; gunDump();   // v8.97: 구를 때마다 (재장전 중이어도 즉시 장전) 6발 난사
+  rollQ.first = false; gunDump();   // v8.97: 구를 때마다 (재장전 중이어도 즉시 장전) 탄창 전부 난사
 }
 function gunDump() {   // v8.31 → v8.97: 구를 때마다 — 재장전 중이어도 즉시 장전하고 6발을 0.04초 간격으로 모두 쏜다 → 재장전
   if (!P.mag || P.reloadT > 0) { gunLoad(); P.reloadT = 0; }
@@ -759,8 +763,8 @@ function drawGunMag(x, y) {   // 머리 위 탄창: 남은 탄은 색깔대로 �
   if (P.reloadT > 0) {
     const w = 46, p = 1 - P.reloadT / (P.reloadMax || 1);
     ctx.fillStyle = 'rgba(10,4,8,0.8)'; ctx.fillRect(x - w / 2 - 1, y - 1, w + 2, 6); ctx.fillStyle = '#ffd27a'; ctx.fillRect(x - w / 2, y, w * p, 4);
-  } else for (let i = 0; i < GUN.mag; i++) {
-    const k = P.mag[i], used = i < P.magI, bx = x - 25 + i * 9;
+  } else for (let i = 0, n = P.mag.length; i < n; i++) {
+    const k = P.mag[i], used = i < P.magI, bx = x - (n * 9 - 3) / 2 + i * 9;
     ctx.fillStyle = used ? 'rgba(40,30,36,0.7)' : `rgb(${GUN_AMMO[k].rgb})`; ctx.fillRect(bx, y - 2, 6, 7);
     if (!used) { ctx.fillStyle = 'rgba(255,255,255,0.55)'; ctx.fillRect(bx + 1, y - 1, 2, 2); }
   }
@@ -828,7 +832,7 @@ const uniqueSkill = () => (P.char === 'chimera' && P.route === 'dream') ? 'rush'
 const uniqueSkills = () => P.char === 'gun' ? ['roll'] : P.char === 'octo' ? [P.form >= 2 ? 'otent' : 'ele'] : P.char === 'ghost' ? (P.route === 'knight' ? (P.form >= 2 ? ['lhead'] : []) : [P.form >= 2 ? 'gsummon' : 'gcharge']) : P.char === 'lizard' ? [P.fin === 'guard' ? 'shell' : P.fin === 'water' ? 'tide' : 'rage'] : P.char === 'archer' ? (P.route === 'elf' && P.fin ? [P.fin === 'holy' ? 'holyshot' : 'bombshot'] : (P.route === 'skel' ? ['darkarrow'] : ['bigarrow', 'backdash'])) : [uniqueSkill()];
 const skillName = k => (k === 'blast' && P.char === 'snail' && P.form === 2) ? '맹독 대폭파' : (k === 'bigarrow' && P.route === 'skel') ? '해골 대궁의 일격' : SKILLS[k].name;
 const SKILLS = {
-  roll:   { name: '구르기', desc: '[악마처형자 전용] 4초 동안 짧게 3번 구를 수 있습니다 (SPACE를 다시 누를 때마다 한 번). 구를 때마다 (재장전 중이어도 즉시 장전해서) 탄창의 탄 6발을 짧은 간격으로 모두 쏘고 바로 재장전합니다. 구르는 동안 무적.', sub: '3회 · 4초 안에 다 쓰지 않으면 증발 · 구를 때마다 남은 탄 난사' },
+  roll:   { name: '구르기', desc: '[악마처형자 전용] 4초 동안 짧게 2번 구를 수 있습니다 (SPACE를 다시 누르면 한 번 더). 구를 때마다 (재장전 중이어도 즉시 장전해서) 탄창의 탄을 짧은 간격으로 모두 쏘고 바로 재장전합니다. 구르는 동안 무적.', sub: '2회 · 4초 안에 다 쓰지 않으면 증발 · 구를 때마다 남은 탄 난사' },
   cerb:   { name: '삼두 연쇄 물기', desc: '[삼두 전용] 세 머리가 가까운 적을 차례로 물어뜯습니다. 한 번마다 범위 피해와 강한 넉백, 둔화.', sub: '3연속 · 서로 다른 적 · 범위 피해' },
   drain:  { name: '피의 갈취', desc: '[혈랑 전용] 사방의 적에게서 피를 짜내 큰 피해를 주고, 맞힌 적 수만큼 체력을 회복합니다.', sub: '반경 400 · 적 1마리당 체력 +2% (최대 15%)' },
   bloodrain: { name: '신성한 피의 비', desc: '[성혈랑 전용] 3초 동안 성스러운 핏빛 기둥이 적들 위로 연달아 내리꽂히며, 명중할 때마다 체력을 조금 회복합니다. 맞은 적은 2초간 느려집니다.', sub: '기둥 16개 · 범위 피해 · 명중 시 회복 · 둔화' },
@@ -852,7 +856,7 @@ const SKILLS = {
   ele: { name: '코끼리 돌진', desc: '[문어 마법사 전용] 앞에 낡은 냉장고를 소환합니다. 문을 부수고 튀어나온 코끼리가 바라보는 방향(움직이는 중이면 그 방향, 위아래·대각선 포함)으로 곧게 돌진해 길 위의 적을 모두 짓밟고 크게 밀어냅니다.', sub: '직선 돌진 · 공격력의 520% · 강한 넉백' },
   otent: { name: '문어의 심연', desc: '[심연의 문어 대마법사 전용] 3초 동안 적들의 발밑에서 거대한 문어 다리가 연달아 솟아올라 마구 후려칩니다. 다리 하나가 두 번씩 때립니다.', sub: '문어 다리 14개 · 범위 피해 (공격력의 160% × 2)' },
   gcharge: { name: '차지 샷', desc: '[연보라 총령 전용] 총구에 빛을 모아 거대한 연보라 구슬을 쏩니다. 일직선의 모든 적을 꿰뚫고 크게 밀어냅니다.', sub: '관통 · 공격력의 550% · 강한 넉백' },
-  lhead: { name: '잃어버린 머리 소환', desc: '[듀라한 전용] 잃어버린 머리를 10초 동안 불러냅니다. 머리는 몸과 따로 날아다니며 보스(없으면 미니 보스 · 가장 가까운 적)를 쫓아가 0.6초마다 보라색 영혼 불꽃을 터뜨립니다. 화면 밖(내게서 최대 560)이나 맵 밖으로 나가지 않고, 적에게 닿으면 머리 체력이 깎여 다 닳으면 일찍 목으로 돌아옵니다.', sub: '10초 · 쿨 28초 · 보스 우선 추적 · 불꽃 반경 92 · 공격력의 110% · 머리 체력 = 내 최대 체력의 30%' },
+  lhead: { name: '잃어버린 머리 소환', desc: '[듀라한 전용] 잃어버린 머리를 10초 동안 불러냅니다. 머리는 몸과 따로 날아다니며 보스(없으면 미니 보스 · 가장 가까운 적)를 쫓아가 0.5초마다 보라색 영혼 불꽃을 터뜨립니다. 화면 밖(내게서 최대 560)이나 맵 밖으로 나가지 않고, 적에게 맞아도 사라지지 않으며 시간이 다 되면 목으로 돌아옵니다.', sub: '10초 · 쿨 28초 · 보스 우선 추적 · 불꽃 반경 92 · 공격력의 180%' },
   gsummon: { name: '수호령 소환', desc: '[수호령의 총령 전용] 수호령 4마리를 불러 12초 동안 몸 주위를 돌게 합니다. 수호령은 적의 공격을 한 번 대신 맞아 주고 (최대 체력의 8%까지 막음), 그 자리에서 터지며 주변 적에게 피해를 줍니다.', sub: '수호령 4마리 · 12초 · 피격 1회 대신 받기 · 폭발 (공격력의 280%)' },
   laser:  { name: '지옥 광선',   desc: '앞쪽으로 긴 광선을 쏘아 훑어버립니다.',          sub: '지속 1.5초 · 관통 · 틱 피해' },
   zone:   { name: '업화의 장판', desc: '발밑에 거대한 불길 지대를 깔아 적을 태우고 느리게 만듭니다.', sub: '7초 유지 · 지속 피해 + 둔화' },
@@ -887,7 +891,7 @@ function mkCanvas(w, h) { const c = document.createElement('canvas'); c.width = 
  * 0-1. 저장(영혼 조각 · 영구 강화 · 설정) / 캐릭터 목록 / 소리
  * ============================================================ */
 const SAVE_KEY = 'hellSurvivorSave1';
-const GAME_VER = 'v9.01';
+const GAME_VER = 'v9.02';
 const SAVE_DEF = () => ({
   shards: 0,
   perks: { hp: 0, spd: 0, dmg: 0, exp: 0, magnet: 0, banish: 0, revive: 0, regen: 0, shard: 0, critd: 0, choice: 0 },
@@ -957,7 +961,7 @@ const CHARS = {
   twins: { role: '기동형 사슬 근접', weak: '멈추면 딜이 안 나온다 (자동 공격 없음)', name: '사슬 악마', price: 0, cond: '벨리아·셀리아 둘 다 처치하면 해금', desc: '부서진 사슬을 쥔 작고 불완전한 악마.<br>직접 공격하지 않고, 움직일수록 사슬 끝 창날이 휘둘리며 적을 친다. 창날은 적 최대 체력 비례 추가 피해도 준다.', ally: '특징: 자동 공격 없음 · 이속이 곧 공격력 · Lv.10 사슬 두 가닥 + 스킬' },
   ghost: { role: '부채꼴 다발 사격', weak: '구슬 하나하나가 약하고 멀면 약하다', name: '연보라 구슬 유령', price: 0, cond: '지하 2층 이상의 마왕을 쓰러뜨리면 10% 확률로 떨어지는 [보라구슬]을 먹는다', desc: '저승의 기운이 맺힌 연보라 구슬을 앞쪽으로 흩뿌리는 유령.<br>구슬 하나는 약하지만 여러 개가 한꺼번에 날아간다.<br>Lv.10 갈림길: 연보라 총령 (큰 구슬 · 차지 샷) → Lv.20 수호령의 총령 (대신 맞고 터지는 수호령)<br>또는 유령 기사 (근접 사브르 · 회피) → Lv.20 듀라한 (잃어버린 머리 소환)', ally: '특징: 부채꼴 다발 사격 · 가까울수록 많이 맞힌다 · (진화는 아직 없음)' },
   octo: { role: '직선 마법 · 구체 성장형', weak: '직선 탄이라 빗나가기 쉽고 초반이 약하다', name: '문어 마법사', price: 0, hidden: true, cond: '지하 3층 이상에서 나오는 히든 마물 [문어 마법사]를 쓰러뜨리면 해금', desc: '책과 등불을 든 어린 문어 마법사.<br>곧게 날아가는 마법탄을 쏘고, 증강(스킬 카드)을 고를 때마다 몸 주위를 도는 마력 구체가 하나씩 늘어난다.', ally: '특징: 구체가 점점 늘어남 · Lv.10 진화 + 스킬 [코끼리 돌진] · Lv.20 스킬이 [문어의 심연]으로 바뀜' },
-  gun: { role: '한 발이 강한 리볼버 (보스에 강함)', weak: '느리고 체력이 낮다 · 몹 무리에 약하다', name: '악마 총잡이', price: 0, cond: '지하 6층 마왕을 쓰러뜨리면 해금', desc: '아무것도 기억하지 못하는 어린 악마. 리볼버 6발을 한 발씩 쏘고, 다 쓰면 1초 동안 재장전한다.<br>재장전할 때마다 탄 6발이 무작위로 정해진다: 일반탄 55% · 도탄 25%(튕김 · 피해 80%) · 불씨탄 15%(2배 · 관통 · 화상) · 공포탄 5%(꽝).<br>Lv.10 지옥의 무법자 → Lv.20 악마처형자 (스킬 [구르기])', ally: '특징: 한 발이 강한 원거리 · 탄 운 · Lv.20 스킬 구르기 3회' },
+  gun: { role: '한 발이 강한 리볼버 (보스에 강함)', weak: '느리고 체력이 낮다 · 몹 무리에 약하다', name: '악마 총잡이', price: 0, cond: '지하 6층 마왕을 쓰러뜨리면 해금', desc: '아무것도 기억하지 못하는 어린 악마. 리볼버 6발을 한 발씩 쏘고, 다 쓰면 1초 동안 재장전한다.<br>재장전할 때마다 탄 6발이 무작위로 정해진다: 일반탄 55% · 도탄 25%(튕김 · 피해 80%) · 불씨탄 15%(2배 · 관통 · 화상) · 공포탄 5%(꽝).<br>Lv.10 지옥의 무법자 → Lv.20 악마처형자 (스킬 [구르기])', ally: '특징: 한 발이 강한 원거리 · 탄 운 · Lv.20 스킬 구르기 2회' },
 };
 
 /* ---------- 소리 (파일 없이 WebAudio로 합성) ---------- */
@@ -1343,7 +1347,7 @@ const GMAP = { s: 3, iw: 932, ih: 970,
   start: [467, 854], cx: 462, cy: 434, bx: 462, by: 374, exitY: 914, itemY: 814, skp: [[292, 434], [632, 434], [462, 304]] };
 { const k = GMAP.s; GMAP.w = Math.round(GMAP.iw * k); GMAP.h = Math.round(GMAP.ih * k); GMAP.poly = GMAP.poly.map(([x, y]) => [x * k, y * k]); GMAP.skp = GMAP.skp.map(([x, y]) => [x * k, y * k]);
   for (const f of ['cx', 'cy', 'bx', 'by', 'exitY', 'itemY']) GMAP[f] *= k; GMAP.start = GMAP.start.map(v => v * k); }
-const BM = () => arena && arena.gard ? GMAP : arena && arena.sea ? SMAP : MMAP;   // 지금 쓰는 층 세트의 보스맵 (버섯 / 어인섬)
+const BM = () => arena && arena.ice ? IMAP : arena && arena.gard ? GMAP : arena && arena.sea ? SMAP : MMAP;   // 지금 쓰는 층 세트의 보스맵 (버섯 / 어인섬)
 let SMS = null;
 function smapS() { if (SMS) return SMS; SMS = mkCanvas(SMAP.w, SMAP.h); const g = SMS.getContext('2d'); g.imageSmoothingEnabled = true; g.imageSmoothingQuality = 'high'; g.drawImage(IMG.smap, 0, 0, SMAP.w, SMAP.h); return SMS; }
 const AMC = () => arena && arena.mush ? BM() : AMAP;   // 타락천사 위치 계산의 기준 맵
@@ -1390,7 +1394,7 @@ function clearField() {   // 마왕전 입장처럼 맵을 옮길 때: 필드의
   admFx = []; admBalls = []; admAnc = null; admPull = null; admDeath = null;   // v8.40 썩어버린 해군 제독
   QNW.spores = []; QNW.roots = []; QNW.pools = []; QNW.fx = []; QNW.pollen = null; QNW.death = null; qn = null; if (P) P.bindT = 0;   // v8.63 여왕
   VFW.spores = []; VFW.hearts = []; VFW.traps = []; VFW.fx = []; VFW.wave = null; VFW.fog = null; VFW.death = null; vf = null; if (P) { P.charmT = 0; P.bleedT = 0; }   // v8.70 파리지옥 마왕
-  kgClear(); KGW.fx = []; KGW.death = null; grnClear();   // v8.80 타락한 어인왕 · v8.87 영원의 온실주
+  kgClear(); KGW.fx = []; KGW.death = null; grnClear(); pbClear(); PBW.fx = []; PBW.death = null;   // v8.80 타락한 어인왕 · v8.87 영원의 온실주 · v9.02 백곰 마왕
   mini = null; mdeath = null; enemies = []; orbs = []; items = []; zones = []; shards = []; globs = []; beam = null; meteorQ = null; cerbQ = null; rainQ = null; bigQ = null; darkQ = null; dashQ = null; ebul = []; airs = []; diveQ = null; breathQ = null; rushQ = null; bombQ = null; holyQ = null; afx = []; bombT = []; slots = []; lasers = []; udeath = []; bsig = null; cutSaws = []; plBalls = []; fwFx = []; fwd = null; anOrbs = []; anFx = []; gunFx = []; rollQ = null; gunDq = null;
 }
 function enterArena() {
@@ -1399,7 +1403,8 @@ function enterArena() {
     const sealed = P.exitLeft <= 0, an = P.bossK === 'angel';
     arena = an ? { sealed, hold: 0, k: 'angel' } : { sealed, hold: 0 }; if (castle) castle.force = 0;
     const bset = P.fset === 'ice' ? (BR_SET[P.bossK] || 'hell') : P.fset;   // v8.99 팔한지옥: 보스방은 그 마왕이 원래 싸우던 맵
-    if (bset === 'gard' && IMG.gmap) { arena.mush = true; arena.gard = true; } else if (bset === 'sea' && IMG.smap) { arena.mush = true; arena.sea = true; } else if (bset === 'mush' && IMG.mmap) arena.mush = true;   // v6.52: 지하 6~10층은 마왕 4종 모두 버섯 보스맵   // v6.30: 타락천사는 전용 보스맵
+    if (bset === 'ice') { arena.mush = true; arena.ice = true; }   // v9.02 백곰 마왕: 빙결 투기장
+    else if (bset === 'gard' && IMG.gmap) { arena.mush = true; arena.gard = true; } else if (bset === 'sea' && IMG.smap) { arena.mush = true; arena.sea = true; } else if (bset === 'mush' && IMG.mmap) arena.mush = true;   // v6.52: 지하 6~10층은 마왕 4종 모두 버섯 보스맵   // v6.30: 타락천사는 전용 보스맵
     clearField();
     const S0 = arena.mush ? BM().start : an ? AMAP.start : ARENA.start; P.x = S0[0]; P.y = S0[1]; cam.x = P.x; cam.y = P.y - 20; placeAllies();
     P.hp = P.max; P.healBank = P.max * 0.12;   // 마왕전은 체력을 가득 채우고 시작한다
@@ -1408,6 +1413,7 @@ function enterArena() {
     if (boss && boss.bk === 'skel') tx += '\n스켈레톤 마왕: 정면에 서 있으면 대검으로 내려찍는다 · 체력 66%·33%에 결계(무적) · 첨탑 20초 방치 시 체력 15% 회복 · 해골 전사 2마리 소환';
     if (boss && boss.bk === 'shk') tx += '\n거대 버섯마귀: 바닥에 그림자가 생기면 거대 포자가 떨어진다 (독 장판이 남는다) · 체력 75%·50%·25%에 버섯 군단 소환 — 다 잡을 때까지 받는 피해 -50%';
     if (boss && boss.bk === 'vft') tx += '\n파리지옥 마왕: 나에게 입힌 피해만큼 체력을 흡혈한다 · 붉은 포자 = 부채꼴 다발(맞으면 출혈) · 하트 = 닿으면 매혹(보스 쪽으로 끌려감) · 붉은 원 = 내 이동 경로를 예측한 포식의 덫(멈추거나 방향을 바꾸기) · 해골은 달려와 자폭(붙기 전에 베기) · 체력 30% 끝없는 갈증(하트 파동은 밝은 통로로)';
+    if (boss && boss.bk === 'bear') tx += '\n팔한지옥의 백곰 마왕: 푸른 사각형 = 얼음 장벽(내 이동·투사체를 막는다) · 눈보라 = 바람에 밀리고 동상(100이면 1.5초 얼어붙음) — 장벽 뒤 바람 그늘로\n흰 균열 = 0.5초 뒤 솟는다(줄 사이로) · 체력 30%부터 당구공처럼 튕기는 빙산 돌진(하얀 점선이 앞으로 갈 길)';
     if (boss && boss.bk === 'kng') tx += '\n타락한 어인왕 (지하 20층 최종 마왕): 보스방이 물에 잠겨 산소가 계속 준다(0이면 초당 최대 체력 10%) — 빛나는 산소 간헐천 기둥 안에 서서 채우기\n물거울에 맞은 투사체는 나에게 되돌아온다(거울 사이 틈을 노리기) · 물줄기 사슬 = 반경 밖으로 나가면 체력 절반 · 파도 고리 = 바깥부터 조여 오니 어인왕 발밑 밝은 원으로 · 체력 30%에 해일 서핑(미끄러운 바닥 + 맵 끝~끝 돌진)';
     if (boss && boss.bk === 'qn') tx += '\n타락한 원예의 여왕 (지하 15층 최종 마왕): 초록 포자 = 쏘는 순간의 내 자리로 곧게(옆으로 비키기 · 맞으면 잠깐 둔화) · 붉은 원 = 뿌리가 솟을 자리(묶이면 1.5초 이동 불가)\n초록 원 = 산성액이 떨어질 자리(독 웅덩이 + 포자 주머니: 5초 뒤 폭발 — 부수면 안 터진다) · 체력 30%에 매혹의 꽃가루(시야가 좁아지고 식인 버섯이 끝없이)';
     if (boss && boss.bk === 'adm') tx += '\n썩어버린 해군 제독: 가까이 붙으면 닻을 빠르게 후려친다(한 번 피하고 다시 붙기) · 파란 줄 = 닻(맞으면 기절 + 끌려감) · 파란 원 = 포탄이 떨어질 자리 · 유령 함포는 부술 수 있다 · 체력 60%에 어인 수병 · 30%에 발악(함포 6문 일제 사격)';
@@ -1703,6 +1709,7 @@ function spawnBoss() {
   if (P.bossK === 'qn') initQnBoss(boss);   // v8.63 타락한 원예의 여왕
   if (P.bossK === 'vft') initVfBoss(boss);   // v8.70 파리지옥 마왕
   if (P.bossK === 'kng') initKgBoss(boss);   // v8.80 타락한 어인왕
+  if (P.bossK === 'bear') initBearBoss(boss);   // v9.02 팔한지옥의 백곰 마왕
   if (P.bossK === 'eye') { boss.bk = 'eye'; boss.hp *= EYE.hp; boss.max *= EYE.hp; boss.r = 72; boss.n = 0; boss.k = ''; boss.emT = 0; boss.ang = 0; boss.side = 1; boss.sideT = 4; boss.glow = 0; }
   chBossHp(boss); if (chal && !arena) chFieldPlace(boss); enemies.push(boss);
   if (P.pet) { const q = P.pet; q.hp = q.max; q.down = false; q.act = null; q.inv = 0; q.intro = 0; q.cd1 = 1.2; q.cd2 = 4; q.cd3 = 7; }   // 마왕전: 동료 체력이 가득 찬 채로 시작
@@ -1806,7 +1813,7 @@ function updateBoss(e, dt) {
   if (e.bk === 'ab') { updateAbBoss(e, dt); return; }
   if (e.bk === 'grn') { updateGrnBoss(e, dt); return; }
   if (e.ex === undefined) tierExInit(e);
-  if (!(e.bk === 'tox' && (toxFog || e.st === 'collapse')) && !(e.bk === 'adm' && (e.st === 'frenzy' || admPull || admNC() >= 5)) && !(e.bk === 'qn' && (e.ph2 || e.st === 'intro' || P.bindT > 0 || QNW.roots.some(r => r.pending))) && !(e.bk === 'kng' && (e.ph2 || e.st === 'intro' || e.st === 'tide' || KGW.tether || KGW.ring || e.st === 'charge' || e.st === 'dash')) && !(e.bk === 'vft' && (e.st === 'intro' || e.st === 'thirst' || VFW.wave || P.charmT > 0 || VFW.traps.some(t => t.combo)))) tierEx(e, dt);   // v8.63 여왕: 2페이즈·묶인 중·뿌리 예고 중에는 추가 패턴을 멈춘다 (규칙 9)   // v8.40: 제독 발악 포효·끌려가는 중·함포 5문 이상이면 멈춘다 (규칙 9)   // v8.20: 독 안개(이속 -50%)·붕괴 중에는 난이도 추가 패턴을 멈춘다 (규칙 9)
+  if (!(e.bk === 'tox' && (toxFog || e.st === 'collapse')) && !(e.bk === 'adm' && (e.st === 'frenzy' || admPull || admNC() >= 5)) && !(e.bk === 'qn' && (e.ph2 || e.st === 'intro' || P.bindT > 0 || QNW.roots.some(r => r.pending))) && !(e.bk === 'kng' && (e.ph2 || e.st === 'intro' || e.st === 'tide' || KGW.tether || KGW.ring || e.st === 'charge' || e.st === 'dash')) && !(e.bk === 'bear' && pbExPause(e)) && !(e.bk === 'vft' && (e.st === 'intro' || e.st === 'thirst' || VFW.wave || P.charmT > 0 || VFW.traps.some(t => t.combo)))) tierEx(e, dt);   // v8.63 여왕: 2페이즈·묶인 중·뿌리 예고 중에는 추가 패턴을 멈춘다 (규칙 9)   // v8.40: 제독 발악 포효·끌려가는 중·함포 5문 이상이면 멈춘다 (규칙 9)   // v8.20: 독 안개(이속 -50%)·붕괴 중에는 난이도 추가 패턴을 멈춘다 (규칙 9)
   if (e.bk === 'eye') { updateEyeBoss(e, dt); return; }
   if (e.bk === 'fw') { updateFwBoss(e, dt); return; }
   if (e.bk === 'skel') { updateSkBoss(e, dt); return; }
@@ -1817,6 +1824,7 @@ function updateBoss(e, dt) {
   if (e.bk === 'qn') { updateQnBoss(e, dt); return; }
   if (e.bk === 'vft') { updateVfBoss(e, dt); return; }
   if (e.bk === 'kng') { updateKgBoss(e, dt); return; }
+  if (e.bk === 'bear') { updateBearBoss(e, dt); return; }
   e.t += dt; e.flash = Math.max(0, e.flash - dt); e.swing = Math.max(0, e.swing - dt);
   if (state !== 'play' || trans) return;
   if (!e.rage && e.hp <= e.max * (P.tier >= 3 ? 0.6 : 0.5) && e.st !== 'roar') {   // 체력 절반: 분노 전환
@@ -2856,7 +2864,7 @@ function drawShkDeath(m, x, y) {
    시트(tox): tools/atlas/tox_build.py · 원본은 정면(걷기·공격은 오른쪽) · 도트가 거칠어서 부드럽게 1.8배 */
 const TOXF = {"idle":[[0,0,115,79,56,79],[117,0,105,79,48,79],[224,0,112,88,52,88],[338,0,97,79,44,79],[437,0,114,79,55,79],[553,0,108,74,49,74],[663,0,103,88,47,88]],"walk":[[768,0,113,84,55,84],[883,0,100,84,45,84],[0,90,101,82,46,82],[103,90,107,83,47,83],[212,90,106,83,52,83],[320,90,116,83,58,83],[438,90,129,96,64,96]],"atk":[[569,90,106,91,54,91],[677,90,87,90,40,90],[766,90,124,94,61,94],[892,90,75,96,36,96]],"cast":[[0,188,153,85,75,85],[155,188,123,85,56,85],[280,188,101,83,50,83],[383,188,126,83,64,83],[511,188,126,81,65,81],[639,188,131,60,64,60]],"melt":[[772,188,164,81,87,81],[0,275,110,81,54,81],[112,275,100,63,50,63],[214,275,115,83,57,83],[331,275,106,80,52,80],[439,275,61,58,30,58],[502,275,112,64,51,64]],"ball":[[616,275,56,36,28,18]],"splash":[[674,275,110,91,59,91],[786,275,100,92,49,92],[888,275,83,92,42,92]],"pool":[[0,369,105,46,52,23],[107,369,129,46,64,23],[238,369,113,45,56,22]],"pbig":[[353,369,38,32,19,16]],"swamp":[[393,369,220,77,110,38]],"rise":[[615,369,175,111,84,111]],"mini":[[792,369,57,66,32,66],[851,369,45,65,19,65],[898,369,69,61,38,61],[0,482,80,56,30,56],[82,482,60,74,11,74],[144,482,78,74,31,74],[224,482,86,68,44,68],[312,482,117,69,60,69],[431,482,110,67,56,67],[543,482,90,64,43,64]],"core":[[635,482,59,67,30,34],[696,482,86,67,43,34],[784,482,90,73,45,36],[876,482,88,72,44,36],[0,558,96,72,48,36]]};
 const TOX = { hp: 1.1, dm: 1.1, s: 1.8, sp: 66, poolStep: 80, poolR: 62, poolLife: 28, poolMax: 16, poolDm: 15, throwR: 110, fl: 1.25, flFog: 1.65, gasCd: 15, fog: 7, fogAdds: 8, reflux: [0.7, 0.5], ph2: 0.25,
-  swampR: 235, swampDm: 30, coreR: 30, coreSp: 215, dashLen: 540, dashSp: 1150, mmMax: 14 };
+  swampR: 235, swampDm: 30, coreR: 30, coreSp: 245, dashLen: 600, dashSp: 1500, mmMax: 14 };   // v9.02 발악 강화: 핵심 포자 추적 215 → 245 · 돌진 속도 1150 → 1500 · 길이 540 → 600 (예고 시간은 그대로)
 const toxHit = d => bossHit(d * TOX.dm);
 let toxFx = [], toxFl = [], toxFog = null;   // 이펙트 · 날아가는 살점 · 독 안개 { t, dur, w: 소환 시각들 }
 const toxM = () => (1 - 0.04 * TP()) / bossTempo();   // 패턴 빠르기 (5단계에서 멈춤 → 규칙 9)
@@ -3012,10 +3020,10 @@ function updateToxBoss(e, dt) {
       if (!ok || e.dgo >= TOX.dashLen) {
         e.dn++; const low = e.hp <= e.max * 0.12;   // 체력 12% 아래: 두 번 연속 돌진
         if (low && e.dn % 2 === 1) { e.st = 'aim'; e.stT = 0.85 * m; e.tele.push({ k: 'rect', x: e.x, y: e.y, ang: Math.atan2(P.y - e.y, P.x - e.x), len: TOX.dashLen + 40, w: 76, t: 0, dur: 0.85 * m, aim: 0.3 * m, done: false, rgb: '255,60,140' }); }
-        else { e.st = 'rest'; e.stT = 0.7 * m; }
+        else { e.st = 'rest'; e.stT = 0.55 * m; }
       }
       break; }
-    case 'rest': if (e.stT <= 0) { e.st = 'cchase'; e.stT = (0.8 + rand() * 0.6) * m; } break;
+    case 'rest': if (e.stT <= 0) { e.st = 'cchase'; e.stT = (0.6 + rand() * 0.5) * m; } break;
   }
   if (!e.ph2) {   // 1. 부패하는 육신: 움직인 거리마다 웅덩이
     e.mv += Math.hypot(e.x - e.lx, e.y - e.ly); if (e.mv >= TOX.poolStep) { e.mv = 0; toxPool(e.x, e.y + 6); }
@@ -3929,6 +3937,507 @@ function drawKgO2(bx, by, bw) {   // 산소 게이지 (화면 아래 가운데, 
   ctx.strokeStyle = '#bfefff'; ctx.lineWidth = 1; ctx.strokeRect(x - 0.5, y - 0.5, w + 1, 11);
   ctx.font = 'bold 12px "Malgun Gothic", sans-serif'; ctx.textAlign = 'left'; ctx.fillStyle = low ? '#ffb0a0' : '#dff6ff';
   ctx.textAlign = 'center'; ctx.strokeStyle = '#04101e'; ctx.lineWidth = 3; const tx = (q <= 0 ? '🫧 산소 부족! 초당 최대 체력 10% — 빛나는 간헐천으로' : '🫧 산소') + '  ' + Math.ceil(P.o2) + '%'; ctx.strokeText(tx, W / 2, y - 6); ctx.fillText(tx, W / 2, y - 6); ctx.restore();
+}
+/* ---------- v9.02 팔한지옥의 백곰 마왕 (지하 21층 100% · 22층 70% · 빙결 투기장 IMAP) ----------
+   상태 머신(PolarBearAI.update 의 switch): intro(대기) → chase(추적) ⇄ 순환 [wall 장벽 생성 → spear 빙창 → fissure 균열 → blizzard 눈보라] (각자 쿨타임)
+     · 가까이 붙으면 paw 곰발 후려치기(앞 부채꼴)가 순환보다 먼저 · 몸통 접촉 피해 · 쫄몹 소환 · 원형 장판 없음
+   A wall     : 영구 동토의 투기장 — 내 자리를 가운데로 육각형 얼음 장벽 6개(AABB)가 솟는다(0.9초 예고). 장벽은 내 이동을 막고, 내 투사체(탄·화살·에어슬래시…)와
+                백곰의 빙창도 닿는 즉시 사라진다. 6.5초 뒤 녹는다 · 안쪽은 약 350×300 (보스가 가까우면 쓰지 않는다)
+   B blizzard : 살을 에이는 눈보라 — 6.5초 동안 맵 전체에 한 방향 바람(초당 105px 밀림 · 가장 느린 캐릭터 이속 150보다 약해 버틸 수 있다) + 동상 게이지 초당 +16
+                · 얼음 장벽 바람 그늘(바람이 불어오는 쪽 190px 안에 장벽)에 서 있으면 밀리지 않고 동상도 오르지 않는다 · 100이면 1.5초 빙결(이동·공격·스킬 불가) → 3초 면역
+   C fissure  : 빙하 균열 쇄도 — 바닥을 내리쳐 백곰에게서 맵 끝까지 선분 균열 6줄(2페이즈 8줄, 한 줄은 내 쪽) → 0.5초 뒤 솟는다 (점과 선분 사이 거리로 판정 · 줄 사이는 안전)
+   D spear    : 빙창 투척 — 얼음 창 3개(2페이즈 5개)를 부채꼴로 · 장벽에 막힌다
+   E paw      : 곰발 후려치기 — 가까울 때 앞 부채꼴(0.6초 예고, 0.3초 동안 따라오다 고정)
+   체력 30% roar '폭주하는 빙산': 2.6초 무적 포효 → 2페이즈 순환 [pinball → fissure → wall(얼음 범퍼 4개) → spear → pinball → blizzard] · 쿨타임 ÷1.2
+     · pinball: 0.9초 조준(앞으로 튕길 길 2번까지 미리 표시) → 몸을 웅크린 빙산이 되어 초당 880px로 돌진, 투기장 벽·얼음 장벽에 닿으면 당구공처럼 속도 벡터를 반사해 계속 튕긴다
+       (6번 튕기거나 4.2초) → 1.6초 어지러움(멈춤) · 굴러가는 동안 앞으로 갈 길이 계속 보인다 (규칙 9) · 장벽은 두 번 부딪히면 깨진다
+   규칙 9: 장벽 안·빙결 중·눈보라·2페이즈에는 난이도 추가 패턴(tierEx)을 멈추고, 빙결 중에는 새 공격을 시작하지 않는다 (tools/tests/bear902.py)
+   그림: 아직 도트가 없어 코드 그림(bearArt, 저해상도 캔버스를 3배 nearest) — 도트가 오면 아틀라스로 바꾼다 */
+const PB = { hp: 1.45, dm: 1.0, sp: 52, r: 92, bump: 12,
+  wCd: 16, wWarn: 0.9, wLife: 6.5, wR: 230, wHits: 2, bumpN: 4, bumpLife: 10, bumpS: 120,
+  bzCd: 22, bzDur: 6.5, bzCast: 1.2, bzWind: 105, bzFrost: 16, bzDecay: 12, frz: 1.5, frzImm: 3, shade: 190,
+  fsCd: 9, fsN: 6, fsN2: 8, fsWarn: 0.5, fsW: 20, fsDm: 26, fsGap: 0.36,
+  spCd: 6.5, spN: 3, spN2: 5, spSpread: 0.26, spSp: 520, spR: 16, spDm: 14, spLife: 2.8,
+  pwR: 250, pwHalf: 0.85, pwWarn: 0.6, pwAim: 0.3, pwDm: 18, pwCd: 4.5,
+  ph2: 0.3, roar: 2.6, tempo: 1.2,
+  pbCd: 11, pbWarn: 0.9, pbSp: 880, pbDur: 4.2, pbBounce: 6, pbDm: 24, pbKnock: 190, pbDizzy: 1.6 };
+const PR_W = 18;   // 장벽에 부딪히는 내 몸 반지름
+/* 빙결 투기장 (지하 21~25층 백곰 마왕 전용 보스방): 팔한지옥 타일(ifloor)로 한 번만 그려 둔다. 팔각형 광장 + 아래 통로(출발·출구) */
+const IMAP = (() => {
+  const X0 = 200, X1 = 2600, Y0 = 260, Y1 = 1900, c = 240, cx0 = 1280, cx1 = 1520, Yb = 2300;
+  return { iw: 2800, ih: 2400, w: 2800, h: 2400, X0, X1, Y0, Y1, c,
+    poly: [[X0 + c, Y0], [X1 - c, Y0], [X1, Y0 + c], [X1, Y1 - c], [X1 - c, Y1], [cx1, Y1], [cx1, Yb], [cx0, Yb], [cx0, Y1], [X0 + c, Y1], [X0, Y1 - c], [X0, Y0 + c]],
+    start: [1400, 2080], cx: 1400, cy: 1080, bx: 1400, by: 760, exitY: 2180, itemY: 1880, skp: [[700, 1080], [2100, 1080], [1400, 520]] };
+})();
+let IMS = null;
+function imapS() {   // 바닥(타일 42px → 64px) · 광장 밖은 깊은 얼음 골짜기 · 가장자리에 얼음 소품
+  if (IMS) return IMS;
+  const M = IMAP, c = mkCanvas(M.w, M.h), g = c.getContext('2d');
+  const gr = g.createLinearGradient(0, 0, 0, M.h); gr.addColorStop(0, '#04070f'); gr.addColorStop(1, '#0a1428'); g.fillStyle = gr; g.fillRect(0, 0, M.w, M.h);
+  const path = () => { g.beginPath(); M.poly.forEach(([x, y], i) => i ? g.lineTo(x, y) : g.moveTo(x, y)); g.closePath(); };
+  g.save(); path(); g.clip(); g.imageSmoothingEnabled = true;
+  if (IMG.ifloor) for (let ty = 0; ty * TILE < M.h; ty++) for (let tx = 0; tx * TILE < M.w; tx++) {
+    g.drawImage(IMG.ifloor, iceTile(tx + 40, ty + 40) * 42, 0, 42, 42, tx * TILE, ty * TILE, TILE + 1, TILE + 1);   // 필드와 같은 바닥 배치
+  } else { g.fillStyle = '#9fc4e0'; g.fillRect(0, 0, M.w, M.h); }
+  g.fillStyle = 'rgba(6,10,26,0.12)'; g.fillRect(0, 0, M.w, M.h);
+  const rg = g.createRadialGradient(M.cx, M.cy, 200, M.cx, M.cy, 1500); rg.addColorStop(0, 'rgba(180,230,255,0.10)'); rg.addColorStop(1, 'rgba(10,20,50,0.35)'); g.fillStyle = rg; g.fillRect(0, 0, M.w, M.h);
+  g.restore();
+  g.save(); path(); g.lineWidth = 10; g.strokeStyle = '#d8f2ff'; g.stroke(); g.lineWidth = 4; g.strokeStyle = '#4a86c0'; g.stroke(); g.restore();   // 얼음 테두리
+  if (IMG.iprops) {   // 광장 바깥 가장자리를 따라 얼음 바위 · 고드름 (장식, 충돌 없음)
+    const B = [10, 11, 15, 16, 12, 13];
+    for (let i = 0; i < M.poly.length; i++) {
+      const [ax, ay] = M.poly[i], [bx, by] = M.poly[(i + 1) % M.poly.length], L = Math.hypot(bx - ax, by - ay), nx = (by - ay) / L, ny = -(bx - ax) / L;
+      if (ay >= M.Y1 && by >= M.Y1) continue;   // 아래 통로 쪽은 비운다
+      for (let s = 60; s < L - 60; s += 150 + hash2(i, s, 5) * 80) {
+        const id = B[(hash2(i, s, 9) * B.length) | 0], r = IPROP_RECTS[id], k = 1.3, x = ax + (bx - ax) * s / L - nx * 40, y = ay + (by - ay) * s / L - ny * 40;
+        g.drawImage(IMG.iprops, r[0], r[1], r[2], r[3], x - r[2] * k / 2, y - r[3] * k + 30, r[2] * k, r[3] * k);
+      }
+    }
+  }
+  IMS = c; return c;
+}
+function drawImap(cx, cy) { const M = imapS(), ox = Math.round(W / 2 - cx), oy = Math.round(H / 2 - cy), sx = Math.max(0, -ox), sy = Math.max(0, -oy), sw = Math.min(M.width - sx, W - Math.max(0, ox)), sh = Math.min(M.height - sy, H - Math.max(0, oy)); if (sw > 0 && sh > 0) ctx.drawImage(M, sx, sy, sw, sh, Math.max(0, ox), Math.max(0, oy), sw, sh); }
+const PBW = { walls: [], spears: [], fis: [], fx: [], bz: null, death: null, frost: 0, frzImm: 0, warn: 0 };   // 보스와 따로 움직이는 것들
+let pb = null;
+const pbOn = () => !!(boss && boss.bk === 'bear' && boss.hp > 0);
+const pbM = () => (1 - 0.04 * TP()) / bossTempo() / (boss && boss.ph2 ? PB.tempo : 1);   // 쿨타임 배율 (예고 시간에는 안 쓴다)
+const pbHit = d => bossHit(d * PB.dm);
+/* 점과 선분 사이의 거리 (빙하 균열 판정) */
+function segDist(px, py, ax, ay, bx, by) {
+  const vx = bx - ax, vy = by - ay, L2 = vx * vx + vy * vy || 1, t = clamp(((px - ax) * vx + (py - ay) * vy) / L2, 0, 1);
+  return Math.hypot(px - (ax + vx * t), py - (ay + vy * t));
+}
+/* 투기장 광장(팔각형)의 반평면들: 보스는 통로로 내려가지 않고, 핀볼 돌진은 여기서 반사된다 — n = 안쪽 법선, d = n·p ≥ d */
+function pbPlanes(m) {
+  const M = IMAP, s = Math.SQRT1_2;
+  return [[1, 0, M.X0 + m], [-1, 0, -(M.X1 - m)], [0, 1, M.Y0 + m], [0, -1, -(M.Y1 - m)],
+    [s, s, (M.X0 + M.Y0 + M.c) * s + m], [-s, s, (-M.X1 + M.Y0 + M.c) * s + m], [s, -s, (M.X0 - M.Y1 + M.c) * s + m], [-s, -s, (-M.X1 - M.Y1 + M.c) * s + m]];
+}
+function pbClampHall(e, m) {   // 광장 밖으로 나간 만큼 되돌리고, 부딪힌 면의 법선들을 돌려준다
+  const hit = [];
+  for (const [nx, ny, d] of pbPlanes(m)) { const v = e.x * nx + e.y * ny - d; if (v < 0) { e.x -= nx * v; e.y -= ny * v; hit.push([nx, ny]); } }
+  return hit;
+}
+/* ① 얼음 장벽 (AABB · 이동과 투사체를 막는다) */
+class IceWall {
+  constructor(x, y, w, h, life, bump) { this.x = x; this.y = y; this.w = w; this.h = h; this.t = 0; this.life = life; this.hits = 0; this.dead = false; this.bump = !!bump; this.seed = rand() * 100; this.flash = 0; }
+  get x0() { return this.x - this.w / 2; } get x1() { return this.x + this.w / 2; } get y0() { return this.y - this.h / 2; } get y1() { return this.y + this.h / 2; }
+  get up() { return Math.min(1, this.t / 0.25); }   // 솟아오르는 중 (0.25초)
+  has(px, py, pad) { return px > this.x0 - pad && px < this.x1 + pad && py > this.y0 - pad && py < this.y1 + pad; }
+  closest(px, py) { return [clamp(px, this.x0, this.x1), clamp(py, this.y0, this.y1)]; }
+  pushCircle(o, r) {   // 원(o.x, o.y, r)을 상자 밖으로 밀어낸다 → 밀어낸 방향 법선 (안 겹치면 null)
+    const [qx, qy] = this.closest(o.x, o.y); let dx = o.x - qx, dy = o.y - qy, d = Math.hypot(dx, dy);
+    if (d >= r) return null;
+    if (d < 1e-6) {   // 중심이 상자 안: 가장 가까운 면으로
+      const L = o.x - this.x0, R = this.x1 - o.x, T = o.y - this.y0, B = this.y1 - o.y, m = Math.min(L, R, T, B);
+      if (m === L) { o.x = this.x0 - r; return [-1, 0]; } if (m === R) { o.x = this.x1 + r; return [1, 0]; } if (m === T) { o.y = this.y0 - r; return [0, -1]; } o.y = this.y1 + r; return [0, 1];
+    }
+    dx /= d; dy /= d; o.x = qx + dx * r; o.y = qy + dy * r; return [dx, dy];
+  }
+  crack() { this.hits++; this.flash = 0.2; burst(this.x, this.y - 30, 14, ['#e6f8ff', '#9fd8ff', '#ffffff'], 260, 0.5); if (this.hits >= PB.wHits) { this.dead = true; burst(this.x, this.y - 30, 30, ['#e6f8ff', '#9fd8ff', '#3a78b0'], 380, 0.7); sfx('hit'); } }
+  update(dt) { this.t += dt; this.flash = Math.max(0, this.flash - dt); if (this.t >= this.life) { this.dead = true; burst(this.x, this.y - 30, 12, ['#cfefff', '#ffffff'], 160, 0.5); } }
+  draw(wx, wy) {   // 바닥 자리(AABB) 위로 얼음 덩어리가 솟는다
+    const x = wx(this.x0), y = wy(this.y0), w = this.w, h = this.h, H0 = 46 * this.up, end = this.life - this.t, a = end < 1.2 ? 0.5 + 0.5 * Math.sin(wallT * 16) : 1;
+    if (x > W + 40 || x + w < -40 || y - H0 > H + 40 || y + h < -120) return;
+    ctx.save(); ctx.globalAlpha = a;
+    ctx.fillStyle = 'rgba(0,10,30,0.35)'; ctx.fillRect(x + 6, y + 8, w, h);   // 그림자
+    ctx.fillStyle = '#5f9fd0'; ctx.fillRect(x, y - H0 + h, w, H0);   // 앞면
+    ctx.fillStyle = '#9fd8ff'; ctx.fillRect(x, y - H0, w, h);   // 윗면
+    ctx.fillStyle = 'rgba(230,248,255,0.7)'; ctx.fillRect(x + 4, y - H0 + 4, w - 8, 6);
+    ctx.strokeStyle = '#2a5a8c'; ctx.lineWidth = 2; ctx.strokeRect(x, y - H0, w, h + H0);
+    ctx.fillStyle = '#e6f8ff';   // 위에 솟은 얼음 결정
+    const n = Math.max(2, Math.round(w / 34));
+    for (let i = 0; i < n; i++) { const bx = x + (i + 0.5) * w / n, by = y - H0 + h * (0.3 + 0.4 * ((i * 7 + this.seed) % 3) / 2), hh = (18 + ((i * 13 + this.seed) % 17)) * this.up; ctx.beginPath(); ctx.moveTo(bx - 8, by); ctx.lineTo(bx, by - hh); ctx.lineTo(bx + 8, by); ctx.closePath(); ctx.fill(); }
+    if (this.hits) { ctx.strokeStyle = 'rgba(255,255,255,0.9)'; ctx.lineWidth = 1.5; ctx.beginPath(); ctx.moveTo(x + w * 0.3, y - H0); ctx.lineTo(x + w * 0.5, y + h * 0.5); ctx.lineTo(x + w * 0.4, y + h + 10); ctx.stroke(); }
+    if (this.flash > 0) { ctx.globalAlpha = this.flash * 3; ctx.fillStyle = '#ffffff'; ctx.fillRect(x, y - H0, w, h + H0); }
+    ctx.restore();
+  }
+}
+const pbWallAt = (x, y, pad) => PBW.walls.some(w => w.has(x, y, pad || 0));
+function pbWallPush() {   // 내 몸이 장벽에 들어가지 않게 (updateCastle에서 광장 판정 뒤에)
+  if (!PBW.walls.length) return;
+  for (let k = 0; k < 2; k++) for (const w of PBW.walls) w.pushCircle(P, PR_W);
+  if (!inPoly(P.x, P.y)) { const c = [IMAP.cx, IMAP.cy], d = Math.hypot(c[0] - P.x, c[1] - P.y) || 1; P.x += (c[0] - P.x) / d * 6; P.y += (c[1] - P.y) / d * 6; }
+}
+function pbWallBlock() {   // 장벽에 닿은 내 투사체는 바로 사라진다
+  if (!PBW.walls.length) return;
+  let ch = false;
+  for (const s of shards) { if (s.life <= 0 || s.bomb) continue; if (pbWallAt(s.x, s.y + 20, 4)) { s.life = 0; ch = true; if (fx.length < 600) burst(s.x, s.y, 4, ['#e6f8ff', '#9fd8ff'], 120, 0.3); } }
+  if (ch) shards = shards.filter(s => s.life > 0);
+  ch = false;
+  for (const s of airs) { if (s.life <= 0) continue; if (pbWallAt(s.x, s.y + 20, 4)) { s.life = 0; ch = true; if (fx.length < 600) burst(s.x, s.y, 5, ['#e6f8ff', '#9fd8ff'], 140, 0.3); } }
+  if (ch) airs = airs.filter(s => s.life > 0);
+}
+/* ② 동상 · 빙결 매니저 */
+const FrostMgr = {
+  add(v) { if (PBW.frzImm > 0 || P.frzT > 0) return; PBW.frost = Math.min(100, PBW.frost + v); if (PBW.frost >= 100) this.freeze(); },
+  freeze() {
+    PBW.frost = 0; PBW.frzImm = PB.frz + PB.frzImm; P.frzT = PB.frz; P.stunT = Math.max(P.stunT || 0, PB.frz);
+    floatNum(P.x, P.y - 116, '동상! 얼어붙었다', '#bfefff'); addRing(P.x, P.y - 34, 10, 90, 0.4, '200,240,255', 8); burst(P.x, P.y - 40, 24, ['#e6f8ff', '#9fd8ff', '#ffffff'], 240, 0.6); sfx('hurt'); shake = Math.max(shake, 6);
+  },
+  update(dt) {
+    PBW.frzImm = Math.max(0, PBW.frzImm - dt); if (P.frzT > 0) { P.frzT -= dt; if (P.frzT <= 0) { P.frzT = 0; burst(P.x, P.y - 40, 18, ['#e6f8ff', '#ffffff'], 260, 0.5); } }
+    if (!PBW.bz || PBW.bz.t < 0) PBW.frost = Math.max(0, PBW.frost - PB.bzDecay * dt);
+  },
+  locked() { return P.frzT > 0; },
+};
+function pbShade() {   // 바람 그늘: 바람이 불어오는 쪽으로 PB.shade 안에 장벽이 있으면
+  const B = PBW.bz; if (!B || !PBW.walls.length) return false;
+  for (let s = 0; s <= PB.shade; s += 15) if (pbWallAt(P.x - B.ux * s, P.y - B.uy * s, 6)) return true;
+  return false;
+}
+function pbWind(dt) {   // 눈보라 바람: 내 자리를 바람 방향으로 민다 (그늘이면 밀리지 않는다)
+  const B = PBW.bz; if (!B || B.t < 0 || !pbOn() || state !== 'play' || trans) return;
+  if (P.y > IMAP.Y1 - 60) { B.shade = false; return; }   // 아래 통로(출구)로는 밀지 않는다 — 바람에 떠밀려 보스방을 나가지 않게
+  const sh = pbShade(); B.shade = sh;
+  if (!sh && !(P.frzT > 0)) { P.x += B.ux * PB.bzWind * dt; P.y += B.uy * PB.bzWind * dt; FrostMgr.add(PB.bzFrost * dt); }
+}
+/* ③ 빙하 균열 (선분) */
+class Fissure {
+  constructor(x, y, ang, delay) {
+    this.ax = x; this.ay = y; this.ang = ang; this.t = -(delay || 0); this.done = false; this.dead = false;
+    let L = 80; const ux = Math.cos(ang), uy = Math.sin(ang); while (L < 3200 && inPoly(x + ux * (L + 30), y + uy * (L + 30))) L += 30;
+    this.bx = x + ux * L; this.by = y + uy * L; this.len = L; this.jag = []; for (let i = 0; i <= 12; i++) this.jag.push((rand() - 0.5) * 14);
+  }
+  update(dt) {
+    this.t += dt; if (this.t < 0) return;
+    if (!this.done && this.t >= PB.fsWarn) {
+      this.done = true; shake = Math.max(shake, 5); if (rand() < 0.5) sfx('boom');
+      if (state === 'play' && segDist(P.x, P.y, this.ax, this.ay, this.bx, this.by) < PB.fsW + 8 + PR() && !PBW.fsHit) { PBW.fsHit = true; pbHit(PB.fsDm); }
+      const p = P.pet; if (p && !p.down && segDist(p.x, p.y, this.ax, this.ay, this.bx, this.by) < PB.fsW + 6) petHurt(p, PB.fsDm);
+      for (let i = 0; i < 6; i++) { const s = rand(); burst(this.ax + (this.bx - this.ax) * s, this.ay + (this.by - this.ay) * s - 10, 3, ['#e6f8ff', '#9fd8ff', '#ffffff'], 160, 0.4); }
+    }
+    if (this.t >= PB.fsWarn + 0.45) this.dead = true;
+  }
+  path(sx, sy) {   // 들쭉날쭉한 균열 (moveTo · lineTo)
+    const n = this.jag.length - 1, nx = -Math.sin(this.ang), ny = Math.cos(this.ang);
+    ctx.beginPath(); ctx.moveTo(sx(this.ax), sy(this.ay));
+    for (let i = 1; i <= n; i++) { const s = i / n, j = i === n ? 0 : this.jag[i]; ctx.lineTo(sx(this.ax + (this.bx - this.ax) * s + nx * j), sy(this.ay + (this.by - this.ay) * s + ny * j)); }
+  }
+  draw(wx, wy) {
+    if (this.t < 0) return;
+    if (!this.done) {   // 경고: 균열이 빠르게 뻗어 나간 뒤 깜빡인다
+      const grow = Math.min(1, this.t / 0.15), pu = 0.5 + 0.5 * Math.sin(wallT * 30), sx = wx, sy = wy;
+      ctx.save(); ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+      if (grow < 1) { const ox = this.bx, oy = this.by; this.bx = this.ax + (ox - this.ax) * grow; this.by = this.ay + (oy - this.ay) * grow; this.path(sx, sy); this.bx = ox; this.by = oy; } else this.path(sx, sy);
+      ctx.strokeStyle = `rgba(90,190,255,${0.25 + 0.15 * pu})`; ctx.lineWidth = (PB.fsW + 8) * 2; ctx.stroke();
+      ctx.strokeStyle = `rgba(230,250,255,${0.75 + 0.25 * pu})`; ctx.lineWidth = 3; ctx.stroke(); ctx.restore();
+    } else {   // 솟아오른 얼음 가시 줄
+      const p = (this.t - PB.fsWarn) / 0.45, ux = Math.cos(this.ang), uy = Math.sin(this.ang), hgt = 70 * Math.sin(Math.min(1, p * 1.6) * Math.PI);
+      ctx.save(); ctx.globalAlpha = 1 - p * 0.6;
+      for (let s = 20; s < this.len; s += 34) {
+        const x = wx(this.ax + ux * s), y = wy(this.ay + uy * s); if (x < -60 || x > W + 60 || y < -100 || y > H + 60) continue;
+        const hh = hgt * (0.6 + 0.4 * Math.abs(Math.sin(s * 0.37)));
+        ctx.fillStyle = '#9fd8ff'; ctx.beginPath(); ctx.moveTo(x - 12, y); ctx.lineTo(x - 2, y - hh); ctx.lineTo(x + 12, y); ctx.closePath(); ctx.fill();
+        ctx.fillStyle = '#e6f8ff'; ctx.beginPath(); ctx.moveTo(x - 4, y); ctx.lineTo(x - 2, y - hh); ctx.lineTo(x + 3, y); ctx.closePath(); ctx.fill();
+      }
+      ctx.restore();
+    }
+  }
+}
+/* ④ 빙창 (장벽에 막힌다) */
+class IceSpear {
+  constructor(x, y, ang) { this.x = x; this.y = y; this.ang = ang; this.vx = Math.cos(ang) * PB.spSp; this.vy = Math.sin(ang) * PB.spSp; this.life = PB.spLife; this.dead = false; }
+  update(dt) {
+    this.x += this.vx * dt; this.y += this.vy * dt; this.life -= dt;
+    if (this.life <= 0 || !inPoly(this.x, this.y + 30)) { this.dead = true; return; }
+    if (pbWallAt(this.x, this.y + 30, 2)) { this.dead = true; burst(this.x, this.y, 8, ['#e6f8ff', '#9fd8ff'], 160, 0.35); return; }
+    const p = P.pet; if (p && !p.down && Math.hypot(p.x - this.x, p.y - 30 - this.y) < PB.spR + 16) { petHurt(p, PB.spDm); this.dead = true; return; }
+    if (state === 'play' && Math.hypot(P.x - this.x, P.y - 30 - this.y) < PB.spR + 12 + PR()) { pbHit(PB.spDm); this.dead = true; burst(this.x, this.y, 10, ['#e6f8ff', '#9fd8ff', '#ffffff'], 180, 0.35); }
+  }
+  draw(wx, wy) {
+    const x = wx(this.x), y = wy(this.y); if (x < -60 || x > W + 60 || y < -60 || y > H + 60) return;
+    ctx.save(); ctx.translate(x, y); ctx.rotate(this.ang);
+    ctx.globalCompositeOperation = 'lighter'; ctx.fillStyle = 'rgba(120,210,255,0.35)'; ctx.beginPath(); ctx.ellipse(-10, 0, 34, 10, 0, 0, 6.283); ctx.fill(); ctx.globalCompositeOperation = 'source-over';
+    ctx.fillStyle = '#9fd8ff'; ctx.beginPath(); ctx.moveTo(26, 0); ctx.lineTo(-22, -7); ctx.lineTo(-30, 0); ctx.lineTo(-22, 7); ctx.closePath(); ctx.fill();
+    ctx.fillStyle = '#ffffff'; ctx.beginPath(); ctx.moveTo(26, 0); ctx.lineTo(-10, -2); ctx.lineTo(-10, 2); ctx.closePath(); ctx.fill();
+    ctx.strokeStyle = '#2a5a8c'; ctx.lineWidth = 1.5; ctx.beginPath(); ctx.moveTo(26, 0); ctx.lineTo(-22, -7); ctx.lineTo(-30, 0); ctx.lineTo(-22, 7); ctx.closePath(); ctx.stroke();
+    ctx.restore();
+  }
+}
+/* 백곰 마왕 그림 (코드 그림 · 저해상도 캔버스를 3배 nearest — 도트를 받으면 아틀라스로 바꾼다) */
+const PB_ART = new Map(), PB_K = 3;
+function bearArt(pose, f) {   // 포즈 · 프레임 → 저해상도 캔버스 (오른쪽을 봄, 기준 = 발 가운데 (60, 92))
+  const key = pose + f; let c = PB_ART.get(key); if (c) return c;
+  c = mkCanvas(124, 96); const g = c.getContext('2d'), O = '#14243a';
+  const ell = (x, y, rx, ry, col, a) => { g.save(); g.translate(x, y); if (a) g.rotate(a); g.fillStyle = O; g.beginPath(); g.ellipse(0, 0, rx + 1.5, ry + 1.5, 0, 0, 6.283); g.fill(); g.fillStyle = col; g.beginPath(); g.ellipse(0, 0, rx, ry, 0, 0, 6.283); g.fill(); g.restore(); };
+  const spike = (x, y, w, h, col) => { g.fillStyle = O; g.beginPath(); g.moveTo(x - w - 1, y + 1); g.lineTo(x, y - h - 2); g.lineTo(x + w + 1, y + 1); g.closePath(); g.fill(); g.fillStyle = col; g.beginPath(); g.moveTo(x - w, y); g.lineTo(x, y - h); g.lineTo(x + w, y); g.closePath(); g.fill(); };
+  const legs = (sw) => { for (const [lx, ph] of [[34, 0], [46, 1], [70, 1], [82, 0]]) { const o = sw * (ph ? 1 : -1); g.fillStyle = O; g.fillRect(lx - 7 + o, 70, 14, 22); g.fillStyle = ph ? '#cfe0ea' : '#e8f2f7'; g.fillRect(lx - 6 + o, 70, 12, 20); g.fillStyle = '#8aa6bb'; g.fillRect(lx - 6 + o, 87, 12, 3); } };
+  if (pose === 'ball') {   // 웅크린 빙산 (핀볼 돌진)
+    const a = f * 0.8;
+    ell(60, 60, 34, 32, '#e8f2f7'); ell(60, 68, 30, 20, '#c6d8e4');
+    for (let i = 0; i < 8; i++) { const q = a + i * 0.785, x = 60 + Math.cos(q) * 30, y = 60 + Math.sin(q) * 28; spike(x, y, 5, 12, i % 2 ? '#9fd8ff' : '#e6f8ff'); }
+    g.fillStyle = '#ff3a4a'; g.fillRect(60 + Math.cos(a) * 14 - 2, 56 + Math.sin(a) * 10 - 2, 4, 4);
+    PB_ART.set(key, c); return c;
+  }
+  const rear = pose === 'cast' ? 1 : pose === 'roar' ? 0.7 : 0, slam = pose === 'slam' ? 1 : 0, sw = pose === 'walk' ? [0, 3, 0, -3][f % 4] : 0, bob = pose === 'idle' ? (f % 2) : 0;
+  g.save(); g.translate(60, 92);
+  if (rear) { g.translate(0, -6 * rear); g.rotate(-0.32 * rear); } if (slam) { g.translate(4, 4); g.rotate(0.12); }
+  g.translate(-60, -92 + bob);
+  if (!rear) legs(sw); else { g.fillStyle = O; g.fillRect(30, 66, 16, 26); g.fillRect(48, 66, 16, 26); g.fillStyle = '#e8f2f7'; g.fillRect(31, 67, 14, 24); g.fillRect(49, 67, 14, 24); }
+  ell(56, 56, 38, 24, '#e8f2f7'); ell(56, 64, 34, 14, '#c6d8e4');   // 몸통
+  for (const [x, y, w, h] of [[34, 38, 5, 14], [44, 33, 6, 18], [55, 33, 5, 15], [26, 44, 4, 10]]) spike(x, y, w, h, '#9fd8ff');   // 등의 얼음 갑옷
+  for (const [x, y, w, h] of [[45, 31, 2, 9], [55, 31, 2, 7]]) spike(x, y, w, h, '#ffffff');
+  const hx = 90 + (slam ? 4 : 0), hy = 40 + (slam ? 8 : 0);
+  ell(hx - 8, hy + 6, 14, 12, '#e8f2f7');   // 목
+  ell(hx, hy, 15, 13, '#f2f8fb'); ell(hx + 13, hy + 4, 9, 6, '#dde9f0');   // 머리 · 주둥이
+  ell(hx - 7, hy - 12, 4, 4, '#dde9f0'); ell(hx + 3, hy - 13, 4, 4, '#dde9f0');   // 귀
+  g.fillStyle = '#0a0a12'; g.fillRect(hx + 19, hy + 1, 4, 3);   // 코
+  g.fillStyle = '#ff2a3a'; g.fillRect(hx + 4, hy - 4, 4, 3); g.fillStyle = '#ffd0d4'; g.fillRect(hx + 5, hy - 4, 1, 1);   // 붉은 눈
+  if (pose === 'roar' || pose === 'slam') { g.fillStyle = '#3a0a14'; g.fillRect(hx + 10, hy + 7, 12, 4); g.fillStyle = '#ffffff'; g.fillRect(hx + 11, hy + 7, 2, 2); g.fillRect(hx + 19, hy + 7, 2, 2); }
+  for (const [x, w, h] of [[-9, 3, 9], [-3, 3, 12], [3, 3, 10]]) spike(hx + x, hy - 11, w, h, '#bfeaff');   // 고드름 왕관
+  if (rear) { ell(hx - 10, hy + 26, 7, 11, '#e8f2f7', -0.6); ell(hx - 2, hy + 20, 7, 10, '#e8f2f7', -0.9); spike(hx + 2, hy + 12, 2, 6, '#9fd8ff'); }   // 든 앞발
+  if (slam) { ell(hx + 6, 84, 10, 6, '#e8f2f7'); ell(hx - 8, 86, 10, 6, '#e8f2f7'); }
+  g.restore();
+  PB_ART.set(key, c); return c;
+}
+function drawBearBody(g, pose, f, x, y, face, alpha, white) {
+  const c = bearArt(pose, f), k = PB_K;
+  g.save(); g.imageSmoothingEnabled = false; if (alpha !== undefined) g.globalAlpha = clamp(alpha, 0, 1);
+  g.translate(Math.round(x), Math.round(y)); if (face < 0) g.scale(-1, 1);
+  g.drawImage(c, -60 * k, -92 * k, 124 * k, 96 * k);
+  if (white) { g.globalCompositeOperation = 'lighter'; g.globalAlpha = clamp(white, 0, 0.6); g.drawImage(c, -60 * k, -92 * k, 124 * k, 96 * k); }
+  g.restore();
+}
+/* 백곰 마왕 본체: 상태 머신 */
+class PolarBearAI {
+  constructor(e) {
+    this.e = e; this.cyc = ['wall', 'spear', 'fissure', 'blizzard']; this.ci = 0;
+    this.cd = { wall: 3, spear: 1.5, fissure: 4, blizzard: 9, paw: 2, pinball: 0 }; this.bump = 0; this.fired = false; this.pb = null;
+    if (e.bk !== 'bear') Object.assign(e, { bk: 'bear', r: PB.r, st: 'intro', stT: 2.4, an: 'idle', anT: 0, face: -1, moving: false, ph2: false, tele: [], vx: 0, vy: 0 });
+  }
+  go(st, stT, an) { const e = this.e; e.st = st; e.stT = stT; e.an = an || 'idle'; e.anT = 0; this.fired = false; }
+  chase(t) { this.go('chase', (t === undefined ? 0.9 : t) * pbM(), 'walk'); this.e.invul = false; }
+  next(d) {   // 순환: 차례인 패턴의 쿨타임이 돌았으면 시작 (아니면 다음 차례)
+    const e = this.e, k = this.cyc[this.ci], m = pbM();
+    this.ci = (this.ci + 1) % this.cyc.length;
+    if (this.cd[k] > 0 || P.frzT > 0) return;   // 얼어 있는 동안은 새 공격을 시작하지 않는다
+    if (k === 'wall') { if (!e.ph2 && d < PB.wR + PB.r + 140) return; this.go('wall', PB.wWarn, 'cast'); this.cd.wall = PB.wCd * m; this.wallTele(); floatNum(e.x, e.y - 300, e.ph2 ? '얼음 범퍼!' : '영구 동토의 투기장!', '#bfefff'); sfx('skill'); }
+    else if (k === 'spear') { this.go('spear', 0.55, 'cast'); this.cd.spear = PB.spCd * m; }
+    else if (k === 'fissure') { this.go('fissure', 0.45, 'cast'); this.cd.fissure = PB.fsCd * m; floatNum(e.x, e.y - 300, '빙하 균열 쇄도!', '#9fd8ff'); }
+    else if (k === 'blizzard') { if (PBW.bz) return; this.go('blizzard', PB.bzCast, 'roar'); this.cd.blizzard = PB.bzCd * m; this.blizzard(); }
+    else if (k === 'pinball') { if (PBW.bz) return; this.cd.pinball = PB.pbCd * m; this.pinAim(); }
+  }
+  wallSpots() {   // 1페이즈: 내 자리 둘레 육각형 6개 · 2페이즈: 투기장 곳곳에 범퍼 4개
+    const e = this.e, L = [];
+    if (!e.ph2) { const R = PB.wR; for (let i = 0; i < 6; i++) { const a = i * Math.PI / 3, side = i % 3 === 0; L.push([P.x + Math.cos(a) * R, P.y + Math.sin(a) * R, side ? 110 : 240, side ? 310 : 100]); /* 이웃 상자끼리 살짝 겹쳐 틈이 없다 */ } }
+    else for (let n = 0, tries = 0; n < PB.bumpN && tries < 60; tries++) {
+      const x = IMAP.X0 + 200 + rand() * (IMAP.X1 - IMAP.X0 - 400), y = IMAP.Y0 + 200 + rand() * (IMAP.Y1 - IMAP.Y0 - 400);
+      if (Math.hypot(x - P.x, y - P.y) < 260 || Math.hypot(x - e.x, y - e.y) < PB.r + 160 || L.some(q => Math.hypot(q[0] - x, q[1] - y) < 320)) continue;
+      L.push([x, y, PB.bumpS, PB.bumpS]); n++;
+    }
+    return L;
+  }
+  wallTele() {   // 예고: 솟을 자리에 푸른 사각형
+    const e = this.e; this.wq = this.wallSpots();
+    for (const [x, y, w, h] of this.wq) e.tele.push({ k: 'rect', x: x - w / 2, y, ang: 0, len: w, w: h, t: 0, dur: PB.wWarn, done: false, rgb: '150,220,255' });
+  }
+  wallRise() {
+    const e = this.e;
+    if (!e.ph2) PBW.walls = PBW.walls.filter(w => w.bump);   // 새 감옥을 세우면 예전 감옥은 녹는다
+    for (const [x, y, w, h] of this.wq || []) PBW.walls.push(new IceWall(x, y, w, h, e.ph2 ? PB.bumpLife : PB.wLife, e.ph2));
+    if (!e.ph2) { for (let k = 0; k < 3; k++) for (const w of PBW.walls) w.pushCircle(P, PR_W); banner = { txt: '백곰 마왕: 얼음 장벽에 갇혔다!  장벽은 이동과 투사체를 막는다 (6.5초 뒤 녹는다)\n눈보라가 불면 장벽 뒤(바람 그늘)에 숨으면 밀리지도 얼지도 않는다', t: 3.5, c: '#bfefff' }; }
+    shake = Math.max(shake, 8); sfx('boom'); this.wq = null;
+  }
+  spears() {
+    const e = this.e, n = e.ph2 ? PB.spN2 : PB.spN, ox = e.x + e.face * 60, oy = e.y - 150, base = Math.atan2(P.y - 30 - oy, P.x - ox);
+    for (let i = 0; i < n; i++) PBW.spears.push(new IceSpear(ox, oy, base + (i - (n - 1) / 2) * PB.spSpread));
+    sfx('shoot'); burst(ox, oy, 10, ['#e6f8ff', '#9fd8ff'], 200, 0.4);
+  }
+  fissures() {   // 내리친 자리에서 맵 끝까지 무작위 각도 선분 (한 줄은 내 쪽 · 줄 사이는 최소 fsGap 라디안)
+    const e = this.e, n = e.ph2 ? PB.fsN2 : PB.fsN, x = e.x + e.face * 70, y = e.y + 10, A = [Math.atan2(P.y - y, P.x - x) + (rand() - 0.5) * 0.12];
+    for (let tries = 0; A.length < n && tries < 200; tries++) { const a = rand() * 6.283; if (A.every(b => Math.abs(angDiff(a, b)) > PB.fsGap)) A.push(a); }
+    PBW.fsHit = false; for (const a of A) PBW.fis.push(new Fissure(x, y, a, 0));
+    if (e.ph2) { PBW.fs2 = 0.75; PBW.fsA = A; PBW.fsX = x; PBW.fsY = y; }   // 2페이즈: 0.75초 뒤 사이사이로 한 번 더
+    shake = Math.max(shake, 12); sfx('boom'); addRing(x, y, 10, 180, 0.35, '200,240,255', 10); burst(x, y - 10, 24, ['#e6f8ff', '#9fd8ff', '#ffffff'], 300, 0.5);
+  }
+  blizzard() {
+    const a = ((rand() * 8) | 0) * Math.PI / 4; PBW.bz = { t: -0.6, ux: Math.cos(a), uy: Math.sin(a), shade: false };
+    const dir = ['→', '↘', '↓', '↙', '←', '↖', '↑', '↗'][Math.round(a / (Math.PI / 4)) % 8];
+    banner = { txt: `백곰 마왕: 살을 에이는 눈보라! (${dir})  바람에 밀리고 동상 게이지가 오른다 — 100이면 1.5초 얼어붙음\n얼음 장벽 뒤 바람 그늘에 서 있으면 밀리지도 얼지도 않는다`, t: 4, c: '#e6f8ff' };
+    sfx('evolve'); shake = Math.max(shake, 6);
+  }
+  paw() {
+    const e = this.e; this.go('paw', PB.pwWarn + 0.25, 'slam'); this.cd.paw = PB.pwCd * pbM();
+    e.tele.push({ k: 'fan', x: e.x, y: e.y - 20, ang: Math.atan2(P.y - e.y, P.x - e.x), half: PB.pwHalf, len: PB.pwR, t: 0, dur: PB.pwWarn, aim: PB.pwAim, done: false, rgb: '150,220,255', fire: t => {
+      shake = Math.max(shake, 9); sfx('boom'); burst(t.x + Math.cos(t.ang) * 120, t.y + Math.sin(t.ang) * 120, 18, ['#e6f8ff', '#9fd8ff', '#ffffff'], 300, 0.5);
+      const dx = P.x - t.x, dy = P.y - t.y, d = Math.hypot(dx, dy);
+      if (state === 'play' && d < t.len + 8 + PR() && Math.abs(angDiff(Math.atan2(dy, dx), t.ang)) < t.half) pbHit(PB.pwDm);
+      const p = P.pet; if (p && !p.down && Math.hypot(p.x - t.x, p.y - t.y) < t.len && Math.abs(angDiff(Math.atan2(p.y - t.y, p.x - t.x), t.ang)) < t.half) petHurt(p, PB.pwDm);
+    } });
+  }
+  pinPath(x, y, vx, vy, L) {   // 앞으로 튕길 길 (투기장 벽 · 장벽 반사) — 예고선
+    const o = { x, y }, pts = [[x, y]], sp = Math.hypot(vx, vy) || 1; let ux = vx / sp, uy = vy / sp, b = 0;
+    for (let s = 0; s < L && b < 3; s += 20) {
+      o.x += ux * 20; o.y += uy * 20; let n = pbClampHall(o, PB.r * 0.75);
+      for (const w of PBW.walls) { const q = w.pushCircle(o, PB.r * 0.75); if (q) n.push(q); }
+      if (n.length) { for (const [nx, ny] of n) { const dt = ux * nx + uy * ny; if (dt < 0) { ux -= 2 * dt * nx; uy -= 2 * dt * ny; } } b++; pts.push([o.x, o.y]); }
+    }
+    pts.push([o.x, o.y]); return pts;
+  }
+  pinAim() {
+    const e = this.e; this.go('pbAim', PB.pbWarn, 'ball'); e.invul = false;
+    const a = Math.atan2(P.y - e.y, P.x - e.x); this.pb = { vx: Math.cos(a) * PB.pbSp, vy: Math.sin(a) * PB.pbSp, n: 0, hitCd: 0, t: 0 };
+    floatNum(e.x, e.y - 300, '폭주하는 빙산!', '#9fd8ff'); sfx('skill');
+  }
+  pinStep(dt) {   // 반사 돌진: 벽·장벽에 닿으면 속도 벡터를 법선으로 반사해 계속 튕긴다
+    const e = this.e, q = this.pb; q.t += dt; q.hitCd -= dt;
+    const steps = Math.ceil(Math.hypot(q.vx, q.vy) * dt / 20);
+    for (let i = 0; i < steps; i++) {
+      e.x += q.vx * dt / steps; e.y += q.vy * dt / steps;
+      const N = pbClampHall(e, PB.r * 0.75); let wl = null;
+      for (const w of PBW.walls) { const nn = w.pushCircle(e, PB.r * 0.75); if (nn) { N.push(nn); wl = w; } }
+      if (N.length) {
+        for (const [nx, ny] of N) { const d = q.vx * nx + q.vy * ny; if (d < 0) { q.vx -= 2 * d * nx; q.vy -= 2 * d * ny; } }
+        q.n++; shake = Math.max(shake, 7); sfx('hit'); burst(e.x, e.y - 60, 14, ['#e6f8ff', '#9fd8ff', '#ffffff'], 260, 0.45); addRing(e.x, e.y - 40, 10, 120, 0.3, '200,240,255', 8);
+        if (wl) wl.crack();
+      }
+    }
+    e.face = q.vx >= 0 ? 1 : -1; e.moving = true;
+    if (rand() < 0.7) burst(e.x - q.vx * 0.05, e.y - 20 - rand() * 60, 1, ['#e6f8ff', '#9fd8ff'], 80, 0.5);
+    if (q.hitCd <= 0 && state === 'play' && Math.hypot(P.x - e.x, (P.y - e.y) * 1.2) < PB.r * 0.8 + 14 + PR()) {
+      q.hitCd = 0.6; pbHit(PB.pbDm);
+      const dx = P.x - e.x, dy = P.y - e.y, dl = Math.hypot(dx, dy) || 1; for (let k = 0; k < 10; k++) { const nx = P.x + dx / dl * PB.pbKnock / 10, ny = P.y + dy / dl * PB.pbKnock / 10; if (inPoly(nx, ny) && !pbWallAt(nx, ny, PR_W)) { P.x = nx; P.y = ny; } else break; }
+    }
+    const p = P.pet; if (p && !p.down && Math.hypot(p.x - e.x, p.y - e.y) < PB.r) petHurt(p, PB.pbDm * 0.5);
+    return q.n >= PB.pbBounce || q.t >= PB.pbDur;
+  }
+  roar() {   // 체력 30%: 폭주하는 빙산 → 2페이즈
+    const e = this.e; e.ph2 = true; e.rage = true; e.tele = []; this.go('roar', PB.roar, 'roar'); e.invul = true;
+    this.cyc = ['pinball', 'fissure', 'wall', 'spear', 'pinball', 'blizzard']; this.ci = 0; this.cd.pinball = 0; this.cd.wall = 2; this.cd.blizzard = 10;
+    PBW.bz = null; PBW.walls = [];
+    addRing(e.x, e.y - 90, 20, 900, 1.2, '200,240,255', 18); burst(e.x, e.y - 120, 60, ['#e6f8ff', '#9fd8ff', '#ffffff', '#ff3a4a'], 440, 1.0); shake = 18; sfx('evolve');
+    banner = { txt: '백곰 마왕: 폭주하는 빙산!  몸을 웅크려 투기장 벽과 얼음 장벽에 당구공처럼 튕기며 돌진한다\n앞으로 튕길 길이 하얀 점선으로 보인다 — 다 튕기면 잠깐 어지러워한다', t: 6, c: '#bfefff' };
+  }
+  update(dt) {
+    const e = this.e;
+    e.t += dt; e.anT += dt; e.flash = Math.max(0, e.flash - dt);
+    if (state !== 'play' || trans) return;
+    for (const t of e.tele) {
+      t.t += dt; if (t.t < 0) continue;
+      if (t.aim && t.t < t.aim) { t.x = e.x; t.y = e.y - 20; t.ang = Math.atan2(P.y - t.y, P.x - t.x); }
+      if (!t.done && t.t >= t.dur) { t.done = true; if (t.fire) t.fire(t); }
+    }
+    e.tele = e.tele.filter(t => !(t.done && t.t >= t.dur + 0.15));
+    e.stT -= dt; this.bump -= dt; for (const k in this.cd) this.cd[k] -= dt; if (e.slowT > 0) e.slowT -= dt;
+    const dx = P.x - e.x, dy = P.y - e.y, d = Math.hypot(dx, dy) || 1;
+    if (!e.ph2 && e.st !== 'intro' && e.hp <= e.max * PB.ph2) { this.pb = null; this.roar(); return; }
+    const lock = e.st === 'pbAim' || e.st === 'pbDash' || e.st === 'pbDizzy' || e.st === 'paw';
+    if (!lock && Math.abs(dx) > 8) e.face = dx > 0 ? 1 : -1;
+    e.moving = false;
+    switch (e.st) {
+      case 'intro': e.invul = true; e.an = 'idle'; if (e.stT <= 0) this.chase(1.0); break;   // 대기
+      case 'chase': {   // 추적: 아주 묵직하고 느리다
+        const sp = PB.sp * (e.ph2 ? PB.tempo : 1) * (1 + (bossTempo() - 1) * 0.7) * (e.slowT > 0 ? 0.7 : 1);
+        if (d > e.r + 60) { const o = { x: e.x + dx / d * sp * dt, y: e.y + dy / d * sp * dt }; for (const w of PBW.walls) w.pushCircle(o, e.r * 0.75); pbClampHall(o, e.r * 0.75); e.moving = Math.hypot(o.x - e.x, o.y - e.y) > 0.01; e.x = o.x; e.y = o.y; }
+        e.an = e.moving ? 'walk' : 'idle';
+        if (d < PB.pwR - 30 && this.cd.paw <= 0 && !(P.frzT > 0)) { this.paw(); break; }   // 가까우면 곰발이 먼저
+        if (e.stT <= 0) this.next(d);
+        break; }
+      case 'wall': if (!this.fired && e.stT <= 0) { this.fired = true; this.wallRise(); e.stT = 0.4; } else if (this.fired && e.stT <= 0) this.chase(0.7); break;
+      case 'spear': if (!this.fired && e.stT <= 0) { this.fired = true; this.spears(); e.stT = 0.4; } else if (this.fired && e.stT <= 0) this.chase(0.6); break;
+      case 'fissure': if (!this.fired && e.stT <= 0) { this.fired = true; e.an = 'slam'; e.anT = 0; this.fissures(); e.stT = PB.fsWarn + 0.4; } else if (this.fired && e.stT <= 0) this.chase(0.6); break;
+      case 'blizzard': if (e.stT <= 0) this.chase(0.4); break;   // 포효한 뒤 눈보라는 따로 계속된다
+      case 'paw': if (e.stT <= 0) this.chase(0.5); break;
+      case 'roar': e.invul = true; if (e.stT <= 0) { e.invul = false; this.chase(0.4); } break;
+      case 'pbAim': if (e.stT <= 0) { this.go('pbDash', PB.pbDur + 0.5, 'ball'); sfx('skill'); } break;
+      case 'pbDash': if (this.pinStep(dt) || e.stT <= 0) { this.pb = null; this.go('pbDizzy', PB.pbDizzy, 'dizzy'); floatNum(e.x, e.y - 260, '어지러움!', '#fff2a0'); } break;
+      case 'pbDizzy': if (e.stT <= 0) this.chase(0.5); break;
+    }
+    if (PBW.fs2 !== undefined && PBW.fs2 > 0 && (PBW.fs2 -= dt) <= 0) {   // 2페이즈 균열 두 번째 물결 (앞 줄들 사이)
+      PBW.fsHit = false; for (const a of PBW.fsA) PBW.fis.push(new Fissure(PBW.fsX, PBW.fsY, a + PB.fsGap / 2 + 0.06, 0)); shake = Math.max(shake, 8); sfx('boom');
+    }
+    if (e.st !== 'intro' && e.st !== 'roar' && e.st !== 'pbDash' && d < e.r * 0.75 + 22 + PR() && this.bump <= 0 && !e.invul) { this.bump = 1.2; pbHit(PB.bump); }   // 몸통에 닿으면
+    if (rand() < dt * 4) burst(e.x + (rand() - 0.5) * 200, e.y - 40 - rand() * 180, 1, ['#e6f8ff', '#bfefff'], 40, 0.9);   // 냉기
+  }
+}
+function initBearBoss(b) { pbClear(); b.hp *= PB.hp; b.max *= PB.hp; b.x = IMAP.bx; b.y = IMAP.by; pb = new PolarBearAI(b); markDex('boss14', 1); }
+function updateBearBoss(e, dt) { if (!pb || pb.e !== e) pb = new PolarBearAI(e); pb.update(dt); }
+function pbClear() { PBW.walls = []; PBW.spears = []; PBW.fis = []; PBW.bz = null; PBW.frost = 0; PBW.frzImm = 0; PBW.fs2 = undefined; pb = null; if (P) P.frzT = 0; }
+function bearDefeated(e) { PBW.death = { x: e.x, y: e.y, t: 0, face: e.face }; pbClear(); PBW.fx = []; }
+function updateBearFx(dt) {
+  if (PBW.death && (PBW.death.t += dt) > 5) PBW.death = null;
+  if (!pbOn()) { if (PBW.walls.length || PBW.bz || PBW.spears.length || PBW.fis.length) pbClear(); return; }
+  FrostMgr.update(dt);
+  for (const w of PBW.walls) w.update(dt); PBW.walls = PBW.walls.filter(w => !w.dead);
+  for (const s of PBW.spears) s.update(dt); PBW.spears = PBW.spears.filter(s => !s.dead);
+  for (const f of PBW.fis) f.update(dt); PBW.fis = PBW.fis.filter(f => !f.dead);
+  const B = PBW.bz; if (B) { B.t += dt; if (B.t >= PB.bzDur) { PBW.bz = null; floatNum(P.x, P.y - 110, '눈보라가 그쳤다', '#e6f8ff'); } }
+  pbWallBlock();
+}
+const pbExPause = e => e.st === 'intro' || e.ph2 || PBW.walls.length > 0 || !!PBW.bz || P.frzT > 0 || PBW.fis.length > 0;   // 규칙 9: 장벽·눈보라·균열·빙결 중·2페이즈에는 난이도 추가 패턴을 멈춘다
+function drawBearBoss(e, x, y) {
+  ctx.fillStyle = 'rgba(0,10,30,0.4)'; ctx.beginPath(); ctx.ellipse(x, y - 2, 150, 32, 0, 0, 6.283); ctx.fill();
+  const a = e.anT, t = e.t; let pose = 'idle', f = Math.floor(t * 2);
+  if (e.an === 'walk') { pose = 'walk'; f = Math.floor(t * 6); }
+  else if (e.an === 'cast') pose = 'cast';
+  else if (e.an === 'roar') pose = 'roar';
+  else if (e.an === 'slam') pose = a < 0.4 ? 'cast' : 'slam';
+  else if (e.an === 'ball') { pose = 'ball'; f = Math.floor(t * (e.st === 'pbDash' ? 18 : 6)) % 8; }
+  else if (e.an === 'dizzy') pose = 'idle';
+  if (e.ph2) { ctx.save(); ctx.globalCompositeOperation = 'lighter'; const g = ctx.createRadialGradient(x, y - 130, 20, x, y - 130, 220); g.addColorStop(0, `rgba(160,220,255,${0.22 + 0.08 * Math.sin(wallT * 8)})`); g.addColorStop(1, 'rgba(60,140,255,0)'); ctx.fillStyle = g; ctx.fillRect(x - 230, y - 360, 460, 400); ctx.restore(); }
+  const sh = e.st === 'pbAim' ? Math.sin(wallT * 60) * 3 : 0;
+  drawBearBody(ctx, pose, f, x + sh, y, e.face, 1, e.flash > 0 && !e.invul ? e.flash * 3 : 0);
+  if (e.st === 'pbDizzy') { ctx.save(); ctx.fillStyle = '#fff2a0'; ctx.font = 'bold 22px sans-serif'; ctx.textAlign = 'center'; for (let i = 0; i < 3; i++) { const q = wallT * 4 + i * 2.09; ctx.fillText('★', x + Math.cos(q) * 60, y - 250 + Math.sin(q) * 14); } ctx.restore(); }
+}
+function drawBearFloor(wx, wy) {   // 바닥 층: 균열 · 내 뒤쪽 장벽 · 핀볼 예고선
+  if (!pbOn()) return;
+  for (const f of PBW.fis) f.draw(wx, wy);
+  for (const w of PBW.walls) if (w.y1 <= P.y) w.draw(wx, wy);
+  const e = boss;
+  if (pb && (e.st === 'pbAim' || e.st === 'pbDash') && pb.pb) {   // 앞으로 튕길 길 (규칙 9: 미리 보인다)
+    const q = pb.pb, pts = pb.pinPath(e.x, e.y, q.vx, q.vy, e.st === 'pbAim' ? 1600 : 1100);
+    ctx.save(); ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+    ctx.strokeStyle = `rgba(150,220,255,${e.st === 'pbAim' ? 0.22 : 0.14})`; ctx.lineWidth = PB.r * 1.5; ctx.beginPath(); pts.forEach(([x, y], i) => i ? ctx.lineTo(wx(x), wy(y)) : ctx.moveTo(wx(x), wy(y))); ctx.stroke();
+    ctx.strokeStyle = 'rgba(255,255,255,0.85)'; ctx.lineWidth = 3; ctx.setLineDash([16, 10]); ctx.lineDashOffset = -wallT * 60; ctx.stroke(); ctx.restore();
+  }
+}
+function drawBearTop(wx, wy) {
+  if (PBW.death) {   // 쓰러진 백곰: 얼음 조각으로 부서지며 사라진다
+    const q = PBW.death, al = q.t > 3.5 ? Math.max(0, 1 - (q.t - 3.5) / 1.5) : 1;
+    drawBearBody(ctx, q.t < 0.8 ? 'roar' : 'slam', 0, wx(q.x), wy(q.y) + Math.min(30, q.t * 20), q.face, al);
+    if (q.t < 2 && rand() < 0.5) burst(q.x + (rand() - 0.5) * 200, q.y - rand() * 200, 2, ['#e6f8ff', '#9fd8ff', '#ffffff'], 200, 0.6);
+  }
+  if (!pbOn()) return;
+  for (const w of PBW.walls) if (w.y1 > P.y) w.draw(wx, wy);
+  for (const s of PBW.spears) s.draw(wx, wy);
+}
+function drawBearScreen(wx, wy) {   // 화면 마지막 층(비네트 뒤): 냉기 · 눈보라 · 빙결
+  if (!pbOn()) return;
+  const B = PBW.bz;
+  ctx.save(); ctx.fillStyle = 'rgba(120,180,230,0.07)'; ctx.fillRect(0, 0, W, H);
+  if (B && B.t > -0.6) {
+    const a = Math.min(1, (B.t + 0.6) / 0.6) * (B.t > PB.bzDur - 0.8 ? Math.max(0, (PB.bzDur - B.t) / 0.8) : 1);
+    ctx.fillStyle = `rgba(230,245,255,${0.16 * a})`; ctx.fillRect(0, 0, W, H);
+    ctx.strokeStyle = `rgba(255,255,255,${0.5 * a})`; ctx.lineWidth = 2; ctx.beginPath();
+    for (let i = 0; i < 90; i++) { const sp = 600 + (i % 7) * 90, px = (((i * 397) + B.ux * wallT * sp) % (W + 200) + W + 200) % (W + 200) - 100, py = (((i * 263) + B.uy * wallT * sp + Math.sin(i) * 40) % (H + 200) + H + 200) % (H + 200) - 100, L = 18 + (i % 5) * 8; ctx.moveTo(px, py); ctx.lineTo(px - B.ux * L, py - B.uy * L); }
+    ctx.stroke();
+    ctx.fillStyle = `rgba(255,255,255,${0.75 * a})`; for (let i = 0; i < 70; i++) { const sp = 300 + (i % 5) * 70, px = (((i * 151) + B.ux * wallT * sp) % W + W) % W, py = (((i * 211) + B.uy * wallT * sp + wallT * 40) % H + H) % H; ctx.fillRect(px, py, 2 + (i % 2), 2 + (i % 2)); }
+    if (B.shade) { ctx.fillStyle = 'rgba(200,240,255,0.9)'; ctx.font = 'bold 14px "Malgun Gothic", sans-serif'; ctx.textAlign = 'center'; ctx.strokeStyle = '#04101e'; ctx.lineWidth = 3; ctx.strokeText('바람 그늘', wx(P.x), wy(P.y) - 130); ctx.fillText('바람 그늘', wx(P.x), wy(P.y) - 130); }
+  }
+  if (P.frzT > 0) {   // 얼음에 갇힌 나
+    const x = wx(P.x), y = wy(P.y); ctx.globalAlpha = 0.75; ctx.fillStyle = '#bfeaff'; ctx.fillRect(x - 34, y - 96, 68, 100); ctx.strokeStyle = '#ffffff'; ctx.lineWidth = 2; ctx.strokeRect(x - 34, y - 96, 68, 100);
+    ctx.beginPath(); ctx.moveTo(x - 20, y - 90); ctx.lineTo(x - 4, y - 50); ctx.lineTo(x - 14, y - 10); ctx.stroke(); ctx.globalAlpha = 1;
+  }
+  ctx.restore();
+  for (const f of PBW.fis) if (!f.done) f.draw(wx, wy);   // 균열 경고는 눈보라 속에서도 보이게 한 번 더
+}
+function drawBearFrost(bw) {   // 동상 게이지 (화면 아래 가운데, 스킬 칸 위)
+  if (!pbOn()) return;
+  if (!PBW.bz && PBW.frost <= 0 && !(P.frzT > 0)) return;
+  const w = Math.min(320, bw * 0.6), x = W / 2 - w / 2, y = H - 100, q = clamp(PBW.frost / 100, 0, 1), hi = q > 0.7, pu = 0.5 + 0.5 * Math.sin(wallT * 10);
+  ctx.save(); ctx.fillStyle = 'rgba(4,12,30,0.8)'; ctx.fillRect(x - 3, y - 3, w + 6, 16);
+  ctx.fillStyle = P.frzT > 0 ? '#ffffff' : hi ? `rgb(255,${Math.round(150 + 80 * pu)},${Math.round(200 + 55 * pu)})` : '#9fd8ff'; ctx.fillRect(x, y, w * (P.frzT > 0 ? 1 : q), 10);
+  ctx.strokeStyle = '#e6f8ff'; ctx.lineWidth = 1; ctx.strokeRect(x - 0.5, y - 0.5, w + 1, 11);
+  ctx.font = 'bold 12px "Malgun Gothic", sans-serif'; ctx.textAlign = 'center'; ctx.strokeStyle = '#04101e'; ctx.lineWidth = 3;
+  const tx = P.frzT > 0 ? '❄ 얼어붙음!' : '❄ 동상 ' + Math.floor(PBW.frost) + ' / 100' + (PBW.bz && PBW.bz.shade ? '  (바람 그늘)' : PBW.bz ? '  — 장벽 뒤로!' : '');
+  ctx.strokeText(tx, W / 2, y - 6); ctx.fillStyle = hi ? '#ffd0e0' : '#e6f8ff'; ctx.fillText(tx, W / 2, y - 6); ctx.restore();
+}
+function bearDexArt(g, w, h, l) {   // 도감 그림
+  const c = bearArt('idle', 0), k = Math.min((w - 4) / 124, (h - 4) / 96);
+  g.save(); g.imageSmoothingEnabled = false; g.drawImage(c, (w - 124 * k) / 2, h - 2 - 96 * k, 124 * k, 96 * k);
+  if (l) { g.globalCompositeOperation = 'source-atop'; g.fillStyle = '#0c0508'; g.fillRect(0, 0, w, h); }
+  g.restore();
 }
 /* ---------- v8.70 파리지옥 마왕 (지하 11층 100% · 12층 70% · 13층부터 다른 마왕과 균등 · 악마 식물원 보스맵) ----------
    상태 머신(VenusAI.update 의 switch): intro → chase ⇄ 순환 패턴 [A 붉은 포자 난사 → B 피의 유혹 → C 포식의 덫 → D 해골 토해내기] (각자 쿨타임)
@@ -4973,6 +5482,7 @@ function bossDefeated() {
   if (e.bk === 'qn') qnDefeated(e);   // v8.63
   if (e.bk === 'vft') vfDefeated(e);   // v8.70
   if (e.bk === 'kng') kgDefeated(e);   // v8.80
+  if (e.bk === 'bear') bearDefeated(e);   // v9.02
   if (e.bk === 'grn') grnDefeated(e);   // v8.87
   if (e.bk === 'tox') { toxFl = []; toxFog = null; DEBUFF.clear('toxFog'); for (const q of enemies) if ((q.toxAdd || q.kind === 'toxm') && q.hp > 0) { q.hp = 0; burst(q.x, q.y - 20, 8, ['#ff2a8a', '#b6ff6a'], 160, 0.5); } enemies = enemies.filter(q => !q.toxAdd && q.kind !== 'toxm'); zones = zones.filter(z => z.type !== 'tpool' && z.type !== 'tswamp'); }   // v8.20
   if (e.bk === 'shk') { shkDeath = { x: e.x, y: e.y, t: 0 }; shkSp = []; for (const q of enemies) if (q.shkAdd && q.hp > 0) { q.hp = 0; burst(q.x, q.y - 20, 8, ['#ff2a5a', '#ffb0c8'], 160, 0.5); } enemies = enemies.filter(q => !q.shkAdd); }
@@ -5054,6 +5564,7 @@ function drawBoss(e, x, y) {
   if (e.bk === 'qn') { drawQnBoss(e, x, y); return; }
   if (e.bk === 'vft') { drawVfBoss(e, x, y); return; }
   if (e.bk === 'kng') { drawKgBoss(e, x, y); return; }
+  if (e.bk === 'bear') { drawBearBoss(e, x, y); return; }
   const B = BSP, R = B.rows; let row = 'idle', f = Math.floor(e.t * 5) % 4, k = 1.8, sy = 1, sx = 1, up = e.jh || 0, alpha = 1;
   switch (e.st) {
     case 'intro': case 'roar': row = 'roar'; f = 0; k = 0.8; break;
@@ -5361,6 +5872,7 @@ function updateCastle(dt, ox, oy) {
   if (banner) { banner.t -= dt; if (banner.t <= 0) banner = null; }
   if (arena) {
     if (!inPoly(P.x, P.y)) { if (inPoly(P.x, oy)) P.y = oy; else if (inPoly(ox, P.y)) P.x = ox; else { P.x = ox; P.y = oy; } }
+    pbWallPush();   // v9.02 얼음 장벽 (AABB)
     const EX = arenaExit();
     if (arena.sealed) { if (EX && P.y > EX.y - 14) P.y = EX.y - 14; arena.hold = 0; }   // 출구가 봉인되면 아래로 못 간다
     else if (!trans && boss && boss.hp > 0 && EX) {   // 출구 구역에 잠시 머물러야 나갈 수 있다 (실수로 나가는 것을 막는다)
@@ -5474,7 +5986,7 @@ function heartBonus() {   // v8.01: 장착한 보스 심장 합계 (%)
 function reset(char) {
   buildSpecies(); try { buildMushSpecies(); buildSeaSpecies(); } catch (_) {}
   chal = null; rush = null;   // v6.62: 경험치통 계산이 이전 판의 챌린지 상태를 보지 않게
-  try { kgClear(); KGW.fx = []; KGW.death = null; grnClear(); } catch (_) {}   // v8.85: 어인왕전 도중 죽고 새 판을 시작해도 산소 간헐천 등이 남지 않게
+  try { kgClear(); KGW.fx = []; KGW.death = null; grnClear(); pbClear(); PBW.death = null; } catch (_) {}   // v8.85: 어인왕전 도중 죽고 새 판을 시작해도 산소 간헐천 등이 남지 않게
   P = newPlayer(char || curChar);
   DMETER = {}; DBOSS = {}; bfx = []; enemies = []; orbs = []; shards = []; fx = []; nums = []; arcs = []; zones = []; plBalls = []; rings = []; beam = null; meteorQ = null; cerbQ = null; rainQ = null; bigQ = null; darkQ = null; dashQ = null; evo = null; airs = []; diveQ = null; breathQ = null; rushQ = null; bombQ = null; holyQ = null; afx = []; bombT = []; holyPtr = null; cfx = []; ebul = []; allies = []; items = []; globs = []; sprFx = []; whipQ = null; ambT = 1.5; itemT = 9; blades = []; lights = []; waveT = 80 + rand() * 20;
   eleQ = null; tentQ = null; octoFx = []; lhead = null;
@@ -5731,7 +6243,7 @@ function skWrap(fn, key) {
   };
 }
 const withSrc = (k, f) => { const o = DSRC; DSRC = k; try { return f(); } finally { DSRC = o; } };
-const dexBoss = e => ({ eye: 'boss2', fw: 'boss3', skel: 'boss4', ab: 'boss5', angel: 'boss6', shk: 'boss7', tox: 'boss8', adm: 'boss9', qn: 'boss10', vft: 'boss11', kng: 'boss12', grn: 'boss13' })[e.bk] || 'boss';   // 도감 키 (원숭이 마왕 = boss)
+const dexBoss = e => ({ eye: 'boss2', fw: 'boss3', skel: 'boss4', ab: 'boss5', angel: 'boss6', shk: 'boss7', tox: 'boss8', adm: 'boss9', qn: 'boss10', vft: 'boss11', kng: 'boss12', grn: 'boss13', bear: 'boss14' })[e.bk] || 'boss';   // 도감 키 (원숭이 마왕 = boss)
 /* v8.62 체력비례 피해: 약한 근접 최종 진화(사슬의 폭군 · 삼두 늑대 · 지옥 군주 늑대 · 혈랑 진화형 · 업화의 사자 · 물의 도마뱀 전사 · 버서커 리자드)는
    보스·미니 보스·유니크를 때릴 때 최대 체력의 0.10%를 더 입힌다 (대상마다 0.25초에 한 번, 추가분은 그 타격 피해의 ×4까지). 달팽이(맹독·용암)는 독·용암 장판 틱에도 같은 식으로 (상한은 내 공격력 ×4, 장판 감쇠 없음) */
 const PCT_RATE = 0.001, PCT_CAP = 4, PCT_CD = 0.25;
@@ -5933,7 +6445,7 @@ function updateTwins(dt) {
   const T = P.tw; if (!T) return;
   if (!T.init) { T.x = P.x - 70; T.y = P.y + 10; T.init = true; }   // 시작 위치: 왼쪽 뒤
   if (whipQ) { updateWhip(dt); T.x = P.x - P.face * twLen() * 0.6; T.y = P.y + 6; T.vx = P.vx; T.vy = P.vy; return; }
-  const L = twLen(), h = dt / 2, pv = P.moving ? Math.hypot(P.vx, P.vy) : 0, spin = ((2.4 + 0.6 * (P.up.whirl | 0)) * L + 0.9 * pv * Math.pow(Math.max(1, L / (P.chain4 > 0 ? 2 : 1) / TW.L[P.form]), 0.6)) * (P.chain4 > 0 ? 2 : 1) * (1 + 0.5 * Math.max(0, aspdE() - 1)) * (1 + 0.04 * (P.up.whirl | 0) * (1 - (P.twSt || 0)));   /* v7.12 원심력: 움직일 때 회전 +4%/단계 · v7.04: 공속 +X% → 사슬 회전 +X/2% */   // 빨리 움직일수록 사슬이 빨리 돈다
+  const L = twLen(), h = dt / 2, pv = P.moving ? Math.hypot(P.vx, P.vy) : 0, spin = ((2.2 + 0.6 * (P.up.whirl | 0)) * L + 0.9 * pv * Math.pow(Math.max(1, L / (P.chain4 > 0 ? 2 : 1) / TW.L[P.form]), 0.6)) * (P.chain4 > 0 ? 2 : 1) * Math.max(1, aspdE()) * (1 + 0.04 * (P.up.whirl | 0) * (1 - (P.twSt || 0)));   /* v7.12 원심력: 움직일 때 회전 +4%/단계 · v9.02: 공속 +X% → 사슬 회전 +X% (예전 절반) · 기본 회전 2.4 → 2.2 */   // 빨리 움직일수록 사슬이 빨리 돈다
   for (let k = 0; k < 2; k++) {
     const dmp = Math.exp(-0.7 * h); T.vx = P.vx + (T.vx - P.vx) * dmp; T.vy = P.vy + (T.vy - P.vy) * dmp;   // 본체를 따라 끌려간다
     let rx = T.x - P.x, ry = T.y - P.y, d = Math.hypot(rx, ry) || 1, nx = rx / d, ny = ry / d;
@@ -6124,7 +6636,7 @@ const UPGRADES = [
   { id: 'claw',   name: '날카로운 발톱', txt: () => '공격력 +14%',      apply: p => { p.dmg *= 1.14; },
     alt: { gun: ['강화 화약', '탄환 피해 +14%'], octo: ['마력 증폭', '마력탄 · 구체 피해 +14%'], lava: ['용암 강화', '공격력 +14% (용암탄 · 흔적 모두)'], snail: ['맹독 강화', '공격력 +14% (독 침 · 독 자국 모두)'], archer: ['화살 강화', '화살 피해 +14%'], lizard: ['대검 단련', '공격력 +14%'], twins: ['악마의 분노', '공격력 +14%'], ghost: ['진한 저승 기운', '구슬 피해 +14%'], knight: ['유령의 칼날', '사브르 피해 +14%'] } },
   { id: 'speed',  name: '날렵한 발톱',   txt: () => '공속 +12%',        apply: p => { p.aspd += 0.12; },
-    alt: { gun: ['빠른 방아쇠', '사격 속도 +12% (재장전은 그대로)'], octo: ['고속 영창', '공속 +12%'], snail: ['빠른 분비', '공속 +12%'], archer: ['속사', '공속 +12%'], lizard: ['가벼운 휘두르기', '공속 +12%'], twins: ['빠른 손놀림', '타격 간격 -11%'], ghost: ['빠른 손짓', '공속 +12%'], knight: ['빠른 칼놀림', '공속 +12%'] } },
+    alt: { gun: ['빠른 방아쇠', '사격 속도 +12% (재장전은 그대로)'], octo: ['고속 영창', '공속 +12%'], snail: ['빠른 분비', '공속 +12%'], archer: ['속사', '공속 +12%'], lizard: ['가벼운 휘두르기', '공속 +12%'], twins: ['빠른 손놀림', '타격 간격 -11% · 사슬 회전 속도 +12%'], ghost: ['빠른 손짓', '공속 +12%'], knight: ['빠른 칼놀림', '공속 +12%'] } },
   { id: 'move',   name: '질주',          txt: () => '이속 +7.5%',       apply: p => { p.spd *= 1.075; },
     alt: { octo: ['물결 걸음', '이속 +7.5%'], snail: ['미끄러운 점액', '이속 +7%'], archer: ['바람의 걸음', '이속 +7%'] } },
   { id: 'heart',  name: '지옥의 심장',   txt: () => '최대 체력 +16',    apply: p => { p.max += 16; p.hp = Math.min(p.max, p.hp + 24); },
@@ -6176,7 +6688,8 @@ const UNIQUE = {
   gun: [
     { id: 'gReload', name: '빠른 장전', max: 3, txt: n => `재장전 시간 -15% (1초 → ${(1 - 0.15 * n).toFixed(2)}초)`, apply: () => {} },
     { id: 'gSpec', name: '특수탄 강화', max: 3, txt: n => `불씨탄 · 도탄 피해 +12% (합계 +${12 * n}%)`, apply: () => {} },
-    { id: 'gEmber', name: '불씨 각인', max: 3, txt: n => `불씨탄 확률 +5%p (${15 + 5 * n}% · 일반탄 ${55 - 5 * n}%)`, apply: () => {} },
+    { id: 'gEmber', name: '불씨 각인', max: 3, txt: n => `불씨탄 확률 +6%p (${15 + 6 * n}% · 일반탄 ${55 - 6 * n}%)`, apply: () => {} },
+    { id: 'gMag', name: '확장 탄창', max: 3, txt: n => `탄창 +1발 (${GUN.mag + n}발 — 재장전 횟수가 줄고 구르기 난사도 늘어남)`, apply: () => {} },
     { id: 'gBounty', name: '현상금 사냥', max: 3, txt: n => `처치할 때마다 1.5초 동안 이속 +2% (최대 ${1 + 2 * n}중첩)`, apply: () => {} },
   ],
   ghost: [
@@ -6212,6 +6725,7 @@ const SYNERGIES = [
   { id: 'lifeOrb',   name: '불사의 영혼', txt: '경험치 구슬마다 체력 회복',        need: ['heart', 'magnet'] },
   { id: 'tstorm',    name: '폭풍 낙뢰',   txt: '낙뢰 쿨타임 -20% · +2발 · 피해 -8%',            need: ['thunder', 'speed'] },
   { id: 'bstorm',    name: '칼날 폭풍',   txt: '칼날 +2개 · 크기 +62%',            need: ['blade', 'range'] },
+  { id: 'gEmberMag', name: '불씨 탄띠',  txt: '재장전할 때마다 불씨탄이 최소 1발 들어간다', need: ['gMag', 'gEmber'], only: 'gun', apply: p => { p.syn.gEmberMag = true; } },
   { id: 'glacier',   name: '빙하 충격파', txt: '충격파에 맞은 적은 반드시 빙결 · 빙결 중 받는 피해 +10% → +25%', need: ['freeze', 'nova'] },
   { id: 'forge',     name: '달궈진 칼날', txt: '칼날에 맞은 적은 반드시 점화 · 점화 지속 +2초 · 점화 피해 +30%', need: ['ignite', 'blade'] },
   { id: 'shock',     name: '열충격',      txt: '점화와 빙결이 함께 걸린 적이 터져 주변에 공격력 220% 피해 (점화는 사라짐 · 적마다 3초에 한 번) · 점화 중인 적은 빙결, 빙결 중인 적은 점화 확률 ×2', need: ['ignite', 'freeze'] },
@@ -6660,20 +7174,20 @@ function applyEvo(to) {
     return;
   }
   if (P.char === 'chimera' && P.route === 'dream') {
-    if (to === 1) { P.max += 30; P.dmg *= 1.3; P.aspd += 0.08; P.spd *= 1.03; P.rng *= 1.12; }          // 아직 약하다: 촉수가 함께 공격
-    else { P.max += 60; P.dmg *= 1.22; P.aspd += 0.05; P.rng *= 1.03; }                  // 최종: 촉수 2개 · 스킬 천안 난무
+    if (to === 1) { P.max += 30; P.dmg *= 1.3; P.aspd += 0.12; P.spd *= 1.03; P.rng *= 1.16; }   // v9.02 중폭(두 단계 합 공속 +10% · 사거리 +9%): 필드가 약함 → 공속 +8 → +12% · 사거리 +12 → +16%          // 아직 약하다: 촉수가 함께 공격
+    else { P.max += 60; P.dmg *= 1.22; P.aspd += 0.12; P.rng *= 1.08; }   // v9.02: 공속 +5 → +12% · 사거리 +3 → +8%                  // 최종: 촉수 2개 · 스킬 천안 난무
     P.hp = P.max; markDex('chimera:d' + to);
     return;
   }
   if (P.char === 'chimera' && P.route === 'flame') {
-    if (to === 1) { P.max += 40; P.dmg *= 1.25 * 1.08; P.rng *= 1.15; P.spd *= 1.02; }   // 화염 발톱: 넓은 범위 + 화상 · v6.22: 소폭 버프(공격력 +8% · 체력 +5)
-    else { P.max += 58; P.dmg *= 1.25; P.rng *= 1.08; P.aspd += 0.1; P.taken *= 0.92; }   // v6.22: 체력 +8 · v5.26 받는 피해 -8% · 업화: 최종 단계에서 화염 브레스 해금
+    if (to === 1) { P.max += 40; P.dmg *= 1.45; P.rng *= 1.15; P.spd *= 1.02; }   // v9.02 중폭(두 단계 합 공격력 +15%): 보스가 약함 → 공격력 +35 → +45%   // 화염 발톱: 넓은 범위 + 화상 · v6.22: 소폭 버프(공격력 +8% · 체력 +5)
+    else { P.max += 58; P.dmg *= 1.34; P.rng *= 1.08; P.aspd += 0.1; P.taken *= 0.92; }   // v9.02: 공격력 +25 → +34%   // v6.22: 체력 +8 · v5.26 받는 피해 -8% · 업화: 최종 단계에서 화염 브레스 해금
     P.hp = P.max; markDex('chimera:f' + to);
     return;
   }
   if (P.char === 'chimera') {
-    if (to === 1) { P.max += 25; P.dmg *= 1.2; P.spd *= 1.04; P.rng *= 1.08; }   // 에어슬래시 해금
-    else { P.max += 40; P.dmg *= 1.17; P.aspd += 0.12; P.spd *= 1.04; }              // 날개가 완성된다: 에어슬래시 2갈래
+    if (to === 1) { P.max += 25; P.dmg *= 1.29; P.spd *= 1.04; P.rng *= 1.08; }   // 에어슬래시 해금 · v9.02 중폭(두 단계 합 공격력 +15%): 공격력 +20 → +29%
+    else { P.max += 40; P.dmg *= 1.25; P.aspd += 0.12; P.spd *= 1.04; }   // v9.02: 공격력 +17 → +25%              // 날개가 완성된다: 에어슬래시 2갈래
     P.hp = P.max; markDex('chimera:' + to);
     return;
   }
@@ -6749,6 +7263,7 @@ function openSkill() {
 
 /* ---------- 특수 스킬 ---------- */
 function castSkill() {
+  if (P.frzT > 0) return;   // v9.02 빙결: 스킬도 못 쓴다
   if (rollQ) { gunRoll(); return; }   // 구르기 창이 열려 있는 동안은 한 번 더 구른다
   if (holyQ) { if (holyQ.t >= 0.3) fireHoly(); return; }   // 모으는 중 한 번 더 누르면 발사
   if (state !== 'play' || !P.skill || P.skT > 0 || P.stunT > 0) return;
@@ -6913,7 +7428,7 @@ class SeveredHeadSummon {
   constructor() {
     const C = KN.lh, up = P.up.kHead | 0;
     this.x = P.x; this.y = P.y - 70; this.face = P.face;
-    this.max = this.hp = Math.round(P.max * C.hpK); this.life = C.dur + up; this.t = 0; this.tick = 0.3; this.atkT = 0; this.flash = 0;
+    this.life = C.dur + up; this.t = 0; this.tick = 0.3; this.atkT = 0; this.flash = 0;
     this.st = 'spawn'; this.tgt = null; this.retarget = 0; this.hitCd = new Map(); this.fx = []; this.mv = false; this.dm = C.dm * (1 + 0.15 * up);
   }
   ok(x, y) { return (arena || chal) ? inPoly(x, y) : true; }   // 맵 밖으로는 못 나간다
@@ -6935,8 +7450,7 @@ class SeveredHeadSummon {
     }
     return best;
   }
-  hurt(d) { this.hp -= d; this.flash = 0.12; if (this.hp <= 0) { this.hp = 0; this.back('쓰러짐'); } }
-  back(why) { if (this.st === 'back') return; this.st = 'back'; if (why) floatNum(this.x, this.y - 40, why === '쓰러짐' ? '머리가 돌아온다' : '귀환', '#d8b8ff'); }
+  back(why) { if (this.st === 'back') return; this.st = 'back'; if (why) floatNum(this.x, this.y - 40, '귀환', '#d8b8ff'); }
   boom() {   // 보라색 영혼 불꽃 폭발 (범위 피해)
     const R = KN.lh.r, dm = P.dmg * this.dm; let n = 0;
     for (const e of enemies) {
@@ -6966,12 +7480,6 @@ class SeveredHeadSummon {
     this.mv = d > 6 && !near;
     if (d > 6) { this.move(this.x + dx / d * Math.min(sp * dt, d), this.y + dy / d * Math.min(sp * dt, d) + Math.sin(this.t * 6) * 18 * dt); if (Math.abs(dx) > 4) this.face = dx > 0 ? -1 : 1; }
     this.tick -= dt; if (this.tgt && d < this.tgt.r + KN.lh.r * 0.7 && this.tick <= 0) { this.tick = C.tick; this.boom(); }
-    for (const e of enemies) {   // 적에게 닿으면 머리 체력이 깎인다 (적마다 0.7초에 한 번)
-      if (e.hp <= 0 || Math.hypot(e.x - this.x, e.y - e.r - this.y) > e.r + 20) continue;
-      const tt = this.hitCd.get(e) || 0; if (gt < tt) continue; this.hitCd.set(e, gt + 0.7);
-      this.hurt(e.kind === 'boss' || e.kind === 'mini' ? this.max * 0.07 : (e.dmg || 10) * 0.6);
-      if (this.st === 'back') break;
-    }
     return true;
   }
   draw(wx, wy) {
@@ -6985,12 +7493,12 @@ class SeveredHeadSummon {
     for (const q of this.fx) { const p = q.t / 0.4; ctx.globalAlpha = 0.5 * (1 - p); ctx.fillStyle = '#d9b0ff'; ctx.beginPath(); ctx.arc(X, Y, KN.lh.r * (0.4 + 0.6 * p), 0, 6.283); ctx.fill(); }
     ctx.globalAlpha = blink * (this.flash > 0 ? 0.6 : 1); ctx.translate(Math.round(X), Math.round(Y)); ctx.scale(fl, 1); ctx.imageSmoothingEnabled = true; ctx.imageSmoothingQuality = 'high';
     ctx.drawImage(img, r[0], r[1], r[2], r[3], -r[4] * s, -r[5] * s, r[2] * s, r[3] * s); ctx.restore();
-    if (this.st === 'out' && this.hp < this.max) { const w = 40, h2 = clamp(this.hp / this.max, 0, 1), ty = Math.round(Y - 34); ctx.fillStyle = 'rgba(10,6,18,0.85)'; ctx.fillRect(Math.round(X - w / 2) - 1, ty - 1, w + 2, 5); ctx.fillStyle = '#c896ff'; ctx.fillRect(Math.round(X - w / 2), ty, Math.round(w * h2), 3); }
+    if (this.st === 'out' && this.life < KN.lh.dur + 3) { const w = 40, h2 = clamp(this.life / (KN.lh.dur + (P.up.kHead | 0)), 0, 1), ty = Math.round(Y - 34); ctx.fillStyle = 'rgba(10,6,18,0.85)'; ctx.fillRect(Math.round(X - w / 2) - 1, ty - 1, w + 2, 5); ctx.fillStyle = '#c896ff'; ctx.fillRect(Math.round(X - w / 2), ty, Math.round(w * h2), 3); }
   }
 }
-function castLostHead() {   // 듀라한 스킬: 이미 나와 있으면 체력·시간을 되돌려 다시 내보낸다
+function castLostHead() {   // 듀라한 스킬: 이미 나와 있으면 시간을 되돌려 다시 내보낸다
   P.lhCast = KN.lh.cast; P.atkTimer = -1; P.animT = 0;
-  if (lhead && lhead.st !== 'back') { lhead.life = KN.lh.dur + (P.up.kHead | 0); lhead.hp = lhead.max; }
+  if (lhead && lhead.st !== 'back') { lhead.life = KN.lh.dur + (P.up.kHead | 0); }
   else lhead = new SeveredHeadSummon();
   addRing(P.x, P.y - 40, 10, 110, 0.4, '200,140,255', 9); burst(P.x, P.y - 60, 18, ['#c896ff', '#f4e8ff', '#ffffff'], 220, 0.6);
 }
@@ -8626,6 +9134,7 @@ function update(dt) {
     if (Math.abs(ix) > 0.1 && P.atkTimer < 0 && !breathQ) P.face = ix > 0 ? 1 : -1;
   }
   P.moving = moving && !dashQ; if (!moving) { P.vx = 0; P.vy = 0; }
+  pbWind(dt);   // v9.02 눈보라 바람
   if (iceQ) { if (!moving) { const k = Math.exp(-iFric * dt); P.svx *= k; P.svy *= k; } P.x += P.svx * dt; P.y += P.svy * dt; P.vx = P.svx; P.vy = P.svy; }   // 키를 떼도 관성으로 미끄러진다
   P.twSt = clamp((P.twSt || 0) + (P.moving ? -3 : 2.5) * dt, 0, 1);   // 원심력: 멈춰 있는 정도 (부드럽게)
   if (P.char === 'twins') updateTwins(dt);
@@ -8879,7 +9388,7 @@ function update(dt) {
   }
 }
 function updateFx(dt) {
-  darkT = Math.max(0, darkT - dt); updateFwFx(dt); updateSkFx(dt); updateAnFx(dt); updateShkFx(dt); updateToxFx(dt); updateAdmFx(dt); updateQnFx(dt); updateVfFx(dt); updateKgFx(dt); updateGunFx(dt);
+  darkT = Math.max(0, darkT - dt); updateFwFx(dt); updateSkFx(dt); updateAnFx(dt); updateShkFx(dt); updateToxFx(dt); updateAdmFx(dt); updateQnFx(dt); updateVfFx(dt); updateKgFx(dt); updateBearFx(dt); updateGunFx(dt);
   for (const q of smokes) { q.x += q.vx * dt; q.y += q.vy * dt; q.life -= dt; }
   smokes = smokes.filter(q => q.life > 0);
   if (P && P.contractN > 0 && state === 'play' && smokes.length < 40 && rand() < dt * (3 + 2 * P.contractN)) smokes.push({ x: P.x + (rand() - 0.5) * 40, y: P.y - 8 - rand() * 20, vx: (rand() - 0.5) * 16, vy: -22 - rand() * 18, r: 14 + rand() * 10, life: 1.2, max: 1.2 });   // 계약 오라: 검은 연기가 피어오른다
@@ -9457,6 +9966,7 @@ function render() {
     else if (arena.gard) {   // v8.30 악마 식물원 보스맵: 보이는 조각만 정수 배율(nearest)
       const k = GMAP.s, ox = Math.round(W / 2 - cx), oy = Math.round(H / 2 - cy), sx = Math.max(0, Math.floor(-ox / k)), sy = Math.max(0, Math.floor(-oy / k)), ex = Math.min(GMAP.iw, Math.ceil((W - ox) / k)), ey = Math.min(GMAP.ih, Math.ceil((H - oy) / k));
       if (ex > sx && ey > sy && IMG.gmap) { const sm = ctx.imageSmoothingEnabled; ctx.imageSmoothingEnabled = false; ctx.drawImage(IMG.gmap, sx, sy, ex - sx, ey - sy, ox + sx * k, oy + sy * k, (ex - sx) * k, (ey - sy) * k); ctx.imageSmoothingEnabled = sm; } }
+    else if (arena.ice) drawImap(cx, cy);   // v9.02 빙결 투기장 (백곰 마왕)
     else if (arena.sea) {   // v7.16: 어인섬 보스맵은 원본 그림에서 보이는 조각만 정수 배율(nearest)로 그린다 (6배 확대 캔버스를 만들지 않음)
       const k = SMAP.s, ox = Math.round(W / 2 - cx), oy = Math.round(H / 2 - cy), sx = Math.max(0, Math.floor(-ox / k)), sy = Math.max(0, Math.floor(-oy / k)), ex = Math.min(SMAP.iw, Math.ceil((W - ox) / k)), ey = Math.min(SMAP.ih, Math.ceil((H - oy) / k));
       if (ex > sx && ey > sy && IMG.smap) { const sm = ctx.imageSmoothingEnabled; ctx.imageSmoothingEnabled = false; ctx.drawImage(IMG.smap, sx, sy, ex - sx, ey - sy, ox + sx * k, oy + sy * k, (ex - sx) * k, (ey - sy) * k); ctx.imageSmoothingEnabled = sm; } }
@@ -9486,7 +9996,7 @@ function render() {
   if (arena && arena.k !== 'blood') drawArenaExit(wx, wy);
   drawBsig(wx, wy);
   drawSkFloor(wx, wy);
-  drawBossTele(wx, wy); drawAnFloor(wx, wy); drawShkFloor(wx, wy); drawToxFloor(wx, wy); drawAdmFloor(wx, wy); drawQnFloor(wx, wy); drawVfFloor(wx, wy); drawKgFloor(wx, wy);
+  drawBossTele(wx, wy); drawAnFloor(wx, wy); drawShkFloor(wx, wy); drawToxFloor(wx, wy); drawAdmFloor(wx, wy); drawQnFloor(wx, wy); drawVfFloor(wx, wy); drawKgFloor(wx, wy); drawBearFloor(wx, wy);
   drawFwFx(wx, wy);
 
   for (const it of items) drawItem(it, wx(it.x), wy(it.y));
@@ -9604,7 +10114,7 @@ function render() {
 
   drawZonesTop(wx, wy);
   drawUniqFx(wx, wy); drawOctoFx(wx, wy); drawLasers(wx, wy);
-  drawLights(wx, wy); drawBlades(wx, wy); drawChimFx(wx, wy); drawAfx(wx, wy); drawHolyCharge(wx, wy); drawEbul(wx, wy); drawSkTop(wx, wy); drawAnTop(wx, wy); drawShkTop(wx, wy); drawToxTop(wx, wy); drawAdmTop(wx, wy); drawQnTop(wx, wy); drawVfTop(wx, wy); drawKgTop(wx, wy); drawPlantTop(wx, wy); drawGunFx(wx, wy); drawChTop(wx, wy);
+  drawLights(wx, wy); drawBlades(wx, wy); drawChimFx(wx, wy); drawAfx(wx, wy); drawHolyCharge(wx, wy); drawEbul(wx, wy); drawSkTop(wx, wy); drawAnTop(wx, wy); drawShkTop(wx, wy); drawToxTop(wx, wy); drawAdmTop(wx, wy); drawQnTop(wx, wy); drawVfTop(wx, wy); drawKgTop(wx, wy); drawBearTop(wx, wy); drawPlantTop(wx, wy); drawGunFx(wx, wy); drawChTop(wx, wy);
   for (const q of mfx) miniFrame('D9', wx(q.x), wy(q.y), 1, 0.95, false, Math.max(0, 1 - q.t / q.life));   // 내려찍기 충격파
   drawBeam(wx, wy); drawBigQ(wx, wy);
   for (const g of globs) {   // 날아가는 독 침 / 용암탄
@@ -9720,6 +10230,7 @@ function render() {
   drawQnScreen(wx, wy);   // v8.63 여왕: 매혹의 꽃가루
   drawVfScreen(wx, wy);   // v8.70 파리지옥 마왕: 붉은 안개 · 하트 파동
   drawKgScreen(wx, wy);   // v8.80 타락한 어인왕: 심해의 푸른빛
+  drawBearScreen(wx, wy);   // v9.02 백곰 마왕: 눈보라 · 빙결
   if (perfLv < 2) for (const e of embers) {
     ctx.globalAlpha = 0.55 + Math.sin(wallT * 5 + e.d) * 0.3;
     ctx.fillStyle = e.s > 1 ? '#ffb030' : '#ff6a1c'; ctx.fillRect(Math.round(e.x), Math.round(e.y), e.s, e.s);
@@ -9836,13 +10347,14 @@ function drawHud() {
   if (boss && boss.hp > 0 && (arena || chal)) {   // 보스 체력바
     const bw = Math.min(560, W - 80), bx = W / 2 - bw / 2, by = 44;
     ctx.fillStyle = 'rgba(10,4,16,0.75)'; ctx.fillRect(bx - 4, by - 22, bw + 8, 40);
-    ctx.fillStyle = '#ffd36a'; ctx.font = 'bold 14px sans-serif'; ctx.textAlign = 'center'; ctx.fillText((boss.bk === 'grn' ? '영원의 온실주' + (boss.rage ? '  ·  만개' : '') : boss.bk === 'ab' ? '심연의 촉수마왕' : boss.bk === 'eye' ? '심연의 마안군주' : boss.bk === 'fw' ? '타락한 혈랑왕' + (boss.giant ? '  ·  거대화' : '') : boss.bk === 'skel' ? '스켈레톤 마왕' + (boss.shield ? `  ·  결계 (첨탑 ${boss.tow} / 3)` : '') : boss.bk === 'angel' ? '타락천사' + (boss.ph === 2 ? '  ·  흑화' : '') + (boss.shT > 0 ? '  ·  성스러운 방패 (등 뒤에서 공격!)' : '') : boss.bk === 'shk' ? '거대 버섯마귀' + (boss.guard ? '  ·  포자 갑옷 (받는 피해 -50%)' : '') : boss.bk === 'adm' ? '썩어버린 해군 제독' + (boss.fz ? '  ·  발악 (총공세)' : '') : boss.bk === 'qn' ? '타락한 원예의 여왕' + (boss.ph2 ? '  ·  매혹의 꽃가루' : '') : boss.bk === 'kng' ? '타락한 어인왕' + (boss.ph2 ? '  ·  해일 서핑 (미끄러운 바닥)' : '') : boss.bk === 'vft' ? '파리지옥 마왕' + (boss.ph2 ? '  ·  끝없는 갈증 (공격·이동 ×1.5)' : '') : boss.bk === 'tox' ? '이독버섯 마왕' + (boss.ph2 ? '  ·  핵심 포자' : '') + (toxFog ? '  ·  맹독성 가스' : '') : '원숭이 마왕') + (boss.rage ? '  ·  분노' : ''), W / 2, by - 6);
+    ctx.fillStyle = '#ffd36a'; ctx.font = 'bold 14px sans-serif'; ctx.textAlign = 'center'; ctx.fillText((boss.bk === 'bear' ? '팔한지옥의 백곰 마왕' + (boss.ph2 ? '  ·  폭주하는 빙산' : '') : boss.bk === 'grn' ? '영원의 온실주' + (boss.rage ? '  ·  만개' : '') : boss.bk === 'ab' ? '심연의 촉수마왕' : boss.bk === 'eye' ? '심연의 마안군주' : boss.bk === 'fw' ? '타락한 혈랑왕' + (boss.giant ? '  ·  거대화' : '') : boss.bk === 'skel' ? '스켈레톤 마왕' + (boss.shield ? `  ·  결계 (첨탑 ${boss.tow} / 3)` : '') : boss.bk === 'angel' ? '타락천사' + (boss.ph === 2 ? '  ·  흑화' : '') + (boss.shT > 0 ? '  ·  성스러운 방패 (등 뒤에서 공격!)' : '') : boss.bk === 'shk' ? '거대 버섯마귀' + (boss.guard ? '  ·  포자 갑옷 (받는 피해 -50%)' : '') : boss.bk === 'adm' ? '썩어버린 해군 제독' + (boss.fz ? '  ·  발악 (총공세)' : '') : boss.bk === 'qn' ? '타락한 원예의 여왕' + (boss.ph2 ? '  ·  매혹의 꽃가루' : '') : boss.bk === 'kng' ? '타락한 어인왕' + (boss.ph2 ? '  ·  해일 서핑 (미끄러운 바닥)' : '') : boss.bk === 'vft' ? '파리지옥 마왕' + (boss.ph2 ? '  ·  끝없는 갈증 (공격·이동 ×1.5)' : '') : boss.bk === 'tox' ? '이독버섯 마왕' + (boss.ph2 ? '  ·  핵심 포자' : '') + (toxFog ? '  ·  맹독성 가스' : '') : '원숭이 마왕') + (boss.rage ? '  ·  분노' : ''), W / 2, by - 6);
     ctx.fillStyle = '#2a0a0e'; ctx.fillRect(bx, by, bw, 12);
     ctx.fillStyle = boss.shield ? '#8a6a9a' : boss.rage ? '#ff3a2a' : '#c8283a'; ctx.fillRect(bx, by, bw * Math.max(0, boss.hp / boss.max), 12);
     if (boss.bk === 'skel') { ctx.fillStyle = 'rgba(255,255,255,0.45)'; for (const q of SK_PH) ctx.fillRect(bx + bw * q - 1, by - 2, 2, 16); }
     if (boss.bk === 'angel' && boss.ph === 1) { ctx.fillStyle = 'rgba(255,130,160,0.8)'; ctx.fillRect(bx + bw * AN.ph - 1, by - 2, 2, 16); }   // 흑화 지점
     ctx.fillStyle = 'rgba(255,255,255,0.6)'; ctx.fillRect(bx + bw / 2 - 1, by - 2, 2, 16);
     if (boss.bk === 'kng') drawKgO2(bx, by, bw);   // v8.80 산소 게이지
+    if (boss.bk === 'bear') drawBearFrost(bw);   // v9.02 동상 게이지
   }
   ctx.save();
   if (mini && mini.hp > 0 && !arena) {   // 미니 보스 체력바 · 화면 밖이면 방향 표시
@@ -10763,9 +11275,9 @@ function drawZomDeath(m, x, y) {
  *  출구는 항상 봉인(성 없이 곧장 보스방) · 심장 드랍 없음 · 보상: 마왕마다 50 + 완주 300 (난이도 배율) · 완주하면 업적 · 숨은 보스·챌린지 마왕은 나오지 않는다
  * ============================================================ */
 const BR_ORDER = ['monkey', 'eye', 'skel', 'angel', 'shk', 'tox', 'vft', 'adm', 'qn', 'kng'], BR_N = BR_ORDER.length;
-const BR_NAME = { monkey: '원숭이 마왕', eye: '심연의 마안군주', skel: '스켈레톤 마왕', angel: '타락천사', shk: '거대 버섯마귀', tox: '이독버섯 마왕', adm: '썩어버린 해군 제독', qn: '타락한 원예의 여왕', vft: '파리지옥 마왕', kng: '타락한 어인왕' };
+const BR_NAME = { monkey: '원숭이 마왕', eye: '심연의 마안군주', skel: '스켈레톤 마왕', angel: '타락천사', shk: '거대 버섯마귀', tox: '이독버섯 마왕', adm: '썩어버린 해군 제독', qn: '타락한 원예의 여왕', vft: '파리지옥 마왕', kng: '타락한 어인왕', bear: '팔한지옥의 백곰 마왕' };
 const BR = { lv: 20, per: 50, clear: 300, up: 5, rest: 3.2, auto: 5 };   // lv = 시작 레벨 · up = 마왕 처치마다 레벨업 횟수 · rest = 다음 마왕 입장 전 쉬는 시간(초) · auto = 시작할 때 무작위로 정해지는 증강 수
-const BR_SET = { monkey: 'hell', eye: 'hell', skel: 'hell', angel: 'hell', shk: 'mush', tox: 'mush', vft: 'gard', qn: 'gard', adm: 'sea', kng: 'sea' };   // 마왕이 나오는 지옥의 맵
+const BR_SET = { bear: 'ice', monkey: 'hell', eye: 'hell', skel: 'hell', angel: 'hell', shk: 'mush', tox: 'mush', vft: 'gard', qn: 'gard', adm: 'sea', kng: 'sea' };   // 마왕이 나오는 지옥의 맵
 const rushFset = bk => { const q = BR_SET[bk]; return q === 'gard' && IMG.gfloor && IMG.gprops && MSPECIES.length ? 'gard' : q === 'sea' && IMG.sfloor && IMG.sprops && SSPECIES.length ? 'sea' : q !== 'hell' && IMG.mfloor && IMG.mprops && MSPECIES.length ? 'mush' : 'hell'; };
 const rushOpen = () => !!(SAVE.rush.open || (SAVE.fw.snap && (SAVE.fw.snap.tier | 0) >= MAX_TIER));
 const rushLine = () => rushOpen() ? `⚔ 보스 러시 — 마왕 ${BR_N}종 무작위 연속전(선택한 층과 무관) · Lv.${BR.lv} 시작 · 처음 증강 ${BR.auto}개 무작위 + 나머지 직접 선택 · 처치마다 체력 회복 + ${BR.up}레벨  ·  최고 ${SAVE.rush.best | 0}/${BR_N} · 완주 ${SAVE.rush.clears | 0}회<br>` : '';
@@ -11337,12 +11849,14 @@ function showOver(win) {
 const TOX_L = ['tox', 'monkey', 'eye', 'skel', 'angel', 'shk'];   // v8.20
 const VFT_L = ['vft', 'monkey', 'eye', 'skel', 'angel', 'shk', 'tox'];   // v8.70 파리지옥 마왕 (11·12층)
 const ADM_L = ['adm', 'tox', 'monkey', 'eye', 'skel', 'angel', 'shk', 'vft'];   // v8.40 (v8.70: 파리지옥 포함 8종)
-const ICE_L = ['monkey', 'eye', 'skel', 'angel', 'shk', 'tox', 'vft', 'qn', 'adm', 'kng'];   // v8.99 팔한지옥(21층~): 새 마왕이 나오기 전까지는 지금까지의 마왕 10종이 균등하게
+const ICE_L = ['bear', 'monkey', 'eye', 'skel', 'angel', 'shk', 'tox', 'vft', 'qn', 'adm', 'kng'];   // v8.99 팔한지옥(21층~) · v9.02: 백곰 마왕 21층 100% · 22층 70% · 23층부터 11종 균등
 const BOSS_TBL = [['monkey'], ['eye', 'monkey'], ['skel', 'monkey', 'eye'], ['angel', 'monkey', 'eye', 'skel'], null, ['shk', 'monkey', 'eye', 'skel', 'angel'], null, TOX_L, TOX_L, null, ADM_L, ADM_L];   // null = 앞 층 보스 균등
 function pickBossK(t) {
   const F1 = { 1: 'eye', 2: 'skel', 3: 'angel', 5: 'shk', 7: 'tox', 10: 'vft', 15: 'adm' }; if (F1[t]) return F1[t];   // v8.67: 마왕이 처음 나오는 층은 100% (이독버섯 8층 · 해군 제독 16층 …, 9·17층처럼 이어지는 층은 아래 70%)
   if (t === 14) return 'qn';   // v8.63: 지하 15층은 타락한 원예의 여왕만
-  if (t >= 20) return ICE_L[(rand() * ICE_L.length) | 0];
+  if (t === 20) return 'bear';
+  if (t === 21) return rand() < 0.7 ? 'bear' : ICE_L[1 + ((rand() * (ICE_L.length - 1)) | 0)];
+  if (t >= 22) return ICE_L[(rand() * ICE_L.length) | 0];
   if (t === 19) return 'kng';   // v8.80: 지하 20층은 타락한 어인왕만 (최종 마왕)
   if (t >= 10 && t <= 13) { const L = VFT_L; return t >= 12 ? L[(rand() * L.length) | 0] : (rand() < 0.7 ? L[0] : L[1 + ((rand() * (L.length - 1)) | 0)]); }   // v8.70: 11층 파리지옥 100% · 12층 70% · 13·14층 7종 균등 (v8.64엔 이독버섯) (제독은 바다 보스라 16층부터)
   if (t >= 15 && t <= 16) return rand() < 0.7 ? ADM_L[0] : ADM_L[1 + ((rand() * (ADM_L.length - 1)) | 0)];   // v8.64: 16·17층(어인섬) 해군 제독 70%
@@ -11558,6 +12072,7 @@ function openDex() {
       add(gr, { on: d.kills.boss10, trophy: true, name: '타락한 원예의 여왕', sub: (d.kills.boss10 || 0) + '회 처치', hint: '<br>지하 15층의 최종 마왕 (15층에서만 등장)', draw: qd('idle') });
       add(gr, { on: d.kills.qmush, name: '식인 버섯', sub: (d.kills.qmush || 0) + '마리 처치', hint: '<br>여왕의 꽃가루(2페이즈)에서 끝없이 돋아난다 · 소 → 중 → 포자 폭탄 버섯으로 자란다', draw: qd('mb') });
       add(gr, { on: d.kills.qsack, name: '폭발하는 포자 주머니', sub: (d.kills.qsack || 0) + '개 파괴', hint: '<br>산성 독 웅덩이 가운데에 생긴다 · 5초 뒤 넓게 폭발 (부수면 터지지 않는다)', draw: qd('sack') }); }
+  add(gr, { on: d.kills.boss14, trophy: true, name: '팔한지옥의 백곰 마왕', sub: (d.kills.boss14 || 0) + '회 처치', hint: '<br>지하 21층 마왕 (21층 100% · 22층에서 자주) · 얼음 장벽 감옥 · 눈보라(바람·동상) · 빙하 균열 · 빙창 · 체력 30%부터 튕기는 빙산 돌진', draw: bearDexArt });   // v9.02
   { const r = KGF.idle[0]; add(gr, { on: d.kills.boss12, trophy: true, name: '타락한 어인왕', sub: (d.kills.boss12 || 0) + '회 처치', hint: '<br>지하 20층의 최종 마왕 (20층에서만 등장) · 산소 게이지 · 물거울 반사 · 물줄기 사슬 · 파도 고리 · 해일 서핑', draw: (g, w, h, l) => { if (IMG.kng) dexSprite(g, w, h, IMG.kng, r[0], r[1], r[2], r[3], false, l, false); } }); }   // v8.80
   { const vd = (key, f) => (g, w, h, l) => { if (IMG.vft) { const r = VFF[key][f || 0]; dexSprite(g, w, h, IMG.vft, r[0], r[1], r[2], r[3], false, l, false); } else lockFx(g, w, h, l); };   // v8.70 파리지옥 마왕
     add(gr, { on: d.kills.boss11, trophy: true, name: '파리지옥 마왕', sub: (d.kills.boss11 || 0) + '회 처치', hint: '<br>보스 (지하 11층부터 등장 · 11층 100% · 12층에서 자주) · 입힌 피해만큼 흡혈', draw: vd('idle') });
@@ -11979,6 +12494,7 @@ function openAch() {
 }
 /* v8.71 간략 패치노트 (최근 버전만, 새 버전마다 맨 위에 한 줄 추가) */
 const PATCH = [
+  ['v9.02', '새 마왕 [팔한지옥의 백곰 마왕] — 지하 21층 100% · 22층 70% · 빙결 투기장(얼음 장벽 감옥 · 눈보라와 동상 · 빙하 균열 · 빙창 · 30%부터 튕기는 빙산 돌진) · 이독버섯 마왕 발악 돌진 더 빠르게 · 듀라한 머리 불꽃 피해 되돌림(110→180%) · 머리는 시간으로만 돌아옴 · 악마처형자 구르기 3→2번 · 새 카드 [확장 탄창] · 불씨 각인 +5→+6%p · 새 조합 [★불씨 탄띠] · 키메라 전 루트 중폭 버프 · 사슬 악마 공속이 사슬 회전에 그대로 적용(기본 회전 -8%)'],
   ['v9.01', '유령 기사로 진화하면 체력바·카드 칩이 사라지던 버그 수정 · 유령 기사에서 [구슬 늘리기]는 [검풍](사브르 피해·넉백, 휘두르는 횟수는 그대로)으로 바뀜 · 듀라한 루트 너프(참격 105→80% · 머리 불꽃 180→110% · 머리 10초/쿨 28초 · 회피·공속·체력 하향) · 마왕 토벌 업적은 10번 처치해야 심장 보상 · 합성된 심장 → [끔찍한 심장], 3줄 합성 심장 → [지옥 심장]'],
   ['v8.99', '5지옥 [팔한지옥] 추가 — 지하 21~25층(지금은 21·22층만 열림, 23~25층 잠금) · 미끄러운 얼음 타일 · 새 잡몹 9종 · 이미 지하 20층을 깬 기록은 다시 깰 필요 없이 21층 개방 · 유령 기사 카드 [되받아 베기] 추가'],
   ['v8.98', '구슬 유령 새 진화 루트 — Lv.10 갈림길에서 [유령 기사](근접 사브르 · 회피) → Lv.20 [듀라한](스킬: 잃어버린 머리 소환 — 보스를 먼저 쫓아가 영혼 불꽃 폭발)'],
@@ -12238,7 +12754,7 @@ stepDive = skWrap(stepDive, 'dive'); stepRush = skWrap(stepRush, 'rush'); rushSt
 updateAirs = (f => function (...a) { return withSrc('basic', () => f.apply(this, a)); })(updateAirs);   // v6.22: 에어슬래시는 평타 (v6.30: 바로 뒤 천안 난무·브레스 감싸기가 주석에 묻혀 딜미터기에서 빠지던 것 수정)
 { const _tb = thornBlast, _sb = smashBlow; thornBlast = function (...a) { return withSrc('scale', () => _tb.apply(this, a)); }; smashBlow = function (...a) { return withSrc('smash', () => _sb.apply(this, a)); }; }
 shellReflect = skWrap(shellReflect, 'shell'); updateBsig = skWrap(updateBsig, 'bsigil');
-window.__G = { isIceSlip, isIceSet, get ISPECIES() { return ISPECIES; }, ICE_SLIP, ICE_L, OPEN_TIER, TOP_TIER, renderHells, floorSet, pickFloor, iceTile, IF, get lhead() { return lhead; }, KN, isKnight, castLostHead, knightSlash, openGhostRoute, KNIGHT_FORMS, ghostForm, hTitle, relicIcon, heartMake, hOpt, heartBonus, calcShards, GRN, GRW, GRNF, spawnGrn, grnStart, grnPick, TRIAL, chAltarTick, chAltarPlace, chTrialStart, chTrialWin, chTime, chTime0, chDmgT, CH_HARD, CH_BOSS, cardDefs, cardView, ACH, achSync, achClear, openAch, KG, KGW, get kg() { return kg; }, AirGeyser, WaterMirror, MirrorBolt, kgIce, get shards() { return shards; }, set shards(v) { shards = v; }, VF, VFW, get vf() { return vf; }, VfTrap, VfSkull, VfHeart, vfLeech, fuseHearts, rerollHeart, heartBonus, renderFuse, setFu(v) { hFu = v; }, QN, QNW, get qn() { return qn; }, RootBind, SporeSack, QnMush, pickBossK, pctMelee, pctZone, updateDiff, skinG, bhKey, BH_ORDER, heartIcon, relicMaskOn, calcShards, isSlow, isLava, saveSave, svParse, spawnPlant, PL, get GSPECIES() { return GSPECIES; }, get plBalls() { return plBalls; }, synCard, freezeE, availSyn, SYNERGIES, dmName, FD, shkAdd, toxAdd, skSpawnPair, phoenixRevive, mirrorBlock, palPop, updateCutSaws, get shkSp() { return shkSp; }, get toxFl() { return toxFl; }, get zonesRef() { return zones; },
+window.__G = { PB, PBW, IMAP, IceWall, Fissure, IceSpear, segDist, FrostMgr, pbOn, pbClear, pbExPause, get pb() { return pb; }, gunMagN, ROLL, get lhead() { return lhead; }, KN, castLostHead, TW, isIceSlip, isIceSet, get ISPECIES() { return ISPECIES; }, ICE_SLIP, ICE_L, OPEN_TIER, TOP_TIER, renderHells, floorSet, pickFloor, iceTile, IF, get lhead() { return lhead; }, KN, isKnight, castLostHead, knightSlash, openGhostRoute, KNIGHT_FORMS, ghostForm, hTitle, relicIcon, heartMake, hOpt, heartBonus, calcShards, GRN, GRW, GRNF, spawnGrn, grnStart, grnPick, TRIAL, chAltarTick, chAltarPlace, chTrialStart, chTrialWin, chTime, chTime0, chDmgT, CH_HARD, CH_BOSS, cardDefs, cardView, ACH, achSync, achClear, openAch, KG, KGW, get kg() { return kg; }, AirGeyser, WaterMirror, MirrorBolt, kgIce, get shards() { return shards; }, set shards(v) { shards = v; }, VF, VFW, get vf() { return vf; }, VfTrap, VfSkull, VfHeart, vfLeech, fuseHearts, rerollHeart, heartBonus, renderFuse, setFu(v) { hFu = v; }, QN, QNW, get qn() { return qn; }, RootBind, SporeSack, QnMush, pickBossK, pctMelee, pctZone, updateDiff, skinG, bhKey, BH_ORDER, heartIcon, relicMaskOn, calcShards, isSlow, isLava, saveSave, svParse, spawnPlant, PL, get GSPECIES() { return GSPECIES; }, get plBalls() { return plBalls; }, synCard, freezeE, availSyn, SYNERGIES, dmName, FD, shkAdd, toxAdd, skSpawnPair, phoenixRevive, mirrorBlock, palPop, updateCutSaws, get shkSp() { return shkSp; }, get toxFl() { return toxFl; }, get zonesRef() { return zones; },
   bossDefeated, get IMG() { return IMG; },
   get ready() { return !!IMG.floorD; }, get state() { return state; }, get P() { return P; }, get enemies() { return enemies; }, get orbs() { return orbs; },
   get zones() { return zones; }, get ebul() { return ebul; }, get EYE() { return EYE; }, get shards() { return shards; }, get bigQ() { return bigQ; }, get bombQ() { return bombQ; }, get holyQ() { return holyQ; }, get afx() { return afx; }, get dashQ() { return dashQ; }, get beam() { return beam; }, get evo() { return evo; }, get choices() { return choices; },
