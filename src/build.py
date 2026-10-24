@@ -110,6 +110,8 @@ ASSETS = {
     '__SKAGUNE__': 'skin/gunE_art.webp',
     '__SKAWOLFE__': 'skin/wolfE_art.webp',
     '__SKWOLFB__': 'skin/wolfB.webp',
+    '__SKGHOSTU__': 'skin/ghostU.webp',
+    '__SKAGHOSTU__': 'skin/ghostU_art.webp',
     '__SKAWOLFB__': 'skin/wolfB_art.webp',
     '__SH__': 'mush/sh.webp',
     '__MIMIC__': 'mimic/mimic.webp',
