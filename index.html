@@ -671,7 +671,7 @@ function gunEdge(s) {   // 도탄: 화면 끝에 닿으면 튕긴다 (최대 2�
   if (s.y < y0 + 6 && s.vy < 0 || s.y > y1 - 6 && s.vy > 0) { s.vy = -s.vy; b = true; }
   if (b) { s.eb++; s.life = Math.max(s.life, 0.5); if (gunFx.length < 80) gunFx.push({ k: 'xR', x: s.x, y: s.y, t: 0, life: 0.25, i: 2 }); }
 }
-/* 최종 스킬: 구르기 — 4초 안에 3번 · 첫 구르기 때 남은 탄을 전부 쏘고 재장전 */
+/* 최종 스킬: 구르기 — 4초 안에 3번 · 구를 때마다 탄창의 탄을 전부 쏘고 재장전 */
 const ROLL = { n: 3, win: 4, dur: 0.26 };
 function gunRollStart() {
   rollQ = { n: ROLL.n, t: ROLL.win, d: null, first: true };
@@ -684,11 +684,11 @@ function gunRoll() {
   if (P.moving) { const l = Math.hypot(P.lastX, P.lastY) || 1; ux = P.lastX / l; uy = P.lastY / l; }
   if (Math.abs(ux) > 0.2) P.face = ux > 0 ? 1 : -1;
   rollQ.n--; rollQ.d = { t: 0, dur: ROLL.dur, ux, uy };
-  P.inv = Math.max(P.inv, ROLL.dur + 0.1); P.atkTimer = -1; sfx('skill');
+  P.inv = Math.max(P.inv, ROLL.dur + 0.1); P.atkTimer = -1; sfx('roll');
   if (gunFx.length < 80) gunFx.push({ k: 'roll', x: P.x, y: P.y, t: 0, life: 0.35, f: P.face });
-  if (rollQ.first) { rollQ.first = false; gunDump(); }
+  rollQ.first = false; gunDump();   // v8.97: 구를 때마다 (재장전 중이어도 즉시 장전) 6발 난사
 }
-function gunDump() {   // v8.31: 구르기 첫 회 — 재장전 중이어도 즉시 장전하고 6발을 0.04초 간격으로 모두 쏜다 → 재장전
+function gunDump() {   // v8.31 → v8.97: 구를 때마다 — 재장전 중이어도 즉시 장전하고 6발을 0.04초 간격으로 모두 쏜다 → 재장전
   if (!P.mag || P.reloadT > 0) { gunLoad(); P.reloadT = 0; }
   const left = P.mag.slice(P.magI);
   gunDq = { list: left, i: 0, t: 0 };
@@ -813,7 +813,7 @@ const uniqueSkill = () => (P.char === 'chimera' && P.route === 'dream') ? 'rush'
 const uniqueSkills = () => P.char === 'gun' ? ['roll'] : P.char === 'octo' ? [P.form >= 2 ? 'otent' : 'ele'] : P.char === 'ghost' ? [P.form >= 2 ? 'gsummon' : 'gcharge'] : P.char === 'lizard' ? [P.fin === 'guard' ? 'shell' : P.fin === 'water' ? 'tide' : 'rage'] : P.char === 'archer' ? (P.route === 'elf' && P.fin ? [P.fin === 'holy' ? 'holyshot' : 'bombshot'] : (P.route === 'skel' ? ['darkarrow'] : ['bigarrow', 'backdash'])) : [uniqueSkill()];
 const skillName = k => (k === 'blast' && P.char === 'snail' && P.form === 2) ? '맹독 대폭파' : (k === 'bigarrow' && P.route === 'skel') ? '해골 대궁의 일격' : SKILLS[k].name;
 const SKILLS = {
-  roll:   { name: '구르기', desc: '[악마처형자 전용] 4초 동안 짧게 3번 구를 수 있습니다 (SPACE를 다시 누를 때마다 한 번). 첫 구르기 때 (재장전 중이어도 즉시 장전해서) 탄창의 탄 6발을 짧은 간격으로 모두 쏘고 바로 재장전합니다. 구르는 동안 무적.', sub: '3회 · 4초 안에 다 쓰지 않으면 증발 · 첫 구르기 = 남은 탄 난사' },
+  roll:   { name: '구르기', desc: '[악마처형자 전용] 4초 동안 짧게 3번 구를 수 있습니다 (SPACE를 다시 누를 때마다 한 번). 구를 때마다 (재장전 중이어도 즉시 장전해서) 탄창의 탄 6발을 짧은 간격으로 모두 쏘고 바로 재장전합니다. 구르는 동안 무적.', sub: '3회 · 4초 안에 다 쓰지 않으면 증발 · 구를 때마다 남은 탄 난사' },
   cerb:   { name: '삼두 연쇄 물기', desc: '[삼두 전용] 세 머리가 가까운 적을 차례로 물어뜯습니다. 한 번마다 범위 피해와 강한 넉백, 둔화.', sub: '3연속 · 서로 다른 적 · 범위 피해' },
   drain:  { name: '피의 갈취', desc: '[혈랑 전용] 사방의 적에게서 피를 짜내 큰 피해를 주고, 맞힌 적 수만큼 체력을 회복합니다.', sub: '반경 400 · 적 1마리당 체력 +2% (최대 15%)' },
   bloodrain: { name: '신성한 피의 비', desc: '[성혈랑 전용] 3초 동안 성스러운 핏빛 기둥이 적들 위로 연달아 내리꽂히며, 명중할 때마다 체력을 조금 회복합니다. 맞은 적은 2초간 느려집니다.', sub: '기둥 16개 · 범위 피해 · 명중 시 회복 · 둔화' },
@@ -871,7 +871,7 @@ function mkCanvas(w, h) { const c = document.createElement('canvas'); c.width = 
  * 0-1. 저장(영혼 조각 · 영구 강화 · 설정) / 캐릭터 목록 / 소리
  * ============================================================ */
 const SAVE_KEY = 'hellSurvivorSave1';
-const GAME_VER = 'v8.96';
+const GAME_VER = 'v8.97';
 const SAVE_DEF = () => ({
   shards: 0,
   perks: { hp: 0, spd: 0, dmg: 0, exp: 0, magnet: 0, banish: 0, revive: 0, regen: 0, shard: 0, critd: 0, choice: 0 },
@@ -973,7 +973,7 @@ function noise(dur, vol, fc) {
 }
 function sfx(n) {
   if (!AC || SAVE.set.sfx <= 0) return;
-  const now = performance.now(), gap = { hit: 70, orb: 45, hurt: 120, shoot: 50, zap: 90 }[n] || 0;
+  const now = performance.now(), gap = { hit: 70, orb: 45, hurt: 120, shoot: 50, zap: 90, roll: 150 }[n] || 0;
   if (now - (sfxLast[n] || 0) < gap) return; sfxLast[n] = now;
   switch (n) {
     case 'hit':   tone(220, 90, 0.07, 'square', 0.25); break;
@@ -983,6 +983,7 @@ function sfx(n) {
     case 'level': [523, 659, 784, 1046].forEach((f, i) => tone(f, f, 0.14, 'triangle', 0.4, null, i * 0.07)); break;
     case 'evolve': tone(120, 900, 0.9, 'sawtooth', 0.35); [392, 523, 659, 784, 1046].forEach((f, i) => tone(f, f, 0.3, 'triangle', 0.35, null, 0.8 + i * 0.08)); break;
     case 'boom':  noise(0.5, 0.9, 700); tone(110, 40, 0.4, 'sine', 0.7); break;
+    case 'roll':   noise(0.24, 0.55, 2200); tone(520, 200, 0.16, 'triangle', 0.3); tone(150, 70, 0.14, 'sine', 0.45, null, 0.02); tone(120, 70, 0.07, 'square', 0.2, null, 0.12); tone(110, 65, 0.07, 'square', 0.18, null, 0.2); break;   // v8.97 구르기: 바람 가르는 소리 + 굴러 부딪히는 쿵쿵
     case 'skill': tone(300, 1200, 0.4, 'sawtooth', 0.35); noise(0.3, 0.4, 3000); break;
     case 'zap':   tone(1500, 180, 0.14, 'sawtooth', 0.22); noise(0.1, 0.25, 5000); break;
     case 'item':  tone(660, 660, 0.09, 'square', 0.3); tone(990, 990, 0.12, 'square', 0.3, null, 0.08); break;
@@ -11772,6 +11773,7 @@ function openAch() {
 }
 /* v8.71 간략 패치노트 (최근 버전만, 새 버전마다 맨 위에 한 줄 추가) */
 const PATCH = [
+  ['v8.97', '악마처형자 구르기 — 구를 때마다 탄창을 난사하고 재장전 · 구르기 효과음을 굴러가는 소리로 변경'],
   ['v8.96', '연보라 총령 — 카드 [넓게 흩뿌리기] 삭제'],
   ['v8.95', '문어 마법사도 [지옥불 구슬] 카드를 고를 수 있음 (구슬 +1, 최대 12개)'],
   ['v8.94', '업적 추가 — 타락한 혈랑왕 300번 처치 시 [타락한 혈랑의 심장](레어 · 옵션 3줄) 보상'],
