@@ -63,6 +63,8 @@
   .hcell .hlk, .hslot .hlk { position: absolute; top: 2px; left: 4px; font-size: 11px; }
   .hslot { position: relative; }
   #hLock.on { border-color: #ffe28a; color: #ffe28a; }
+  .hfuse { margin: 0 auto 10px; max-width: 820px; padding: 8px 10px; border-radius: 12px; background: rgba(20, 6, 14, 0.85); border: 1px solid #5a3a48; } .hfh { color: #ffb0d0; font-weight: bold; font-size: 14px; } .hfh small { color: #c9a8b4; font-weight: normal; font-size: 11px; margin-left: 6px; }
+  .hfrow { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; margin-top: 6px; } .hfrow i { color: #ffb0d0; font-style: normal; } .hslot.fz { width: 72px; height: 84px; } .hslot.fz img { width: 44px; height: 44px; } .hcell .hfu { position: absolute; top: 2px; left: 50%; transform: translateX(-50%); font-size: 9px; color: #ffb0d0; }
   .hcell .heq { position: absolute; top: 2px; right: 4px; font-size: 11px; color: #ffe28a; }
   .hnone { font-size: 13px; color: #b49484; grid-column: 1 / -1; padding: 20px 6px; }
   .hcore { width: min(460px, 92vw); padding: 14px; border-radius: 16px; background: linear-gradient(180deg, rgba(40, 12, 24, 0.95), rgba(12, 4, 10, 0.95)); border: 2px solid #8a4a2a; box-shadow: inset 0 0 40px rgba(255, 120, 60, 0.12); display: flex; flex-direction: column; align-items: center; gap: 8px; }
@@ -336,8 +338,9 @@
   <h2 style="color:#ff8aa8">💗 보스 심장</h2>
   <div class="gtop"><span id="hShards" style="color:var(--gold);font-weight:bold"></span><button id="hClose" class="sm">닫기</button></div>
   <div class="hslots" id="hSlots"></div><p id="hSum" class="hsum"></p>
+  <div class="hfuse" id="hFuse"></div>
   <div class="hmain"><div class="hinv" id="hInv"></div><div class="hcore" id="hCore"></div></div>
-  <p class="gprob">마왕 7종은 종류마다 심장이 한 번씩만(얻기 전까지 처치 시 20%) 떨어짐 · 챌린지·숨은 보스 제외 · [보스의 심장] (레어) · 떨어질 때 1% 확률로 레전더리 · 재설정 비용은 등급별 레어 ◆500 · 에픽 ◆600 · 유니크 ◆700 · 레전더리 ◆800: 레어→에픽 30% · 에픽→유니크 20% · 유니크→레전더리 5% 등급 상승, 옵션(공격력 · 최대 체력 · 공격 속도 각 1/3)과 수치를 다시 뽑음<br>등급별 수치: 레어 1~3% · 에픽 4~6% · 유니크 7~9% · 레전더리 15~20% · 최대 5개 장착 (효과는 다음 판 시작부터)</p>
+  <p class="gprob">마왕 8종은 종류마다 심장이 한 번씩만(얻기 전까지 처치 시 20%) 떨어짐 · 챌린지·숨은 보스 제외 · [보스의 심장] (레어) · 떨어질 때 1% 확률로 레전더리 · 재설정 비용은 등급별 레어 ◆500 · 에픽 ◆600 · 유니크 ◆700 · 레전더리 ◆800: 레어→에픽 30% · 에픽→유니크 20% · 유니크→레전더리 5% 등급 상승, 옵션(공격력 · 최대 체력 · 공격 속도 각 1/3)과 수치를 다시 뽑음<br>등급별 수치: 레어 1~3% · 에픽 4~6% · 유니크 7~9% · 레전더리 15~20% · 최대 5개 장착 (효과는 다음 판 시작부터)<br>합성: 심장 4개를 합성 칸에 넣으면 첫 번째 칸 심장이 옵션 2줄(2번째 옵션은 그 등급 범위에서 새로 뽑음)이 되고 나머지 3개는 사라짐 · 옵션 2줄 심장은 재설정할 때 두 줄을 모두 다시 뽑음</p>
 </div>
 <div id="hfx"></div>
 
@@ -355,7 +358,7 @@
 /* ============================================================
  * 0. 기본 설정
  * ============================================================ */
-const SRC = { qn: 'src/assets/qn/qn.webp?v=87ae4744', gmob: 'src/assets/gard/gmob.webp?v=f9eb8d1a', gnm: 'src/assets/gard/gnm.webp?v=1b721b56', zom: 'src/assets/zom/zom.webp?v=b4711bf4', adm: 'src/assets/adm/adm.webp?v=23fc8c70', gfloor: 'src/assets/gard/gfloor.webp?v=5a66ac34', gprops: 'src/assets/gard/gprops.webp?v=8895f1f4', gmap: 'src/assets/gard/gmap.webp?v=c5062278', tox: 'src/assets/tox/tox.webp?v=ae83766e', skelF: 'src/assets/skin/skelF.webp?v=23c8b6b9', skelFa: 'src/assets/skin/skelF_arrow.webp?v=fa902f4a', sktw: 'src/assets/sk/sktower.webp?v=78a745ab', mimic: 'src/assets/mimic/mimic.webp?v=86627d9e', sh: 'src/assets/mush/sh.webp?v=91485cee', mfloor: 'src/assets/mush/mfloor.webp?v=58a1549b', mprops: 'src/assets/mush/mprops.webp?v=1700bcac', mmob: 'src/assets/mush/mmob.webp?v=29e57e79', mmap: 'src/assets/mush/mmap.webp?v=da62046e', an2: 'src/assets/an/an2.webp?v=e8d646c2', shk: 'src/assets/shk/shk.webp?v=0d35c3f1', statue: 'src/assets/statue/statue.webp?v=280ee2c1', sk_gunH: 'src/assets/skin/gunH.webp?v=2aef5301', sk_ghostU: 'src/assets/skin/ghostU.webp?v=6bb142e2', skA_ghostU: 'src/assets/skin/ghostU_art.webp?v=607cb695', sk_wolfB: 'src/assets/skin/wolfB.webp?v=b448d7f2', skA_wolfB: 'src/assets/skin/wolfB_art.webp?v=c437d39d', sk_gunE: 'src/assets/skin/gunE.webp?v=579b6d98', heart: 'src/assets/heart/heart.webp?v=8a041dbd', sk_wolfE: 'src/assets/skin/wolfE.webp?v=a6772d4a', sk_lizG: 'src/assets/skin/lizG.webp?v=57cb0afd', skA_lizG: 'src/assets/skin/lizG_art.webp?v=4df48179', sk_ghostG: 'src/assets/skin/ghostG.webp?v=770ac55e', sk_twS: 'src/assets/skin/twS.webp?v=ed19ff4b', skA_twS: 'src/assets/skin/twS_art.webp?v=6b5fc236', skA_ghostG: 'src/assets/skin/ghostG_art.webp?v=c8bb29fc', skA_gunH: 'src/assets/skin/gunH_art.webp?v=097764b7', skA_gunE: 'src/assets/skin/gunE_art.webp?v=79889d33', skA_wolfE: 'src/assets/skin/wolfE_art.webp?v=673ee5dc', horse: 'src/assets/horse/horse.webp?v=128207b7', sfloor: 'src/assets/sea/sfloor.webp?v=b8e8164b', sprops: 'src/assets/sea/sprops.webp?v=7b8f1831', smob: 'src/assets/sea/smob.webp?v=94dcefca', smap: 'src/assets/sea/smap.webp?v=e347a31c', mini: 'src/assets/opt/mini.webp?v=ef7bd838', snail: 'src/assets/snail/snail_q.png?v=d60b3063', base: 'src/assets/opt/atlas.webp?v=86f6ddad', pup: 'src/assets/opt/pup.webp?v=ade04411', dark: 'src/assets/final/dark.webp?v=4305e585', bug: 'src/assets/evo/bug_q.png?v=4475354d', floor: 'src/assets/opt/floor.webp?v=eefec490', props: 'src/assets/opt/props.webp?v=b6506fb7', castle: 'src/assets/castle/castle_q.png?v=d8227e4f', arena: 'src/assets/opt/arena.webp?v=d513eccd', boss: 'src/assets/opt/boss.webp?v=58622b00', mobs: 'src/assets/opt/mobs.webp?v=e54f9ae3', blood: 'src/assets/opt/blood.webp?v=12f1722d', twin: 'src/assets/final/twin.webp?v=5ee38046', triple: 'src/assets/opt/triple.webp?v=8be3574c', items: 'src/assets/final/items.webp?v=be482d0e', drophb: 'src/assets/final/drop_hb.webp?v=567abde1', droppo: 'src/assets/final/drop_po.webp?v=501882aa', blood2: 'src/assets/final/blood2.webp?v=a6f5468a', holy: 'src/assets/opt/holy.webp?v=48900af3', lavasn: 'src/assets/opt/lavasn.webp?v=137bf3a8', lavafx: 'src/assets/opt/lavafx.webp?v=6533c23f', venom2: 'src/assets/opt/venom2.webp?v=5309ab02', venom3: 'src/assets/final/venom3.webp?v=e87f56bb', venomfx: 'src/assets/final/venomfx.webp?v=e016c316', elf0: 'src/assets/opt/elf0.webp?v=41960075', elf1: 'src/assets/v401/n_elf.webp?v=a6c68d14', skel: 'src/assets/v401/n_skel.webp?v=264d7841', chim0: 'src/assets/v401/n_chimw.webp?v=a33f0788', chim1: 'src/assets/v401/n_chim1.webp?v=30c50901', chim2: 'src/assets/opt/chim2.webp?v=c50b22fc', chimfx: 'src/assets/opt/chimfx.webp?v=3693dfb6', flm1: 'src/assets/opt/flm1.webp?v=4f115b84', flm2: 'src/assets/final/flm2.webp?v=64165a64', flmfx: 'src/assets/opt/flmfx.webp?v=128873bc', drm1: 'src/assets/v401/n_drm1.webp?v=f4149b03', drm2: 'src/assets/v401/n_drm2.webp?v=5b518613', drfx: 'src/assets/final/drfx.webp?v=b3558beb', arcr: 'src/assets/opt/arcr.webp?v=4de9002d', arch: 'src/assets/opt/arch.webp?v=c8a5de79', arfx: 'src/assets/final/arfx.webp?v=cbebb4a9', hlfx: 'src/assets/final/hlfx.webp?v=9f760684', slot: 'src/assets/opt/slot.webp?v=802671d0', uniq: 'src/assets/opt/uniq.webp?v=63109307', eyem: 'src/assets/final/eyem.webp?v=d8e65a1b', relic: 'src/assets/final/relic.webp?v=97df87f7', liz0: 'src/assets/v401/n_liz0.webp?v=58a28b27', liz1: 'src/assets/v401/n_liz1.webp?v=b9d68e9f', liz2: 'src/assets/v401/n_liz2.webp?v=e83c57c8', liz3: 'src/assets/final/liz3.webp?v=2f8f01cc', gh: 'src/assets/gh/gh.webp?v=891097b2', gg: 'src/assets/gg/gg.webp?v=6a18d717', oc: 'src/assets/oc/oc.webp?v=314f9fbd', lg: 'src/assets/lg/lg.webp?v=db7a0c72', os: 'src/assets/os/os.webp?v=353068cb', bs: 'src/assets/bs/bs.webp?v=932c80ac', tw0: 'src/assets/cd/cd1.webp?v=8f619864', tw1: 'src/assets/cd/cd2.webp?v=78cbbaba', tw2: 'src/assets/cd/cd3.webp?v=3090fcd9', fwb: 'src/assets/v404/fwb.webp?v=53313174', fwp: 'src/assets/v404/fwp.webp?v=34499ca1', fwfx: 'src/assets/v404/fwfx.webp?v=4112e827', bmap: 'src/assets/v404/bmap.webp?v=053d00d6', skb: 'src/assets/sk/skb.webp?v=70c4535b', skw: 'src/assets/sk/skw.webp?v=ea0bf1a6', chm: 'src/assets/ch/chmap.webp?v=96178577', cm: 'src/assets/ch/cm.webp?v=9cbe4f41', ab: 'src/assets/ch/ab.webp?v=5f5acfff', an: 'src/assets/an/an.webp?v=cae7082f', anfx: 'src/assets/an/anfx.webp?v=17e26bd5', amap: 'src/assets/an/amap.webp?v=f2d66a84', gun: 'src/assets/gun/gun.webp?v=ae4161fb' };
+const SRC = { qn: 'src/assets/qn/qn.webp?v=87ae4744', gmob: 'src/assets/gard/gmob.webp?v=f9eb8d1a', gnm: 'src/assets/gard/gnm.webp?v=1b721b56', zom: 'src/assets/zom/zom.webp?v=b4711bf4', adm: 'src/assets/adm/adm.webp?v=23fc8c70', gfloor: 'src/assets/gard/gfloor.webp?v=5a66ac34', gprops: 'src/assets/gard/gprops.webp?v=8895f1f4', gmap: 'src/assets/gard/gmap.webp?v=c5062278', tox: 'src/assets/tox/tox.webp?v=ae83766e', skelF: 'src/assets/skin/skelF.webp?v=23c8b6b9', skelFa: 'src/assets/skin/skelF_arrow.webp?v=fa902f4a', sktw: 'src/assets/sk/sktower.webp?v=78a745ab', mimic: 'src/assets/mimic/mimic.webp?v=86627d9e', sh: 'src/assets/mush/sh.webp?v=91485cee', mfloor: 'src/assets/mush/mfloor.webp?v=58a1549b', mprops: 'src/assets/mush/mprops.webp?v=1700bcac', mmob: 'src/assets/mush/mmob.webp?v=29e57e79', mmap: 'src/assets/mush/mmap.webp?v=da62046e', an2: 'src/assets/an/an2.webp?v=e8d646c2', shk: 'src/assets/shk/shk.webp?v=0d35c3f1', statue: 'src/assets/statue/statue.webp?v=280ee2c1', sk_gunH: 'src/assets/skin/gunH.webp?v=2aef5301', sk_ghostU: 'src/assets/skin/ghostU.webp?v=6bb142e2', skA_ghostU: 'src/assets/skin/ghostU_art.webp?v=607cb695', sk_wolfB: 'src/assets/skin/wolfB.webp?v=b448d7f2', skA_wolfB: 'src/assets/skin/wolfB_art.webp?v=c437d39d', sk_gunE: 'src/assets/skin/gunE.webp?v=579b6d98', heart: 'src/assets/heart/heart.webp?v=e8f2c2c0', sk_wolfE: 'src/assets/skin/wolfE.webp?v=a6772d4a', sk_lizG: 'src/assets/skin/lizG.webp?v=57cb0afd', skA_lizG: 'src/assets/skin/lizG_art.webp?v=4df48179', sk_ghostG: 'src/assets/skin/ghostG.webp?v=770ac55e', sk_twS: 'src/assets/skin/twS.webp?v=ed19ff4b', skA_twS: 'src/assets/skin/twS_art.webp?v=6b5fc236', skA_ghostG: 'src/assets/skin/ghostG_art.webp?v=c8bb29fc', skA_gunH: 'src/assets/skin/gunH_art.webp?v=097764b7', skA_gunE: 'src/assets/skin/gunE_art.webp?v=79889d33', skA_wolfE: 'src/assets/skin/wolfE_art.webp?v=673ee5dc', horse: 'src/assets/horse/horse.webp?v=128207b7', sfloor: 'src/assets/sea/sfloor.webp?v=b8e8164b', sprops: 'src/assets/sea/sprops.webp?v=7b8f1831', smob: 'src/assets/sea/smob.webp?v=94dcefca', smap: 'src/assets/sea/smap.webp?v=e347a31c', mini: 'src/assets/opt/mini.webp?v=ef7bd838', snail: 'src/assets/snail/snail_q.png?v=d60b3063', base: 'src/assets/opt/atlas.webp?v=86f6ddad', pup: 'src/assets/opt/pup.webp?v=ade04411', dark: 'src/assets/final/dark.webp?v=4305e585', bug: 'src/assets/evo/bug_q.png?v=4475354d', floor: 'src/assets/opt/floor.webp?v=eefec490', props: 'src/assets/opt/props.webp?v=b6506fb7', castle: 'src/assets/castle/castle_q.png?v=d8227e4f', arena: 'src/assets/opt/arena.webp?v=d513eccd', boss: 'src/assets/opt/boss.webp?v=58622b00', mobs: 'src/assets/opt/mobs.webp?v=e54f9ae3', blood: 'src/assets/opt/blood.webp?v=12f1722d', twin: 'src/assets/final/twin.webp?v=5ee38046', triple: 'src/assets/opt/triple.webp?v=8be3574c', items: 'src/assets/final/items.webp?v=be482d0e', drophb: 'src/assets/final/drop_hb.webp?v=567abde1', droppo: 'src/assets/final/drop_po.webp?v=501882aa', blood2: 'src/assets/final/blood2.webp?v=a6f5468a', holy: 'src/assets/opt/holy.webp?v=48900af3', lavasn: 'src/assets/opt/lavasn.webp?v=137bf3a8', lavafx: 'src/assets/opt/lavafx.webp?v=6533c23f', venom2: 'src/assets/opt/venom2.webp?v=5309ab02', venom3: 'src/assets/final/venom3.webp?v=e87f56bb', venomfx: 'src/assets/final/venomfx.webp?v=e016c316', elf0: 'src/assets/opt/elf0.webp?v=41960075', elf1: 'src/assets/v401/n_elf.webp?v=a6c68d14', skel: 'src/assets/v401/n_skel.webp?v=264d7841', chim0: 'src/assets/v401/n_chimw.webp?v=a33f0788', chim1: 'src/assets/v401/n_chim1.webp?v=30c50901', chim2: 'src/assets/opt/chim2.webp?v=c50b22fc', chimfx: 'src/assets/opt/chimfx.webp?v=3693dfb6', flm1: 'src/assets/opt/flm1.webp?v=4f115b84', flm2: 'src/assets/final/flm2.webp?v=64165a64', flmfx: 'src/assets/opt/flmfx.webp?v=128873bc', drm1: 'src/assets/v401/n_drm1.webp?v=f4149b03', drm2: 'src/assets/v401/n_drm2.webp?v=5b518613', drfx: 'src/assets/final/drfx.webp?v=b3558beb', arcr: 'src/assets/opt/arcr.webp?v=4de9002d', arch: 'src/assets/opt/arch.webp?v=c8a5de79', arfx: 'src/assets/final/arfx.webp?v=cbebb4a9', hlfx: 'src/assets/final/hlfx.webp?v=9f760684', slot: 'src/assets/opt/slot.webp?v=802671d0', uniq: 'src/assets/opt/uniq.webp?v=63109307', eyem: 'src/assets/final/eyem.webp?v=d8e65a1b', relic: 'src/assets/final/relic.webp?v=97df87f7', liz0: 'src/assets/v401/n_liz0.webp?v=58a28b27', liz1: 'src/assets/v401/n_liz1.webp?v=b9d68e9f', liz2: 'src/assets/v401/n_liz2.webp?v=e83c57c8', liz3: 'src/assets/final/liz3.webp?v=2f8f01cc', gh: 'src/assets/gh/gh.webp?v=891097b2', gg: 'src/assets/gg/gg.webp?v=6a18d717', oc: 'src/assets/oc/oc.webp?v=314f9fbd', lg: 'src/assets/lg/lg.webp?v=db7a0c72', os: 'src/assets/os/os.webp?v=353068cb', bs: 'src/assets/bs/bs.webp?v=932c80ac', tw0: 'src/assets/cd/cd1.webp?v=8f619864', tw1: 'src/assets/cd/cd2.webp?v=78cbbaba', tw2: 'src/assets/cd/cd3.webp?v=3090fcd9', fwb: 'src/assets/v404/fwb.webp?v=53313174', fwp: 'src/assets/v404/fwp.webp?v=34499ca1', fwfx: 'src/assets/v404/fwfx.webp?v=4112e827', bmap: 'src/assets/v404/bmap.webp?v=053d00d6', skb: 'src/assets/sk/skb.webp?v=70c4535b', skw: 'src/assets/sk/skw.webp?v=ea0bf1a6', chm: 'src/assets/ch/chmap.webp?v=96178577', cm: 'src/assets/ch/cm.webp?v=9cbe4f41', ab: 'src/assets/ch/ab.webp?v=5f5acfff', an: 'src/assets/an/an.webp?v=cae7082f', anfx: 'src/assets/an/anfx.webp?v=17e26bd5', amap: 'src/assets/an/amap.webp?v=f2d66a84', gun: 'src/assets/gun/gun.webp?v=ae4161fb' };
 const SNAIL_RECTS = [[0, 0, 216, 146], [220, 0, 273, 208], [497, 0, 276, 208], [777, 0, 289, 214]];
 const PROP_RECTS = [[0, 0, 38, 48], [40, 0, 22, 49], [64, 0, 34, 48], [100, 0, 26, 44], [128, 0, 29, 44], [159, 0, 56, 44], [217, 0, 64, 59], [283, 0, 42, 44], [327, 0, 20, 48], [349, 0, 62, 62], [413, 0, 47, 64], [462, 0, 44, 56], [0, 66, 33, 62], [35, 66, 36, 56], [73, 66, 28, 57], [103, 66, 19, 29], [124, 66, 20, 46], [146, 66, 18, 28], [166, 66, 18, 23], [186, 66, 19, 31], [207, 66, 21, 31], [230, 66, 22, 30], [254, 66, 21, 18], [277, 66, 20, 19], [299, 66, 32, 50], [333, 66, 32, 49], [367, 66, 40, 46], [409, 66, 39, 46], [450, 66, 33, 45], [0, 130, 37, 45], [39, 130, 19, 29], [60, 130, 18, 29], [80, 130, 17, 18], [99, 130, 20, 19], [121, 130, 20, 20], [143, 130, 58, 60], [203, 130, 31, 54], [236, 130, 30, 54], [268, 130, 30, 54], [300, 130, 47, 53], [349, 130, 28, 53], [379, 130, 31, 53], [412, 130, 43, 41], [457, 130, 44, 40], [0, 192, 36, 11], [38, 192, 25, 16], [65, 192, 48, 11], [115, 192, 76, 57], [193, 192, 43, 49], [238, 192, 21, 21], [261, 192, 35, 45], [298, 192, 50, 38], [350, 192, 67, 77], [419, 192, 53, 57], [0, 271, 45, 79], [47, 271, 53, 24], [102, 271, 32, 36], [136, 271, 59, 53]];
 // 늑대 형태별 스프라이트 설정: 한 칸 크기, 배율, 원본이 바라보는 방향(flip), 공격이 맞는 프레임(hitF), 동작별 (줄, 프레임 수, 초당 프레임)
@@ -849,7 +852,7 @@ function mkCanvas(w, h) { const c = document.createElement('canvas'); c.width = 
  * 0-1. 저장(영혼 조각 · 영구 강화 · 설정) / 캐릭터 목록 / 소리
  * ============================================================ */
 const SAVE_KEY = 'hellSurvivorSave1';
-const GAME_VER = 'v8.65';
+const GAME_VER = 'v8.66';
 const SAVE_DEF = () => ({
   shards: 0,
   perks: { hp: 0, spd: 0, dmg: 0, exp: 0, magnet: 0, banish: 0, revive: 0, regen: 0, shard: 0, critd: 0, choice: 0 },
@@ -4578,7 +4581,7 @@ function newPlayer(char) {
 }
 function heartBonus() {   // v8.01: 장착한 보스 심장 합계 (%)
   const S = SAVE.heart, o = { atk: 0, hp: 0, aspd: 0 }; if (!S) return o;
-  for (const id of S.eq) { const h = S.inv.find(q => q.id === id); if (h) o[h.st] += h.v; }
+  for (const id of S.eq) { const h = S.inv.find(q => q.id === id); if (h) { o[h.st] += h.v; if (h.st2) o[h.st2] += h.v2; } }
   return o;
 }
 function reset(char) {
@@ -10342,10 +10345,11 @@ const HG_ORDER = ['rare', 'epic', 'unique', 'legend'];
 const HSTAT = { atk: '공격력', hp: '최대 체력', aspd: '공격 속도' };
 const HEART = { drop: 0.20, legend: 0.01, slots: 5 };
 const heartCost = h => HG[h.g].cost;   // v8.09: 심장 등급(강화 단계)에 따라 레어 500 · 에픽 600 · 유니크 700 · 레전더리 800
-const BH = { angel: '타락천사', shk: '거대 버섯마귀', skel: '스켈레톤 마왕', eye: '마안군주', monkey: '원숭이 마왕', tox: '이독버섯 마왕', adm: '썩어버린 해군 제독' }, BH_ORDER = ['angel', 'shk', 'skel', 'eye', 'monkey', 'tox', 'adm'];   // 보스 종류별 심장 (도트 줄 순서)
-const bhKey = e => e.bk === 'angel' || e.bk === 'shk' || e.bk === 'skel' || e.bk === 'eye' || e.bk === 'tox' || e.bk === 'adm' ? e.bk : (e.bk ? null : 'monkey');
+const BH = { angel: '타락천사', shk: '거대 버섯마귀', skel: '스켈레톤 마왕', eye: '마안군주', monkey: '원숭이 마왕', tox: '이독버섯 마왕', adm: '썩어버린 해군 제독', qn: '타락한 원예의 여왕' }, BH_ORDER = ['angel', 'shk', 'skel', 'eye', 'monkey', 'tox', 'adm', 'qn'];   // v8.66 여왕 심장 = 8번째 줄   // 보스 종류별 심장 (도트 줄 순서)
+const bhKey = e => e.bk === 'angel' || e.bk === 'shk' || e.bk === 'skel' || e.bk === 'eye' || e.bk === 'tox' || e.bk === 'adm' || e.bk === 'qn' ? e.bk : (e.bk ? null : 'monkey');
 const hRand = (a, b) => a + Math.floor(Math.random() * (b - a + 1));
-const hOpt = h => `${HSTAT[h.st]} +${h.v}%`;
+const hOpt = h => `${HSTAT[h.st]} +${h.v}%` + (h.st2 ? ` · ${HSTAT[h.st2]} +${h.v2}%` : '');   // v8.66: 합성한 심장은 옵션 2줄
+const hShort = h => { const f = (st, v) => `${HSTAT[st].replace('최대 ', '').replace('공격 속도', '공속').replace('공격력', '공격')} +${v}%`; return f(h.st, h.v) + (h.st2 ? '<br>' + f(h.st2, h.v2) : ''); };
 function heartMake(g, b) { const S = SAVE.heart, G = HG[g]; return { id: ++S.n, g, b: b || 'angel', st: ['atk', 'hp', 'aspd'][(Math.random() * 3) | 0], v: hRand(G.min, G.max) }; }
 function rollHeartDrop(bk) {   // 마왕 처치 시: 그 보스 심장을 아직 못 얻었으면 20% → 'rare' (그중 1% → 'legend') / 아니면 null
   if (!BH[bk] || SAVE.heart.got[bk] || Math.random() >= HEART.drop) return null;
@@ -10357,10 +10361,21 @@ function rerollHeart(id) {   // 재설정: 조각 500 → 등급업 판정 → �
   if (h.lock) return { err: '잠긴 심장입니다 — 잠금을 풀어야 재설정할 수 있어요' };   // v8.51 잠금
   const cost = heartCost(h); if (SAVE.shards < cost) return { err: '영혼 조각이 부족합니다' };
   SAVE.shards -= cost;
-  const before = { g: h.g, st: h.st, v: h.v }, G = HG[h.g]; let up = false;
+  const before = { g: h.g, st: h.st, v: h.v, st2: h.st2, v2: h.v2 }, G = HG[h.g]; let up = false;
   if (G.next && Math.random() < G.up) { h.g = G.next; up = true; SAVE.dex.seen['heart:' + (h.b || 'angel') + ':' + h.g] = 1; }
   const N = HG[h.g]; h.st = ['atk', 'hp', 'aspd'][(Math.random() * 3) | 0]; h.v = hRand(N.min, N.max);
-  saveSave(); return { before, after: { g: h.g, st: h.st, v: h.v }, up };
+  if (h.st2) { h.st2 = ['atk', 'hp', 'aspd'][(Math.random() * 3) | 0]; h.v2 = hRand(N.min, N.max); }   // v8.66: 2줄이면 두 줄 모두
+  saveSave(); return { before, after: { g: h.g, st: h.st, v: h.v, st2: h.st2, v2: h.v2 }, up };
+}
+const HFUSE_N = 4;
+function fuseHearts(ids) {   // v8.66 합성: 4개 → 첫 번째 심장에 2번째 옵션 (나머지 3개는 사라짐)
+  const S = SAVE.heart, L = ids.map(id => S.inv.find(q => q.id === id));
+  if (L.length !== HFUSE_N || L.some(q => !q) || new Set(ids).size !== HFUSE_N) return { err: `심장 ${HFUSE_N}개가 필요해요` };
+  if (L.some(q => q.lock)) return { err: '잠긴 심장은 합성 재료로 쓸 수 없어요' };
+  const b = L[0]; if (b.st2) return { err: '첫 번째 칸 심장은 이미 옵션이 2줄이에요' };
+  const G = HG[b.g]; b.st2 = ['atk', 'hp', 'aspd'][(Math.random() * 3) | 0]; b.v2 = hRand(G.min, G.max);
+  const gone = new Set(ids.slice(1)); S.inv = S.inv.filter(q => !gone.has(q.id)); S.eq = S.eq.filter(q => !gone.has(q));
+  saveSave(); return { h: b };
 }
 function equipHeart(id) {   // 장착 (최대 5개) — 성공 true
   const S = SAVE.heart; if (!S.inv.some(q => q.id === id) || S.eq.includes(id)) return false;
@@ -10416,7 +10431,7 @@ function playUpgradeEffect(grade, text) {
   try { sfx(power >= 1.5 ? 'evolve' : 'chest'); } catch (_) {}
 }
 /* 보스 심장 화면 (재련 + 큐브 느낌: 가운데 심장 오브 · 등급 화살표 · 전→후 옵션 · 비용 줄) */
-let hSel = null, hLast = null;
+let hSel = null, hLast = null, hFu = [];   // v8.66 hFu = 합성 칸 (심장 id, 최대 4)
 function openHeart() { const S = SAVE.heart; if (!S.inv.some(q => q.id === hSel)) hSel = S.eq[0] || (S.inv[0] && S.inv[0].id) || null; hLast = null; renderHeart(); show('heartBox', true); }
 function heartSum() { const b = heartBonus(); return `공격력 +${b.atk}% · 최대 체력 +${b.hp}% · 공격 속도 +${b.aspd}%`; }
 function renderHeart() {
@@ -10425,14 +10440,15 @@ function renderHeart() {
   const sl = $('hSlots'); sl.innerHTML = '';
   for (let i = 0; i < HEART.slots; i++) {
     const q = S.inv.find(z => z.id === S.eq[i]), d = document.createElement('div'); d.className = 'hslot' + (q ? ' ' + q.g : '') + (q && q.id === hSel ? ' sel' : '');
-    d.innerHTML = q ? `<img src="${heartImg(q.g, 64, q.b)}"><small>${HSTAT[q.st].replace('최대 ', '')} +${q.v}%</small>` + (q.lock ? '<b class="hlk">🔒</b>' : '') : `<span>빈 슬롯</span><small>${i + 1}</small>`;
+    d.innerHTML = q ? `<img src="${heartImg(q.g, 64, q.b)}"><small>${hShort(q)}</small>` + (q.lock ? '<b class="hlk">🔒</b>' : '') : `<span>빈 슬롯</span><small>${i + 1}</small>`;
     if (q) d.onclick = () => { hSel = q.id; hLast = null; renderHeart(); }; sl.appendChild(d);
   }
   $('hSum').textContent = `장착 효과 합계 (다음 판부터): ${heartSum()}`;
   const inv = $('hInv'); inv.innerHTML = '';
   const L = S.inv.slice().sort((a, b) => HG_ORDER.indexOf(b.g) - HG_ORDER.indexOf(a.g) || b.v - a.v);
-  if (!L.length) inv.innerHTML = '<p class="hnone">아직 심장이 없어요.<br>마왕 7종(타락천사·거대 버섯마귀·이독버섯·해군 제독·스켈레톤·마안군주·원숭이)을 처음 쓰러뜨릴 때 종류마다 20% 확률로 그 마왕의 [심장]이 한 번씩 떨어집니다. (챌린지·숨은 보스 제외)</p>';
-  for (const q of L) { const d = document.createElement('div'); d.className = `hcell ${q.g}` + (q.id === hSel ? ' sel' : ''); d.innerHTML = `<img src="${heartImg(q.g, 56, q.b)}"><small>${HSTAT[q.st].replace('최대 ', '').replace('공격 속도', '공속')} +${q.v}%</small>` + (S.eq.includes(q.id) ? '<b class="heq">E</b>' : '') + (q.lock ? '<b class="hlk">🔒</b>' : ''); d.onclick = () => { hSel = q.id; hLast = null; renderHeart(); }; inv.appendChild(d); }
+  if (!L.length) inv.innerHTML = '<p class="hnone">아직 심장이 없어요.<br>마왕 8종(타락천사·거대 버섯마귀·이독버섯·해군 제독·원예의 여왕·스켈레톤·마안군주·원숭이)을 처음 쓰러뜨릴 때 종류마다 20% 확률로 그 마왕의 [심장]이 한 번씩 떨어집니다. (챌린지·숨은 보스 제외)</p>';
+  for (const q of L) { const d = document.createElement('div'); d.className = `hcell ${q.g}` + (q.id === hSel ? ' sel' : ''); d.innerHTML = `<img src="${heartImg(q.g, 56, q.b)}"><small>${hShort(q)}</small>` + (S.eq.includes(q.id) ? '<b class="heq">E</b>' : '') + (hFu.includes(q.id) ? `<b class="hfu">합${hFu.indexOf(q.id) + 1}</b>` : '') + (q.lock ? '<b class="hlk">🔒</b>' : ''); d.onclick = () => { hSel = q.id; hLast = null; renderHeart(); }; inv.appendChild(d); }
+  hFu = hFu.filter(id => S.inv.some(q => q.id === id)); renderFuse();
   const core = $('hCore');
   if (!h) { core.innerHTML = '<div class="horb"><p class="hnone">왼쪽 목록에서 심장을 고르세요</p></div>'; return; }
   const G = HG[h.g], nx = G.next && HG[G.next], eq = S.eq.includes(h.id);
@@ -10442,7 +10458,7 @@ function renderHeart() {
     <div class="hopt">${hOpt(h)} <small>(${G.name} 범위 ${G.min}~${G.max}%)</small></div>
     ${hLast ? `<div class="hcube"><div><small>이전</small><b style="color:${HG[hLast.before.g].col}">[${HG[hLast.before.g].name}] ${hOpt(hLast.before)}</b></div><i>➜</i><div><small>이후</small><b style="color:${HG[hLast.after.g].col}">[${HG[hLast.after.g].name}] ${hOpt(hLast.after)}</b></div></div>` : ''}
     <div class="hcost"><span>재설정 비용</span><b>◆ ${heartCost(h)}</b><span>보유</span><b class="${SAVE.shards < heartCost(h) ? 'lack' : ''}">◆ ${SAVE.shards}</b></div>
-    <div class="row"><button id="hReroll" ${h.lock || SAVE.shards < heartCost(h) ? 'disabled' : ''}>${h.lock ? '🔒 잠김' : '재설정'}</button><button class="sm ${h.lock ? 'on' : ''}" id="hLock">${h.lock ? '🔒 잠금 해제' : '🔓 옵션 잠금'}</button><button class="sm" id="hEquip">${eq ? '장착 해제' : '장착'}</button><button class="sm" id="hDis" ${h.lock ? 'disabled' : ''}>분해 (+${G.dis})</button></div>${h.lock ? '<p class="hsum">🔒 잠금 중 — 이 옵션은 재설정·분해되지 않아요</p>' : ''}`;
+    <div class="row"><button id="hReroll" ${h.lock || SAVE.shards < heartCost(h) ? 'disabled' : ''}>${h.lock ? '🔒 잠김' : '재설정'}</button><button class="sm ${h.lock ? 'on' : ''}" id="hLock">${h.lock ? '🔒 잠금 해제' : '🔓 옵션 잠금'}</button><button class="sm" id="hEquip">${eq ? '장착 해제' : '장착'}</button><button class="sm" id="hDis" ${h.lock ? 'disabled' : ''}>분해 (+${G.dis})</button><button class="sm" id="hFuseIn" ${h.lock ? 'disabled' : ''}>${hFu.includes(h.id) ? '합성 칸에서 빼기' : '합성 칸에 넣기'}</button></div>${h.lock ? '<p class="hsum">🔒 잠금 중 — 이 옵션은 재설정·분해되지 않아요</p>' : ''}`;
   $('hLock').onclick = () => { h.lock = !h.lock; saveSave(); try { sfx('item'); } catch (_) {} renderHeart(); };   // v8.51: 마음에 드는 옵션을 잠가 두면 실수로 재설정·분해하지 않는다
   $('hReroll').onclick = () => {
     const r = rerollHeart(h.id); if (r.err) return;
@@ -10451,7 +10467,22 @@ function renderHeart() {
     if (r.up) playUpgradeEffect(r.after.g); else { try { sfx('item'); } catch (_) {} }
   };
   $('hEquip').onclick = () => { if (eq) unequipHeart(h.id); else if (!equipHeart(h.id)) { $('hSum').textContent = '슬롯이 가득 찼어요 (최대 5개) — 먼저 다른 심장을 해제하세요'; return; } renderHeart(); };
+  $('hFuseIn').onclick = () => { if (hFu.includes(h.id)) hFu = hFu.filter(q => q !== h.id); else if (hFu.length < HFUSE_N && !h.lock) hFu.push(h.id); renderHeart(); };
   $('hDis').onclick = () => { if (!confirmDis(h)) return; disHeart(h.id); hSel = null; openHeart(); };
+}
+function renderFuse() {   // v8.66 합성 칸: 4개를 넣으면 첫 번째 칸 심장이 옵션 2줄이 된다
+  const S = SAVE.heart, box = $('hFuse'); if (!box) return;
+  const L = hFu.map(id => S.inv.find(q => q.id === id)).filter(Boolean), b = L[0];
+  let cells = '';
+  for (let i = 0; i < HFUSE_N; i++) { const q = L[i]; cells += `<div class="hslot fz${q ? ' ' + q.g : ''}" data-i="${i}">${q ? `<img src="${heartImg(q.g, 48, q.b)}"><small>${hShort(q)}</small>` : `<span>${i ? '재료' : '기준'}</span>`}<small>${i ? '사라짐' : '남음'}</small></div>${i < HFUSE_N - 1 ? '<i>+</i>' : ''}`; }
+  const why = L.length < HFUSE_N ? `심장 ${HFUSE_N - L.length}개 더 넣기` : b.st2 ? '기준 심장은 이미 옵션 2줄' : '';
+  box.innerHTML = `<div class="hfh">⚗ 심장 합성 <small>4개 → 첫 번째 칸(기준) 심장에 옵션 1줄 추가 (그 등급 범위 · 재료 3개는 사라짐)</small></div><div class="hfrow">${cells}<i>➜</i><button id="hFuseGo" ${why ? 'disabled' : ''}>${why || '합성'}</button></div>`;
+  box.querySelectorAll('.fz').forEach(d => d.onclick = () => { const id = hFu[+d.dataset.i]; if (id) { hFu = hFu.filter(q => q !== id); renderHeart(); } });
+  const go = $('hFuseGo'); if (go) go.onclick = () => {
+    if (go.dataset.ok !== '1') { go.dataset.ok = '1'; go.textContent = '정말 합성? (재료 3개 사라짐)'; return; }
+    const r = fuseHearts(hFu.slice()); if (r.err) { $('hSum').textContent = r.err; return; }
+    hFu = []; hSel = r.h.id; hLast = null; renderHeart(); playUpgradeEffect(r.h.g, '⚗ 합성 성공! 옵션 2줄');
+  };
 }
 function confirmDis(h) { const b = $('hDis'); if (b.dataset.ok === '1') return true; b.dataset.ok = '1'; b.textContent = `정말 분해? (+${HG[h.g].dis})`; return false; }
 function openShop(kind) {   // v5.11: 캐릭터 상점 / 강화 상점 분리
@@ -10705,7 +10736,7 @@ stepDive = skWrap(stepDive, 'dive'); stepRush = skWrap(stepRush, 'rush'); rushSt
 updateAirs = (f => function (...a) { return withSrc('basic', () => f.apply(this, a)); })(updateAirs);   // v6.22: 에어슬래시는 평타 (v6.30: 바로 뒤 천안 난무·브레스 감싸기가 주석에 묻혀 딜미터기에서 빠지던 것 수정)
 { const _tb = thornBlast, _sb = smashBlow; thornBlast = function (...a) { return withSrc('scale', () => _tb.apply(this, a)); }; smashBlow = function (...a) { return withSrc('smash', () => _sb.apply(this, a)); }; }
 shellReflect = skWrap(shellReflect, 'shell'); updateBsig = skWrap(updateBsig, 'bsigil');
-window.__G = { QN, QNW, get qn() { return qn; }, RootBind, SporeSack, QnMush, pickBossK, pctMelee, pctZone, updateDiff, skinG, bhKey, BH_ORDER, heartIcon, relicMaskOn, calcShards, isSlow, isLava, saveSave, svParse, spawnPlant, PL, get GSPECIES() { return GSPECIES; }, get plBalls() { return plBalls; }, synCard, freezeE, availSyn, SYNERGIES, dmName, FD, shkAdd, toxAdd, skSpawnPair, phoenixRevive, mirrorBlock, palPop, updateCutSaws, get shkSp() { return shkSp; }, get toxFl() { return toxFl; }, get zonesRef() { return zones; },
+window.__G = { fuseHearts, rerollHeart, heartBonus, renderFuse, setFu(v) { hFu = v; }, QN, QNW, get qn() { return qn; }, RootBind, SporeSack, QnMush, pickBossK, pctMelee, pctZone, updateDiff, skinG, bhKey, BH_ORDER, heartIcon, relicMaskOn, calcShards, isSlow, isLava, saveSave, svParse, spawnPlant, PL, get GSPECIES() { return GSPECIES; }, get plBalls() { return plBalls; }, synCard, freezeE, availSyn, SYNERGIES, dmName, FD, shkAdd, toxAdd, skSpawnPair, phoenixRevive, mirrorBlock, palPop, updateCutSaws, get shkSp() { return shkSp; }, get toxFl() { return toxFl; }, get zonesRef() { return zones; },
   bossDefeated, get IMG() { return IMG; },
   get ready() { return !!IMG.floorD; }, get state() { return state; }, get P() { return P; }, get enemies() { return enemies; }, get orbs() { return orbs; },
   get zones() { return zones; }, get ebul() { return ebul; }, get EYE() { return EYE; }, get shards() { return shards; }, get bigQ() { return bigQ; }, get bombQ() { return bombQ; }, get holyQ() { return holyQ; }, get afx() { return afx; }, get dashQ() { return dashQ; }, get beam() { return beam; }, get evo() { return evo; }, get choices() { return choices; },
