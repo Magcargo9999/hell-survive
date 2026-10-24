@@ -223,6 +223,13 @@
   #diffRow { display: none; align-items: center; justify-content: center; gap: 10px; margin-top: -4px; }
   #diffRow button { padding: 4px 14px; font-size: 14px; }
   #diffTxt { color: var(--gold); min-width: 120px; display: inline-block; }
+  #hellRow { display: none; flex-direction: column; align-items: center; gap: 6px; margin: 2px 0 6px; }   /* v8.61 지옥(5층 묶음) 고르기 */
+  #hellRow .hr { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; }
+  #hellRow button { padding: 4px 10px; font-size: 13px; letter-spacing: 0; box-shadow: 0 2px 0 #7a2a0a; line-height: 1.2; }
+  #hellRow button small { display: block; font-size: 10px; opacity: 0.8; }
+  #hellRow button.on { border-color: var(--gold); color: var(--gold); background: #4a1a10; }
+  #hellRow button:disabled { opacity: 0.35; cursor: default; }
+  #hellRow .fl button { min-width: 74px; }
   .slotrow { display: flex; gap: 18px; align-items: center; justify-content: center; flex-wrap: wrap; }
   #slotCv { width: 240px; height: 236px; image-rendering: pixelated; }
   .slotcols { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; }
@@ -243,6 +250,7 @@
   <div class="cards" id="charCards"></div>
   <div id="hint"></div>
   <div id="diffRow"><button id="diffMinus" class="sm">◀</button><b id="diffTxt"></b><button id="diffPlus" class="sm">▶</button></div>
+  <div id="hellRow"><div class="hr" id="hellTabs"></div><div class="hr fl" id="hellFloors"></div></div>
   <p id="diffDesc" style="font-size:12px;margin-top:-8px"></p>
   <p id="chInfo" style="font-size:12px;margin-top:-6px;color:#c9a0ff;line-height:1.5"></p>
   <p class="keys"><b>W</b><b>A</b><b>S</b><b>D</b> 또는 방향키로 이동 · 공격은 자동 · <b>SPACE</b> 특수 스킬 · <b>E</b> 성유물(순간이동) · <b>P</b> 일시정지</p>
@@ -841,7 +849,7 @@ function mkCanvas(w, h) { const c = document.createElement('canvas'); c.width = 
  * 0-1. 저장(영혼 조각 · 영구 강화 · 설정) / 캐릭터 목록 / 소리
  * ============================================================ */
 const SAVE_KEY = 'hellSurvivorSave1';
-const GAME_VER = 'v8.58';
+const GAME_VER = 'v8.61';
 const SAVE_DEF = () => ({
   shards: 0,
   perks: { hp: 0, spd: 0, dmg: 0, exp: 0, magnet: 0, banish: 0, revive: 0, regen: 0, shard: 0, critd: 0, choice: 0 },
@@ -9655,9 +9663,34 @@ function chMenu() {   // v6.20: 시작 화면의 챌린지 버튼 · 룬 · 보�
   const o = chOpen(); $('chBtn').textContent = o ? '∞ 챌린지 모드' : '∞ 챌린지 🔒'; $('chBtn').style.opacity = o ? 1 : 0.6;
   $('chInfo').innerHTML = rushLine() + (o ? `∞ 챌린지 — 룬: ${runeLine()}  ·  룬 조각 ${SAVE.ch.frag | 0}/${RUNE_COST}` + (SAVE.ch.best ? `  ·  최고 ${Math.floor(SAVE.ch.best / 60)}분 ${SAVE.ch.best % 60}초` : '') + `<br>보물: ${treasureLine()}` : '');
 }
+/* v8.61 지옥 고르기: 5층씩 묶어 1지옥(지하 1~5층) · 2지옥(6~10층) … — 지옥을 누르면 그 지옥에서 갈 수 있는 가장 깊은 층, 층 버튼으로 바로 고른다 */
+const HELL_N = 5, HELL_SET = { hell: '마왕성', mush: '버섯 동굴', sea: '어인섬', gard: '악마 식물원' };
+const hellOf = t => Math.floor((t | 0) / HELL_N);
+function pickFloor(n) {   // 층 고르기 (참가비 확인) → 성공하면 true
+  if (n > (SAVE.diff.max | 0)) return false;
+  if (n > 0 && SAVE.shards < n * 25) { $('hint').textContent = `${floorName(n)}은 참가비 ${n * 25} 영혼 조각이 필요해요.`; return false; }
+  SAVE.diff.fw = false; SAVE.diff.sel = n; saveSave(); $('hint').textContent = ''; updateDiff(); return true;
+}
+function renderHells() {
+  const m = SAVE.diff.max | 0, row = $('hellRow'); row.style.display = m > 0 ? 'flex' : 'none'; if (m <= 0) return;
+  const cur = SAVE.diff.fw ? -1 : hellOf(SAVE.diff.sel), H = Math.ceil((MAX_TIER + 1) / HELL_N), tabs = $('hellTabs'), fl = $('hellFloors');
+  tabs.innerHTML = ''; fl.innerHTML = '';
+  for (let h = 0; h < H; h++) {
+    const b = document.createElement('button'), a = h * HELL_N, z = Math.min(MAX_TIER, a + HELL_N - 1);
+    b.innerHTML = `${h + 1}지옥<small>${a > m ? '🔒 ' : ''}${HELL_SET[floorSet(a)] || ''} · ${a + 1}~${z + 1}층</small>`; b.disabled = a > m; b.classList.toggle('on', h === cur);
+    b.onclick = () => { for (let n = Math.min(m, z); n >= a; n--) if (n === 0 || SAVE.shards >= n * 25) { pickFloor(n); return; } pickFloor(a); };
+    tabs.appendChild(b);
+  }
+  if (cur < 0) return;
+  for (let n = cur * HELL_N; n <= Math.min(MAX_TIER, cur * HELL_N + HELL_N - 1); n++) {
+    const b = document.createElement('button'); b.innerHTML = `${n > m ? '🔒 ' : ''}${floorName(n)}`; b.disabled = n > m; b.classList.toggle('on', n === SAVE.diff.sel);
+    b.onclick = () => pickFloor(n); fl.appendChild(b);
+  }
+}
 function updateDiff() {
   const m = SAVE.diff.max | 0; SAVE.diff.sel = Math.min(SAVE.diff.sel | 0, m); const t = SAVE.diff.sel, fwo = !!(SAVE.fw.open && SAVE.fw.snap);
   if (!fwo) SAVE.diff.fw = false;
+  renderHells();
   $('diffRow').style.display = m > 0 || fwo ? 'flex' : 'none';
   if (SAVE.diff.fw) {
     const S = SAVE.fw.snap, C = CHARS[S.char];
@@ -9665,7 +9698,7 @@ function updateDiff() {
     $('diffDesc').textContent = `숨은 보스전 · 마지막으로 마왕을 쓰러뜨린 ${C ? C.name : S.char} Lv.${S.lvl}${S.tier ? ` (${floorName(S.tier)})` : ''} 스펙 그대로 곧장 타락한 혈랑왕과 싸웁니다 · 참가비 ${25 * (S.tier || 0)} (클리어하면 반환)` + (SAVE.fw.cleared ? ' · 처치함 ✔' : '');
     return;
   }
-  $('diffTxt').textContent = floorName(t);
+  $('diffTxt').textContent = `${hellOf(t) + 1}지옥 · ${floorName(t)}`;
   $('diffDesc').textContent = m <= 0 ? '' : t ? `몹 체력 +${15 * t}% · 몹 공격 +${10 * t}% · 보스 체력 +${30 * t}% · 보스 패턴 강화 · 영혼 조각 ×${(1 + 0.3 * t).toFixed(1)} · 참가비 ${25 * t} (클리어하면 반환)` : '마왕을 쓰러뜨리면 다음 층이 열립니다 (최대 지하 20층)';
 }
 function selectChar(c) {
@@ -10315,7 +10348,7 @@ stepDive = skWrap(stepDive, 'dive'); stepRush = skWrap(stepRush, 'rush'); rushSt
 updateAirs = (f => function (...a) { return withSrc('basic', () => f.apply(this, a)); })(updateAirs);   // v6.22: 에어슬래시는 평타 (v6.30: 바로 뒤 천안 난무·브레스 감싸기가 주석에 묻혀 딜미터기에서 빠지던 것 수정)
 { const _tb = thornBlast, _sb = smashBlow; thornBlast = function (...a) { return withSrc('scale', () => _tb.apply(this, a)); }; smashBlow = function (...a) { return withSrc('smash', () => _sb.apply(this, a)); }; }
 shellReflect = skWrap(shellReflect, 'shell'); updateBsig = skWrap(updateBsig, 'bsigil');
-window.__G = { skinG, bhKey, BH_ORDER, heartIcon, relicMaskOn, calcShards, isSlow, isLava, saveSave, svParse, spawnPlant, PL, get GSPECIES() { return GSPECIES; }, get plBalls() { return plBalls; }, synCard, freezeE, availSyn, SYNERGIES, dmName, FD, shkAdd, toxAdd, skSpawnPair, phoenixRevive, mirrorBlock, palPop, updateCutSaws, get shkSp() { return shkSp; }, get toxFl() { return toxFl; }, get zonesRef() { return zones; },
+window.__G = { updateDiff, skinG, bhKey, BH_ORDER, heartIcon, relicMaskOn, calcShards, isSlow, isLava, saveSave, svParse, spawnPlant, PL, get GSPECIES() { return GSPECIES; }, get plBalls() { return plBalls; }, synCard, freezeE, availSyn, SYNERGIES, dmName, FD, shkAdd, toxAdd, skSpawnPair, phoenixRevive, mirrorBlock, palPop, updateCutSaws, get shkSp() { return shkSp; }, get toxFl() { return toxFl; }, get zonesRef() { return zones; },
   bossDefeated, get IMG() { return IMG; },
   get ready() { return !!IMG.floorD; }, get state() { return state; }, get P() { return P; }, get enemies() { return enemies; }, get orbs() { return orbs; },
   get zones() { return zones; }, get ebul() { return ebul; }, get EYE() { return EYE; }, get shards() { return shards; }, get bigQ() { return bigQ; }, get bombQ() { return bombQ; }, get holyQ() { return holyQ; }, get afx() { return afx; }, get dashQ() { return dashQ; }, get beam() { return beam; }, get evo() { return evo; }, get choices() { return choices; },
