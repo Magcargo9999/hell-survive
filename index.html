@@ -352,7 +352,7 @@
   <div class="hslots" id="hSlots"></div><p id="hSum" class="hsum"></p>
   <div class="hfuse" id="hFuse"></div>
   <div class="hmain"><div class="hinv" id="hInv"></div><div class="hcore" id="hCore"></div></div>
-  <p class="gprob">마왕 8종은 종류마다 심장이 한 번씩만(얻기 전까지 처치 시 20%) 떨어짐 · 챌린지·숨은 보스 제외 · [보스의 심장] (레어) · 떨어질 때 1% 확률로 레전더리 · 재설정 비용은 등급별 레어 ◆500 · 에픽 ◆600 · 유니크 ◆700 · 레전더리 ◆800: 레어→에픽 30% · 에픽→유니크 20% · 유니크→레전더리 5% 등급 상승, 옵션(공격력 · 최대 체력 · 공격 속도 각 1/3)과 수치를 다시 뽑음<br>등급별 수치: 레어 1~3% · 에픽 4~6% · 유니크 7~9% · 레전더리 15~20% · 최대 5개 장착 (효과는 다음 판 시작부터)<br>합성: 심장 4개를 합성 칸에 넣으면 첫 번째 칸 심장이 옵션 2줄(2번째 옵션은 그 등급 범위에서 새로 뽑음)이 되고 나머지 3개는 사라짐 · 옵션 2줄 심장은 재설정할 때 두 줄을 모두 다시 뽑음</p>
+  <p class="gprob">마왕 8종은 종류마다 심장이 한 번씩만(얻기 전까지 처치 시 20%) 떨어짐 · 챌린지·숨은 보스 제외 · [보스의 심장] (레어) · 떨어질 때 1% 확률로 레전더리 · 재설정 비용은 등급별 레어 ◆500 · 에픽 ◆600 · 유니크 ◆700 · 레전더리 ◆800: 레어→에픽 30% · 에픽→유니크 20% · 유니크→레전더리 5% 등급 상승, 옵션(공격력 · 최대 체력 · 공격 속도 각 1/3)과 수치를 다시 뽑음<br>등급별 수치: 레어 1~3% · 에픽 4~6% · 유니크 7~9% · 레전더리 15~20% · 최대 5개 장착 (효과는 다음 판 시작부터)<br>합성: 레전더리 심장 3개를 합성 칸에 넣으면 첫 번째 칸 심장이 옵션 2줄(2번째 옵션은 레전더리 범위에서 새로 뽑음)이 되고 나머지 2개는 사라짐 · 옵션 2줄 심장은 재설정할 때 두 줄을 모두 다시 뽑음</p>
 </div>
 <div id="hfx"></div>
 
@@ -871,7 +871,7 @@ function mkCanvas(w, h) { const c = document.createElement('canvas'); c.width = 
  * 0-1. 저장(영혼 조각 · 영구 강화 · 설정) / 캐릭터 목록 / 소리
  * ============================================================ */
 const SAVE_KEY = 'hellSurvivorSave1';
-const GAME_VER = 'v8.83';
+const GAME_VER = 'v8.84';
 const SAVE_DEF = () => ({
   shards: 0,
   perks: { hp: 0, spd: 0, dmg: 0, exp: 0, magnet: 0, banish: 0, revive: 0, regen: 0, shard: 0, critd: 0, choice: 0 },
@@ -5360,10 +5360,10 @@ function newPlayer(char) {
   const p = {
     char, bossK: rand() < 0.5 ? 'eye' : 'monkey', shield: 0, boost: 0, armor: char === 'snail' ? 0.9 : 1, trailAcc: 0, tx: 0, ty: 0,
     syn: {}, aspd: 1, knock: 0.7, crit: 0.05, critD: 1.7, vx: 0, vy: 0, lavaT: 0, lavaTick: 0, banish: 0, banned: {}, cdT: { th: 1.5, bl: 1, nv: 2.5, au: 0, nv2: 0 }, vampCd: 0, expMul: 1, named: 0, bolts: 1, killHeal: 0, trailBonus: 0, orbR: 80, orbW: 3.2, orbD: 0.55, revived: false, earned: 0,
-    x: 0, y: 0, hp: sn ? 125 : ar ? 70 : 100, max: sn ? 125 : ar ? 70 : 100, spd: sn ? 175 : ar ? 215 : 200, face: 1,
+    x: 0, y: 0, hp: sn ? 125 : ar ? 70 : 100, max: sn ? 125 : ar ? 70 : 100, spd: sn ? 175 : ar ? 195 : 200, face: 1,
     anim: 'idle', animT: 0, inv: 0, hitT: 0,
     atkTimer: -1, atkCd: 0, atkHitN: 0, ax: 1, ay: 0,
-    dmg: sn ? 18 : ar ? 22 : 18, rng: sn || ar ? 100 : 96, cd: sn ? 0.85 : ar ? 0.51 : 0.9, pickup: ar ? 95 : 90,
+    dmg: sn ? 18 : ar ? 19 : 18, rng: sn || ar ? 100 : 96, cd: sn ? 0.85 : ar ? 0.51 : 0.9, pickup: ar ? 95 : 90,
     pierce: 1, fin: null, regen: 0, arrowScale: 1, far: ar ? 0.15 : 0, dodge: 0, kite: 0, fireArrow: 0, moving: false,
     orbsN: 0, orbAng: 0, shardN: 0, shardCd: 0,
     exp: 0, need: needFor(1), lvl: 1, kills: 0, up: {},
@@ -11195,10 +11195,11 @@ function rerollHeart(id) {   // 재설정: 조각 500 → 등급업 판정 → �
   if (h.st2) { h.st2 = ['atk', 'hp', 'aspd'][(Math.random() * 3) | 0]; h.v2 = hRand(N.min, N.max); }   // v8.66: 2줄이면 두 줄 모두
   saveSave(); return { before, after: { g: h.g, st: h.st, v: h.v, st2: h.st2, v2: h.v2 }, up };
 }
-const HFUSE_N = 4;
-function fuseHearts(ids) {   // v8.66 합성: 4개 → 첫 번째 심장에 2번째 옵션 (나머지 3개는 사라짐)
+const HFUSE_N = 3;   // v8.83: 레전더리 심장 3개
+function fuseHearts(ids) {   // v8.66 합성 → v8.83: 레전더리 심장 3개 → 첫 번째 심장에 2번째 옵션 (나머지 2개는 사라짐)
   const S = SAVE.heart, L = ids.map(id => S.inv.find(q => q.id === id));
   if (L.length !== HFUSE_N || L.some(q => !q) || new Set(ids).size !== HFUSE_N) return { err: `심장 ${HFUSE_N}개가 필요해요` };
+  if (L.some(q => q.g !== 'legend')) return { err: '레전더리 등급 심장만 합성할 수 있어요' };
   if (L.some(q => q.lock)) return { err: '잠긴 심장은 합성 재료로 쓸 수 없어요' };
   const b = L[0]; if (b.st2) return { err: '첫 번째 칸 심장은 이미 옵션이 2줄이에요' };
   const G = HG[b.g]; b.st2 = ['atk', 'hp', 'aspd'][(Math.random() * 3) | 0]; b.v2 = hRand(G.min, G.max);
@@ -11259,7 +11260,7 @@ function playUpgradeEffect(grade, text) {
   try { sfx(power >= 1.5 ? 'evolve' : 'chest'); } catch (_) {}
 }
 /* 보스 심장 화면 (재련 + 큐브 느낌: 가운데 심장 오브 · 등급 화살표 · 전→후 옵션 · 비용 줄) */
-let hSel = null, hLast = null, hFu = [];   // v8.66 hFu = 합성 칸 (심장 id, 최대 4)
+let hSel = null, hLast = null, hFu = [];   // v8.66 hFu = 합성 칸 (심장 id, 최대 3)
 function openHeart() { const S = SAVE.heart; if (!S.inv.some(q => q.id === hSel)) hSel = S.eq[0] || (S.inv[0] && S.inv[0].id) || null; hLast = null; renderHeart(); show('heartBox', true); }
 function heartSum() { const b = heartBonus(); return `공격력 +${b.atk}% · 최대 체력 +${b.hp}% · 공격 속도 +${b.aspd}%`; }
 function renderHeart() {
@@ -11286,7 +11287,7 @@ function renderHeart() {
     <div class="hopt">${hOpt(h)} <small>(${G.name} 범위 ${G.min}~${G.max}%)</small></div>
     ${hLast ? `<div class="hcube"><div><small>이전</small><b style="color:${HG[hLast.before.g].col}">[${HG[hLast.before.g].name}] ${hOpt(hLast.before)}</b></div><i>➜</i><div><small>이후</small><b style="color:${HG[hLast.after.g].col}">[${HG[hLast.after.g].name}] ${hOpt(hLast.after)}</b></div></div>` : ''}
     <div class="hcost"><span>재설정 비용</span><b>◆ ${heartCost(h)}</b><span>보유</span><b class="${SAVE.shards < heartCost(h) ? 'lack' : ''}">◆ ${SAVE.shards}</b></div>
-    <div class="row"><button id="hReroll" ${h.lock || SAVE.shards < heartCost(h) ? 'disabled' : ''}>${h.lock ? '🔒 잠김' : '재설정'}</button><button class="sm ${h.lock ? 'on' : ''}" id="hLock">${h.lock ? '🔒 잠금 해제' : '🔓 옵션 잠금'}</button><button class="sm" id="hEquip">${eq ? '장착 해제' : '장착'}</button><button class="sm" id="hDis" ${h.lock ? 'disabled' : ''}>분해 (+${G.dis})</button><button class="sm" id="hFuseIn" ${h.lock ? 'disabled' : ''}>${hFu.includes(h.id) ? '합성 칸에서 빼기' : '합성 칸에 넣기'}</button></div>${h.lock ? '<p class="hsum">🔒 잠금 중 — 이 옵션은 재설정·분해되지 않아요</p>' : ''}`;
+    <div class="row"><button id="hReroll" ${h.lock || SAVE.shards < heartCost(h) ? 'disabled' : ''}>${h.lock ? '🔒 잠김' : '재설정'}</button><button class="sm ${h.lock ? 'on' : ''}" id="hLock">${h.lock ? '🔒 잠금 해제' : '🔓 옵션 잠금'}</button><button class="sm" id="hEquip">${eq ? '장착 해제' : '장착'}</button><button class="sm" id="hDis" ${h.lock ? 'disabled' : ''}>분해 (+${G.dis})</button><button class="sm" id="hFuseIn" ${h.lock || h.g !== 'legend' ? 'disabled' : ''}>${hFu.includes(h.id) ? '합성 칸에서 빼기' : '합성 칸에 넣기'}</button></div>${h.lock ? '<p class="hsum">🔒 잠금 중 — 이 옵션은 재설정·분해되지 않아요</p>' : ''}`;
   $('hLock').onclick = () => { h.lock = !h.lock; saveSave(); try { sfx('item'); } catch (_) {} renderHeart(); };   // v8.51: 마음에 드는 옵션을 잠가 두면 실수로 재설정·분해하지 않는다
   $('hReroll').onclick = () => {
     const r = rerollHeart(h.id); if (r.err) return;
@@ -11295,7 +11296,7 @@ function renderHeart() {
     if (r.up) playUpgradeEffect(r.after.g); else { try { sfx('item'); } catch (_) {} }
   };
   $('hEquip').onclick = () => { if (eq) unequipHeart(h.id); else if (!equipHeart(h.id)) { $('hSum').textContent = '슬롯이 가득 찼어요 (최대 5개) — 먼저 다른 심장을 해제하세요'; return; } renderHeart(); };
-  $('hFuseIn').onclick = () => { if (hFu.includes(h.id)) hFu = hFu.filter(q => q !== h.id); else if (hFu.length < HFUSE_N && !h.lock) hFu.push(h.id); renderHeart(); };
+  $('hFuseIn').onclick = () => { if (hFu.includes(h.id)) hFu = hFu.filter(q => q !== h.id); else if (hFu.length < HFUSE_N && !h.lock && h.g === 'legend') hFu.push(h.id); renderHeart(); };
   $('hDis').onclick = () => { if (!confirmDis(h)) return; disHeart(h.id); hSel = null; openHeart(); };
 }
 function renderFuse() {   // v8.66 합성 칸: 4개를 넣으면 첫 번째 칸 심장이 옵션 2줄이 된다
@@ -11303,11 +11304,11 @@ function renderFuse() {   // v8.66 합성 칸: 4개를 넣으면 첫 번째 칸 
   const L = hFu.map(id => S.inv.find(q => q.id === id)).filter(Boolean), b = L[0];
   let cells = '';
   for (let i = 0; i < HFUSE_N; i++) { const q = L[i]; cells += `<div class="hslot fz${q ? ' ' + q.g : ''}" data-i="${i}">${q ? `<img src="${heartImg(q.g, 48, q.b)}"><small>${hShort(q)}</small>` : `<span>${i ? '재료' : '기준'}</span>`}<small>${i ? '사라짐' : '남음'}</small></div>${i < HFUSE_N - 1 ? '<i>+</i>' : ''}`; }
-  const why = L.length < HFUSE_N ? `심장 ${HFUSE_N - L.length}개 더 넣기` : b.st2 ? '기준 심장은 이미 옵션 2줄' : '';
-  box.innerHTML = `<div class="hfh">⚗ 심장 합성 <small>4개 → 첫 번째 칸(기준) 심장에 옵션 1줄 추가 (그 등급 범위 · 재료 3개는 사라짐)</small></div><div class="hfrow">${cells}<i>➜</i><button id="hFuseGo" ${why ? 'disabled' : ''}>${why || '합성'}</button></div>`;
+  const why = L.length < HFUSE_N ? `레전더리 심장 ${HFUSE_N - L.length}개 더 넣기` : L.some(q => q.g !== 'legend') ? '레전더리만 가능' : b.st2 ? '기준 심장은 이미 옵션 2줄' : '';
+  box.innerHTML = `<div class="hfh">⚗ 심장 합성 <small>레전더리 심장 3개 → 첫 번째 칸(기준) 심장에 옵션 1줄 추가 (레전더리 범위 · 재료 2개는 사라짐)</small></div><div class="hfrow">${cells}<i>➜</i><button id="hFuseGo" ${why ? 'disabled' : ''}>${why || '합성'}</button></div>`;
   box.querySelectorAll('.fz').forEach(d => d.onclick = () => { const id = hFu[+d.dataset.i]; if (id) { hFu = hFu.filter(q => q !== id); renderHeart(); } });
   const go = $('hFuseGo'); if (go) go.onclick = () => {
-    if (go.dataset.ok !== '1') { go.dataset.ok = '1'; go.textContent = '정말 합성? (재료 3개 사라짐)'; return; }
+    if (go.dataset.ok !== '1') { go.dataset.ok = '1'; go.textContent = '정말 합성? (재료 2개 사라짐)'; return; }
     const r = fuseHearts(hFu.slice()); if (r.err) { $('hSum').textContent = r.err; return; }
     hFu = []; hSel = r.h.id; hLast = null; renderHeart(); playUpgradeEffect(r.h.g, '⚗ 합성 성공! 옵션 2줄');
   };
@@ -11382,6 +11383,7 @@ function openAch() {
 }
 /* v8.71 간략 패치노트 (최근 버전만, 새 버전마다 맨 위에 한 줄 추가) */
 const PATCH = [
+  ['v8.84', '지옥엘프 궁수 기본 이속 215→195 · 기본 공격력 22→19 너프 · 심장 합성: 레전더리 심장 3개로 변경 (재료 2개 사라짐)'],
   ['v8.83', '달팽이 장판(독 자국·용암 웅덩이)도 빙결·점화 발동(적마다 1.2초 쿨) · 용암 대분출이 용암 흔적을 터뜨리지 않음 · 보스 러시 시작 증강 5개만 무작위(나머지 직접 선택) · 토끼 후드 늑대 스킨은 0진화에서만'],
   ['v8.82', '보스 러시 개편 — 선택한 층과 무관한 독립 시행 · Lv.20 시작 + 증강 5개 무작위 · 마왕 10종 무작위 순서(처치할수록 난이도 상승) · 처치마다 +5레벨 · 완주 업적 추가'],
   ['v8.81', '지옥엘프 궁수 체력 대폭 너프 (진화한 지옥엘프 최종 체력 약 -25%)'],
