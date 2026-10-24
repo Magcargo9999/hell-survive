@@ -819,7 +819,7 @@ const SKILLS = {
   bloodrain: { name: '신성한 피의 비', desc: '[성혈랑 전용] 3초 동안 성스러운 핏빛 기둥이 적들 위로 연달아 내리꽂히며, 명중할 때마다 체력을 조금 회복합니다. 맞은 적은 2초간 느려집니다.', sub: '기둥 16개 · 범위 피해 · 명중 시 회복 · 둔화' },
   howl:   { name: '지옥의 울부짖음', desc: '[늑대 전용] 사방의 적을 크게 밀쳐내고 피해를 주며 느리게 만듭니다.', sub: '반경 420 · 강한 넉백 · 둔화' },
   megabomb: { name: '강화된 폭탄 투척', desc: '[폭탄 달팽이 전용] 적이 가장 많이 모인 곳에 거대한 폭탄을 던집니다. 떨어진 자리에서 크게 터지고, 작은 폭탄 6개가 사방으로 흩어져 연달아 터집니다.', sub: '거대 폭발 (공격력의 700%) + 작은 폭탄 6발 (각 120%)' },
-  lavaburst: { name: '용암 대분출', desc: '[용암 달팽이 전용] 남겨둔 용암 흔적이 한꺼번에 터지고, 하늘에서 거대 용암탄 1발과 작은 용암탄 4발이 쏟아집니다.', sub: '흔적 폭발 · 거대 용암탄(범위 215) · 용암 웅덩이' },
+  lavaburst: { name: '용암 대분출', desc: '[용암 달팽이 전용] 하늘에서 거대 용암탄 1발과 작은 용암탄 4발이 쏟아집니다. 남겨둔 용암 흔적은 그대로 남습니다.', sub: '거대 용암탄(범위 215) · 용암 웅덩이' },
   breath: { name: '화염 브레스', desc: '[화염 사자 전용] 짧게 힘을 모은 뒤 앞쪽 부채꼴로 2.4초간 화염을 뿜습니다. 시전 중에는 느리게 움직일 수 있고, 불길에 닿은 적은 화상을 입습니다.', sub: '부채꼴 · 지속 피해 · 화상' },
   rush:   { name: '천안 난무', desc: '[천안의 군주 전용] 보랏빛 기운을 두르고 무적 상태로 적 사이를 8번 연달아 돌진하며 베어 넘깁니다. 돌진 경로와 도착 지점마다 피해를 주고, 마지막 일격은 더 강하게 밀쳐냅니다. 보스·미니 보스를 우선 노립니다.', sub: '무적 · 8연속 돌진 · 경로+도착 피해 · 마지막 일격 강화' },
   dive:   { name: '천공 강하', desc: '[키메라 전용] 하늘 높이 날아올라 적이 가장 많이 모인 곳으로 내려꽂힙니다. 비행 중에는 무적이며, 착지 지점에 큰 범위 피해와 강한 넉백.', sub: '비행 중 무적 · 착지 범위 피해 · 넉백' },
@@ -871,7 +871,7 @@ function mkCanvas(w, h) { const c = document.createElement('canvas'); c.width = 
  * 0-1. 저장(영혼 조각 · 영구 강화 · 설정) / 캐릭터 목록 / 소리
  * ============================================================ */
 const SAVE_KEY = 'hellSurvivorSave1';
-const GAME_VER = 'v8.82';
+const GAME_VER = 'v8.83';
 const SAVE_DEF = () => ({
   shards: 0,
   perks: { hp: 0, spd: 0, dmg: 0, exp: 0, magnet: 0, banish: 0, revive: 0, regen: 0, shard: 0, critd: 0, choice: 0 },
@@ -6274,7 +6274,10 @@ function takeCard(u) {   // 카드 한 장을 적용한다 (고른 경우 · 보
   if (P.char === 'octo' && !u.cls && !u.noLv && u.def && P.orbsN < OCTO_ORB_MAX) { P.orbsN++; floatNum(P.x, P.y - 100, `마력 구체 ${P.orbsN}개`, '#e0b0ff'); }
 }
 function openUpgrade() {
-  if (rush && rush.init) { state = 'play'; if (P.exp >= P.need) levelUp(); return; }   // v8.82: 보스 러시 시작 레벨업에서는 카드를 고르지 않는다 (끝난 뒤 증강 5개가 무작위로 정해진다)
+  if (rush && rush.init && rush.autoN > 0) {   // v8.83: 보스 러시 시작 레벨업 — 처음 5번은 카드가 무작위로 정해지고, 나머지는 직접 고른다
+    const it = rollCards(3, []).map(cardView);
+    if (it.length) { const u = it[(rand() * it.length) | 0]; takeCard(u); rush.autoN--; rush.got.push(u.name); state = 'play'; if (P.exp >= P.need) levelUp(); return; }
+  }
   const NC = 3 + ((SAVE.perks.choice | 0) > 0 ? 1 : 0);   // v5.24: 강화 상점 [넓어진 선택지] → 4장
   const items = rollCards(NC, []).map(cardView);
   while (items.length < NC) items.push(items.length ? shardCard() : restCard());
@@ -6751,22 +6754,8 @@ function castSkill() {
     const t = denseTarget(620, 200), tx = t ? t.x : P.x + P.face * 260, ty = t ? t.y : P.y;
     if (Math.abs(tx - P.x) > 6) P.face = tx > P.x ? 1 : -1;
     globs.push({ src: null, bomb: true, mega: true, sz: 1, x0: P.x + P.face * 30, y0: P.y - 70, x1: tx, y1: ty, t: -0.3, life: 0.65, R: 210 * (P.form >= 2 ? 1.1 : 1), dm: 7, kb: 420, spin: 1 });
-  } else if (P.skill === 'lavaburst') {
-    const th = theme(); let n = 0; const f3 = P.form >= 3 ? 1.3 : 1;
-    const cov = new Map();
-    for (const z of zones) {
-      if (z.type !== 'trail') continue;
-      n++; const R = z.r + 85;   // 폭발 범위 확대
-      for (const e of enemies) {
-        if (e.hp <= 0) continue;
-        if (Math.hypot(e.x - z.x, e.y - z.y) < R + e.r * 0.5) cov.set(e, (cov.get(e) || 0) + 1);
-      }
-      if (n % 3 === 0) sprFx.push({ k: 'hit1', x: z.x, y: z.y, w: R * 1.8, t: 0, life: 0.45 });
-      if (n % 6 === 0) addRing(z.x, z.y, 6, R, 0.4, z.rgb, 5);
-      if (n % 9 === 0) zones.push({ type: 'lavapool', x: z.x, y: z.y, r: 62, life: 3.5, max: 3.5, tick: 0, dm: 0.25, sp: rand() });
-      z.life = 0;
-    }
-    for (const [e, c] of cov) { if (e.hp <= 0) continue; const dx = e.x - P.x, dy = e.y - P.y, d = Math.hypot(dx, dy) || 1; hurtEnemy(e, P.dmg * 1.32 * f3 * (1 + 0.15 * Math.min(c, 6)), dx / d, dy / d, 240, true); }   // v5.00: -12%
+  } else if (P.skill === 'lavaburst') {   // v8.83: 남겨둔 용암 흔적은 터뜨리지 않는다 (장판이 사라지지 않음)
+    const th = theme(); const f3 = P.form >= 3 ? 1.3 : 1;
     const cand = enemies.filter(e => e.hp > 0 && Math.hypot(e.x - P.x, e.y - P.y) < 520).slice(0, 70);
     let tg = null, bs = -1;
     for (const e of cand) { let c = 0; for (const o of cand) if (Math.hypot(o.x - e.x, o.y - e.y) < 170) c++; if (c > bs) { bs = c; tg = e; } }
@@ -8345,7 +8334,7 @@ function updateSkills(dt) {
       z.tick -= dt; const tk = z.tick <= 0; if (tk) z.tick = 0.3;
       for (const e of enemies) {
         if (e.hp <= 0) continue;
-        if (Math.hypot(e.x - z.x, e.y - z.y) < z.r + e.r * 0.5) { e.slowT = 0.2; if (tk && !(e.tzT > gt)) { e.tzT = gt + 0.3; DSRC = z.src || null; { const bd = Math.max(3, P.dmg * z.dm); hurtEnemy(e, bd, 0, 0, 0, true); if (pctZone(true)) pctZoneHit(e); } DSRC = null; } }
+        if (Math.hypot(e.x - z.x, e.y - z.y) < z.r + e.r * 0.5) { e.slowT = 0.2; if (tk && !(e.tzT > gt)) { e.tzT = gt + 0.3; DSRC = z.src || null; { const bd = Math.max(3, P.dmg * z.dm); hurtEnemy(e, bd, 0, 0, 0, true); if (pctZone(true)) pctZoneHit(e); zoneElem(e); } DSRC = null; } }
       }
       if (rand() < 0.05) fx.push({ x: z.x + (rand() - 0.5) * z.r * 1.4, y: z.y, vx: 0, vy: -60 - rand() * 50, life: 0.45, max: 0.45, c: ['#ff6a1c', '#ffb030'][(rand() * 2) | 0], s: 3 });
     } else if (z.type === 'trail') {
@@ -8353,7 +8342,7 @@ function updateSkills(dt) {
       for (const e of enemies) {
         if (e.hp <= 0) continue;
         if (Math.hypot(e.x - z.x, e.y - z.y) < z.r + e.r * 0.4) {
-          e.slowT = 0.3; if (tk && !(e.tzT > gt)) { e.tzT = gt + 0.3; DSRC = 'trail'; { const bd = Math.max(3, P.dmg * 0.18 * z.dm); hurtEnemy(e, bd, 0, 0, 0, true); if (pctZone(false)) pctZoneHit(e); } DSRC = null; }
+          e.slowT = 0.3; if (tk && !(e.tzT > gt)) { e.tzT = gt + 0.3; DSRC = 'trail'; { const bd = Math.max(3, P.dmg * 0.18 * z.dm); hurtEnemy(e, bd, 0, 0, 0, true); if (pctZone(false)) pctZoneHit(e); zoneElem(e); } DSRC = null; }
           if (P.syn.snare && !(e.snareT > gt) && (e.kind === 'mob' || e.kind === 'bug')) { e.rootT = gt + 0.7; e.snareT = gt + 3; burst(e.x, e.y - 4, 4, [FD().c1 || '#b45aff', '#ffffff'], 70, 0.35); }   // 끈적한 덫
         }
       }
@@ -8920,6 +8909,8 @@ function thermalCheck(e) {   // 열충격: 점화 + 빙결이 동시에 걸린 �
   });
   thermBusy = false;
 }
+const ZONE_ELEM_CD = 1.2;   // v8.83: 달팽이 장판(독 자국·용암 웅덩이) 틱도 빙결·점화를 건다 — 적마다 1.2초에 한 번만 굴린다
+function zoneElem(e) { if ((P.up.freeze || P.up.ignite) && e.hp > 0 && !(e.zeT > gt)) { e.zeT = gt + ZONE_ELEM_CD; procElem(e); } }
 function igniteX(e, force) {
   if (e.hp <= 0) return;
   e.ignT = 3 + (P.syn.forge ? 2 : 0); e.ignAcc = e.ignAcc || 0;
@@ -10467,7 +10458,7 @@ const BR = { lv: 20, per: 50, clear: 300, up: 5, rest: 3.2, auto: 5 };   // lv =
 const BR_SET = { monkey: 'hell', eye: 'hell', skel: 'hell', angel: 'hell', shk: 'mush', tox: 'mush', vft: 'gard', qn: 'gard', adm: 'sea', kng: 'sea' };   // 마왕이 나오는 지옥의 맵
 const rushFset = bk => { const q = BR_SET[bk]; return q === 'gard' && IMG.gfloor && IMG.gprops && MSPECIES.length ? 'gard' : q === 'sea' && IMG.sfloor && IMG.sprops && SSPECIES.length ? 'sea' : q !== 'hell' && IMG.mfloor && IMG.mprops && MSPECIES.length ? 'mush' : 'hell'; };
 const rushOpen = () => !!(SAVE.rush.open || (SAVE.fw.snap && (SAVE.fw.snap.tier | 0) >= MAX_TIER));
-const rushLine = () => rushOpen() ? `⚔ 보스 러시 — 마왕 ${BR_N}종 무작위 연속전(선택한 층과 무관) · Lv.${BR.lv} 시작 · 증강 ${BR.auto}개 무작위 · 처치마다 체력 회복 + ${BR.up}레벨  ·  최고 ${SAVE.rush.best | 0}/${BR_N} · 완주 ${SAVE.rush.clears | 0}회<br>` : '';
+const rushLine = () => rushOpen() ? `⚔ 보스 러시 — 마왕 ${BR_N}종 무작위 연속전(선택한 층과 무관) · Lv.${BR.lv} 시작 · 처음 증강 ${BR.auto}개 무작위 + 나머지 직접 선택 · 처치마다 체력 회복 + ${BR.up}레벨  ·  최고 ${SAVE.rush.best | 0}/${BR_N} · 완주 ${SAVE.rush.clears | 0}회<br>` : '';
 function rushLevels(n) {   // n번 레벨업할 경험치를 한꺼번에 채우고 카드 선택을 이어서 띄운다 (진화·루트 선택도 평소처럼 끼어든다)
   let sum = 0; for (let i = 0; i < n; i++) sum += needFor(P.lvl + i);
   P.exp += sum; if (state === 'play' && P.exp >= P.need) levelUp();
@@ -10481,20 +10472,11 @@ function startRush(char) {
   try { buildGardSpecies(); } catch (_) {}
   P.fset = rushFset(ord[0]);
   P.fee = 0; P.miniDone = true; P.poisonSpawned = true; P.exitLeft = 0; P.goal = null; P.spd0 = P.spd; P.hp = P.max;
-  rush = { i: 0, ph: 'prep', wait: 0.6, kills: 0, shards: 0, ord, init: true };
+  rush = { i: 0, ph: 'prep', wait: 0.6, kills: 0, shards: 0, ord, init: true, autoN: BR.auto, got: [] };
   setTimeout(() => { try { if (IMG.mmap) mmapS(); arenaS(); } catch (_) {} }, 400);
   show('startBox', false); show('overBox', false); show('levelBox', false); show('pauseBox', false);
-  banner = { txt: `⚔ 보스 러시!  Lv.${BR.lv}까지 올린 뒤 증강 ${BR.auto}개가 무작위로 정해집니다 (루트·진화는 직접 선택)\n마왕 ${BR_N}종이 무작위 순서로 나옵니다 · 하나씩 쓰러뜨릴 때마다 난이도가 오릅니다`, t: 6, c: '#ffb05a' };
+  banner = { txt: `⚔ 보스 러시!  Lv.${BR.lv}까지 올립니다 — 처음 증강 ${BR.auto}개는 무작위, 나머지는 직접 선택 (루트·진화도 직접)\n마왕 ${BR_N}종이 무작위 순서로 나옵니다 · 하나씩 쓰러뜨릴 때마다 난이도가 오릅니다`, t: 6, c: '#ffb05a' };
   state = 'play'; rushLevels(BR.lv - 1);
-}
-function rushAuto() {   // 시작 증강: 카드 BR.auto장을 골라 주지 않고 무작위로 적용한다
-  const got = [];
-  for (let i = 0; i < BR.auto; i++) {
-    const items = rollCards(3, []).map(cardView); if (!items.length) break;
-    const u = items[(rand() * items.length) | 0]; takeCard(u); got.push(u.name);
-  }
-  P.hp = P.max; P.healBank = 0;
-  banner = { txt: `⚔ 시작 증강 ${got.length}개: ${got.join(' · ')}`, t: 6, c: '#ffe28a' };
 }
 function rushEnter() {
   P.bossK = rush.ord[rush.i]; rush.ph = 'fight'; P.tier = Math.min(9, rush.i); P.fset = rushFset(P.bossK);   // 난이도 = 지금까지 쓰러뜨린 마왕 수
@@ -10504,7 +10486,7 @@ function rushEnter() {
 }
 function rushTick(dt) {   // 준비(카드 선택 끝) → 입장 · 쉬는 시간 → 다음 마왕
   if (rush.ph === 'fight' || state !== 'play' || trans || P.exp >= P.need) return;
-  if (rush.init) { rush.init = false; rushAuto(); rush.wait = 1.2; return; }   // 레벨 20까지 올린 직후 증강 5개를 정한다
+  if (rush.init) { rush.init = false; P.hp = P.max; banner = { txt: `⚔ 시작 증강 ${rush.got.length}개(무작위): ${rush.got.join(' · ')}`, t: 6, c: '#ffe28a' }; rush.wait = 1.2; return; }
   if ((rush.wait -= dt) <= 0) rushEnter();
 }
 function rushWin(e) {
@@ -11047,7 +11029,7 @@ const SKINS = [
   { id: 'ghostG', name: '수호령 총령 · 연보라', grade: 'rare', char: 'ghost', forms: [2], where: '연보라 총령 · 최종 진화(수호령의 총령)', ws: [1, 1, 1.15], face: { idle: 1, walk: 1, attack: 1, hit: 1, death: 1 }, fps: { idle: 8, walk: 11, attack: 15, hit: 12, death: 7 } },
 { id: 'ghostU', name: '곰 후드 총령', grade: 'unique', char: 'ghost', forms: [2], where: '연보라 총령 · 최종 진화(수호령의 총령)', ws: [1, 1, 1.15], face: { idle: 1, walk: 1, attack: 1, hit: 1, death: 1 }, fps: { idle: 8, walk: 11, attack: 15, hit: 12, death: 7 } },
   { id: 'lizG', name: '현무 리저드', grade: 'rare', char: 'lizard', forms: [2], route: 'guard', where: '리저드 · 수호의 길 최종 진화(수호의 리저드)', ws: [1, 1, 1.0], face: { idle: 1, walk: 1, attack: 1, skill: 1, hit: 1, death: 1 } },
-  { id: 'wolfB', name: '토끼 후드 늑대', grade: 'epic', char: 'wolf', forms: [0, 1, 2], where: '지옥 늑대 · 모든 진화 단계', ws: [1, 1.1, 1.2], face: { idle: 1, walk: 1, attack: 1, hit: 1, death: 1 }, fps: { idle: 8, walk: 14, attack: 16, hit: 14, death: 8 } },
+  { id: 'wolfB', name: '토끼 후드 늑대', grade: 'epic', char: 'wolf', forms: [0], where: '지옥 늑대 · 0진화(시작 형태)에서만', ws: [1], face: { idle: 1, walk: 1, attack: 1, hit: 1, death: 1 }, fps: { idle: 8, walk: 14, attack: 16, hit: 14, death: 8 } },
   { id: 'wolfE', name: '지옥군주늑대', grade: 'epic', char: 'wolf', forms: [2], route: 'abyss', where: '지옥 늑대 · 심연 루트 최종 진화(지옥 군주 늑대)', ws: [1, 1, 1.0], face: { walk: 1, attack: 1, hit: -1, death: -1 } },
 ];
 const SKIN_GRADE = { unique: { name: '유니크', need: 20, star: '★★★★' }, epic: { name: '에픽', need: 15, star: '★★★' }, rare: { name: '레어', need: 10, star: '★★' } };
@@ -11400,6 +11382,7 @@ function openAch() {
 }
 /* v8.71 간략 패치노트 (최근 버전만, 새 버전마다 맨 위에 한 줄 추가) */
 const PATCH = [
+  ['v8.83', '달팽이 장판(독 자국·용암 웅덩이)도 빙결·점화 발동(적마다 1.2초 쿨) · 용암 대분출이 용암 흔적을 터뜨리지 않음 · 보스 러시 시작 증강 5개만 무작위(나머지 직접 선택) · 토끼 후드 늑대 스킨은 0진화에서만'],
   ['v8.82', '보스 러시 개편 — 선택한 층과 무관한 독립 시행 · Lv.20 시작 + 증강 5개 무작위 · 마왕 10종 무작위 순서(처치할수록 난이도 상승) · 처치마다 +5레벨 · 완주 업적 추가'],
   ['v8.81', '지옥엘프 궁수 체력 대폭 너프 (진화한 지옥엘프 최종 체력 약 -25%)'],
   ['v8.80', '20층 최종 마왕 타락한 어인왕 추가 · 업적(시작 화면 오른쪽 위) 추가'],
