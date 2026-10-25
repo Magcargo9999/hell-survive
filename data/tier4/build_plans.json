@@ -1,0 +1,858 @@
+{
+ "game_ver": "9.01",
+ "note": "§5 사람형 시너지 정책용 계획. 우선순위: 갈림길>진화조건>목표시너지>재료(낮은 쪽, Lv3까지)>전용/보조(aux)>공용·레벨업>avoid. 슬롯예약 AUG_CAP-2. 전환: Lv14까지 재료 0장 또는 5번 연속 제안에 재료 없음 → fallback",
+ "plans": [
+  {
+   "variant": "wolf:crimson",
+   "synergy": "vamp",
+   "mats": [
+    "claw",
+    "heart"
+   ],
+   "aux": [
+    "thirst",
+    "armor",
+    "speed",
+    "thunder",
+    "guard",
+    "blade"
+   ],
+   "avoid": [
+    "exp",
+    "magnet",
+    "knock",
+    "orb",
+    "shard",
+    "crit",
+    "move"
+   ],
+   "fallback": {
+    "synergy": "deadeye",
+    "mats": [
+     "crit",
+     "claw"
+    ],
+    "aux": [
+     "thirst",
+     "armor",
+     "speed",
+     "thunder",
+     "guard",
+     "blade"
+    ]
+   }
+  },
+  {
+   "variant": "wolf:holy",
+   "synergy": "vamp",
+   "mats": [
+    "claw",
+    "heart"
+   ],
+   "aux": [
+    "thirst",
+    "armor",
+    "speed",
+    "thunder",
+    "guard",
+    "blade"
+   ],
+   "avoid": [
+    "exp",
+    "magnet",
+    "knock",
+    "orb",
+    "shard",
+    "crit",
+    "move"
+   ],
+   "fallback": {
+    "synergy": "deadeye",
+    "mats": [
+     "crit",
+     "claw"
+    ],
+    "aux": [
+     "thirst",
+     "armor",
+     "speed",
+     "thunder",
+     "guard",
+     "blade"
+    ]
+   }
+  },
+  {
+   "variant": "wolf:fallen",
+   "synergy": "vamp",
+   "mats": [
+    "claw",
+    "heart"
+   ],
+   "aux": [
+    "thirst",
+    "speed",
+    "armor",
+    "guard",
+    "thunder",
+    "blade"
+   ],
+   "avoid": [
+    "exp",
+    "magnet",
+    "knock",
+    "orb",
+    "shard",
+    "crit",
+    "move"
+   ],
+   "fallback": {
+    "synergy": "deadeye",
+    "mats": [
+     "crit",
+     "claw"
+    ],
+    "aux": [
+     "thirst",
+     "speed",
+     "armor",
+     "guard",
+     "thunder",
+     "blade"
+    ]
+   }
+  },
+  {
+   "variant": "wolf:abyss",
+   "synergy": "deadeye",
+   "mats": [
+    "crit",
+    "claw"
+   ],
+   "aux": [
+    "claw",
+    "speed",
+    "thunder",
+    "armor",
+    "guard",
+    "blade"
+   ],
+   "avoid": [
+    "exp",
+    "magnet",
+    "knock",
+    "orb",
+    "shard",
+    "move"
+   ],
+   "fallback": {
+    "synergy": "vamp",
+    "mats": [
+     "claw",
+     "heart"
+    ],
+    "aux": [
+     "claw",
+     "speed",
+     "thunder",
+     "armor",
+     "guard",
+     "blade"
+    ]
+   }
+  },
+  {
+   "variant": "wolf:twin",
+   "synergy": "vamp",
+   "mats": [
+    "claw",
+    "heart"
+   ],
+   "aux": [
+    "speed",
+    "armor",
+    "thunder",
+    "guard",
+    "blade"
+   ],
+   "avoid": [
+    "exp",
+    "magnet",
+    "knock",
+    "orb",
+    "shard",
+    "crit",
+    "move"
+   ],
+   "fallback": {
+    "synergy": "deadeye",
+    "mats": [
+     "crit",
+     "claw"
+    ],
+    "aux": [
+     "speed",
+     "armor",
+     "thunder",
+     "guard",
+     "blade"
+    ]
+   }
+  },
+  {
+   "variant": "snail:venom",
+   "synergy": "corpse",
+   "mats": [
+    "range",
+    "claw"
+   ],
+   "aux": [
+    "sticky",
+    "spread",
+    "armor",
+    "guard",
+    "heart",
+    "thunder"
+   ],
+   "avoid": [
+    "exp",
+    "magnet",
+    "knock",
+    "orb",
+    "shard",
+    "crit",
+    "move"
+   ],
+   "fallback": {
+    "synergy": "spore",
+    "mats": [
+     "shard",
+     "spread"
+    ],
+    "aux": [
+     "sticky",
+     "spread",
+     "armor",
+     "guard",
+     "heart",
+     "thunder"
+    ]
+   }
+  },
+  {
+   "variant": "snail:lava",
+   "synergy": "corpse",
+   "mats": [
+    "range",
+    "claw"
+   ],
+   "aux": [
+    "sticky",
+    "spread",
+    "magma",
+    "armor",
+    "guard",
+    "heart"
+   ],
+   "avoid": [
+    "exp",
+    "magnet",
+    "knock",
+    "orb",
+    "shard",
+    "crit",
+    "move"
+   ],
+   "fallback": {
+    "synergy": "spore",
+    "mats": [
+     "shard",
+     "spread"
+    ],
+    "aux": [
+     "sticky",
+     "spread",
+     "magma",
+     "armor",
+     "guard",
+     "heart"
+    ]
+   }
+  },
+  {
+   "variant": "snail:bomb",
+   "synergy": "tstorm",
+   "mats": [
+    "thunder",
+    "speed"
+   ],
+   "aux": [
+    "claw",
+    "range",
+    "armor",
+    "guard",
+    "heart",
+    "blade"
+   ],
+   "avoid": [
+    "exp",
+    "magnet",
+    "knock",
+    "orb",
+    "shard",
+    "crit",
+    "move"
+   ],
+   "fallback": {
+    "synergy": "dnova",
+    "mats": [
+     "nova",
+     "knock"
+    ],
+    "aux": [
+     "claw",
+     "range",
+     "armor",
+     "guard",
+     "heart",
+     "blade"
+    ]
+   }
+  },
+  {
+   "variant": "archer:red",
+   "synergy": "gust",
+   "mats": [
+    "kite",
+    "move"
+   ],
+   "aux": [
+    "multi",
+    "pierceA",
+    "claw",
+    "armor",
+    "guard",
+    "speed"
+   ],
+   "avoid": [
+    "exp",
+    "magnet",
+    "knock",
+    "orb",
+    "shard",
+    "crit"
+   ],
+   "fallback": {
+    "synergy": "ricochet",
+    "mats": [
+     "claw",
+     "shard"
+    ],
+    "aux": [
+     "multi",
+     "pierceA",
+     "claw",
+     "armor",
+     "guard",
+     "speed"
+    ]
+   }
+  },
+  {
+   "variant": "archer:holy",
+   "synergy": "mark",
+   "mats": [
+    "snipe",
+    "crit"
+   ],
+   "aux": [
+    "multi",
+    "claw",
+    "pierceA",
+    "armor",
+    "guard",
+    "speed"
+   ],
+   "avoid": [
+    "exp",
+    "magnet",
+    "knock",
+    "orb",
+    "shard",
+    "move"
+   ],
+   "fallback": {
+    "synergy": "deadeye",
+    "mats": [
+     "crit",
+     "claw"
+    ],
+    "aux": [
+     "multi",
+     "claw",
+     "pierceA",
+     "armor",
+     "guard",
+     "speed"
+    ]
+   }
+  },
+  {
+   "variant": "archer:skel",
+   "synergy": "deadeye",
+   "mats": [
+    "crit",
+    "claw"
+   ],
+   "aux": [
+    "pierceA",
+    "multi",
+    "armor",
+    "guard",
+    "speed",
+    "thunder"
+   ],
+   "avoid": [
+    "exp",
+    "magnet",
+    "knock",
+    "orb",
+    "shard",
+    "move"
+   ],
+   "fallback": {
+    "synergy": "ricochet",
+    "mats": [
+     "claw",
+     "shard"
+    ],
+    "aux": [
+     "pierceA",
+     "multi",
+     "armor",
+     "guard",
+     "speed",
+     "thunder"
+    ]
+   }
+  },
+  {
+   "variant": "chimera",
+   "synergy": "galeWing",
+   "mats": [
+    "airA",
+    "airB"
+   ],
+   "aux": [
+    "airC",
+    "claw",
+    "speed",
+    "armor",
+    "guard",
+    "diveUp"
+   ],
+   "avoid": [
+    "exp",
+    "magnet",
+    "knock",
+    "orb",
+    "shard",
+    "crit",
+    "move"
+   ],
+   "fallback": {
+    "synergy": "rush",
+    "mats": [
+     "move",
+     "speed"
+    ],
+    "aux": [
+     "airC",
+     "claw",
+     "speed",
+     "armor",
+     "guard",
+     "diveUp"
+    ]
+   }
+  },
+  {
+   "variant": "chimera:flame",
+   "synergy": "blaze",
+   "mats": [
+    "flameA",
+    "flameB"
+   ],
+   "aux": [
+    "breathUp",
+    "claw",
+    "armor",
+    "guard",
+    "speed",
+    "diveUp"
+   ],
+   "avoid": [
+    "exp",
+    "magnet",
+    "knock",
+    "orb",
+    "shard",
+    "crit",
+    "move"
+   ],
+   "fallback": {
+    "synergy": "rush",
+    "mats": [
+     "move",
+     "speed"
+    ],
+    "aux": [
+     "breathUp",
+     "claw",
+     "armor",
+     "guard",
+     "speed",
+     "diveUp"
+    ]
+   }
+  },
+  {
+   "variant": "chimera:dream",
+   "synergy": "gaze",
+   "mats": [
+    "dreamA",
+    "dreamB"
+   ],
+   "aux": [
+    "rushUp",
+    "claw",
+    "armor",
+    "guard",
+    "speed",
+    "diveUp"
+   ],
+   "avoid": [
+    "exp",
+    "magnet",
+    "knock",
+    "orb",
+    "shard",
+    "crit",
+    "move"
+   ],
+   "fallback": {
+    "synergy": "rush",
+    "mats": [
+     "move",
+     "speed"
+    ],
+    "aux": [
+     "rushUp",
+     "claw",
+     "armor",
+     "guard",
+     "speed",
+     "diveUp"
+    ]
+   }
+  },
+  {
+   "variant": "lizard:rage",
+   "synergy": "regen",
+   "mats": [
+    "scale",
+    "heart"
+   ],
+   "aux": [
+    "smash",
+    "bloodlust",
+    "rageUp",
+    "claw",
+    "armor",
+    "speed"
+   ],
+   "avoid": [
+    "exp",
+    "magnet",
+    "knock",
+    "orb",
+    "shard",
+    "crit",
+    "move"
+   ],
+   "fallback": {
+    "synergy": "quake",
+    "mats": [
+     "smash",
+     "knock"
+    ],
+    "aux": [
+     "smash",
+     "bloodlust",
+     "rageUp",
+     "claw",
+     "armor",
+     "speed"
+    ]
+   }
+  },
+  {
+   "variant": "lizard:water",
+   "synergy": "regen",
+   "mats": [
+    "scale",
+    "heart"
+   ],
+   "aux": [
+    "tideUp",
+    "smash",
+    "claw",
+    "armor",
+    "speed",
+    "guard"
+   ],
+   "avoid": [
+    "exp",
+    "magnet",
+    "knock",
+    "orb",
+    "shard",
+    "crit",
+    "move"
+   ],
+   "fallback": {
+    "synergy": "quake",
+    "mats": [
+     "smash",
+     "knock"
+    ],
+    "aux": [
+     "tideUp",
+     "smash",
+     "claw",
+     "armor",
+     "speed",
+     "guard"
+    ]
+   }
+  },
+  {
+   "variant": "lizard:guard",
+   "synergy": "regen",
+   "mats": [
+    "scale",
+    "heart"
+   ],
+   "aux": [
+    "shellUp",
+    "claw",
+    "armor",
+    "speed",
+    "guard"
+   ],
+   "avoid": [
+    "exp",
+    "magnet",
+    "knock",
+    "orb",
+    "shard",
+    "crit",
+    "move"
+   ],
+   "fallback": {
+    "synergy": "quake",
+    "mats": [
+     "smash",
+     "knock"
+    ],
+    "aux": [
+     "shellUp",
+     "claw",
+     "armor",
+     "speed",
+     "guard"
+    ]
+   }
+  },
+  {
+   "variant": "twins",
+   "synergy": "vortex",
+   "mats": [
+    "whirl",
+    "move"
+   ],
+   "aux": [
+    "heavy",
+    "chainUp",
+    "whipUp",
+    "claw",
+    "speed",
+    "armor"
+   ],
+   "avoid": [
+    "exp",
+    "magnet",
+    "knock",
+    "orb",
+    "shard",
+    "crit"
+   ],
+   "fallback": {
+    "synergy": "pendulum",
+    "mats": [
+     "heavy",
+     "knock"
+    ],
+    "aux": [
+     "heavy",
+     "chainUp",
+     "whipUp",
+     "claw",
+     "speed",
+     "armor"
+    ]
+   }
+  },
+  {
+   "variant": "ghost",
+   "synergy": "deadeye",
+   "mats": [
+    "crit",
+    "claw"
+   ],
+   "aux": [
+    "gmore",
+    "speed",
+    "armor",
+    "guard",
+    "thunder"
+   ],
+   "avoid": [
+    "exp",
+    "magnet",
+    "knock",
+    "orb",
+    "shard",
+    "move"
+   ],
+   "fallback": {
+    "synergy": "tstorm",
+    "mats": [
+     "thunder",
+     "speed"
+    ],
+    "aux": [
+     "gmore",
+     "speed",
+     "armor",
+     "guard",
+     "thunder"
+    ]
+   }
+  },
+  {
+   "variant": "octo",
+   "synergy": "oBig",
+   "mats": [
+    "range",
+    "claw"
+   ],
+   "aux": [
+    "speed",
+    "armor",
+    "guard",
+    "thunder",
+    "blade",
+    "heart"
+   ],
+   "avoid": [
+    "exp",
+    "magnet",
+    "knock",
+    "orb",
+    "shard",
+    "crit",
+    "move"
+   ],
+   "fallback": {
+    "synergy": "oReso",
+    "mats": [
+     "knock",
+     "speed"
+    ],
+    "aux": [
+     "speed",
+     "armor",
+     "guard",
+     "thunder",
+     "blade",
+     "heart"
+    ]
+   }
+  },
+  {
+   "variant": "gun",
+   "synergy": "__none__",
+   "mats": [
+    "gReload",
+    "gSpec"
+   ],
+   "aux": [
+    "gEmber",
+    "gBounty",
+    "dmg",
+    "speed"
+   ],
+   "avoid": [
+    "exp",
+    "magnet",
+    "knock",
+    "orb",
+    "shard",
+    "move"
+   ],
+   "fallback": null
+  },
+  {
+   "variant": "ghost:knight",
+   "synergy": "deadeye",
+   "mats": [
+    "crit",
+    "claw"
+   ],
+   "aux": [
+    "kStep",
+    "kRip",
+    "kHead",
+    "dmg",
+    "speed",
+    "armor",
+    "guard"
+   ],
+   "avoid": [
+    "exp",
+    "magnet",
+    "knock",
+    "orb",
+    "shard",
+    "move"
+   ],
+   "fallback": {
+    "synergy": "tstorm",
+    "mats": [
+     "thunder",
+     "speed"
+    ],
+    "aux": [
+     "kStep",
+     "kRip",
+     "kHead",
+     "dmg",
+     "speed",
+     "armor",
+     "guard"
+    ]
+   }
+  }
+ ]
+}

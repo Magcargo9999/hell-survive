@@ -1,0 +1,703 @@
+{
+ "aug_common": [
+  {
+   "id": "claw",
+   "name": "날카로운 발톱",
+   "kind": "stat"
+  },
+  {
+   "id": "speed",
+   "name": "날렵한 발톱",
+   "kind": "stat"
+  },
+  {
+   "id": "move",
+   "name": "질주",
+   "kind": "stat"
+  },
+  {
+   "id": "heart",
+   "name": "지옥의 심장",
+   "kind": "stat"
+  },
+  {
+   "id": "magnet",
+   "name": "영혼 자석",
+   "kind": "stat"
+  },
+  {
+   "id": "range",
+   "name": "넓은 발톱",
+   "kind": "stat"
+  },
+  {
+   "id": "orb",
+   "name": "지옥불 구슬",
+   "kind": "stat"
+  },
+  {
+   "id": "shard",
+   "name": "뼈 투사체",
+   "kind": "stat"
+  },
+  {
+   "id": "knock",
+   "name": "밀치기",
+   "kind": "stat"
+  },
+  {
+   "id": "crit",
+   "name": "급소 노리기",
+   "kind": "stat"
+  },
+  {
+   "id": "guard",
+   "name": "수호의 방어막",
+   "kind": "stat"
+  },
+  {
+   "id": "armor",
+   "name": "단단한 피부",
+   "kind": "stat"
+  },
+  {
+   "id": "exp",
+   "name": "배움의 눈",
+   "kind": "stat"
+  },
+  {
+   "id": "thunder",
+   "name": "지옥 낙뢰",
+   "kind": "attack"
+  },
+  {
+   "id": "blade",
+   "name": "회전 칼날",
+   "kind": "attack"
+  },
+  {
+   "id": "nova",
+   "name": "충격파",
+   "kind": "attack"
+  },
+  {
+   "id": "freeze",
+   "name": "빙결",
+   "kind": "status_proc"
+  },
+  {
+   "id": "ignite",
+   "name": "점화",
+   "kind": "status_proc"
+  },
+  {
+   "id": "aura",
+   "name": "불길 오라",
+   "kind": "attack"
+  }
+ ],
+ "aug_unique": {
+  "snail": [
+   {
+    "id": "sticky",
+    "name": "끈적한 독",
+    "kind": "unique"
+   },
+   {
+    "id": "spread",
+    "name": "번지는 독",
+    "kind": "unique"
+   },
+   {
+    "id": "magma",
+    "name": "끓는 용암",
+    "kind": "unique"
+   }
+  ],
+  "chimera": [
+   {
+    "id": "airA",
+    "name": "날 선 바람",
+    "kind": "unique"
+   },
+   {
+    "id": "airB",
+    "name": "멀리 나는 바람",
+    "kind": "unique"
+   },
+   {
+    "id": "airC",
+    "name": "쌍날 바람",
+    "kind": "unique"
+   },
+   {
+    "id": "flameA",
+    "name": "불씨 강화",
+    "kind": "unique"
+   },
+   {
+    "id": "flameB",
+    "name": "넓은 불길",
+    "kind": "unique"
+   },
+   {
+    "id": "breathHeart",
+    "name": "타오르는 업화",
+    "kind": "unique"
+   },
+   {
+    "id": "breathUp",
+    "name": "끓는 숨결",
+    "kind": "unique"
+   },
+   {
+    "id": "dreamA",
+    "name": "늘어난 촉수",
+    "kind": "unique"
+   },
+   {
+    "id": "dreamB",
+    "name": "뜬 눈",
+    "kind": "unique"
+   },
+   {
+    "id": "rushUp",
+    "name": "끝없는 난무",
+    "kind": "unique"
+   },
+   {
+    "id": "diveUp",
+    "name": "더 높은 하늘",
+    "kind": "unique"
+   }
+  ],
+  "lizard": [
+   {
+    "id": "scale",
+    "name": "가시 비늘",
+    "kind": "unique"
+   },
+   {
+    "id": "smash",
+    "name": "대검 내려찍기",
+    "kind": "unique"
+   },
+   {
+    "id": "bloodlust",
+    "name": "피에 굶주린 광기",
+    "kind": "unique"
+   },
+   {
+    "id": "rageUp",
+    "name": "끝없는 광란",
+    "kind": "unique"
+   },
+   {
+    "id": "shellUp",
+    "name": "갑주 단련",
+    "kind": "unique"
+   },
+   {
+    "id": "tideUp",
+    "name": "깊은 물결",
+    "kind": "unique"
+   }
+  ],
+  "gun": [
+   {
+    "id": "gReload",
+    "name": "빠른 장전",
+    "kind": "unique"
+   },
+   {
+    "id": "gSpec",
+    "name": "특수탄 강화",
+    "kind": "unique"
+   },
+   {
+    "id": "gEmber",
+    "name": "불씨 각인",
+    "kind": "unique"
+   },
+   {
+    "id": "gBounty",
+    "name": "현상금 사냥",
+    "kind": "unique"
+   }
+  ],
+  "ghost": [
+   {
+    "id": "gmore",
+    "name": "구슬 늘리기",
+    "kind": "unique"
+   },
+   {
+    "id": "kStep",
+    "name": "유령 보법",
+    "kind": "unique"
+   },
+   {
+    "id": "kRip",
+    "name": "되받아 베기",
+    "kind": "unique"
+   },
+   {
+    "id": "kHead",
+    "name": "분노한 머리",
+    "kind": "unique"
+   }
+  ],
+  "twins": [
+   {
+    "id": "heavy",
+    "name": "무거운 창날",
+    "kind": "unique"
+   },
+   {
+    "id": "whirl",
+    "name": "원심력",
+    "kind": "unique"
+   },
+   {
+    "id": "chainUp",
+    "name": "달군 사슬",
+    "kind": "unique"
+   },
+   {
+    "id": "whipUp",
+    "name": "폭군의 사슬",
+    "kind": "unique"
+   }
+  ],
+  "archer": [
+   {
+    "id": "multi",
+    "name": "다발 사격",
+    "kind": "unique"
+   },
+   {
+    "id": "pierceA",
+    "name": "관통 화살",
+    "kind": "unique"
+   },
+   {
+    "id": "kite",
+    "name": "카이팅 사격",
+    "kind": "unique"
+   },
+   {
+    "id": "fireArrow",
+    "name": "지옥불 화살",
+    "kind": "unique"
+   }
+  ]
+ },
+ "synergies": [
+  {
+   "id": "fireBone",
+   "name": "불타는 뼈",
+   "need": [
+    "shard",
+    "orb"
+   ],
+   "only": null
+  },
+  {
+   "id": "vamp",
+   "name": "흡혈 발톱",
+   "need": [
+    "claw",
+    "heart"
+   ],
+   "only": "wolf"
+  },
+  {
+   "id": "soulStorm",
+   "name": "영혼 폭풍",
+   "need": [
+    "orb",
+    "magnet"
+   ],
+   "only": null
+  },
+  {
+   "id": "rush",
+   "name": "질주 공격",
+   "need": [
+    "move",
+    "speed"
+   ],
+   "only": null
+  },
+  {
+   "id": "frenzy",
+   "name": "사냥의 광란",
+   "need": [
+    "claw",
+    "move"
+   ],
+   "only": "wolf"
+  },
+  {
+   "id": "corpse",
+   "name": "부패 폭발",
+   "need": [
+    "range",
+    "claw"
+   ],
+   "only": "snail"
+  },
+  {
+   "id": "galeWing",
+   "name": "질풍 날개",
+   "need": [
+    "airA",
+    "airB"
+   ],
+   "only": "chimera"
+  },
+  {
+   "id": "ricochet",
+   "name": "도탄 사격",
+   "need": [
+    "claw",
+    "shard"
+   ],
+   "only": "archer"
+  },
+  {
+   "id": "lifeOrb",
+   "name": "불사의 영혼",
+   "need": [
+    "heart",
+    "magnet"
+   ],
+   "only": null
+  },
+  {
+   "id": "tstorm",
+   "name": "폭풍 낙뢰",
+   "need": [
+    "thunder",
+    "speed"
+   ],
+   "only": null
+  },
+  {
+   "id": "bstorm",
+   "name": "칼날 폭풍",
+   "need": [
+    "blade",
+    "range"
+   ],
+   "only": null
+  },
+  {
+   "id": "glacier",
+   "name": "빙하 충격파",
+   "need": [
+    "freeze",
+    "nova"
+   ],
+   "only": null
+  },
+  {
+   "id": "forge",
+   "name": "달궈진 칼날",
+   "need": [
+    "ignite",
+    "blade"
+   ],
+   "only": null
+  },
+  {
+   "id": "shock",
+   "name": "열충격",
+   "need": [
+    "ignite",
+    "freeze"
+   ],
+   "only": null
+  },
+  {
+   "id": "dnova",
+   "name": "이중 충격파",
+   "need": [
+    "nova",
+    "knock"
+   ],
+   "only": null
+  },
+  {
+   "id": "inferno",
+   "name": "화염 지옥",
+   "need": [
+    "aura",
+    "armor"
+   ],
+   "only": null
+  },
+  {
+   "id": "deadeye",
+   "name": "급소 사냥꾼",
+   "need": [
+    "crit",
+    "claw"
+   ],
+   "only": null
+  },
+  {
+   "id": "iron",
+   "name": "철벽",
+   "need": [
+    "armor",
+    "heart"
+   ],
+   "only": null
+  },
+  {
+   "id": "harvest",
+   "name": "영혼 수확",
+   "need": [
+    "exp",
+    "magnet"
+   ],
+   "only": null
+  },
+  {
+   "id": "oBig",
+   "name": "거대 마력탄",
+   "need": [
+    "range",
+    "claw"
+   ],
+   "only": "octo"
+  },
+  {
+   "id": "oReso",
+   "name": "구체 공명",
+   "need": [
+    "knock",
+    "speed"
+   ],
+   "only": "octo"
+  },
+  {
+   "id": "oDrain",
+   "name": "마력 흡수",
+   "need": [
+    "exp",
+    "heart"
+   ],
+   "only": "octo"
+  },
+  {
+   "id": "spore",
+   "name": "독가시 웅덩이",
+   "need": [
+    "shard",
+    "spread"
+   ],
+   "only": "snail"
+  },
+  {
+   "id": "snare",
+   "name": "끈적한 덫",
+   "need": [
+    "sticky",
+    "knock"
+   ],
+   "only": "snail"
+  },
+  {
+   "id": "mark",
+   "name": "저격수의 표식",
+   "need": [
+    "range",
+    "crit"
+   ],
+   "only": "archer"
+  },
+  {
+   "id": "gust",
+   "name": "바람의 궤적",
+   "need": [
+    "kite",
+    "move"
+   ],
+   "only": "archer"
+  },
+  {
+   "id": "blaze",
+   "name": "업화 연쇄",
+   "need": [
+    "flameA",
+    "flameB"
+   ],
+   "only": "chimera"
+  },
+  {
+   "id": "gaze",
+   "name": "광기의 시선",
+   "need": [
+    "dreamA",
+    "dreamB"
+   ],
+   "only": "chimera"
+  },
+  {
+   "id": "regen",
+   "name": "재생 비늘",
+   "need": [
+    "scale",
+    "heart"
+   ],
+   "only": "lizard"
+  },
+  {
+   "id": "pendulum",
+   "name": "충격 진자",
+   "need": [
+    "heavy",
+    "knock"
+   ],
+   "only": "twins"
+  },
+  {
+   "id": "vortex",
+   "name": "회오리 방벽",
+   "need": [
+    "whirl",
+    "move"
+   ],
+   "only": "twins"
+  },
+  {
+   "id": "quake",
+   "name": "대지 진동",
+   "need": [
+    "smash",
+    "knock"
+   ],
+   "only": "lizard"
+  }
+ ],
+ "skills": [
+  {
+   "id": "roll",
+   "name": "구르기"
+  },
+  {
+   "id": "cerb",
+   "name": "삼두 연쇄 물기"
+  },
+  {
+   "id": "drain",
+   "name": "피의 갈취"
+  },
+  {
+   "id": "bloodrain",
+   "name": "신성한 피의 비"
+  },
+  {
+   "id": "howl",
+   "name": "지옥의 울부짖음"
+  },
+  {
+   "id": "megabomb",
+   "name": "강화된 폭탄 투척"
+  },
+  {
+   "id": "lavaburst",
+   "name": "용암 대분출"
+  },
+  {
+   "id": "breath",
+   "name": "화염 브레스"
+  },
+  {
+   "id": "rush",
+   "name": "천안 난무"
+  },
+  {
+   "id": "dive",
+   "name": "천공 강하"
+  },
+  {
+   "id": "blast",
+   "name": "독 자국 폭파"
+  },
+  {
+   "id": "darkarrow",
+   "name": "칠흑의 대궁"
+  },
+  {
+   "id": "bigarrow",
+   "name": "혼신의 큰 화살"
+  },
+  {
+   "id": "backdash",
+   "name": "후방 도약 사격"
+  },
+  {
+   "id": "bombshot",
+   "name": "폭발 화살"
+  },
+  {
+   "id": "holyshot",
+   "name": "신성화살"
+  },
+  {
+   "id": "rage",
+   "name": "광란"
+  },
+  {
+   "id": "tide",
+   "name": "물의 주술"
+  },
+  {
+   "id": "whip",
+   "name": "사슬 휘두르기"
+  },
+  {
+   "id": "bsigil",
+   "name": "혈왕의 진"
+  },
+  {
+   "id": "shell",
+   "name": "반격의 갑주"
+  },
+  {
+   "id": "ele",
+   "name": "코끼리 돌진"
+  },
+  {
+   "id": "otent",
+   "name": "문어의 심연"
+  },
+  {
+   "id": "gcharge",
+   "name": "차지 샷"
+  },
+  {
+   "id": "lhead",
+   "name": "잃어버린 머리 소환"
+  },
+  {
+   "id": "gsummon",
+   "name": "수호령 소환"
+  },
+  {
+   "id": "laser",
+   "name": "지옥 광선"
+  },
+  {
+   "id": "zone",
+   "name": "업화의 장판"
+  },
+  {
+   "id": "meteor",
+   "name": "운석 낙하"
+  }
+ ]
+}
