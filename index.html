@@ -944,7 +944,7 @@ function mkCanvas(w, h) { const c = document.createElement('canvas'); c.width = 
  * 0-1. 저장(영혼 조각 · 영구 강화 · 설정) / 캐릭터 목록 / 소리
  * ============================================================ */
 const SAVE_KEY = 'hellSurvivorSave1';
-const GAME_VER = 'v9.41';
+const GAME_VER = 'v9.42';
 const SAVE_DEF = () => ({
   shards: 0,
   perks: { hp: 0, spd: 0, dmg: 0, exp: 0, magnet: 0, banish: 0, revive: 0, regen: 0, shard: 0, critd: 0, choice: 0 },
@@ -2347,7 +2347,7 @@ function fwBossDefeated(e) {
   burst(e.x, e.y - 50, 90, ['#ff1a3a', '#ff8a8a', '#ffffff', '#2a0a10'], 560, 1.3); shake = 26; sfx('evolve');
   banner = { txt: '타락한 혈랑왕을 쓰러뜨렸다!' + (first ? '\n혈랑 루트 Lv.20 최종 진화에 [타락한 혈랑]이 열렸다!' : ''), t: 7, c: '#ff8a9a' };
   P.fwUnlock = first; try { achSync(); } catch (_) {}   // v8.94 혈랑왕 300번 업적
-  P.earned = calcShards() + Math.round(300 * tierMul()) + (P.fee || 0); SAVE.shards += P.earned;   // + 참가비 반환
+  P.earned = shardTotal(Math.round(300 * tierMul())) + (P.fee || 0); SAVE.shards += P.earned;   // + 참가비 반환
   saveSave(); state = 'win'; winT = 0;
 }
 /* ---------- 스켈레톤 마왕 (난이도 1단계부터 · 원숭이 마왕 / 마안군주와 1/3씩) ---------- */
@@ -6987,7 +6987,7 @@ function bossDefeated() {
   if (chal) { chBossWin(e); return; }   // v6.20: 챌린지는 계속된다
   if (rush) { rushWin(e); return; }   // v8.50 보스 러시: 다음 마왕으로
   banner = { txt: '마왕을 쓰러뜨렸다!', t: 6 };
-  const refund = P.fee || 0; P.earned = calcShards() + Math.round(150 * tierMul()) + refund; SAVE.shards += P.earned;   // 클리어 보너스 +150 (단계 배율) + 참가비 반환
+  const refund = P.fee || 0; P.earned = shardTotal(Math.round(150 * tierMul())) + refund; SAVE.shards += P.earned;   // 클리어 보너스 +150 (단계 배율) + 참가비 반환
   P.rushOpen = false; if (P.tier >= MAX_TIER && !SAVE.rush.open) { SAVE.rush.open = true; P.rushOpen = true; }   // v8.50: 지하 20층까지 클리어 → 보스 러시
   SAVE.diff.clr = Math.max(SAVE.diff.clr | 0, P.tier);   // v9.10 깬 가장 깊은 층 (새 층이 열릴 때 인정)
   P.unlocked = 0; if (P.tier === SAVE.diff.max && SAVE.diff.max < OPEN_TIER) { SAVE.diff.max = P.tier + 1; P.unlocked = SAVE.diff.max; }
@@ -7862,7 +7862,8 @@ const isSea = () => !!(P && P.fset === 'sea');   // v7.10 어인섬 (v8.64: 지�
 const isGard = () => !!(P && P.fset === 'gard');   // v8.30 악마 식물원 (v8.64: 지하 11~15층) — v8.53 잡몹 식물형 악마 8종(GSPECIES) + 네임드 3종(PL)
 const isMush = () => !!(P && (P.fset === 'mush' || P.fset === 'sea' || P.fset === 'gard'));   // (팔한지옥 'ice'는 isIceSet으로 따로 — 보스방은 그 판 마왕의 맵을 쓴다)
    // 버섯 · 어인섬: 바닥·소품·잡몹·보스맵이 따로 있는 층 (아래 isSea로 갈라 씀)
-function calcShards() { return Math.round((Math.floor(P.kills / 20) + Math.floor(gt / 30) + Math.floor(P.lvl * 1.5) + P.named * 2 + P.goalShards) * tierMul() * (1 + 0.05 * (SAVE.perks.shard | 0) + (P.rel.pouch ? 0.5 : 0) + heartBonus().shard / 100)) + (P.mimicShards | 0); }   /* v7.02: 미믹 영혼 조각은 배율 없이 그대로 */   // v4.06: 한 번 더 상향 (판이 짧아진 만큼 + α)   // v4.02: 약 1.5배 상향
+const shardTotal = (extra = 0) => Math.round((calcShards() + extra) * (1 + heartBonus().shard / 100));   // v9.42: 판 끝에 받는 조각 전체(클리어 보너스·보스 러시·미믹 포함, 참가비 반환 제외) × (1 + 심장 조각%)
+function calcShards() { return Math.round((Math.floor(P.kills / 20) + Math.floor(gt / 30) + Math.floor(P.lvl * 1.5) + P.named * 2 + P.goalShards) * tierMul() * (1 + 0.05 * (SAVE.perks.shard | 0) + (P.rel.pouch ? 0.5 : 0))) + (P.mimicShards | 0); }   /* v9.42: 심장 [영혼 조각 획득 +%]는 여기서 빼고 shardTotal 에서 판이 끝날 때 받는 조각 전체에 곱한다 */   // v4.06: 한 번 더 상향 (판이 짧아진 만큼 + α)   // v4.02: 약 1.5배 상향
 /* ---------- 런 목표: 한 판 안에서 순서대로 나오는 작은 목표. 달성하면 영혼 조각을 추가로 받는다 ---------- */
 const GOAL_TYPES = [
   { k: 'kills', label: n => `마물 ${n}마리 처치`,       tg: i => 80 + 60 * i,            ok: () => true },
@@ -7902,7 +7903,7 @@ function die() {
   }
   sfx('die');
   if (chal) chOnDeath();   // v6.20: 버틴 시간으로 보물
-  P.earned = calcShards() + (rush ? rush.shards : 0); SAVE.shards += P.earned; saveSave();
+  P.earned = shardTotal(rush ? rush.shards : 0); SAVE.shards += P.earned; saveSave();
   state = 'dead'; P.anim = 'death'; P.animT = 0; deadT = 0; P.atkTimer = -1;
   if (P.char === 'snail' && FD().src) sprFx.push({ k: 'res', x: P.x, y: P.y, w: 170, t: 0, life: 1.4 });
   burst(P.x, P.y - 24, 30, ['#c8283a', '#7a1020', '#ff6a1c', '#ffc247'], 260, 0.9);
@@ -12924,7 +12925,7 @@ function rushWin(e) {
   P.hp = P.max; P.healBank = P.max * 0.12;
   if (last) {
     rush.shards += Math.round(BR.clear * tierMul()); SAVE.rush.clears = (SAVE.rush.clears | 0) + 1;
-    P.earned = calcShards() + rush.shards; SAVE.shards += P.earned; saveSave();
+    P.earned = shardTotal(rush.shards); SAVE.shards += P.earned; saveSave();
     const a = achRush(); rush.ach = a;
     banner = { txt: `⚔ 보스 러시 완주!  마왕 ${BR_N}종을 모두 쓰러뜨렸다` + (a ? `\n🏆 업적 달성: ${a.name}` : ''), t: 6, c: '#ffe28a' }; state = 'win'; winT = 0; return;
   }
@@ -13973,7 +13974,7 @@ const HG = {
 };
 const HG_ORDER = ['rare', 'epic', 'unique', 'legend'];
 const HSTAT = { atk: '공격력', hp: '최대 체력', aspd: '공격 속도', shard: '영혼 조각 획득' };
-const HSHARD = { rare: [5, 10], epic: [11, 18], unique: [19, 28], legend: [15, 25] };   // v8.92 영혼 조각 획득 옵션은 등급별 범위가 따로 (v9.30: 레전더리 30~40 → 15~25%)
+const HSHARD = { rare: [3, 6], epic: [7, 11], unique: [11, 17], legend: [15, 25] };   // v8.92 영혼 조각 획득 옵션은 등급별 범위가 따로 (v9.30: 레전더리 30~40 → 15~25%)
 const hRange = (g, st) => st === 'shard' ? { min: HSHARD[g][0], max: HSHARD[g][1] } : HG[g];
 const hRoll = g => { const st = ['atk', 'hp', 'aspd', 'shard'][(Math.random() * 4) | 0], R = hRange(g, st); return { st, v: hRand(R.min, R.max) }; };
 const hLines = h => { const o = [[h.st, h.v]]; if (h.st2) o.push([h.st2, h.v2]); if (h.st3) o.push([h.st3, h.v3]); return o; };
@@ -14023,7 +14024,7 @@ const hTitle = h => h.b === 'fw' ? '타락한 혈랑의 심장' : h.b === 'fuse3
 function heartMigrate() {   // v8.90: 예전 합성(첫 심장에 옵션 2줄)한 '○○ 심장'은 끔찍한 심장으로 바꾼다 (등급 · 옵션은 그대로, 그 보스 심장이 안 남으면 다시 드랍 가능)
   const S = SAVE.heart; let ch = false;
   for (const h of S.inv) if (h.st2 && h.b !== 'fuse' && h.b !== 'fuse3' && h.b !== 'fw') { const k = h.b || 'angel'; h.b = 'fuse'; ch = true; SAVE.dex.seen['heart:fuse:' + h.g] = 1; if (!S.inv.some(w => (w.b || 'angel') === k)) delete S.got[k]; }
-  for (const h of S.inv) if (h.g === 'legend') for (const [a, b] of [['st', 'v'], ['st2', 'v2'], ['st3', 'v3']]) if (h[a] === 'shard' && h[b] > HSHARD.legend[1]) { h[b] = HSHARD.legend[1]; ch = true; }   // v9.30: 예전 레전더리 조각 옵션(30~40%)은 새 최대 25%로
+  for (const h of S.inv) if (HSHARD[h.g]) for (const [a, b] of [['st', 'v'], ['st2', 'v2'], ['st3', 'v3']]) if (h[a] === 'shard' && h[b] > HSHARD[h.g][1]) { h[b] = HSHARD[h.g][1]; ch = true; }   // v9.30: 예전 레전더리 조각 옵션(30~40%)은 새 최대 25%로
   if (ch) saveSave();
 }
 function equipHeart(id) {   // 장착 (최대 5개) — 성공 true
@@ -14235,6 +14236,7 @@ function openAch() {
 }
 /* v8.71 간략 패치노트 (최근 버전만, 새 버전마다 맨 위에 한 줄 추가) */
 const PATCH = [
+  ['v9.42', '마우스 우클릭 차단 · 심장 [영혼 조각 획득 +%]가 판이 끝날 때 받는 조각 전체에 적용(100%면 2배) · 낮은 등급 조각 옵션 하향(레어 3~6 · 에픽 7~11 · 유니크 11~17, 레전더리 15~25 그대로)'],
   ['v9.41', '시작 화면 정리 — [시작하기]만 크게 · 영혼 상점(강화·캐릭터 탭) · 수집(보스 심장·도감·스킨 가챠 탭) · 기타(연습장) · 설정은 오른쪽 위 · 캐릭터 카드를 한 번 더 누르면 진화 루트 그림 · 조작법은 지하 1~3층 첫 5초만 · 설정 [고급] 접기 · 긴 설명은 ? 도움말 · 빙결·점화 설명 축약 · 글자 크기·색·폰트 통일'],
   ['v9.40', '지하 26층 마왕 [영벌의 화염죄수] 추가(26층 100% · 27층 70%) — 지나간 자리의 지옥불(화상 중첩) · 형벌의 쇠사슬(도넛 안전 지대) · 용광로의 저주(5초 동안 구슬이 불탐) · 속죄의 고통(붉은 오라 중 때리면 고통 반사) · 체력 30% 족쇄 해방(예고선 광폭 돌진)'],
   ['v9.30','수정 — 황금 악마 임프를 잡을 수 있게(체력 -29% · 도망 속도 0.8→0.7배·최저 175→110 · 도망 시간 13→18초) · 팔한지옥 보스방은 마왕과 상관없이 늘 빙결 투기장'],
@@ -14373,7 +14375,7 @@ function pauseStats() {
   const sk = P.skill ? skillName(P.skill) : '없음', syn = SYNERGIES.filter(x => P.syn[x.id]).map(x => { const a = altOf(x); return a ? a[0] : x.name; }).join(', ') || '없음';
   const rows = [['공격력', fmt(P.dmg)], ['공속', `초당 ${fmt(1 / atkCdBase(), 2)}회`], ['이동 속도', fmt(P.spd)], ['최대 체력', `${Math.ceil(P.hp)} / ${P.max}`],
     ['공격 범위', fmt(P.rng)], ['넉백', Math.round(P.knock * 100) + '%'], ['흡수 범위', fmt(P.pickup)], ['특수 스킬', sk], ['동료', (allies.length ? allies.map(a => (a.kind === 'bug' ? '이공벌레' : '마물') + ' Lv' + a.lv) : []).concat(P.pet ? ['원숭이 전사'] : []).join(', ') || '없음'],
-    ['시너지', syn], ['카드 삭제권', P.banish + '장'], ['이번 판 영혼 조각', '+' + calcShards()]];
+    ['시너지', syn], ['카드 삭제권', P.banish + '장'], ['이번 판 영혼 조각', '+' + shardTotal()]];
   let h = rows.map(r => `<div class="setrow"><span>${r[0]}</span><b>${r[1]}</b></div>`).join('');
   const cards = Object.keys(P.up).filter(id => P.up[id] > 0 && !SYNERGIES.some(x => x.id === id)).map(id => `${upName(id)} Lv.${P.up[id]}`).join(' · ');
   h += `<div class="pnote"><b>보유 카드</b><br>${cards || '아직 없음'}</div>`;
@@ -14463,7 +14465,10 @@ window.addEventListener('keydown', e => {
   else if ((e.code === 'KeyP' || e.code === 'Escape') && (state === 'play' || state === 'pause')) setPause(state === 'play');
 });
 window.addEventListener('keyup', e => { keys.delete(e.code); if ((e.code === 'Space' || e.code === 'KeyQ') && holyQ) holyQ.held = false; });
+document.addEventListener('contextmenu', e => e.preventDefault());   // v9.42: 우클릭 메뉴 차단
+document.addEventListener('auxclick', e => e.preventDefault());
 cv.addEventListener('pointerdown', e => {
+  if (e.pointerType === 'mouse' && e.button !== 0) return;   // v9.42: 마우스 오른쪽·가운데 버튼은 무시
   audioInit();
   if (state !== 'play') return;
   const r = cv.getBoundingClientRect(), x = e.clientX - r.left, y = e.clientY - r.top, b = skillBtn;
@@ -14518,7 +14523,7 @@ stepDive = skWrap(stepDive, 'dive'); stepRush = skWrap(stepRush, 'rush'); rushSt
 updateAirs = (f => function (...a) { return withSrc('basic', () => f.apply(this, a)); })(updateAirs);   // v6.22: 에어슬래시는 평타 (v6.30: 바로 뒤 천안 난무·브레스 감싸기가 주석에 묻혀 딜미터기에서 빠지던 것 수정)
 { const _tb = thornBlast, _sb = smashBlow; thornBlast = function (...a) { return withSrc('scale', () => _tb.apply(this, a)); }; smashBlow = function (...a) { return withSrc('smash', () => _sb.apply(this, a)); }; }
 shellReflect = skWrap(shellReflect, 'shell'); updateBsig = skWrap(updateBsig, 'bsigil');
-window.__G = { CV, CVW, HellfirePatch, get cv() { return cvAI; }, cvClear, cvFurnace, pickBossK, get rushQ() { return rushQ; }, get FSPECIES() { return FSPECIES; }, heartMigrate, hRange, IMP, BLD, leadXY, leadDir, HEAT, FF, restNear, restNearest, restAt, updateHeat, isFireSet, fireTile, floorSet, clearGround: () => GROUND.clear(), get TOP_TIER() { return TOP_TIER; }, get OPEN_TIER() { return OPEN_TIER; }, lilArt, drawLilBody, LS, LSW, get ls() { return ls; }, FrostMirror, lsInWedge, lsIce, lsExPause, lsZone, lilDefeated, RD, RDW, RDF, rdOn, get rd() { return rd; }, KarmaBead, FrostMantra, IceLotus, rdAbsorb, rdInGap, rdExPause, rdSilence, rudDefeated, IMP, GoldImp, impOf, trySpawnImp, impDefeated, set impAt(v) { impAt = v; }, LUCK_N, PB, PBW, IMAP, IceWall, Fissure, IceSpear, segDist, FrostMgr, pbOn, pbClear, pbExPause, get pb() { return pb; }, gunMagN, ROLL, get lhead() { return lhead; }, KN, castLostHead, TW, isIceSlip, isIceSet, get ISPECIES() { return ISPECIES; }, ICE_SLIP, ICE_L, OPEN_TIER, TOP_TIER, renderHells, floorSet, pickFloor, iceTile, IF, get lhead() { return lhead; }, KN, isKnight, castLostHead, knightSlash, openGhostRoute, KNIGHT_FORMS, ghostForm, hTitle, relicIcon, heartMake, hOpt, heartBonus, calcShards, GRN, GRW, GRNF, spawnGrn, grnStart, grnPick, TRIAL, chAltarTick, chAltarPlace, chTrialStart, chTrialWin, chTime, chTime0, chDmgT, CH_HARD, CH_BOSS, cardDefs, cardView, ACH, achSync, achClear, openAch, KG, KGW, get kg() { return kg; }, AirGeyser, WaterMirror, MirrorBolt, kgIce, get shards() { return shards; }, set shards(v) { shards = v; }, VF, VFW, get vf() { return vf; }, VfTrap, VfSkull, VfHeart, vfLeech, fuseHearts, rerollHeart, heartBonus, renderFuse, setFu(v) { hFu = v; }, QN, QNW, get qn() { return qn; }, RootBind, SporeSack, QnMush, pickBossK, pctMelee, pctZone, updateDiff, skinG, bhKey, BH_ORDER, heartIcon, relicMaskOn, calcShards, isSlow, isLava, saveSave, svParse, spawnPlant, PL, get GSPECIES() { return GSPECIES; }, get plBalls() { return plBalls; }, synCard, freezeE, availSyn, SYNERGIES, dmName, FD, shkAdd, toxAdd, skSpawnPair, phoenixRevive, mirrorBlock, palPop, updateCutSaws, get shkSp() { return shkSp; }, get toxFl() { return toxFl; }, get zonesRef() { return zones; },
+window.__G = { shardTotal, calcShards, heartBonus, CV, CVW, HellfirePatch, get cv() { return cvAI; }, cvClear, cvFurnace, pickBossK, get rushQ() { return rushQ; }, get FSPECIES() { return FSPECIES; }, heartMigrate, hRange, IMP, BLD, leadXY, leadDir, HEAT, FF, restNear, restNearest, restAt, updateHeat, isFireSet, fireTile, floorSet, clearGround: () => GROUND.clear(), get TOP_TIER() { return TOP_TIER; }, get OPEN_TIER() { return OPEN_TIER; }, lilArt, drawLilBody, LS, LSW, get ls() { return ls; }, FrostMirror, lsInWedge, lsIce, lsExPause, lsZone, lilDefeated, RD, RDW, RDF, rdOn, get rd() { return rd; }, KarmaBead, FrostMantra, IceLotus, rdAbsorb, rdInGap, rdExPause, rdSilence, rudDefeated, IMP, GoldImp, impOf, trySpawnImp, impDefeated, set impAt(v) { impAt = v; }, LUCK_N, PB, PBW, IMAP, IceWall, Fissure, IceSpear, segDist, FrostMgr, pbOn, pbClear, pbExPause, get pb() { return pb; }, gunMagN, ROLL, get lhead() { return lhead; }, KN, castLostHead, TW, isIceSlip, isIceSet, get ISPECIES() { return ISPECIES; }, ICE_SLIP, ICE_L, OPEN_TIER, TOP_TIER, renderHells, floorSet, pickFloor, iceTile, IF, get lhead() { return lhead; }, KN, isKnight, castLostHead, knightSlash, openGhostRoute, KNIGHT_FORMS, ghostForm, hTitle, relicIcon, heartMake, hOpt, heartBonus, calcShards, GRN, GRW, GRNF, spawnGrn, grnStart, grnPick, TRIAL, chAltarTick, chAltarPlace, chTrialStart, chTrialWin, chTime, chTime0, chDmgT, CH_HARD, CH_BOSS, cardDefs, cardView, ACH, achSync, achClear, openAch, KG, KGW, get kg() { return kg; }, AirGeyser, WaterMirror, MirrorBolt, kgIce, get shards() { return shards; }, set shards(v) { shards = v; }, VF, VFW, get vf() { return vf; }, VfTrap, VfSkull, VfHeart, vfLeech, fuseHearts, rerollHeart, heartBonus, renderFuse, setFu(v) { hFu = v; }, QN, QNW, get qn() { return qn; }, RootBind, SporeSack, QnMush, pickBossK, pctMelee, pctZone, updateDiff, skinG, bhKey, BH_ORDER, heartIcon, relicMaskOn, calcShards, isSlow, isLava, saveSave, svParse, spawnPlant, PL, get GSPECIES() { return GSPECIES; }, get plBalls() { return plBalls; }, synCard, freezeE, availSyn, SYNERGIES, dmName, FD, shkAdd, toxAdd, skSpawnPair, phoenixRevive, mirrorBlock, palPop, updateCutSaws, get shkSp() { return shkSp; }, get toxFl() { return toxFl; }, get zonesRef() { return zones; },
   bossDefeated, get IMG() { return IMG; },
   get ready() { return !!IMG.floorD; }, get state() { return state; }, get P() { return P; }, get enemies() { return enemies; }, get orbs() { return orbs; },
   get zones() { return zones; }, get ebul() { return ebul; }, get EYE() { return EYE; }, get shards() { return shards; }, get bigQ() { return bigQ; }, get bombQ() { return bombQ; }, get holyQ() { return holyQ; }, get afx() { return afx; }, get dashQ() { return dashQ; }, get beam() { return beam; }, get evo() { return evo; }, get choices() { return choices; },
