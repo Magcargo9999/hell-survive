@@ -78,6 +78,7 @@ ASSETS = {
     '__ANFX__': 'an/anfx.webp',
     '__AMAP__': 'an/amap.webp',
     '__GUN__': 'gun/gun.webp',
+    '__FISH__': 'fish/fish.webp',
     '__MFLOOR__': 'mush/mfloor.webp',
     '__MPROPS__': 'mush/mprops.webp',
     '__MMOB__': 'mush/mmob.webp',
