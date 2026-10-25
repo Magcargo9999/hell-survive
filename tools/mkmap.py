@@ -9,6 +9,7 @@ ANCHORS = [
  ('캐릭터 목록(소개·역할·약점)', r'^const CHARS = '),
  ('스킬 목록(이름·설명)', r'^const SKILLS = '), ('스킬 쿨타임·스킬 이름 함수', r'^const SKILL_CD|^const skillName'),
  ('공용 카드', r'^const UPGRADES = '), ('캐릭터 전용 카드', r'^const UNIQUE = '), ('조합 카드', r'^const SYNERGIES = '),
+ ('마하칼 루드라(v9.10: 업보 염주·침묵 진언·만트라·청련·8자 해탈)', r'^const RD = |^class KarmaBead|^function rdPull|^class FrostMantra|^class IceLotus|^class RudraAI|^function updateRudFx'),
  ('황금 악마 임프(v9.03: 21층~ 돌진·도망·10000조각)', r'^const IMP = |^class GoldImp|^function trySpawnImp|^function impDefeated'),
  ('팔한지옥의 백곰 마왕(v9.02: 빙결 투기장·장벽·눈보라·균열·핀볼)', r'^const PB = |^const IMAP = |^class IceWall|^const FrostMgr|^class Fissure|^class PolarBearAI|^function updateBearFx'),
  ('팔한지옥 세트(v8.99: 바닥·소품·미끄러운 얼음·잡몹)', r'^const IF = |^function iceTile|^function isIceSlip|^function buildIceSpecies|^const OPEN_TIER'),

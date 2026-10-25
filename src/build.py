@@ -101,6 +101,7 @@ ASSETS = {
     '__HFUSE3__': 'heart/hfuse3.webp',
     '__RELMASK__': 'final/relmask.webp',
     '__IMP__': 'imp/imp.webp',
+    '__RUD__': 'rud/rud.webp',
     '__RELKEY__': 'final/relkey.webp', '__RELPHOENIX__': 'final/relphoenix.webp', '__RELFANG__': 'final/relfang.webp',
     '__HFW__': 'heart/hfw.webp',
     '__DK__': 'dk/dk.webp',
