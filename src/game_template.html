@@ -891,7 +891,7 @@ function mkCanvas(w, h) { const c = document.createElement('canvas'); c.width = 
  * 0-1. 저장(영혼 조각 · 영구 강화 · 설정) / 캐릭터 목록 / 소리
  * ============================================================ */
 const SAVE_KEY = 'hellSurvivorSave1';
-const GAME_VER = 'v9.25';
+const GAME_VER = 'v9.26';
 const SAVE_DEF = () => ({
   shards: 0,
   perks: { hp: 0, spd: 0, dmg: 0, exp: 0, magnet: 0, banish: 0, revive: 0, regen: 0, shard: 0, critd: 0, choice: 0 },
@@ -9646,7 +9646,7 @@ function updateStatus(dt) {   // 기절 · 화상 · 둔화 · 저주 타이머
 const RELICS = {
   eye:     { name: '지옥의 눈동자',     desc: '작은 눈알 괴물이 따라다니며 1.5초마다 가까운 적에게 관통 레이저를 쏜다', sub: '레이저 피해 = 공격력 ×1.4 · 사거리 520' },
   key:     { name: '방랑자의 열쇠 부적', desc: '순간이동 2회 — 주변에 마물이 가장 적은 안전한 곳으로 즉시 이동 (기절도 풀림)', sub: '한 판에 2번', note: '⌨ E 키 (모바일은 오른쪽 아래 버튼)' },
-  phoenix: { name: '피닉스의 심장',     desc: '죽는 순간 딱 한 번 체력 60%로 부활하고, 주변 적을 불태워 날려버린다', sub: '불사조의 깃털과 별개로 한 번 더 부활' },
+  phoenix: { name: '피닉스의 심장',     desc: '죽는 순간 딱 한 번 체력 30%로 부활하고, 주변 적을 불태워 날려버린다', sub: '불사조의 깃털과 별개로 한 번 더 부활' },
   fang:    { name: '포식자의 송곳니',   desc: '정예 · 이공벌레 · 유니크 · 미니 보스를 쓰러뜨릴 때마다 공격력 +2% (최대 10번, 약 +22%)', sub: '강한 적을 사냥할수록 성장' },
   pouch:   { name: '탐욕의 주머니',   desc: '경험치 +35% · 판이 끝날 때 받는 영혼 조각 +50% · 대가로 받는 피해 +15%', sub: '많이 얻는 만큼 더 아프다' },
   mask:    { name: '광기의 가면',     desc: '체력이 50% 이하면 공격 속도 +45% · 대가로 그동안 재생 효과(자연 재생·재생 비늘)가 멈춘다', sub: '체력 50% 이하에서만 켜진다' },
@@ -9695,12 +9695,12 @@ function mirrorBlock(dmg) {
   for (const e of enemies.slice()) { if (e.hp <= 0) continue; const dx = e.x - P.x, dy = e.y - P.y, d = Math.hypot(dx, dy) || 1; if (d < R + e.r) withSrc('mirror', () => hurtEnemy(e, ref, dx / d, dy / d, 160)); }
 }
 function phoenixRevive() {
-  P.phxUsed = true; P.hp = P.max * 0.6; P.shield = 3; P.inv = 1.2; P.stunT = 0; P.bindT = 0; P.charmT = 0; P.bleedT = 0; P.o2 = KG.o2Max; P.dotT = 0; shake = 18;
+  P.phxUsed = true; P.hp = P.max * 0.3; P.shield = 3; P.inv = 1.2; P.stunT = 0; P.bindT = 0; P.charmT = 0; P.bleedT = 0; P.o2 = KG.o2Max; P.dotT = 0; shake = 18;
   floatNum(P.x, P.y - 96, '피닉스의 심장!', '#ffb060'); sfx('evolve');
   addRing(P.x, P.y - 20, 10, 420, 0.8, '255,150,60', 14); addRing(P.x, P.y - 20, 6, 260, 0.6, '255,226,138', 10);
   burst(P.x, P.y - 30, 44, ['#ff9a2e', '#ffe36a', '#ff4a3a', '#ffffff'], 380, 1.0);
   for (const e of enemies.slice()) { if (e.hp <= 0) continue; const dx = e.x - P.x, dy = e.y - P.y, d = Math.hypot(dx, dy) || 1; if (d < 360 + e.r) { withSrc('phoenix', () => hurtEnemy(e, P.dmg * 6 + 80, dx / d, dy / d, 560)); e.slowT = 2; } }
-  banner = { txt: '🔥 피닉스의 심장이 불타올랐다!  체력 60%로 부활', t: 4, c: '#ffb060' };
+  banner = { txt: '🔥 피닉스의 심장이 불타올랐다!  체력 30%로 부활', t: 4, c: '#ffb060' };
 }
 function fangGain(e) {
   if (!P.rel.fang || P.fangN >= 10) return;
@@ -13609,6 +13609,7 @@ function openAch() {
 }
 /* v8.71 간략 패치노트 (최근 버전만, 새 버전마다 맨 위에 한 줄 추가) */
 const PATCH = [
+  ['v9.26','피닉스의 심장 부활 체력 60% → 30%'],
   ['v9.25','성혈랑 신성한 피의 비 너프 — 기둥당 회복 1.2% → 1.02% (중폭) · 기둥 16 → 15개 (소폭, 여전히 3초)'],
   ['v9.24', '6지옥 팔열지옥(지하 26~30층) 필드 맵 추가 (아직 잠김) — 너무 뜨거워 열기가 천천히 차오르고, 가득 차면 체력이 타들어 간다 · 맵 곳곳의 휴식존(❄ 의식진)에 서 있으면 열기가 식는다'],
   ['v9.23', '릴세르카 이펙트 도트 적용 — 샹들리에·얼음 바늘·반사탄·스포트라이트·얼어붙는 시선(눈·광선·얼음 가시)·결정화 영역 바닥·무도회 마법진·화이트아웃 금 가는 효과'],
