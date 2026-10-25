@@ -84,7 +84,7 @@ JS="""([ch,route,fin,prof,L,gt0,win,boss,seed,tier,god,bk])=>{
    if(b.st==='dash'||b.st==='air'||b.st==='rDash'||b.st==='gcharge'||b.st==='pAir'){ const d=Math.hypot(P.x-b.x,P.y-b.y); if(d<b.r+120){fx+=(P.x-b.x)/(d||1);fy+=(P.y-b.y)/(d||1);} }
    return [fx,fy]; }
  const HL={}; const hp0=P.hp; let bcasts=0, deadAt=null; const SMART0=false; const DUR=window.__DUR||(god?400:300); if(window.__BIGHP&&G.boss){G.boss.hp=G.boss.max=1e7;} if(window.__NOEX&&G.boss){G.boss.ex=[];} if(window.__TANK){P.max=P.hp=1e6;}   // TANK: 죽지 않게 체력만 크게 (받은 피해를 그대로 잰다)
- while(bt<DUR && G.boss && G.state==='play'){
+ while(bt<DUR && G.boss && (G.state==='play'||G.state==='levelup'||G.state==='evolve')){   /* v9.40: 보스전 중 레벨업(영혼 구슬)이 나와도 판이 끝나지 않게 */
    const b=G.boss; if(pump())continue; let TG=b; if(b.shield){ let bd=1e9; for(const q of G.enemies) if(q.kind==='skh'&&q.hp>0){ const dd=Math.hypot(q.x-P.x,q.y-P.y); if(dd<bd){bd=dd;TG=q;} } }
    let dx=TG.x-P.x,dy=TG.y-P.y,d=Math.hypot(dx,dy)||1; if(d<30){ const a=(Math.floor(bt*2)%8)*0.785; dx=-Math.cos(a)*30; dy=-Math.sin(a)*30; d=30; }
    keys.delete('KeyW');keys.delete('KeyA');keys.delete('KeyS');keys.delete('KeyD');
@@ -101,7 +101,7 @@ JS="""([ch,route,fin,prof,L,gt0,win,boss,seed,tier,god,bk])=>{
    { const L0=Math.hypot(vx,vy); if(L0>0.05){ let bs=-9,bx=vx/L0,by=vy/L0; for(let k=0;k<16;k++){ const a=k*Math.PI/8,cx=Math.cos(a),cy=Math.sin(a); const sc=cx*vx/L0+cy*vy/L0; let pen=0; for(const dd of [40,90,150]) if(!G.inPoly(P.x+cx*dd,P.y+cy*dd)) pen+=2.2; const v=sc-pen; if(v>bs){bs=v;bx=cx;by=cy;} } vx=bx; vy=by; } }
    if(Math.abs(vx)>0.3) keys.add(vx>0?'KeyD':'KeyA'); if(Math.abs(vy)>0.3) keys.add(vy>0?'KeyS':'KeyW');
    if(P.skill&&P.skT<=0&&d<420&&!window.__NOCAST){G.cast();bcasts++;}
-   if(god){P.hp=9999;} const hb=P.hp, st0=G.boss?G.boss.st:'-'; G.tick(dt); bt+=dt; if(P.hp<hb){bloss+=hb-P.hp; HL[st0]=(HL[st0]||0)+Math.round(hb-P.hp);}
+   if(god){P.hp=9999;} const hb=P.hp, st0=G.boss?G.boss.st:'-'; G.tick(dt); bt+=dt; if(P.hp<hb&&!(god&&hb-P.hp>5000)){bloss+=hb-P.hp; HL[st0]=(HL[st0]||0)+Math.round(hb-P.hp);}   /* v9.40: GOD에서 레벨업 등으로 체력이 최대치로 잘리는 건 피해로 안 센다 */
    if(G.state==='dead'){deadAt=bt;break;}
    if(!G.arena||!G.arena.k){ if(P.y>1055)P.y=1055; } else if(G.arena.k==='angel'&&P.y>1740)P.y=1740;
  }
