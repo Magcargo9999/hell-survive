@@ -891,7 +891,7 @@ function mkCanvas(w, h) { const c = document.createElement('canvas'); c.width = 
  * 0-1. 저장(영혼 조각 · 영구 강화 · 설정) / 캐릭터 목록 / 소리
  * ============================================================ */
 const SAVE_KEY = 'hellSurvivorSave1';
-const GAME_VER = 'v9.29';
+const GAME_VER = 'v9.30';
 const SAVE_DEF = () => ({
   shards: 0,
   perks: { hp: 0, spd: 0, dmg: 0, exp: 0, magnet: 0, banish: 0, revive: 0, regen: 0, shard: 0, critd: 0, choice: 0 },
@@ -1485,7 +1485,7 @@ function enterArena() {
   startTrans(() => {
     const sealed = P.exitLeft <= 0, an = P.bossK === 'angel';
     arena = an ? { sealed, hold: 0, k: 'angel' } : { sealed, hold: 0 }; if (castle) castle.force = 0;
-    const bset = P.fset === 'ice' || P.fset === 'fire' ? (BR_SET[P.bossK] || 'hell') : P.fset;   // v8.99 팔한지옥: 보스방은 그 마왕이 원래 싸우던 맵
+    const bset = rush ? P.fset : (FSET_ARENA[P.fset] || P.fset);   // v9.30: 보스방 맵은 층(지옥)이 정한다 — 마왕이 누구든 같은 맵 (보스 러시만 마왕별 맵)
     if (bset === 'ice') { arena.mush = true; arena.ice = true; }   // v9.02 백곰 마왕: 빙결 투기장
     else if (bset === 'gard' && IMG.gmap) { arena.mush = true; arena.gard = true; } else if (bset === 'sea' && IMG.smap) { arena.mush = true; arena.sea = true; } else if (bset === 'mush' && IMG.mmap) arena.mush = true;   // v6.52: 지하 6~10층은 마왕 4종 모두 버섯 보스맵   // v6.30: 타락천사는 전용 보스맵
     clearField();
@@ -9770,7 +9770,7 @@ function drawLasers(wx, wy) {
   }
 }
 /* ---------- v9.03 황금 악마 임프 (지하 21층부터) — 빠르게 달려와 한 대 때리고 도망치는 영혼 조각 운반꾼. 잡으면 영혼 조각 + 상자, 시간이 지나면 사라진다 ---------- */
-const IMP = { from: 20, first: [95, 40], gap: [150, 60], hpK: 0.35, dash: 560, dashMax: 9, fleeK: 0.8, fleeMin: 175, flee: 13, pause: 0.4, hitDm: 1.0, shards: 10000, scale: 0.72, r: 28 };   /* from = P.tier 20(지하 21층) · dash/flee = 속도(px/s) · dashMax = 못 닿으면 사라지는 시간 · flee = 한 대 때린 뒤 도망치는 시간(초) */
+const IMP = { from: 20, first: [95, 40], gap: [150, 60], hpK: 0.25, dash: 560, dashMax: 9, fleeK: 0.7, fleeMin: 110, flee: 18, pause: 0.4, hitDm: 1.0, shards: 10000, scale: 0.72, r: 28 };   /* from = P.tier 20(지하 21층) · dash/flee = 속도(px/s) · dashMax = 못 닿으면 사라지는 시간 · flee = 한 대 때린 뒤 도망치는 시간(초) */
 const IMPF = {"idle":[[0,0,150,131,75,129],[150,0,150,131,75,129],[300,0,150,131,75,129],[450,0,150,131,75,129],[600,0,150,131,75,129],[750,0,150,131,75,129]],"run":[[0,131,126,120,63,118],[126,131,126,120,63,118],[252,131,126,120,63,118],[378,131,126,120,63,118],[504,131,126,120,63,118],[630,131,126,120,63,118],[756,131,126,120,63,118],[882,131,126,120,63,118],[1008,131,126,120,63,118]],"hit":[[0,251,132,137,66,135],[132,251,132,137,66,135],[264,251,132,137,66,135],[396,251,132,137,66,135]],"col":[[0,388,241,145,120,143],[241,388,241,145,120,143],[482,388,241,145,120,143],[723,388,241,145,120,143],[964,388,241,145,120,143]]};
 let impAt = 1e9;
 const impOf = () => enemies.find(q => q.kind === 'imp' && q.hp > 0);
@@ -12382,6 +12382,7 @@ function drawZomDeath(m, x, y) {
 const BR_ORDER = ['monkey', 'eye', 'skel', 'angel', 'shk', 'tox', 'vft', 'adm', 'qn', 'kng'], BR_N = BR_ORDER.length;
 const BR_NAME = { monkey: '원숭이 마왕', eye: '심연의 마안군주', skel: '스켈레톤 마왕', angel: '타락천사', shk: '거대 버섯마귀', tox: '이독버섯 마왕', adm: '썩어버린 해군 제독', qn: '타락한 원예의 여왕', vft: '파리지옥 마왕', kng: '타락한 어인왕', bear: '팔한지옥의 백곰 마왕', rud: '마하칼 루드라', lil: '팔한지옥의 대공작 릴세르카' };
 const BR = { lv: 20, per: 50, clear: 300, up: 5, rest: 3.2, auto: 5 };   // lv = 시작 레벨 · up = 마왕 처치마다 레벨업 횟수 · rest = 다음 마왕 입장 전 쉬는 시간(초) · auto = 시작할 때 무작위로 정해지는 증강 수
+const FSET_ARENA = { ice: 'ice', fire: 'hell' };   // v9.30 팔한지옥 보스방 = 빙결 투기장 고정 · 팔열지옥은 보스맵이 생길 때까지 마왕성
 const BR_SET = { lil: 'ice', rud: 'ice', bear: 'ice', monkey: 'hell', eye: 'hell', skel: 'hell', angel: 'hell', shk: 'mush', tox: 'mush', vft: 'gard', qn: 'gard', adm: 'sea', kng: 'sea' };   // 마왕이 나오는 지옥의 맵
 const rushFset = bk => { const q = BR_SET[bk]; return q === 'gard' && IMG.gfloor && IMG.gprops && MSPECIES.length ? 'gard' : q === 'sea' && IMG.sfloor && IMG.sprops && SSPECIES.length ? 'sea' : q !== 'hell' && IMG.mfloor && IMG.mprops && MSPECIES.length ? 'mush' : 'hell'; };
 const rushOpen = () => !!(SAVE.rush.open || (SAVE.fw.snap && (SAVE.fw.snap.tier | 0) >= MAX_TIER));
@@ -13616,6 +13617,7 @@ function openAch() {
 }
 /* v8.71 간략 패치노트 (최근 버전만, 새 버전마다 맨 위에 한 줄 추가) */
 const PATCH = [
+  ['v9.30','수정 — 황금 악마 임프를 잡을 수 있게(체력 -29% · 도망 속도 0.8→0.7배·최저 175→110 · 도망 시간 13→18초) · 팔한지옥 보스방은 마왕과 상관없이 늘 빙결 투기장'],
   ['v9.29','버그 수정 — 천안의 군주 [천안 난무]를 쓰면 게임이 처음부터 다시 시작(보스 러시 시작)되던 문제'],
   ['v9.28','화염 사자 화염 브레스 피해 계수 +15% (중폭) · 브레스 중 이동 속도 감소 완화 (40% → 50%)'],
   ['v9.27','지하 1~15층 마왕 8종 예측 — 따라오던 예고·조준이 잠길 때 내 이동 방향 앞을 겨누고, 추적도 이동 방향 앞을 가로막는다 (빙글빙글 돌기만 하는 플레이 방지 · 멈추거나 꺾으면 그대로 피함)'],
