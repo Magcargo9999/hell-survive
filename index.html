@@ -891,7 +891,7 @@ function mkCanvas(w, h) { const c = document.createElement('canvas'); c.width = 
  * 0-1. 저장(영혼 조각 · 영구 강화 · 설정) / 캐릭터 목록 / 소리
  * ============================================================ */
 const SAVE_KEY = 'hellSurvivorSave1';
-const GAME_VER = 'v9.27';
+const GAME_VER = 'v9.28';
 const SAVE_DEF = () => ({
   shards: 0,
   perks: { hp: 0, spd: 0, dmg: 0, exp: 0, magnet: 0, banish: 0, revive: 0, regen: 0, shard: 0, critd: 0, choice: 0 },
@@ -10214,7 +10214,7 @@ function update(dt) {
   if (!iceQ) { P.svx = 0; P.svy = 0; } else if (P.svx === undefined || isNaN(P.svx)) { P.svx = 0; P.svy = 0; }
   if (moving) {
     ix /= len; iy /= len;
-    const spd = P.spd * (P.char === 'gun' ? gunSpdMul() : 1) * (P.boost > 0 ? 1.5 : 1) * (bigQ ? 0.35 : 1) * (breathQ ? 0.4 : 1) * (P.slowT > 0 ? 0.65 : 1) * (P.rage > 0 ? 1.12 : 1) * (P.tideT > 0 ? 0.3 : 1) * (holyQ ? 0.65 : 1) * (P.charmT > 0 ? VF.charmSp : 1) * (P.chillT > 0 ? LS.chillMul : 1) * DEBUFF.mul('spd');   // 신성화살 차징 중 이동 -35%
+    const spd = P.spd * (P.char === 'gun' ? gunSpdMul() : 1) * (P.boost > 0 ? 1.5 : 1) * (bigQ ? 0.35 : 1) * (breathQ ? 0.5 : 1) * (P.slowT > 0 ? 0.65 : 1) * (P.rage > 0 ? 1.12 : 1) * (P.tideT > 0 ? 0.3 : 1) * (holyQ ? 0.65 : 1) * (P.charmT > 0 ? VF.charmSp : 1) * (P.chillT > 0 ? LS.chillMul : 1) * DEBUFF.mul('spd');   // 신성화살 차징 중 이동 -35%
     if (iceQ) { const k = Math.min(1, iAcc * dt); P.svx += (ix * spd - P.svx) * k; P.svy += (iy * spd - P.svy) * k; }   // v8.80 해일 서핑: 미끄러운 바닥 (방향 전환이 느리다)
     else { P.x += ix * spd * dt; P.y += iy * spd * dt; }
     P.lastX = ix; P.lastY = iy; P.vx = ix * spd; P.vy = iy * spd;
@@ -10789,7 +10789,7 @@ function breathTarget(mx, my) {
 function startBreath() {
   const D = FD(), up = P.up.breathUp || 0, mx = P.x + P.face * 70 * D.ws, my = P.y - 56 * D.ws, t = breathTarget(mx, my);
   const ang = t ? Math.atan2(t.y - t.r - my, t.x - mx) : (P.face > 0 ? 0 : Math.PI);
-  breathQ = { t: 0, ph: 'charge', ang, tick: 0, LEN: 330 * (1 + 0.1 * up), half: 0.42, dm: 0.34 * (1 + 0.15 * up) * (1 + 0.3 * (P.up.breathHeart || 0)), dur: BREATH_DUR + 0.6 * (P.up.breathHeart || 0) };
+  breathQ = { t: 0, ph: 'charge', ang, tick: 0, LEN: 330 * (1 + 0.1 * up), half: 0.42, dm: 0.39 * (1 + 0.15 * up) * (1 + 0.3 * (P.up.breathHeart || 0)), dur: BREATH_DUR + 0.6 * (P.up.breathHeart || 0) };
   P.face = Math.cos(ang) >= 0 ? 1 : -1; P.atkTimer = -1;
 }
 function stepBreath(dt) {
@@ -13616,6 +13616,7 @@ function openAch() {
 }
 /* v8.71 간략 패치노트 (최근 버전만, 새 버전마다 맨 위에 한 줄 추가) */
 const PATCH = [
+  ['v9.28','화염 사자 화염 브레스 피해 계수 +15% (중폭) · 브레스 중 이동 속도 감소 완화 (40% → 50%)'],
   ['v9.27','지하 1~15층 마왕 8종 예측 — 따라오던 예고·조준이 잠길 때 내 이동 방향 앞을 겨누고, 추적도 이동 방향 앞을 가로막는다 (빙글빙글 돌기만 하는 플레이 방지 · 멈추거나 꺾으면 그대로 피함)'],
   ['v9.26','피닉스의 심장 부활 체력 60% → 30%'],
   ['v9.25','성혈랑 신성한 피의 비 너프 — 기둥당 회복 1.2% → 1.02% (중폭) · 기둥 16 → 15개 (소폭, 여전히 3초)'],
