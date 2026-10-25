@@ -104,6 +104,7 @@ ASSETS = {
     '__RUD__': 'rud/rud.webp',
     '__RUDFX__': 'rud/rudfx.webp',
     '__LIL__': 'lil/lil.webp',
+    '__LILFX__': 'lil/lilfx.webp',
     '__RELKEY__': 'final/relkey.webp', '__RELPHOENIX__': 'final/relphoenix.webp', '__RELFANG__': 'final/relfang.webp',
     '__HFW__': 'heart/hfw.webp',
     '__DK__': 'dk/dk.webp',
