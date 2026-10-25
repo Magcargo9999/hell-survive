@@ -189,3 +189,4 @@ CLAUDE.md에서 분리. 필요할 때만 `grep -n "키워드" docs/CHANGELOG.md`
 - v9.22: 릴세르카 도트 시트 적용(`lil` 아틀라스 — 대기 6·이동 8·공격 5·시전 6·피격 4(미사용)·사망 4 + 거울 2칸, `tools/atlas/lil_build.py`)
 - v9.23: 릴세르카 이펙트 도트(`IMG.lfx`/`LFX`/`lfx()`, `tools/atlas/lilfx_build.py`) — 샹들리에·바늘·반사탄·스포트라이트·시선·결정화 영역·무도회 바닥·금 효과. 안 쓴 그룹: nstar·rstar·bliz
 - v9.24: 6지옥 팔열지옥(지하 26~30층, `floorSet` t≥25 = `'fire'`, `TOP_TIER` 29 · `OPEN_TIER` 24로 잠김) 필드 — 바닥 `IMG.ffloor`/`FF`·`fireTile`, 소품 `IMG.fprops`/`FPROP_RECTS`(`tools/atlas/fire_build.py`), 위험 지대 = 용암 웅덩이·발화 바닥 · 열기 `HEAT`/`updateHeat`(약 110초에 가득, 가득이면 초당 최대 체력 2.5%) · 휴식존 `restAt`/`restNear`(820px 칸마다 하나, 반경 118, 안에서 초당 −24, 둘레엔 용암·소품 없음) · HUD `drawHeatHud`(게이지 + 열기 50%↑면 가장 가까운 휴식존 화살표) · 테스트 `tools/tests/fire924.py`
+- v9.25: 핫픽스 — 성혈랑 신성한 피의 비 기둥당 회복 1.2%→1.02%(중폭 -15%), 기둥 16→15개(소폭 -6%, 간격 0.2초로 3초 유지)
