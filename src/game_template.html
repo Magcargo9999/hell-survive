@@ -891,7 +891,7 @@ function mkCanvas(w, h) { const c = document.createElement('canvas'); c.width = 
  * 0-1. 저장(영혼 조각 · 영구 강화 · 설정) / 캐릭터 목록 / 소리
  * ============================================================ */
 const SAVE_KEY = 'hellSurvivorSave1';
-const GAME_VER = 'v9.26';
+const GAME_VER = 'v9.27';
 const SAVE_DEF = () => ({
   shards: 0,
   perks: { hp: 0, spd: 0, dmg: 0, exp: 0, magnet: 0, banish: 0, revive: 0, regen: 0, shard: 0, critd: 0, choice: 0 },
@@ -1831,6 +1831,13 @@ function tierEx(e, dt) {
   }
 }
 function bossMove(e, nx, ny) { if (inPoly(nx, ny)) { e.x = nx; e.y = ny; return true; } if (inPoly(nx, e.y)) { e.x = nx; return true; } if (inPoly(e.x, ny)) { e.y = ny; return true; } return false; }
+/* v9.27 보스 예측 (지하 1~15층 마왕: 원숭이·마안·스켈레톤·타락천사·거대 버섯마귀·이독버섯·파리지옥·원예의 여왕): 빙글빙글 돌기만 해도 안 맞던 문제.
+   A) 따라오던 표식·조준선이 잠기는 순간 내 이동 방향 앞(BLD.sec초 뒤 위치)을 겨눈다  C) 추적할 때 내 뒤가 아니라 이동 방향 앞(BLD.chase초 뒤)을 향해 가로막는다.
+   멈추거나(속도 BLD.v 미만) 방향을 꺾으면 그대로 피할 수 있다 — 속도·예고 시간은 그대로(규칙 9). */
+const BLD = { v: 60, sec: 0.35, chase: 0.9, reach: 300 };
+function leadXY(sec) { const vx = P.vx || 0, vy = P.vy || 0, v = Math.hypot(vx, vy); if (v < BLD.v) return [P.x, P.y]; const k = Math.min(sec, BLD.reach / v); for (const f of [1, 0.5]) { const x = P.x + vx * k * f, y = P.y + vy * k * f; if (inPoly(x, y)) return [x, y]; } return [P.x, P.y]; }
+function leadAng(e, sec) { const [x, y] = leadXY(sec); return Math.atan2(y - e.y, x - e.x); }
+function leadDir(e, d, dx, dy) { const v = Math.hypot(P.vx || 0, P.vy || 0); if (v < BLD.v || d < 160) return [dx / d, dy / d]; const [x, y] = leadXY(BLD.chase), lx = x - e.x, ly = y - e.y, l = Math.hypot(lx, ly) || 1; return [lx / l, ly / l]; }
 function bossChase(e) { e.st = 'chase'; e.stT = ((e.rage ? 0.22 : 0.5) + rand() * 0.3) / bossTempo(); e.invul = false; }
 function bossRecover(e, t) { e.st = 'recover'; e.stT = t * 0.52 / bossTempo(); e.invul = false; }
 function bossPick(e, d) {
@@ -1925,9 +1932,9 @@ function updateBoss(e, dt) {
   }
   for (const t of e.tele) {   // 예고 표시 갱신
     t.t += dt;
-    if (t.follow && t.t < t.follow) { t.x = P.x; t.y = P.y; }
+    if (t.follow && t.t < t.follow) { [t.x, t.y] = leadXY(BLD.sec); }
     if (t.stick) { t.x = e.x; t.y = e.y; }
-    if (t.aim && t.t < t.aim) { t.x = e.x; t.y = e.y; t.ang = Math.atan2(P.y - e.y, P.x - e.x) + (t.off || 0); }
+    if (t.aim && t.t < t.aim) { t.x = e.x; t.y = e.y; t.ang = leadAng(e, BLD.sec) + (t.off || 0); }
     if (!t.done && t.t >= t.dur) { t.done = true; if (t.fire) t.fire(t); }
   }
   e.tele = e.tele.filter(t => !(t.done && t.t >= t.dur + 0.15));
@@ -1940,7 +1947,7 @@ function updateBoss(e, dt) {
     case 'roar': if (e.stT <= 0) { bossChase(e); } break;
     case 'chase': {
       const sp = (e.rage ? 190 : 140) * (P.tier >= 5 ? 1.12 * 0.9 : 1) * (1 + (tpo - 1) * 0.7);   // v6.22: 5단계 이속 -10%
-      if (d > e.r + 50) bossMove(e, e.x + dx / d * sp * dt, e.y + dy / d * sp * dt);
+      if (d > e.r + 50) bossMove(e, e.x + leadDir(e, d, dx, dy)[0] * sp * dt, e.y + leadDir(e, d, dx, dy)[1] * sp * dt);
       if (e.stT <= 0) bossPick(e, d);
       break;
     }
@@ -2406,8 +2413,8 @@ function updateSkBoss(e, dt) {
   for (const t of e.tele) {
     t.t += dt;
     if (t.t < 0) { if (t.lead) { t.x = P.x + P.vx * 0.35; t.y = P.y + P.vy * 0.35; if (!inPoly(t.x, t.y)) { t.x = P.x; t.y = P.y; } } continue; }
-    if (t.follow && t.t < t.follow) { t.x = P.x; t.y = P.y; }
-    if (t.aim && t.t < t.aim) { t.x = e.x; t.y = e.y; t.ang = Math.atan2(P.y - e.y, P.x - e.x) + (t.off || 0); if (t.k !== 'rect' || !t.nofire) e.face = Math.cos(t.ang) >= 0 ? 1 : -1; }
+    if (t.follow && t.t < t.follow) { [t.x, t.y] = leadXY(BLD.sec); }
+    if (t.aim && t.t < t.aim) { t.x = e.x; t.y = e.y; t.ang = leadAng(e, BLD.sec) + (t.off || 0); if (t.k !== 'rect' || !t.nofire) e.face = Math.cos(t.ang) >= 0 ? 1 : -1; }
     if (!t.done && t.t >= t.dur) { t.done = true; if (t.fire) t.fire(t); }
   }
   e.tele = e.tele.filter(t => !(t.done && t.t >= t.dur + 0.15));
@@ -2438,7 +2445,7 @@ function updateSkBoss(e, dt) {
     case 'chase': {
       const behind = Math.abs(dx) > 24 && (dx > 0 ? 1 : -1) !== e.face;
       const sp = (e.rage ? 150 : 118) * (1 + (bossTempo() - 1) * 0.7) * (e.slowT > 0 ? 0.7 : 1); if (e.slowT > 0) e.slowT -= dt;
-      if (!behind && d > e.r + 70) { bossMove(e, e.x + dx / d * sp * dt, e.y + dy / d * sp * dt); e.an = 'walk'; } else e.an = 'idle';
+      if (!behind && d > e.r + 70) { bossMove(e, e.x + leadDir(e, d, dx, dy)[0] * sp * dt, e.y + leadDir(e, d, dx, dy)[1] * sp * dt); e.an = 'walk'; } else e.an = 'idle';
       if (e.stT <= 0 && !behind) skPick(e, d);
       else if (e.stT <= -1.2) { skAim(e); skPick(e, d); }   // 오래 등을 보이고 있지는 않는다
       break;
@@ -2839,7 +2846,7 @@ function updateShkBoss(e, dt) {
   if (state !== 'play' || trans) return;
   for (const t of e.tele) {
     t.t += dt; if (t.t < 0) continue;
-    if (t.track && t.t < t.track) { const dx = P.x - t.x, dy = P.y - t.y, dd = Math.hypot(dx, dy); if (dd > 1) { const s = Math.min(dd, 320 * dt); t.x += dx / dd * s; t.y += dy / dd * s; } }
+    if (t.track && t.t < t.track) { const [lx, ly] = leadXY(0.3), dx = lx - t.x, dy = ly - t.y, dd = Math.hypot(dx, dy); if (dd > 1) { const s = Math.min(dd, 320 * dt); t.x += dx / dd * s; t.y += dy / dd * s; } }
     if (t.stick) { t.x = e.x; t.y = e.y; }
     if (t.aim && t.t < t.aim) { t.x = e.x; t.y = e.y; t.ang = Math.atan2(P.y - e.y, P.x - e.x) + (t.off || 0); }
     if (!t.done && t.t >= t.dur) { t.done = true; if (t.fire) t.fire(t); }
@@ -2859,7 +2866,7 @@ function updateShkBoss(e, dt) {
     case 'intro': e.invul = true; e.an = 'idle'; if (e.stT <= 0) { e.invul = false; shkChase(e); } break;
     case 'chase': {
       const sp = SHK.sp * (e.rage ? 1.2 : 1) * (1 + (bossTempo() - 1) * 0.7) * (e.slowT > 0 ? 0.7 : 1);
-      if (d > e.r + 70) { e.moving = bossMove(e, e.x + dx / d * sp * dt, e.y + dy / d * sp * dt); }
+      if (d > e.r + 70) { e.moving = bossMove(e, e.x + leadDir(e, d, dx, dy)[0] * sp * dt, e.y + leadDir(e, d, dx, dy)[1] * sp * dt); }
       e.an = e.moving ? 'walk' : 'idle';
       if (e.stT <= 0) shkPick(e, d);
       break; }
@@ -3060,7 +3067,7 @@ function updateToxBoss(e, dt) {
   if (state !== 'play' || trans) return;
   for (const t of e.tele) {
     t.t += dt; if (t.t < 0) continue;
-    if (t.aim && t.t < t.aim) { t.x = e.x; t.y = e.y; t.ang = Math.atan2(P.y - e.y, P.x - e.x); e.dang = t.ang; }
+    if (t.aim && t.t < t.aim) { t.x = e.x; t.y = e.y; t.ang = leadAng(e, BLD.sec); e.dang = t.ang; }
     if (!t.done && t.t >= t.dur) t.done = true;
   }
   e.tele = e.tele.filter(t => !(t.done && t.t >= t.dur + 0.1));
@@ -3074,7 +3081,7 @@ function updateToxBoss(e, dt) {
     case 'intro': e.invul = true; e.an = 'idle'; if (e.stT <= 0) { e.invul = false; toxChase(e); } break;
     case 'chase': {
       const sp = TOX.sp * (e.rage ? 1.2 : 1) * (1 + (bossTempo() - 1) * 0.7) * (e.slowT > 0 ? 0.7 : 1);
-      if (d > e.r + 70) e.moving = bossMove(e, e.x + dx / d * sp * dt, e.y + dy / d * sp * dt);
+      if (d > e.r + 70) e.moving = bossMove(e, e.x + leadDir(e, d, dx, dy)[0] * sp * dt, e.y + leadDir(e, d, dx, dy)[1] * sp * dt);
       e.an = e.moving ? 'walk' : 'idle';
       if (e.stT <= 0) toxPick(e);
       break; }
@@ -5609,7 +5616,7 @@ class VenusAI {
     else { this.go('skull', 0.7, 'hit'); this.cd.skull = VF.skCd * m; floatNum(e.x, e.y - 230, '해골 토해내기!', '#ffd0c0'); sfx('skill'); }
   }
   spray() {   // 넓은 부채꼴 다발 (줄마다 반 칸씩 엇갈려 틈이 생긴다)
-    const [x, y] = this.mouth(), base = Math.atan2(P.y - 30 - y, P.x - x), n = VF.spN + (this.e.ph2 ? 2 : 0), off = this.vol % 2 ? 0.5 : 0;
+    const [x, y] = this.mouth(), base = Math.atan2(leadXY(0.4)[1] - 30 - y, leadXY(0.4)[0] - x), n = VF.spN + (this.e.ph2 ? 2 : 0), off = this.vol % 2 ? 0.5 : 0;
     for (let i = 0; i < n; i++) { const a = base + VF.spHalf * ((i + off) / (n - 1) * 2 - 1); VFW.spores.push(new VfSpore(x, y, a, VF.spSp * (0.85 + rand() * 0.3))); }
     burst(x, y, 10, ['#ff2a3a', '#ff9aa8'], 200, 0.3); sfx('shoot');
   }
@@ -5669,7 +5676,7 @@ class VenusAI {
       case 'intro': e.invul = true; if (e.stT <= 0) this.chase(1.0); break;
       case 'chase': {
         const sp = VF.sp * (e.ph2 ? VF.tempo : 1) * (P.bleedT > 0 ? VF.smell : 1) * (1 + (bossTempo() - 1) * 0.7) * (e.slowT > 0 ? 0.7 : 1);   // 피 냄새: 출혈 중이면 더 빨리
-        if (d > e.r + 60) e.moving = bossMove(e, e.x + dx / d * sp * dt, e.y + dy / d * sp * dt);
+        if (d > e.r + 60) e.moving = bossMove(e, e.x + leadDir(e, d, dx, dy)[0] * sp * dt, e.y + leadDir(e, d, dx, dy)[1] * sp * dt);
         e.an = e.moving ? 'walk' : 'idle';
         if (d < VF.biR - 30 && this.cd.bite <= 0) { this.bite(); break; }   // 가까우면(매혹으로 끌려오면) 물어뜯기가 먼저
         if (e.stT <= 0) this.next();
@@ -5846,7 +5853,7 @@ class RootBind {
   update(dt) {
     this.t += dt;
     if (this.state === 'gone') { this.dead = true; return; }
-    if (this.state === 'wait') { if (this.t < 0) return; this.state = 'warn'; this.t = 0; [this.x, this.y] = admSpot(P.x, P.y); }   // 차례가 오면 그 순간의 내 발밑
+    if (this.state === 'wait') { if (this.t < 0) return; this.state = 'warn'; this.t = 0; [this.x, this.y] = admSpot(...leadXY(0.35)); }   // 차례가 오면 그 순간의 내 발밑
     if (this.state === 'warn' && this.t >= this.warn) { this.state = 'up'; this.t = 0; this.erupt(); }
     if (this.state === 'up' && this.t > 1.1) this.dead = true;
   }
@@ -5972,7 +5979,7 @@ class QueenAI {
     else { this.go('acid', 0.5 * m, 'atk'); this.cd.acid = QN.acCd * m; floatNum(e.x, e.y - 200, '산성 독 웅덩이!', '#b6ff6a'); sfx('skill'); }
   }
   fireSpore() {
-    const [x, y] = this.cannonMouth(this.shots), a = Math.atan2(P.y - 30 - y, P.x - x);
+    const [x, y] = this.cannonMouth(this.shots), a = Math.atan2(leadXY(0.4)[1] - 30 - y, leadXY(0.4)[0] - x);
     QNW.spores.push(new QnSpore(x, y, a)); burst(x, y, 5, ['#d6ff6a', '#ffffff'], 140, 0.25); sfx('shoot');
   }
   spawnRoots(n, gap) { for (let i = 0; i < n; i++) QNW.roots.push(new RootBind(P.x, P.y, i * gap)); }
@@ -6034,7 +6041,7 @@ class QueenAI {
       case 'intro': e.invul = true; if (e.stT <= 0) this.chase(1.0); break;
       case 'chase': {
         const sp = QN.sp * (e.ph2 ? 1.15 : 1) * (1 + (bossTempo() - 1) * 0.7) * (e.slowT > 0 ? 0.7 : 1);
-        if (d > e.r + 70) e.moving = bossMove(e, e.x + dx / d * sp * dt, e.y + dy / d * sp * dt);
+        if (d > e.r + 70) e.moving = bossMove(e, e.x + leadDir(e, d, dx, dy)[0] * sp * dt, e.y + leadDir(e, d, dx, dy)[1] * sp * dt);
         e.an = e.moving ? 'walk' : 'idle';
         if (d < QN.lashR - 30 && this.cd.lash <= 0) { this.lash(); break; }   // 가까이 붙으면 덩굴 채찍이 먼저
         if (e.stT <= 0) this.next();
@@ -6259,9 +6266,9 @@ function updateAnBoss(e, dt) {
     t.t += dt;
     if (t.t < 0) continue;
     if (t.place && !t.placed) { t.placed = true; t.place(t); }
-    if (t.track && t.t < t.track) { const dx = P.x - t.x, dy = P.y - t.y, dd = Math.hypot(dx, dy); if (dd > 1) { const s = Math.min(dd, 300 * dt); t.x += dx / dd * s; t.y += dy / dd * s; } }
+    if (t.track && t.t < t.track) { const [lx, ly] = leadXY(0.3), dx = lx - t.x, dy = ly - t.y, dd = Math.hypot(dx, dy); if (dd > 1) { const s = Math.min(dd, 300 * dt); t.x += dx / dd * s; t.y += dy / dd * s; } }
     if (t.stick) { t.x = e.x; t.y = e.y; }
-    if (t.aim && t.t < t.aim) { t.x = e.x; t.y = e.y; t.ang = t.shAim ? e.sAng : Math.atan2(P.y - e.y, P.x - e.x); }
+    if (t.aim && t.t < t.aim) { t.x = e.x; t.y = e.y; t.ang = t.shAim ? e.sAng : leadAng(e, BLD.sec); }
     if (!t.done && t.t >= t.dur) { t.done = true; if (t.fire) t.fire(t); }
   }
   e.tele = e.tele.filter(t => !(t.done && t.t >= t.dur + 0.15));
@@ -6289,7 +6296,7 @@ function updateAnBoss(e, dt) {
   switch (e.st) {
     case 'intro': e.invul = true; if (e.stT <= 0) { e.invul = false; anChase(e); } break;
     case 'chase':
-      if (e.ph === 1) { const sp = 132 * (1 + (bossTempo() - 1) * 0.7) * (e.slowT > 0 ? 0.7 : 1); if (d > e.r + 60) { bossMove(e, e.x + dx / d * sp * dt, e.y + dy / d * sp * dt); e.an = 'run'; } else e.an = 'idle'; }
+      if (e.ph === 1) { const sp = 132 * (1 + (bossTempo() - 1) * 0.7) * (e.slowT > 0 ? 0.7 : 1); if (d > e.r + 60) { bossMove(e, e.x + leadDir(e, d, dx, dy)[0] * sp * dt, e.y + leadDir(e, d, dx, dy)[1] * sp * dt); e.an = 'run'; } else e.an = 'idle'; }
       else {
         drift(1); e.an = 'idle';
         e.near = d < 210 ? e.near + dt : Math.max(0, e.near - dt);
@@ -6794,9 +6801,9 @@ function updateEyeBoss(e, dt) {
   }
   for (const t of e.tele) {
     t.t += dt;
-    if (t.follow && t.t < t.follow) { t.x = P.x; t.y = P.y; }
+    if (t.follow && t.t < t.follow) { [t.x, t.y] = leadXY(BLD.sec); }
     if (t.stick) { t.x = e.x; t.y = e.y; }
-    if (t.aim && t.t < t.aim) { t.x = e.x; t.y = e.y; t.ang = Math.atan2(P.y - e.y, P.x - e.x) + (t.off || 0); }
+    if (t.aim && t.t < t.aim) { t.x = e.x; t.y = e.y; t.ang = leadAng(e, BLD.sec) + (t.off || 0); }
     if (!t.done && t.t >= t.dur) { t.done = true; if (t.fire) t.fire(t); }
   }
   e.tele = e.tele.filter(t => !(t.done && t.t >= t.dur + 0.15));
@@ -6809,7 +6816,7 @@ function updateEyeBoss(e, dt) {
     if (d > EYE.want + 70) { mx = dx / d; my = dy / d; } else if (d < EYE.want - 90) { mx = -dx / d; my = -dy / d; } else { mx = -dy / d * e.side * 0.6; my = dx / d * e.side * 0.6; }
     if (!bossMove(e, e.x + mx * sp * dt, e.y + my * sp * dt)) bossMove(e, e.x - my * sp * dt, e.y + mx * sp * dt);
   };
-  const aim = Math.atan2(dy, dx);
+  const aim = leadAng(e, BLD.sec);
   switch (e.st) {
     case 'intro': e.invul = true; if (e.stT <= 0) eyeChase(e); break;
     case 'roar': if (e.stT <= 0) eyeChase(e); break;
@@ -13609,6 +13616,7 @@ function openAch() {
 }
 /* v8.71 간략 패치노트 (최근 버전만, 새 버전마다 맨 위에 한 줄 추가) */
 const PATCH = [
+  ['v9.27','지하 1~15층 마왕 8종 예측 — 따라오던 예고·조준이 잠길 때 내 이동 방향 앞을 겨누고, 추적도 이동 방향 앞을 가로막는다 (빙글빙글 돌기만 하는 플레이 방지 · 멈추거나 꺾으면 그대로 피함)'],
   ['v9.26','피닉스의 심장 부활 체력 60% → 30%'],
   ['v9.25','성혈랑 신성한 피의 비 너프 — 기둥당 회복 1.2% → 1.02% (중폭) · 기둥 16 → 15개 (소폭, 여전히 3초)'],
   ['v9.24', '6지옥 팔열지옥(지하 26~30층) 필드 맵 추가 (아직 잠김) — 너무 뜨거워 열기가 천천히 차오르고, 가득 차면 체력이 타들어 간다 · 맵 곳곳의 휴식존(❄ 의식진)에 서 있으면 열기가 식는다'],
@@ -13878,7 +13886,7 @@ stepDive = skWrap(stepDive, 'dive'); stepRush = skWrap(stepRush, 'rush'); rushSt
 updateAirs = (f => function (...a) { return withSrc('basic', () => f.apply(this, a)); })(updateAirs);   // v6.22: 에어슬래시는 평타 (v6.30: 바로 뒤 천안 난무·브레스 감싸기가 주석에 묻혀 딜미터기에서 빠지던 것 수정)
 { const _tb = thornBlast, _sb = smashBlow; thornBlast = function (...a) { return withSrc('scale', () => _tb.apply(this, a)); }; smashBlow = function (...a) { return withSrc('smash', () => _sb.apply(this, a)); }; }
 shellReflect = skWrap(shellReflect, 'shell'); updateBsig = skWrap(updateBsig, 'bsigil');
-window.__G = { HEAT, FF, restNear, restNearest, restAt, updateHeat, isFireSet, fireTile, floorSet, clearGround: () => GROUND.clear(), get TOP_TIER() { return TOP_TIER; }, get OPEN_TIER() { return OPEN_TIER; }, lilArt, drawLilBody, LS, LSW, get ls() { return ls; }, FrostMirror, lsInWedge, lsIce, lsExPause, lsZone, lilDefeated, RD, RDW, RDF, rdOn, get rd() { return rd; }, KarmaBead, FrostMantra, IceLotus, rdAbsorb, rdInGap, rdExPause, rdSilence, rudDefeated, IMP, GoldImp, impOf, trySpawnImp, impDefeated, set impAt(v) { impAt = v; }, LUCK_N, PB, PBW, IMAP, IceWall, Fissure, IceSpear, segDist, FrostMgr, pbOn, pbClear, pbExPause, get pb() { return pb; }, gunMagN, ROLL, get lhead() { return lhead; }, KN, castLostHead, TW, isIceSlip, isIceSet, get ISPECIES() { return ISPECIES; }, ICE_SLIP, ICE_L, OPEN_TIER, TOP_TIER, renderHells, floorSet, pickFloor, iceTile, IF, get lhead() { return lhead; }, KN, isKnight, castLostHead, knightSlash, openGhostRoute, KNIGHT_FORMS, ghostForm, hTitle, relicIcon, heartMake, hOpt, heartBonus, calcShards, GRN, GRW, GRNF, spawnGrn, grnStart, grnPick, TRIAL, chAltarTick, chAltarPlace, chTrialStart, chTrialWin, chTime, chTime0, chDmgT, CH_HARD, CH_BOSS, cardDefs, cardView, ACH, achSync, achClear, openAch, KG, KGW, get kg() { return kg; }, AirGeyser, WaterMirror, MirrorBolt, kgIce, get shards() { return shards; }, set shards(v) { shards = v; }, VF, VFW, get vf() { return vf; }, VfTrap, VfSkull, VfHeart, vfLeech, fuseHearts, rerollHeart, heartBonus, renderFuse, setFu(v) { hFu = v; }, QN, QNW, get qn() { return qn; }, RootBind, SporeSack, QnMush, pickBossK, pctMelee, pctZone, updateDiff, skinG, bhKey, BH_ORDER, heartIcon, relicMaskOn, calcShards, isSlow, isLava, saveSave, svParse, spawnPlant, PL, get GSPECIES() { return GSPECIES; }, get plBalls() { return plBalls; }, synCard, freezeE, availSyn, SYNERGIES, dmName, FD, shkAdd, toxAdd, skSpawnPair, phoenixRevive, mirrorBlock, palPop, updateCutSaws, get shkSp() { return shkSp; }, get toxFl() { return toxFl; }, get zonesRef() { return zones; },
+window.__G = { BLD, leadXY, leadDir, HEAT, FF, restNear, restNearest, restAt, updateHeat, isFireSet, fireTile, floorSet, clearGround: () => GROUND.clear(), get TOP_TIER() { return TOP_TIER; }, get OPEN_TIER() { return OPEN_TIER; }, lilArt, drawLilBody, LS, LSW, get ls() { return ls; }, FrostMirror, lsInWedge, lsIce, lsExPause, lsZone, lilDefeated, RD, RDW, RDF, rdOn, get rd() { return rd; }, KarmaBead, FrostMantra, IceLotus, rdAbsorb, rdInGap, rdExPause, rdSilence, rudDefeated, IMP, GoldImp, impOf, trySpawnImp, impDefeated, set impAt(v) { impAt = v; }, LUCK_N, PB, PBW, IMAP, IceWall, Fissure, IceSpear, segDist, FrostMgr, pbOn, pbClear, pbExPause, get pb() { return pb; }, gunMagN, ROLL, get lhead() { return lhead; }, KN, castLostHead, TW, isIceSlip, isIceSet, get ISPECIES() { return ISPECIES; }, ICE_SLIP, ICE_L, OPEN_TIER, TOP_TIER, renderHells, floorSet, pickFloor, iceTile, IF, get lhead() { return lhead; }, KN, isKnight, castLostHead, knightSlash, openGhostRoute, KNIGHT_FORMS, ghostForm, hTitle, relicIcon, heartMake, hOpt, heartBonus, calcShards, GRN, GRW, GRNF, spawnGrn, grnStart, grnPick, TRIAL, chAltarTick, chAltarPlace, chTrialStart, chTrialWin, chTime, chTime0, chDmgT, CH_HARD, CH_BOSS, cardDefs, cardView, ACH, achSync, achClear, openAch, KG, KGW, get kg() { return kg; }, AirGeyser, WaterMirror, MirrorBolt, kgIce, get shards() { return shards; }, set shards(v) { shards = v; }, VF, VFW, get vf() { return vf; }, VfTrap, VfSkull, VfHeart, vfLeech, fuseHearts, rerollHeart, heartBonus, renderFuse, setFu(v) { hFu = v; }, QN, QNW, get qn() { return qn; }, RootBind, SporeSack, QnMush, pickBossK, pctMelee, pctZone, updateDiff, skinG, bhKey, BH_ORDER, heartIcon, relicMaskOn, calcShards, isSlow, isLava, saveSave, svParse, spawnPlant, PL, get GSPECIES() { return GSPECIES; }, get plBalls() { return plBalls; }, synCard, freezeE, availSyn, SYNERGIES, dmName, FD, shkAdd, toxAdd, skSpawnPair, phoenixRevive, mirrorBlock, palPop, updateCutSaws, get shkSp() { return shkSp; }, get toxFl() { return toxFl; }, get zonesRef() { return zones; },
   bossDefeated, get IMG() { return IMG; },
   get ready() { return !!IMG.floorD; }, get state() { return state; }, get P() { return P; }, get enemies() { return enemies; }, get orbs() { return orbs; },
   get zones() { return zones; }, get ebul() { return ebul; }, get EYE() { return EYE; }, get shards() { return shards; }, get bigQ() { return bigQ; }, get bombQ() { return bombQ; }, get holyQ() { return holyQ; }, get afx() { return afx; }, get dashQ() { return dashQ; }, get beam() { return beam; }, get evo() { return evo; }, get choices() { return choices; },
