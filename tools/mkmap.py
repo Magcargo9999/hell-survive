@@ -9,6 +9,7 @@ ANCHORS = [
  ('캐릭터 목록(소개·역할·약점)', r'^const CHARS = '),
  ('스킬 목록(이름·설명)', r'^const SKILLS = '), ('스킬 쿨타임·스킬 이름 함수', r'^const SKILL_CD|^const skillName'),
  ('공용 카드', r'^const UPGRADES = '), ('캐릭터 전용 카드', r'^const UNIQUE = '), ('조합 카드', r'^const SYNERGIES = '),
+ ('불구렁이(v9.46: 다관절 마디·파열하는 대지·탐욕의 용광로·환영 포위·종말의 똬리)', r'^const SN = |^class SnakeNode|^function snPath|^function snEscapeR|^function snCrackPush|^function snSuckOrb|^class SerpentAI|^function updateSnFx|^function drawSnFloor'),
  ('영벌의 화염죄수(v9.40: 불길 궤적·쇠사슬 도넛·용광로 구슬·속죄 반사·족쇄 해방 돌진)', r'^const CV = |^class HellfirePatch|^function cvChainStep|^function cvTetherStep|^function cvFurnace|^function cvAtone|^class ConvictAI|^function updateCvFx'),
  ('팔한지옥의 대공작 릴세르카(v9.20: 결정화 영역·왈츠·거울·무도회)', r'^const LS = |^class FrostMirror|^class LilserkaAI|^function lsZone|^function updateLilFx'),
  ('마하칼 루드라(v9.10: 업보 염주·침묵 진언·만트라·청련·8자 해탈)', r'^const RD = |^class KarmaBead|^function rdPull|^class FrostMantra|^class IceLotus|^class RudraAI|^function updateRudFx'),

@@ -104,6 +104,7 @@ ASSETS = {
     '__RELMASK__': 'final/relmask.webp',
     '__IMP__': 'imp/imp.webp',
     '__CVT__': 'cvt/cvt.webp',
+    '__SNK__': 'snk/snk.webp',
     '__RUD__': 'rud/rud.webp',
     '__RUDFX__': 'rud/rudfx.webp',
     '__LIL__': 'lil/lil.webp',
