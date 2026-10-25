@@ -83,6 +83,7 @@ ASSETS = {
     '__MMOB__': 'mush/mmob.webp',
     '__MMAP__': 'mush/mmap.webp',
     '__GFLOOR__': 'gard/gfloor.webp',
+    '__FFLOOR__': 'fire/ffloor.webp', '__FPROPS__': 'fire/fprops.webp',
     '__IFLOOR__': 'ice/ifloor.webp', '__IPROPS__': 'ice/iprops.webp', '__IMOB__': 'ice/imob.webp',
     '__GPROPS__': 'gard/gprops.webp',
     '__GMAP__': 'gard/gmap.webp',
