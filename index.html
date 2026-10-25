@@ -953,7 +953,7 @@ function mkCanvas(w, h) { const c = document.createElement('canvas'); c.width = 
  * 0-1. 저장(영혼 조각 · 영구 강화 · 설정) / 캐릭터 목록 / 소리
  * ============================================================ */
 const SAVE_KEY = 'hellSurvivorSave1';
-const GAME_VER = 'v9.44';
+const GAME_VER = 'v9.45';
 const SAVE_DEF = () => ({
   shards: 0,
   perks: { hp: 0, spd: 0, dmg: 0, exp: 0, magnet: 0, banish: 0, revive: 0, regen: 0, shard: 0, critd: 0, choice: 0 },
@@ -11942,6 +11942,15 @@ function drawHud() {
   ctx.strokeText(t1, W - 12, 32); ctx.fillStyle = '#f3d9c6'; ctx.fillText(t1, W - 12, 32);
   {
     let sy2 = 76 + (Object.keys(P.rel).length ? 38 : 0); ctx.textAlign = 'left';
+    { // v9.43 진화 조건 (체력바 바로 아래 · 카드 칩은 그 아래로)
+      const pc = pendingConds().filter(x => x.c);
+      if (pc.length) { ctx.font = 'bold 13px ' + FONT; const rows = pc.map(x => { const ok = x.c.ok(); return { ok, t: `${ok ? '✔' : '✖'} ${x.name.replace(/ \(.*\)/, '')} : ${x.c.prog()}` }; });
+        const pw = Math.min(330, Math.max(...rows.map(r => ctx.measureText(r.t).width)) + 16), ph = 10 + rows.length * 18;
+        ctx.fillStyle = 'rgba(10,18,24,0.78)'; ctx.fillRect(10, sy2 - 4, pw, ph); ctx.strokeStyle = 'rgba(160,220,255,0.55)'; ctx.lineWidth = 1; ctx.strokeRect(10.5, sy2 - 3.5, pw - 1, ph - 1);
+        ctx.lineWidth = 3; ctx.strokeStyle = '#06120a'; let ty = sy2 + 11;
+        for (const r of rows) { const t = r.t, mw = pw - 12; let tt = t; while (ctx.measureText(tt).width > mw && tt.length > 4) tt = tt.slice(0, -1); if (tt !== t) tt += '…';
+          ctx.strokeText(tt, 16, ty); ctx.fillStyle = r.ok ? '#9bffc0' : '#ffb0a0'; ctx.fillText(tt, 16, ty); ty += 18; }
+        sy2 += ph + 4; ctx.strokeStyle = '#120406'; } }
     { // 획득한 스킬 카드 (체력바 아래 칩)
       if (!hudCards.t || wallT - hudCards.t > 0.5 || hudCards.c !== P) { hudCards.c = P; hudCards.t = wallT; hudCards.L = [];
         for (const u of UPGRADES.concat(...Object.values(UNIQUE))) if ((P.up[u.id] || 0) > 0 && !hudCards.L.some(x => x.id === u.id)) hudCards.L.push({ id: u.id, t: upName(u.id) + ' ' + P.up[u.id], syn: false });
@@ -11972,13 +11981,9 @@ function drawHud() {
     if (P.silT > 0) L.push([`침묵 ${Math.ceil(P.silT)}s (기본 공격 봉인 · 스킬은 반사)`, '#9fd8ff']);
     for (const id in DEBUFF.list) L.push([`${DEBUFF.list[id].name} ${Math.ceil(DEBUFF.list[id].t)}s`, '#b6ff6a']);
     if (P.curseCard > 0) L.push(['☠ 다음 레벨업 카드 선택 불가', '#d6a8ff']);
-    if (P.char === 'lizard' && P.form === 0) L.push([P.taken10 >= LIZ_GUARD_DMG ? '✔ 수호의 길 조건 달성' : `수호의 길 조건: 받은 피해 ${Math.floor(P.taken10)} / ${LIZ_GUARD_DMG}`, P.taken10 >= LIZ_GUARD_DMG ? '#9bffc0' : '#ffc08a']);
-    if (P.char === 'lizard' && !P.fin && P.lvl >= 10) L.push([P.low10 ? '✔ 버서커 조건 달성 (체력 10 이하 경험)' : '버서커 조건: 체력 10 이하까지 떨어졌다 버티기', P.low10 ? '#9bffc0' : '#ff9a9a']);
     if (P.up.guard) L.push([P.guardT > 0 ? `방어막 재충전 ${Math.ceil(P.guardT)}s` : '방어막 준비됨', '#9fe3ff']);
     if (P.rage > 0) L.push([`광란 ${P.rage.toFixed(1)}s  (공속 ×3)`, '#ff6a7a']);
     if (P.char === 'lizard' && P.fin === 'rage') { const bm = berserkMul(); if (bm > 1.05) L.push([`광폭 피해 ×${bm.toFixed(2)}`, '#ff8a8a']); }
-    if (P.char === 'archer' && !P.route && (P.poisonObj || P.poisoned)) L.push([P.poisoned ? '☠ 독약 획득 · Lv.10에 해골 궁수 선택 가능' : '☠ 독약이 맵에 있다 (가장자리 화살표)', '#9bff6a']);
-    if (P.char === 'archer' && !P.fin && P.route !== 'skel' && !arena) { const ok = P.potions >= POTION_N; L.push([ok ? '포션 조건 달성 · Lv.20 성화된 지옥엘프 선택 가능' : `포션 ${P.potions} / ${POTION_N} · Lv.20 성화된 지옥엘프 조건`, ok ? '#9bffc0' : '#bfe9ff']); }
     for (const [tt, c] of L) { ctx.strokeText(tt, 12, sy2 + 12); ctx.fillStyle = c; ctx.fillText(tt, 12, sy2 + 12); sy2 += 18; }
     ctx.textAlign = 'right';
   }
@@ -14273,6 +14278,7 @@ function openAch() {
 }
 /* v8.71 간략 패치노트 (최근 버전만, 새 버전마다 맨 위에 한 줄 추가) */
 const PATCH = [
+  ['v9.45', '진화 조건이 있는 캐릭터(늑대·달팽이·키메라·리자드·궁수)는 왼쪽 체력바 바로 아래에 조건과 진행도(✔/✖)가 항상 보임 — 획득 카드 칩은 그 아래로 내려가 겹치지 않음'],
   ['v9.44', '새 캐릭터 [마계 물고기] 기본 로직(잠금 · 개발 중) — 기본 공격 없이 통통 튀며 몸 둘레 물오라로만 싸움 · 오라 크기는 진화 형태별 · [넓은 오라]/[물의 힘]/[빠른 물결] 카드'],
   ['v9.43', '잡몹 체력 -25% · 잡몹 젠 속도 +40% (정예·마왕·미니보스·네임드는 그대로, 정예 수도 유지) — 후반에도 시원하게 쓸어 담도록'],
   ['v9.42', '마우스 우클릭 차단 · 심장 [영혼 조각 획득 +%]가 판이 끝날 때 받는 조각 전체에 적용(100%면 2배) · 낮은 등급 조각 옵션 하향(레어 3~6 · 에픽 7~11 · 유니크 11~17, 레전더리 15~25 그대로)'],
@@ -14562,7 +14568,7 @@ stepDive = skWrap(stepDive, 'dive'); stepRush = skWrap(stepRush, 'rush'); rushSt
 updateAirs = (f => function (...a) { return withSrc('basic', () => f.apply(this, a)); })(updateAirs);   // v6.22: 에어슬래시는 평타 (v6.30: 바로 뒤 천안 난무·브레스 감싸기가 주석에 묻혀 딜미터기에서 빠지던 것 수정)
 { const _tb = thornBlast, _sb = smashBlow; thornBlast = function (...a) { return withSrc('scale', () => _tb.apply(this, a)); }; smashBlow = function (...a) { return withSrc('smash', () => _sb.apply(this, a)); }; }
 shellReflect = skWrap(shellReflect, 'shell'); updateBsig = skWrap(updateBsig, 'bsigil');
-window.__G = { rollCards, fishR, shardTotal, calcShards, heartBonus, CV, CVW, HellfirePatch, get cv() { return cvAI; }, cvClear, cvFurnace, pickBossK, get rushQ() { return rushQ; }, get FSPECIES() { return FSPECIES; }, heartMigrate, hRange, IMP, BLD, leadXY, leadDir, HEAT, FF, restNear, restNearest, restAt, updateHeat, isFireSet, fireTile, floorSet, clearGround: () => GROUND.clear(), get TOP_TIER() { return TOP_TIER; }, get OPEN_TIER() { return OPEN_TIER; }, lilArt, drawLilBody, LS, LSW, get ls() { return ls; }, FrostMirror, lsInWedge, lsIce, lsExPause, lsZone, lilDefeated, RD, RDW, RDF, rdOn, get rd() { return rd; }, KarmaBead, FrostMantra, IceLotus, rdAbsorb, rdInGap, rdExPause, rdSilence, rudDefeated, IMP, GoldImp, impOf, trySpawnImp, impDefeated, set impAt(v) { impAt = v; }, LUCK_N, PB, PBW, IMAP, IceWall, Fissure, IceSpear, segDist, FrostMgr, pbOn, pbClear, pbExPause, get pb() { return pb; }, gunMagN, ROLL, get lhead() { return lhead; }, KN, castLostHead, TW, isIceSlip, isIceSet, get ISPECIES() { return ISPECIES; }, ICE_SLIP, ICE_L, OPEN_TIER, TOP_TIER, renderHells, floorSet, pickFloor, iceTile, IF, get lhead() { return lhead; }, KN, isKnight, castLostHead, knightSlash, openGhostRoute, KNIGHT_FORMS, ghostForm, hTitle, relicIcon, heartMake, hOpt, heartBonus, calcShards, GRN, GRW, GRNF, spawnGrn, grnStart, grnPick, TRIAL, chAltarTick, chAltarPlace, chTrialStart, chTrialWin, chTime, chTime0, chDmgT, CH_HARD, CH_BOSS, cardDefs, cardView, ACH, achSync, achClear, openAch, KG, KGW, get kg() { return kg; }, AirGeyser, WaterMirror, MirrorBolt, kgIce, get shards() { return shards; }, set shards(v) { shards = v; }, VF, VFW, get vf() { return vf; }, VfTrap, VfSkull, VfHeart, vfLeech, fuseHearts, rerollHeart, heartBonus, renderFuse, setFu(v) { hFu = v; }, QN, QNW, get qn() { return qn; }, RootBind, SporeSack, QnMush, pickBossK, pctMelee, pctZone, updateDiff, skinG, bhKey, BH_ORDER, heartIcon, relicMaskOn, calcShards, isSlow, isLava, saveSave, svParse, spawnPlant, PL, get GSPECIES() { return GSPECIES; }, get plBalls() { return plBalls; }, synCard, freezeE, availSyn, SYNERGIES, dmName, FD, shkAdd, toxAdd, skSpawnPair, phoenixRevive, mirrorBlock, palPop, updateCutSaws, get shkSp() { return shkSp; }, get toxFl() { return toxFl; }, get zonesRef() { return zones; },
+window.__G = { pendingConds, rollCards, fishR, shardTotal, calcShards, heartBonus, CV, CVW, HellfirePatch, get cv() { return cvAI; }, cvClear, cvFurnace, pickBossK, get rushQ() { return rushQ; }, get FSPECIES() { return FSPECIES; }, heartMigrate, hRange, IMP, BLD, leadXY, leadDir, HEAT, FF, restNear, restNearest, restAt, updateHeat, isFireSet, fireTile, floorSet, clearGround: () => GROUND.clear(), get TOP_TIER() { return TOP_TIER; }, get OPEN_TIER() { return OPEN_TIER; }, lilArt, drawLilBody, LS, LSW, get ls() { return ls; }, FrostMirror, lsInWedge, lsIce, lsExPause, lsZone, lilDefeated, RD, RDW, RDF, rdOn, get rd() { return rd; }, KarmaBead, FrostMantra, IceLotus, rdAbsorb, rdInGap, rdExPause, rdSilence, rudDefeated, IMP, GoldImp, impOf, trySpawnImp, impDefeated, set impAt(v) { impAt = v; }, LUCK_N, PB, PBW, IMAP, IceWall, Fissure, IceSpear, segDist, FrostMgr, pbOn, pbClear, pbExPause, get pb() { return pb; }, gunMagN, ROLL, get lhead() { return lhead; }, KN, castLostHead, TW, isIceSlip, isIceSet, get ISPECIES() { return ISPECIES; }, ICE_SLIP, ICE_L, OPEN_TIER, TOP_TIER, renderHells, floorSet, pickFloor, iceTile, IF, get lhead() { return lhead; }, KN, isKnight, castLostHead, knightSlash, openGhostRoute, KNIGHT_FORMS, ghostForm, hTitle, relicIcon, heartMake, hOpt, heartBonus, calcShards, GRN, GRW, GRNF, spawnGrn, grnStart, grnPick, TRIAL, chAltarTick, chAltarPlace, chTrialStart, chTrialWin, chTime, chTime0, chDmgT, CH_HARD, CH_BOSS, cardDefs, cardView, ACH, achSync, achClear, openAch, KG, KGW, get kg() { return kg; }, AirGeyser, WaterMirror, MirrorBolt, kgIce, get shards() { return shards; }, set shards(v) { shards = v; }, VF, VFW, get vf() { return vf; }, VfTrap, VfSkull, VfHeart, vfLeech, fuseHearts, rerollHeart, heartBonus, renderFuse, setFu(v) { hFu = v; }, QN, QNW, get qn() { return qn; }, RootBind, SporeSack, QnMush, pickBossK, pctMelee, pctZone, updateDiff, skinG, bhKey, BH_ORDER, heartIcon, relicMaskOn, calcShards, isSlow, isLava, saveSave, svParse, spawnPlant, PL, get GSPECIES() { return GSPECIES; }, get plBalls() { return plBalls; }, synCard, freezeE, availSyn, SYNERGIES, dmName, FD, shkAdd, toxAdd, skSpawnPair, phoenixRevive, mirrorBlock, palPop, updateCutSaws, get shkSp() { return shkSp; }, get toxFl() { return toxFl; }, get zonesRef() { return zones; },
   bossDefeated, get IMG() { return IMG; },
   get ready() { return !!IMG.floorD; }, get state() { return state; }, get P() { return P; }, get enemies() { return enemies; }, get orbs() { return orbs; },
   get zones() { return zones; }, get ebul() { return ebul; }, get EYE() { return EYE; }, get shards() { return shards; }, get bigQ() { return bigQ; }, get bombQ() { return bombQ; }, get holyQ() { return holyQ; }, get afx() { return afx; }, get dashQ() { return dashQ; }, get beam() { return beam; }, get evo() { return evo; }, get choices() { return choices; },
