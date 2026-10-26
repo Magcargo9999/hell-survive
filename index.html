@@ -961,7 +961,7 @@ function mkCanvas(w, h) { const c = document.createElement('canvas'); c.width = 
  * 0-1. 저장(영혼 조각 · 영구 강화 · 설정) / 캐릭터 목록 / 소리
  * ============================================================ */
 const SAVE_KEY = 'hellSurvivorSave1';
-const GAME_VER = 'v9.57';
+const GAME_VER = 'v9.58';
 const SAVE_DEF = () => ({
   shards: 0,
   perks: { hp: 0, spd: 0, dmg: 0, exp: 0, magnet: 0, banish: 0, revive: 0, regen: 0, shard: 0, critd: 0, choice: 0 },
@@ -15005,18 +15005,20 @@ function rerollHeart(id) {   // 재설정: 조각 500 → 등급업 판정 → �
   if (h.st3) { r = hRoll(h.g); h.st3 = r.st; h.v3 = r.v; }   // v8.92: 3줄이면 세 줄 모두
   saveSave(); return { before, after: { g: h.g, st: h.st, v: h.v, st2: h.st2, v2: h.v2, st3: h.st3, v3: h.v3 }, up, ach };
 }
+const HFUSE_HID = { p: 0.05 };   // v9.57 히든: 레전더리 3개 합성이 이 확률로 '지옥 심장'(옵션 3줄)이 된다 (화면엔 안 알림)
 const HFUSE_N = 3;   // v8.83: 레전더리 심장 3개
 function fuseHearts(ids) {   // v8.89 합성: 레전더리 심장 3개 → '끔찍한 심장'(레어 · 옵션 2줄) / v8.92: 끔찍한 심장 3개 → '지옥 심장'(레어 · 옵션 3줄)
   const S = SAVE.heart, L = ids.map(id => S.inv.find(q => q.id === id));
   if (L.length !== HFUSE_N || L.some(q => !q) || new Set(ids).size !== HFUSE_N) return { err: `심장 ${HFUSE_N}개가 필요해요` };
   if (L.some(q => q.lock)) return { err: '잠긴 심장은 합성 재료로 쓸 수 없어요' };
   const three = L.every(q => q.b === 'fuse');
+  const hid = !three && Math.random() < HFUSE_HID.p;   // 히든 당첨
   if (!three && L.some(q => q.g !== 'legend' || q.b === 'fuse' || q.b === 'fuse3')) return { err: '레전더리 보스 심장 3개, 또는 끔찍한 심장 3개만 합성할 수 있어요' };
   const gone = new Set(ids);
   S.inv = S.inv.filter(q => !gone.has(q.id)); S.eq = S.eq.filter(q => !gone.has(q));
   if (!three) for (const q of L) { const k = q.b || 'angel'; if (!S.inv.some(w => (w.b || 'angel') === k)) delete S.got[k]; }   // 그 보스 심장이 하나도 안 남으면 다시 드랍된다
-  const a = hRoll('rare'), b = hRoll('rare'), h = { id: ++S.n, g: 'rare', b: three ? 'fuse3' : 'fuse', st: a.st, v: a.v, st2: b.st, v2: b.v };
-  if (three) { const c = hRoll('rare'); h.st3 = c.st; h.v3 = c.v; }
+  const a = hRoll('rare'), b = hRoll('rare'), h = { id: ++S.n, g: 'rare', b: three || hid ? 'fuse3' : 'fuse', st: a.st, v: a.v, st2: b.st, v2: b.v };
+  if (three || hid) { const c = hRoll('rare'); h.st3 = c.st; h.v3 = c.v; }
   S.inv.push(h); SAVE.dex.seen['heart:' + h.b + ':rare'] = 1; saveSave(); return { h };
 }
 const hTitle = h => h.b === 'fw' ? '타락한 혈랑의 심장' : h.b === 'fuse3' ? '지옥 심장' : h.b === 'fuse' ? '끔찍한 심장' : `${BH[h.b || 'angel']}의 심장`;
@@ -15236,6 +15238,7 @@ function openAch() {
 }
 /* v8.71 간략 패치노트 (최근 버전만, 새 버전마다 맨 위에 한 줄 추가) */
 const PATCH = [
+  ['v9.58','심장 합성 히든 — 레전더리 심장 3개를 합성할 때 5% 확률로 끔찍한 심장 대신 지옥 심장(옵션 3줄)이 나온다'],
   ['v9.57','수정 — 사슬 악마 기본 공격력 17.5→14.9(-15%, 전 진화에 적용) · 지옥엘프 궁수 체력 포션 회복 25%→30%(+20%)'],
   ['v9.56','수정 — 황금 악마 임프: 이속 -20% · 한 대 때린 뒤 거리 1000까지 도망쳐 그 자리에 멈춤(가까이 가면 다시 도망) · 사라지는 시간 3배(접근 9→27초 · 도망 18→54초) · 멈춘 임프 방향 표시'],
   ['v9.55', '[지하 25층 미니 보스] 서리혈랑 추가 — 대공작 릴세르카의 애완 늑대(체력은 보통, 한 방이 아프다): 서리 절단 3연격 · 혈빙 가시(십자) · 빙혈 폭풍(끌어당긴 뒤 고리 폭발, 품 안이나 멀리가 안전) · 체력 45% 영혼의 겨울(분노)'],
@@ -15538,7 +15541,7 @@ stepDive = skWrap(stepDive, 'dive'); stepRush = skWrap(stepRush, 'rush'); rushSt
 updateAirs = (f => function (...a) { return withSrc('basic', () => f.apply(this, a)); })(updateAirs);   // v6.22: 에어슬래시는 평타 (v6.30: 바로 뒤 천안 난무·브레스 감싸기가 주석에 묻혀 딜미터기에서 빠지던 것 수정)
 { const _tb = thornBlast, _sb = smashBlow; thornBlast = function (...a) { return withSrc('scale', () => _tb.apply(this, a)); }; smashBlow = function (...a) { return withSrc('smash', () => _sb.apply(this, a)); }; }
 shellReflect = skWrap(shellReflect, 'shell'); updateBsig = skWrap(updateBsig, 'bsigil');
-window.__G = { spawnFrw, frwAtk, FRW, spawnLad, lAtk, LAD, LADF, buildCards, rollHeartDrop, heartGain, disHeart, CHARS, inPoly, castSkill, get arena() { return arena; }, FISH, FWAVE, FISHA2, get fwaveQ() { return fwaveQ; }, SN, SNW, get sn() { return snAI; }, snClear, snHall, snEscapeR, pendingConds, rollCards, fishR, shardTotal, calcShards, heartBonus, CV, CVW, HellfirePatch, get cv() { return cvAI; }, cvClear, cvFurnace, pickBossK, get rushQ() { return rushQ; }, get FSPECIES() { return FSPECIES; }, heartMigrate, hRange, IMP, BLD, leadXY, leadDir, HEAT, FF, restNear, restNearest, restAt, updateHeat, isFireSet, fireTile, floorSet, clearGround: () => GROUND.clear(), get TOP_TIER() { return TOP_TIER; }, get OPEN_TIER() { return OPEN_TIER; }, lilArt, drawLilBody, LS, LSW, get ls() { return ls; }, FrostMirror, lsInWedge, lsIce, lsExPause, lsZone, lilDefeated, RD, RDW, RDF, rdOn, get rd() { return rd; }, KarmaBead, FrostMantra, IceLotus, rdAbsorb, rdInGap, rdExPause, rdSilence, rudDefeated, IMP, GoldImp, impOf, trySpawnImp, impDefeated, set impAt(v) { impAt = v; }, LUCK_N, PB, PBW, IMAP, IceWall, Fissure, IceSpear, segDist, FrostMgr, pbOn, pbClear, pbExPause, get pb() { return pb; }, gunMagN, ROLL, get lhead() { return lhead; }, KN, castLostHead, TW, isIceSlip, isIceSet, get ISPECIES() { return ISPECIES; }, ICE_SLIP, ICE_L, OPEN_TIER, TOP_TIER, renderHells, floorSet, pickFloor, iceTile, IF, get lhead() { return lhead; }, KN, isKnight, castLostHead, knightSlash, openGhostRoute, KNIGHT_FORMS, ghostForm, hTitle, relicIcon, heartMake, hOpt, heartBonus, calcShards, GRN, GRW, GRNF, spawnGrn, grnStart, grnPick, TRIAL, chAltarTick, chAltarPlace, chTrialStart, chTrialWin, chTime, chTime0, chDmgT, CH_HARD, CH_BOSS, cardDefs, cardView, ACH, achSync, achClear, openAch, KG, KGW, get kg() { return kg; }, AirGeyser, WaterMirror, MirrorBolt, kgIce, get shards() { return shards; }, set shards(v) { shards = v; }, VF, VFW, get vf() { return vf; }, VfTrap, VfSkull, VfHeart, vfLeech, fuseHearts, rerollHeart, heartBonus, renderFuse, setFu(v) { hFu = v; }, QN, QNW, get qn() { return qn; }, RootBind, SporeSack, QnMush, pickBossK, pctMelee, pctZone, updateDiff, skinG, bhKey, BH_ORDER, heartIcon, relicMaskOn, calcShards, isSlow, isLava, saveSave, svParse, spawnPlant, PL, get GSPECIES() { return GSPECIES; }, get plBalls() { return plBalls; }, synCard, freezeE, availSyn, SYNERGIES, dmName, FD, shkAdd, toxAdd, skSpawnPair, phoenixRevive, mirrorBlock, palPop, updateCutSaws, get shkSp() { return shkSp; }, get toxFl() { return toxFl; }, get zonesRef() { return zones; },
+window.__G = { HFUSE_HID, spawnFrw, frwAtk, FRW, spawnLad, lAtk, LAD, LADF, buildCards, rollHeartDrop, heartGain, disHeart, CHARS, inPoly, castSkill, get arena() { return arena; }, FISH, FWAVE, FISHA2, get fwaveQ() { return fwaveQ; }, SN, SNW, get sn() { return snAI; }, snClear, snHall, snEscapeR, pendingConds, rollCards, fishR, shardTotal, calcShards, heartBonus, CV, CVW, HellfirePatch, get cv() { return cvAI; }, cvClear, cvFurnace, pickBossK, get rushQ() { return rushQ; }, get FSPECIES() { return FSPECIES; }, heartMigrate, hRange, IMP, BLD, leadXY, leadDir, HEAT, FF, restNear, restNearest, restAt, updateHeat, isFireSet, fireTile, floorSet, clearGround: () => GROUND.clear(), get TOP_TIER() { return TOP_TIER; }, get OPEN_TIER() { return OPEN_TIER; }, lilArt, drawLilBody, LS, LSW, get ls() { return ls; }, FrostMirror, lsInWedge, lsIce, lsExPause, lsZone, lilDefeated, RD, RDW, RDF, rdOn, get rd() { return rd; }, KarmaBead, FrostMantra, IceLotus, rdAbsorb, rdInGap, rdExPause, rdSilence, rudDefeated, IMP, GoldImp, impOf, trySpawnImp, impDefeated, set impAt(v) { impAt = v; }, LUCK_N, PB, PBW, IMAP, IceWall, Fissure, IceSpear, segDist, FrostMgr, pbOn, pbClear, pbExPause, get pb() { return pb; }, gunMagN, ROLL, get lhead() { return lhead; }, KN, castLostHead, TW, isIceSlip, isIceSet, get ISPECIES() { return ISPECIES; }, ICE_SLIP, ICE_L, OPEN_TIER, TOP_TIER, renderHells, floorSet, pickFloor, iceTile, IF, get lhead() { return lhead; }, KN, isKnight, castLostHead, knightSlash, openGhostRoute, KNIGHT_FORMS, ghostForm, hTitle, relicIcon, heartMake, hOpt, heartBonus, calcShards, GRN, GRW, GRNF, spawnGrn, grnStart, grnPick, TRIAL, chAltarTick, chAltarPlace, chTrialStart, chTrialWin, chTime, chTime0, chDmgT, CH_HARD, CH_BOSS, cardDefs, cardView, ACH, achSync, achClear, openAch, KG, KGW, get kg() { return kg; }, AirGeyser, WaterMirror, MirrorBolt, kgIce, get shards() { return shards; }, set shards(v) { shards = v; }, VF, VFW, get vf() { return vf; }, VfTrap, VfSkull, VfHeart, vfLeech, fuseHearts, rerollHeart, heartBonus, renderFuse, setFu(v) { hFu = v; }, QN, QNW, get qn() { return qn; }, RootBind, SporeSack, QnMush, pickBossK, pctMelee, pctZone, updateDiff, skinG, bhKey, BH_ORDER, heartIcon, relicMaskOn, calcShards, isSlow, isLava, saveSave, svParse, spawnPlant, PL, get GSPECIES() { return GSPECIES; }, get plBalls() { return plBalls; }, synCard, freezeE, availSyn, SYNERGIES, dmName, FD, shkAdd, toxAdd, skSpawnPair, phoenixRevive, mirrorBlock, palPop, updateCutSaws, get shkSp() { return shkSp; }, get toxFl() { return toxFl; }, get zonesRef() { return zones; },
   bossDefeated, get IMG() { return IMG; },
   get ready() { return !!IMG.floorD; }, get state() { return state; }, get P() { return P; }, get enemies() { return enemies; }, get orbs() { return orbs; },
   get zones() { return zones; }, get ebul() { return ebul; }, get EYE() { return EYE; }, get shards() { return shards; }, get bigQ() { return bigQ; }, get bombQ() { return bombQ; }, get holyQ() { return holyQ; }, get afx() { return afx; }, get dashQ() { return dashQ; }, get beam() { return beam; }, get evo() { return evo; }, get choices() { return choices; },
