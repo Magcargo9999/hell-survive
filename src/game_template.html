@@ -900,6 +900,7 @@ const SKILL_UNIQUE = { fish: 'vwave', wolf: 'howl', snail: 'blast', archer: 'big
 const uniqueSkill = () => (P.char === 'chimera' && P.route === 'dream') ? 'rush' : (P.char === 'chimera' && P.route === 'flame') ? 'breath' : (P.char === 'snail' && P.route === 'lava') ? 'lavaburst' : (P.char === 'snail' && P.route === 'bomb') ? 'megabomb' : (P.char === 'wolf' && P.route === 'twin') ? 'cerb' : (P.char === 'wolf' && P.route === 'crimson') ? (P.fin === 'holy' ? 'bloodrain' : P.fin === 'fallen' ? 'bsigil' : 'drain') : SKILL_UNIQUE[P.char];
 const uniqueSkills = () => P.char === 'gun' ? ['roll'] : P.char === 'octo' ? [P.form >= 2 ? 'otent' : 'ele'] : P.char === 'ghost' ? (P.route === 'knight' ? (P.form >= 2 ? ['lhead'] : []) : [P.form >= 2 ? 'gsummon' : 'gcharge']) : P.char === 'lizard' ? [P.fin === 'guard' ? 'shell' : P.fin === 'water' ? 'tide' : 'rage'] : P.char === 'archer' ? (P.route === 'elf' && P.fin ? [P.fin === 'holy' ? 'holyshot' : 'bombshot'] : (P.route === 'skel' ? ['darkarrow'] : ['bigarrow', 'backdash'])) : [uniqueSkill()];
 const skillName = k => (k === 'blast' && P.char === 'snail' && P.form === 2) ? '맹독 대폭파' : (k === 'bigarrow' && P.route === 'skel') ? '해골 대궁의 일격' : SKILLS[k].name;
+const SKILL_BRIEF = {"vwave": "걷던 방향으로 파도를 타고 돌진", "roll": "무적 구르기 + 탄창 일제 사격", "cerb": "세 머리로 적을 차례로 물어뜯기", "drain": "주변 적의 피를 빨아 체력 회복", "bloodrain": "핏빛 기둥을 비처럼 내리꽂기", "howl": "주변 적을 밀쳐내고 느리게", "megabomb": "거대 폭탄을 던져 연쇄 폭발", "lavaburst": "용암탄을 쏟아 붓기", "breath": "앞쪽 부채꼴로 화염 뿜기", "rush": "무적으로 적 사이를 연속 돌진", "dive": "날아올라 적 무리에 내려꽂기", "blast": "깔아 둔 독 자국을 한꺼번에 폭파", "darkarrow": "거대한 검은 화살로 밀어내기", "bigarrow": "기를 모아 관통 화살 한 발", "backdash": "무적으로 물러나며 화살 부채꼴 발사", "bombshot": "빈 곳으로 백스텝하며 폭발 화살", "holyshot": "누르고 모아서 쏘는 신성한 화살", "rage": "잠시 공격 속도 폭증", "tide": "즉시 체력 회복 + 적 밀쳐내기", "whip": "사슬을 던지고 휘둘러 폭발", "bsigil": "발밑에 적을 끌어당기는 핏빛 진", "shell": "받는 피해를 줄이고 되돌려주기", "ele": "코끼리가 직선으로 짓밟기", "otent": "문어 다리가 연달아 솟아 후려치기", "gcharge": "관통하는 거대 구슬 발사", "lhead": "머리가 따로 날아가 적을 추격", "gsummon": "수호령이 대신 맞고 폭발", "laser": "앞쪽으로 광선 훑기", "zone": "발밑에 불길 지대 깔기", "meteor": "하늘에서 운석 낙하"};   // v9.64 선택 카드 앞면: 한 줄 요약 (자세한 설명·수치는 누르면 뒷면)
 const SKILLS = {
   vwave:  { name: '포식자의 파도', desc: '[공허의 마해룡 전용] 걷던 방향으로 공허의 파도를 두르고 길게 날아갑니다 (0.7초 · 약 670px · 무적). 지나간 길의 적에게 공격력의 650% 피해를 주고 양옆으로 밀어냅니다.', sub: '걷던 방향 · 적마다 한 번 · 날아가는 동안 무적' },
   roll:   { name: '구르기', desc: '[악마처형자 전용] 4초 동안 짧게 2번 구를 수 있습니다 (SPACE를 다시 누르면 한 번 더). 구를 때마다 (재장전 중이어도 즉시 장전해서) 탄창의 탄을 짧은 간격으로 모두 쏘고 바로 재장전합니다. 구르는 동안 무적.', sub: '2회 · 4초 안에 다 쓰지 않으면 증발 · 구를 때마다 남은 탄 난사' },
@@ -961,7 +962,7 @@ function mkCanvas(w, h) { const c = document.createElement('canvas'); c.width = 
  * 0-1. 저장(영혼 조각 · 영구 강화 · 설정) / 캐릭터 목록 / 소리
  * ============================================================ */
 const SAVE_KEY = 'hellSurvivorSave1';
-const GAME_VER = 'v9.64';
+const GAME_VER = 'v9.65';
 const SAVE_DEF = () => ({
   shards: 0,
   perks: { hp: 0, spd: 0, dmg: 0, exp: 0, magnet: 0, banish: 0, revive: 0, regen: 0, shard: 0, critd: 0, choice: 0 },
@@ -9308,8 +9309,8 @@ function openChoice(title, items, cb, cls) {
     if (u.note) html += `<span class="cond ok">${u.note}</span>`;
     if (u.sub) html += `<small>${u.sub}</small>`;
     const evoPick = title.includes('갈림길') && u.sub;   // v5.19: 진화 갈림길 카드 뒷면 = 이후 최종 진화
-    html += (u.syn ? `<span class="flh">누르면 스킬 조합 보기 ★</span>` : evoPick ? `<span class="flh">누르면 최종 진화 형태 보기 ▶</span>` : '') + `<em>[${i + 1}]${u.tag || ''}</em></div>`;
-    html += `<div class="bk"><strong>${u.name}</strong>` + (u.syn ? `<span class="synl">${u.syn}</span>` : evoPick ? `<span class="synl">▶ 이후 최종 진화<br>${u.sub.replace(/^Lv\.20 ?: ?/, 'Lv.20 · ').replace(/ \/ /g, '<br>또는 ').replace(/ · Lv\.25 ?: ?/, '<br>Lv.25 · ')}</span>` : `<span class="flh">이 카드로 만드는 조합이 없어요</span>`) + `<span class="flh">다시 누르면 앞면</span></div>`;   // v5.14: 앞면 = 효과 · 뒷면 = 조합
+    html += (u.flip ? `<span class="flh">${u.flip}</span>` : u.syn ? `<span class="flh">누르면 스킬 조합 보기 ★</span>` : evoPick ? `<span class="flh">누르면 최종 진화 형태 보기 ▶</span>` : '') + `<em>[${i + 1}]${u.tag || ''}</em></div>`;
+    html += `<div class="bk"><strong>${u.name}</strong>` + (u.back ? `<span class="eff" style="display:block;margin-top:6px;font-size:13px;line-height:1.5">${u.back}</span>` : u.syn ? `<span class="synl">${u.syn}</span>` : evoPick ? `<span class="synl">▶ 이후 최종 진화<br>${u.sub.replace(/^Lv\.20 ?: ?/, 'Lv.20 · ').replace(/ \/ /g, '<br>또는 ').replace(/ · Lv\.25 ?: ?/, '<br>Lv.25 · ')}</span>` : `<span class="flh">이 카드로 만드는 조합이 없어요</span>`) + `<span class="flh">다시 누르면 앞면</span></div>`;   // v5.14: 앞면 = 효과 · 뒷면 = 조합
     b.innerHTML = html;
     if (u.preview) u.preview(b.querySelector('canvas'));
     b.addEventListener('click', () => { b.classList.toggle('flip'); });
@@ -9765,7 +9766,7 @@ function updateEvolve(dt) {
 }
 function openSkill() {
   const uqs = uniqueSkills();
-  const items = uqs.map(k => ({ key: k, name: skillName(k), desc: SKILLS[k].desc, sub: `⏱ 쿨타임 ${SKILL_CD[k] || 14}초 · ` + SKILLS[k].sub, cls: 'ultc', note: '⌨ 키보드 SPACE (또는 Q) 로 발동' }));
+  const items = uqs.map(k => ({ key: k, name: skillName(k), desc: SKILL_BRIEF[k] || SKILLS[k].name, sub: `⏱ 쿨타임 ${SKILL_CD[k] || 14}초`, flip: '누르면 자세히 보기 ▶', back: `${SKILLS[k].desc}<br><br><b>${SKILLS[k].sub}</b><br>⏱ 쿨타임 ${SKILL_CD[k] || 14}초 · SPACE (또는 Q)`, cls: 'ultc' }));
   openChoice(uqs.length > 1 ? '★ 특수 스킬을 고르세요 ★' : '★ 특수 스킬 해금! ★', items, u => {
     P.skill = u.key; P.skT = 0; P.inv = 1; P.skillTipT = 16;
     banner = { txt: `특수 스킬 [${skillName(u.key)}] 획득!  SPACE 로 발동 · 쓰고 나면 ${Math.round(skillCd())}초 뒤 다시 쓸 수 있어요`, t: 7 };
@@ -15640,6 +15641,7 @@ function openAch() {
 }
 /* v8.71 간략 패치노트 (최근 버전만, 새 버전마다 맨 위에 한 줄 추가) */
 const PATCH = [
+  ['v9.65','[특수 스킬 선택 카드] 앞면은 한 줄 요약 + 쿨타임만, 누르면 뒷면에 자세한 설명·수치'],
   ['v9.64','[릴세르카] 스포트라이트가 맵 밖으로 나가던 버그 수정(원이 투기장 안에 들어오게 방향 선택) · 왈츠 빈도 낮춤(쿨 22→26초) · 얼음 바늘에 어두운 테두리+붉은 빛을 더해 맵에서 잘 보이게'],
   ['v9.63','[30층 최종 마왕] 지옥의 화염 호랑이 추가 · 지하 30층 개방 — 회전하는 불의 십자가(5초 회전 → 2초 불 뿜기) · 패턴을 안 맞고 3번 연속 넘기면 기절 · 가드 자세(때릴수록 반격 폭발이 커짐) · 연속 돌진 · 멸옥 수플렉스(안전지대로! 잡히면 현재 체력 80% · 잡몹 즉사) · 체력 40% 포식자의 추적(카메라가 호랑이를 따라가고 점선 리듬 돌진) · 업적 2개'],
   ['v9.62','백곰 마왕 — 장벽·균열·빙창·눈보라·동상 그림을 받은 이펙트 도트로 교체(코드 그림 삭제) · 서리바람의 동상 게이지 상승 절반(16→8/초) · 눈보라가 그쳐도 게이지가 저절로 내려가지 않고 얼음 장벽 근처에서만 내려감 · 당구공 돌진 최대 3번 튕김 + 2페이즈 얼음 범퍼 5개를 더 촘촘히 · 튕긴 뒤 어지러움(기절) 삭제'],
