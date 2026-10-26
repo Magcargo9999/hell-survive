@@ -961,7 +961,7 @@ function mkCanvas(w, h) { const c = document.createElement('canvas'); c.width = 
  * 0-1. 저장(영혼 조각 · 영구 강화 · 설정) / 캐릭터 목록 / 소리
  * ============================================================ */
 const SAVE_KEY = 'hellSurvivorSave1';
-const GAME_VER = 'v9.56';
+const GAME_VER = 'v9.57';
 const SAVE_DEF = () => ({
   shards: 0,
   perks: { hp: 0, spd: 0, dmg: 0, exp: 0, magnet: 0, banish: 0, revive: 0, regen: 0, shard: 0, critd: 0, choice: 0 },
@@ -8062,7 +8062,7 @@ function newPlayer(char) {
     low10: false, taken10: 0, minHp: 1e9, guardT: 0, rage: 0, rageCast: 0, tideT: 0, thornCd: 0, smashN: 0, potions: 0, rel: {}, teleN: 2, fangN: 0, phxUsed: false, stunT: 0, stunImm: 0, dotT: 0, dotD: 0, dotTick: 0, slowT: 0, curseCard: 0, slotN: 0, uniqSeen: {},
   };
   if (char === 'chimera') { p.max = p.hp = 105; p.spd = 205; p.dmg = 17; p.cd = 0.85; p.rng = 98; p.pickup = 90; }
-  if (char === 'twins') { p.max = p.hp = 108; p.spd = 212; p.dmg = 17.5; p.cd = 1.0; p.rng = 100; p.pickup = 90; p.knock += 0.1; p.tw = { x: -70, y: 10, vx: 0, vy: 0, dir: 1, spd: 0, ang: 0 }; }   // 사슬 악마: 빠르고 약하다, 사슬 끝 창날(tw)은 본체 기준 상대 위치로 시작
+  if (char === 'twins') { p.max = p.hp = 108; p.spd = 212; p.dmg = 14.9; p.cd = 1.0; p.rng = 100; p.pickup = 90; p.knock += 0.1; p.tw = { x: -70, y: 10, vx: 0, vy: 0, dir: 1, spd: 0, ang: 0 }; }   // v9.57 공격력 17.5→14.9(-15%) · 사슬 악마: 빠르고 약하다, 사슬 끝 창날(tw)은 본체 기준 상대 위치로 시작
   if (char === 'fish') { p.max = p.hp = 110; p.spd = 205; p.dmg = 22; p.cd = 0.5; p.rng = 100; p.pickup = 92; p.fishT = 0; p.fishPulse = 0; }   // 마계 물고기: 기본 공격 없음 · 물오라 틱 = 공격 간격
   if (char === 'octo') { p.max = p.hp = 105; p.spd = 195; p.dmg = 20; p.cd = 1.15; p.rng = 100; p.pickup = 92; p.orbsN = 1; p.orbD = 0.40; }   // v5.17: 느리고 큰 마력탄 · 구체 피해 소폭 하향 (45% → 40%)   // 문어 마법사: 직선 마법탄 + 늘어나는 구체
   if (char === 'gun') { p.max = p.hp = 100; p.spd = 185; p.dmg = 30; p.cd = 0.34; p.rng = 100; p.pickup = 92; p.mag = null; p.magI = 0; p.reloadT = 0; p.reloadMax = 1; p.gShot = 0; p.bountyN = 0; p.bountyT = 0; }   // 악마 총잡이: 체력 낮음 · 느림 · 한 발이 강하다 (6발마다 재장전 1초)
@@ -11019,11 +11019,11 @@ function collectItem(it) {
   if (it.type === 'relic') { gainRelic(it.rk); return; }
   if (it.type === 'chest') { sfx('chest'); burst(P.x, P.y - 24, 20, ['#ffc247', '#ffffff'], 240, 0.7); openChest(); return; }
   sfx('item');
-  floatNum(P.x, P.y - 90, I.name + '!', I.c);
+  floatNum(P.x, P.y - 90, (it.type === 'heal' && P.char === 'archer' ? '체력 +30%' : I.name) + '!', I.c);
   addRing(P.x, P.y - 20, 8, 90, 0.4, '255,255,255', 5);
   burst(P.x, P.y - 24, 16, [I.c, '#ffffff'], 220, 0.6);
   if (it.type === 'heal') {
-    P.hp = Math.min(P.max, P.hp + P.max * 0.25); P.potions++;
+    P.hp = Math.min(P.max, P.hp + P.max * (P.char === 'archer' ? 0.30 : 0.25)); P.potions++;   // v9.57 지옥엘프 궁수는 포션 회복 25→30%
     if (P.char === 'archer' && P.route !== 'skel' && !P.fin) floatNum(P.x, P.y - 112, `포션 ${Math.min(P.potions, POTION_N)} / ${POTION_N}`, '#bfe9ff');
   }
   else if (it.type === 'shield') P.shield = 3;
@@ -15236,6 +15236,7 @@ function openAch() {
 }
 /* v8.71 간략 패치노트 (최근 버전만, 새 버전마다 맨 위에 한 줄 추가) */
 const PATCH = [
+  ['v9.57','수정 — 사슬 악마 기본 공격력 17.5→14.9(-15%, 전 진화에 적용) · 지옥엘프 궁수 체력 포션 회복 25%→30%(+20%)'],
   ['v9.56','수정 — 황금 악마 임프: 이속 -20% · 한 대 때린 뒤 거리 1000까지 도망쳐 그 자리에 멈춤(가까이 가면 다시 도망) · 사라지는 시간 3배(접근 9→27초 · 도망 18→54초) · 멈춘 임프 방향 표시'],
   ['v9.55', '[지하 25층 미니 보스] 서리혈랑 추가 — 대공작 릴세르카의 애완 늑대(체력은 보통, 한 방이 아프다): 서리 절단 3연격 · 혈빙 가시(십자) · 빙혈 폭풍(끌어당긴 뒤 고리 폭발, 품 안이나 멀리가 안전) · 체력 45% 영혼의 겨울(분노)'],
   ['v9.54', '[지하 15층 미니 보스] 가시관 무당벌레 추가 — 원예의 여왕 판의 미니 보스(말 2종 15%씩은 그대로): 가시 분출 · 점박이 구슬 · 날갯짓 돌풍 · 체력 40% 분노'],
