@@ -953,7 +953,7 @@ function mkCanvas(w, h) { const c = document.createElement('canvas'); c.width = 
  * 0-1. 저장(영혼 조각 · 영구 강화 · 설정) / 캐릭터 목록 / 소리
  * ============================================================ */
 const SAVE_KEY = 'hellSurvivorSave1';
-const GAME_VER = 'v9.47';
+const GAME_VER = 'v9.48';
 const SAVE_DEF = () => ({
   shards: 0,
   perks: { hp: 0, spd: 0, dmg: 0, exp: 0, magnet: 0, banish: 0, revive: 0, regen: 0, shard: 0, critd: 0, choice: 0 },
@@ -14381,14 +14381,14 @@ function openDex() {
       add(gr, { on: d.kills.boss10, trophy: true, name: '타락한 원예의 여왕', sub: (d.kills.boss10 || 0) + '회 처치', hint: '<br>지하 15층의 최종 마왕 (15층에서만 등장)', draw: qd('idle') });
       add(gr, { on: d.kills.qmush, name: '식인 버섯', sub: (d.kills.qmush || 0) + '마리 처치', hint: '<br>여왕의 꽃가루(2페이즈)에서 끝없이 돋아난다 · 소 → 중 → 포자 폭탄 버섯으로 자란다', draw: qd('mb') });
       add(gr, { on: d.kills.qsack, name: '폭발하는 포자 주머니', sub: (d.kills.qsack || 0) + '개 파괴', hint: '<br>산성 독 웅덩이 가운데에 생긴다 · 5초 뒤 넓게 폭발 (부수면 터지지 않는다)', draw: qd('sack') }); }
-  add(gr, { on: d.kills.boss14, trophy: true, name: '팔한지옥의 백곰 마왕', sub: (d.kills.boss14 || 0) + '회 처치', hint: '<br>지하 21층 마왕 (21층 100% · 22층에서 자주) · 얼음 장벽 감옥 · 눈보라(바람·동상) · 빙하 균열 · 빙창 · 체력 30%부터 튕기는 빙산 돌진', draw: bearDexArt });   // v9.02
-  add(gr, { on: d.kills.boss15, trophy: true, name: '마하칼 루드라', sub: (d.kills.boss15 || 0) + '회 처치', hint: '<br>지하 23층 마왕 (23층 100% · 24층에서 자주) · 얼어붙은 지옥에서 참회를 되풀이하는 타락한 수행승 · 업보의 염주(투사체·피해를 삼키다 폭발) · 침묵의 진언 · 동상 만트라 · 청련 개화 · 체력 30%부터 육신 해탈(8자 질주 + 연꽃 지뢰)', draw: rudDexArt });   // v9.10
-  add(gr, { on: d.kills.boss16, trophy: true, name: '팔한지옥의 대공작 릴세르카', sub: (d.kills.boss16 || 0) + '회 처치', hint: '<br>지하 25층 최종 마왕 (5지옥 팔한지옥의 끝) · 서리 결정화 영역(곁에 오래 있으면 동결) · 대공작의 왈츠 · 왜곡된 냉기의 거울 · 빙결 피루엣 · 얼음 샹들리에 · 체력 25%부터 백한의 무도회(마찰 0 얼음판 + 회전하는 안전지대)', draw: lilDexArt });   // v9.20
-  add(gr, { on: d.kills.boss17, trophy: true, name: '영벌의 화염죄수', sub: (d.kills.boss17 || 0) + '회 처치', hint: '<br>지하 26층 마왕 (26층 100% · 27층에서 자주) · 끊어지지 않는 쇠사슬에 묶여 영원히 불타는 죄인 · 지나간 자리의 지옥불(화상 중첩) · 형벌의 쇠사슬(도넛 안전 지대) · 용광로의 저주(구슬이 불탐) · 속죄의 고통(때리면 반사) · 체력 30%부터 족쇄 해방(광폭 돌진)', draw: cvDexArt });   // v9.40
-  add(gr, { on: d.kills.boss18, trophy: true, name: '불구렁이', sub: (d.kills.boss18 || 0) + '회 처치', hint: '<br>지하 28층 마왕 (28층 100% · 29층에서 자주) · 용암으로 이루어진 거대한 뱀의 형벌자 · 몸통 마디를 때려도 들어간다 · 파열하는 대지(땅속 굴진 → 용암 참호 벽 → 돌출) · 탐욕의 용광로(구슬을 삼킨 만큼 화구 토사) · 불길의 환영 포위(투사체 반사 · 가까이서 머리 5번 = 파훼) · 체력 30%부터 종말의 똬리', draw: snDexArt });   // v9.46
+  add(gr, { on: d.kills.boss14, trophy: true, name: '팔한지옥의 백곰 마왕', sub: (d.kills.boss14 || 0) + '회 처치', hint: '<br>지하 21층 마왕 (21층 100% · 22층에서 자주)', draw: bearDexArt });   // v9.02
+  add(gr, { on: d.kills.boss15, trophy: true, name: '마하칼 루드라', sub: (d.kills.boss15 || 0) + '회 처치', hint: '<br>지하 23층 마왕 (23층 100% · 24층에서 자주)', draw: rudDexArt });   // v9.10
+  add(gr, { on: d.kills.boss16, trophy: true, name: '팔한지옥의 대공작 릴세르카', sub: (d.kills.boss16 || 0) + '회 처치', hint: '<br>지하 25층 최종 마왕 (5지옥의 끝)', draw: lilDexArt });   // v9.20
+  add(gr, { on: d.kills.boss17, trophy: true, name: '영벌의 화염죄수', sub: (d.kills.boss17 || 0) + '회 처치', hint: '<br>지하 26층 마왕 (26층 100% · 27층에서 자주)', draw: cvDexArt });   // v9.40
+  add(gr, { on: d.kills.boss18, trophy: true, name: '불구렁이', sub: (d.kills.boss18 || 0) + '회 처치', hint: '<br>지하 28층 마왕 (28층 100% · 29층에서 자주)', draw: snDexArt });   // v9.46
   add(gr, { on: d.kills.lmir, name: '왜곡된 냉기의 거울', sub: (d.kills.lmir || 0) + '개 파괴', hint: '<br>릴세르카가 세운다 · 투사체를 3갈래로 되돌린다 · 깨면 1초 화이트아웃', draw: (g, w, h, l) => { g.save(); g.fillStyle = l ? '#0c0508' : '#9fd8ff'; g.beginPath(); g.ellipse(w / 2, h / 2, w * 0.22, h * 0.4, 0, 0, 6.283); g.fill(); g.restore(); } });
   add(gr, { on: d.kills.imp, name: '황금 악마 임프', sub: (d.kills.imp || 0) + '마리 처치', hint: '<br>지하 21층부터 가끔 나타나는 영혼 조각 운반꾼 · 빠르게 달려와 한 대 때리고 도망친다 · 잡으면 영혼 조각 10,000 + 보물 상자, 시간이 지나면 사라진다', draw: (g, w, h, l) => { if (IMG.imp) { const r = IMPF.idle[0]; dexSprite(g, w, h, IMG.imp, r[0], r[1], r[2], r[3], false, l, true); } else lockFx(g, w, h, l); } });
-  { const r = KGF.idle[0]; add(gr, { on: d.kills.boss12, trophy: true, name: '타락한 어인왕', sub: (d.kills.boss12 || 0) + '회 처치', hint: '<br>지하 20층의 최종 마왕 (20층에서만 등장) · 산소 게이지 · 물거울 반사 · 물줄기 사슬 · 파도 고리 · 해일 서핑', draw: (g, w, h, l) => { if (IMG.kng) dexSprite(g, w, h, IMG.kng, r[0], r[1], r[2], r[3], false, l, false); } }); }   // v8.80
+  { const r = KGF.idle[0]; add(gr, { on: d.kills.boss12, trophy: true, name: '타락한 어인왕', sub: (d.kills.boss12 || 0) + '회 처치', hint: '<br>지하 20층의 최종 마왕 (20층에서만 등장)', draw: (g, w, h, l) => { if (IMG.kng) dexSprite(g, w, h, IMG.kng, r[0], r[1], r[2], r[3], false, l, false); } }); }   // v8.80
   { const vd = (key, f) => (g, w, h, l) => { if (IMG.vft) { const r = VFF[key][f || 0]; dexSprite(g, w, h, IMG.vft, r[0], r[1], r[2], r[3], false, l, false); } else lockFx(g, w, h, l); };   // v8.70 파리지옥 마왕
     add(gr, { on: d.kills.boss11, trophy: true, name: '파리지옥 마왕', sub: (d.kills.boss11 || 0) + '회 처치', hint: '<br>보스 (지하 11층부터 등장 · 11층 100% · 12층에서 자주) · 입힌 피해만큼 흡혈', draw: vd('idle') });
     add(gr, { on: d.kills.vskull, name: '피에 굶주린 해골', sub: (d.kills.vskull || 0) + '마리 처치', hint: '<br>파리지옥 마왕이 뿌리에서 토해 낸다 · 빠르게 달려와 자폭 (죽이면 터지지 않는다)', draw: (g, w, h, l) => { const S = SPECIES.find(q => q.name === '해골 병사'); if (S) dexSprite(g, w, h, S.frames[0].img, 0, 0, MOB.cw, MOB.ch, false, l, false); else lockFx(g, w, h, l); } }); }
@@ -14398,7 +14398,7 @@ function openDex() {
     { const s0 = STF.idle[2]; add(gr, { on: d.kills.stat, name: '부패한 성상', sub: (d.kills.stat || 0) + '회 처치', hint: '<br>미니 보스 (타락천사 판)', draw: (g, w, h, l) => IMG.statue && dexSprite(g, w, h, IMG.statue, s0[0], s0[1], s0[2], s0[3], false, l) }); }
     { const zp = ZOMF.port[0]; add(gr, { on: d.kills.zom, name: '해저좀비', sub: (d.kills.zom || 0) + '회 처치', hint: '<br>미니 보스 (썩어버린 해군 제독 판)', draw: (g, w, h, l) => IMG.zom && dexSprite(g, w, h, IMG.zom, zp[0], zp[1], zp[2], zp[3], false, l, true) }); }
     { const g0 = GRNF.idle[0];
-      add(gr, { on: d.kills.boss13, trophy: true, name: '영원의 온실주', sub: (d.kills.boss13 || 0) + '회 처치', hint: '<br>보스 (∞ 챌린지 전용) · 최면의 화분 · 가시 덩굴 채찍 · 유리 씨앗 비 · 뿌리의 종복 · 의식의 꽃 원', draw: (g, w, h, l) => IMG.grn && dexSprite(g, w, h, IMG.grn, g0[0], g0[1], g0[2], g0[3], false, l, true) });
+      add(gr, { on: d.kills.boss13, trophy: true, name: '영원의 온실주', sub: (d.kills.boss13 || 0) + '회 처치', hint: '<br>보스 (∞ 챌린지 전용)', draw: (g, w, h, l) => IMG.grn && dexSprite(g, w, h, IMG.grn, g0[0], g0[1], g0[2], g0[3], false, l, true) });
       add(gr, { on: d.kills.grb, name: '뿌리 꽃봉오리', sub: (d.kills.grb || 0) + '마리 처치', hint: '<br>영원의 온실주가 소환한다 · 붙으면 0.8초 뒤 자폭 (먼저 죽이면 터지지 않는다)', draw: (g, w, h, l) => { grnBudArt(g, w / 2, h - 6, Math.min(w / 56, h / 52), 0, 0); if (l) { g.save(); g.globalCompositeOperation = 'source-atop'; g.fillStyle = '#0c0508'; g.fillRect(0, 0, w, h); g.restore(); } } }); }
     add(gr, { on: d.kills.boss5, trophy: true, name: '심연의 촉수마왕', sub: (d.kills.boss5 || 0) + '회 처치', hint: '<br>보스 (∞ 챌린지)', draw: (g, w, h, l) => dexSprite(g, w, h, IMG.ab, a0[0], a0[1], a0[2], a0[3], false, l, true) }); }
   add(gr, { on: d.kills.boss, trophy: true, name: '원숭이 마왕', sub: d.kills.boss + '회 처치', hint: '<br>보스 (지하 1층부터 등장)', draw: (g, w, h, l) => dexSprite(g, w, h, IMG.boss, 88, 138, 100, 94, false, l) });
