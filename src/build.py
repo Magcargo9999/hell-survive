@@ -109,6 +109,7 @@ ASSETS = {
     '__SNK__': 'snk/snk.webp',
     '__RUD__': 'rud/rud.webp',
     '__RUDFX__': 'rud/rudfx.webp',
+    '__LAD__': 'lad/lad.webp',
     '__FMAP__': 'fmap/fmap.webp',
     '__IMAP__': 'imap/imap.webp',
     '__BEAR__': 'bear/bear.webp',
