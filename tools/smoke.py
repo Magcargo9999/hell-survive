@@ -7,8 +7,8 @@ from PIL import Image
 CASES=[('wolf','crimson','blood','wolf_blood'),('wolf','crimson','holy','wolf_holy'),('wolf','abyss','','wolf_abyss'),('wolf','twin','','wolf_twin'),
 ('snail','venom','','snail_venom'),('snail','lava','','snail_lava'),
 ('archer','elf','red','arch_red'),('archer','elf','holy','arch_holy'),('archer','skel','','arch_skel'),
-('chimera','flame','','chim_flame'),('chimera','dream','','chim_dream'),('lizard','','rage','liz_rage'),('lizard','','water','liz_water'),('chimera','','','chim_wind'),('twins','','','twins'),('gun','','','gun')]
-JS="""([ch,route,fin])=>{const G=__G; G.SAVE.holyBlood=true; Object.assign(G.SAVE.chars,{wolf:true,snail:true,archer:true,chimera:true,lizard:true,twins:true,gun:true}); G.startGame(ch); const P=G.P;
+('chimera','flame','','chim_flame'),('chimera','dream','','chim_dream'),('lizard','','rage','liz_rage'),('lizard','','water','liz_water'),('chimera','','','chim_wind'),('twins','','','twins'),('gun','','','gun'),('fish','','','fish')]
+JS="""([ch,route,fin])=>{const G=__G; G.SAVE.holyBlood=true; Object.assign(G.SAVE.chars,{wolf:true,snail:true,archer:true,chimera:true,lizard:true,twins:true,gun:true,fish:true}); G.startGame(ch); const P=G.P;
  const pick=()=>{const t=document.getElementById('levelTitle').textContent;const c=G.choices; let i=0;
    if(t.indexOf('갈림길')>=0||t.indexOf('최종')>=0){const want=t.indexOf('최종')>=0?fin:route; i=c.findIndex(u=>u.key===want&&!u.locked); if(i<0)i=c.findIndex(u=>!u.locked); if(i<0)i=0;}
    G.pick(i)};

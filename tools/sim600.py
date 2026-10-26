@@ -2,7 +2,7 @@ import asyncio,sys,json,os,statistics as st
 from playwright.async_api import async_playwright
 URL=os.environ.get('SIMURL','file://'+os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))),'build','hell_survive.html'))
 JS="""([ch,route,fin,prof,L,gt0,win,boss,seed,tier,god,bk])=>{
- const G=__G; if(G.setDbg)G.setDbg(true); G.SAVE.holyBlood=true; Object.assign(G.SAVE.chars,{wolf:true,snail:true,archer:true,chimera:true,lizard:true,twins:true,ghost:true,octo:true,gun:true}); G.SAVE.diff.max=Math.max(5,tier||0); G.SAVE.shards=Math.max(G.SAVE.shards,99999); G.SAVE.diff.sel=tier||0; G.startGame(ch);   /* v6.30: 해금·참가비가 없으면 startGame이 0단계로 낮춰서 tier 인자가 무시되던 것 수정 */ let P=G.P; const keys=G.keys; if(window.__TW&&ch==='lizard'){ P.dmg*=window.__TW.dmg||1; P.cd*=window.__TW.cd||1; P.armor*=window.__TW.armor||1; P.spd*=window.__TW.spd||1; P.spd0=P.spd; P.max=Math.round(P.max*(window.__TW.hp||1)); P.hp=P.max; } const dt=1/30; P.uniqSeen={belia:true,celia:true};
+ const G=__G; if(G.setDbg)G.setDbg(true); G.SAVE.holyBlood=true; Object.assign(G.SAVE.chars,{wolf:true,snail:true,archer:true,chimera:true,lizard:true,twins:true,ghost:true,octo:true,gun:true,fish:true}); G.SAVE.diff.max=Math.max(5,tier||0); G.SAVE.shards=Math.max(G.SAVE.shards,99999); G.SAVE.diff.sel=tier||0; G.startGame(ch);   /* v6.30: 해금·참가비가 없으면 startGame이 0단계로 낮춰서 tier 인자가 무시되던 것 수정 */ let P=G.P; const keys=G.keys; if(window.__TW&&ch==='lizard'){ P.dmg*=window.__TW.dmg||1; P.cd*=window.__TW.cd||1; P.armor*=window.__TW.armor||1; P.spd*=window.__TW.spd||1; P.spd0=P.spd; P.max=Math.round(P.max*(window.__TW.hp||1)); P.hp=P.max; } const dt=1/30; P.uniqSeen={belia:true,celia:true};
  let s=seed*7919+13; const rnd=()=>{s=(s*1103515245+12345)&0x7fffffff;return s/0x7fffffff;};
  const PROF={
   std:['★','날카로운 발톱','날렵한 발톱','지옥의 심장','피의 갈증','끈적한 독','번지는 독','다발 사격','관통 화살','질주','넓은 발톱','카이팅 사격','지옥 낙뢰','회전 칼날','충격파','불길 오라','단단한 피부','영혼 자석','배움의 눈','급소 노리기','저격 시선','지옥불 구슬','뼈 투사체','밀치기'],
@@ -14,6 +14,7 @@ JS="""([ch,route,fin,prof,L,gt0,win,boss,seed,tier,god,bk])=>{
  if(ch==='lizard') PRI=['★','대검 단련','가벼운 휘두르기','대검 내려찍기','가시 비늘','피에 굶주린 광기','끝없는 광란','깊은 물결','지옥의 심장','단단한 피부',...PRI.filter(x=>x!=='질주')];
  if(ch==='chimera') PRI=['★','날 선 바람','날카로운 발톱','날렵한 발톱','쌍날 바람','멀리 나는 바람','더 높은 하늘','불씨 강화','넓은 불길','끓는 숨결','늘어난 촉수','뜬 눈','끝없는 난무',...PRI];
  if(ch==='ghost') PRI=['★','구슬 늘리기','분노한 머리','유령의 칼날','진한 저승 기운','빠른 손짓','빠른 칼놀림','유령 보법','멀리 뿌리기',...PRI];
+ if(ch==='fish') PRI=['★','물의 힘','빠른 물결','넓은 오라','지옥의 심장',...PRI];
  if(ch==='gun') PRI=['★','강화 화약','빠른 방아쇠','특수탄 강화','빠른 장전','불씨 각인','현상금 사냥','지옥의 심장','긴 총열',...PRI];
  if(ch==='twins') PRI=['★','무거운 동생','무거운 창날','원심력','달군 사슬','쌍둥이의 호흡','폭군의 사슬','쌍둥이의 분노','악마의 분노','빠른 손놀림','긴 사슬',...PRI];
  if(bk) P.bossK=bk; if(window.__EYE) Object.assign(G.EYE,window.__EYE); if(window.__AN) Object.assign(G.AN,window.__AN);
@@ -35,11 +36,11 @@ JS="""([ch,route,fin,prof,L,gt0,win,boss,seed,tier,god,bk])=>{
    G.slots.length=0; let vx=0,vy=0,ne=null,nd=1e9,near=0;
    const lowhp=P.hp<P.max*0.4;
    for(const e of G.enemies){ if(e.hp<=0)continue; const dx=P.x-e.x,dy=P.y-e.y,d=Math.hypot(dx,dy); if(d<nd){nd=d;ne=e;} if(d<260)near++; }
-   if(ch==='wolf'||ch==='chimera'||ch==='lizard'||ch==='twins'){
+   if(ch==='wolf'||ch==='chimera'||ch==='lizard'||ch==='twins'||ch==='fish'){
      // 근접 캐릭터: 체력이 충분하면 가장 가까운 적에게 붙어 싸우고, 위험해지면 물러난다
      const R=lowhp?240:(near>14?150:80);
      for(const e of G.enemies){ if(e.hp<=0)continue; const dx=P.x-e.x,dy=P.y-e.y,d=Math.hypot(dx,dy); if(d<R){const w=(R-d)/R; vx+=dx/(d||1)*w*(lowhp?1.6:0.9); vy+=dy/(d||1)*w*(lowhp?1.6:0.9);} }
-     if(ne&&!lowhp){ const want=ch==='twins'?G.twLen()*0.6:P.rng*0.7+ne.r*0.4; if(nd>want){ const k=Math.min(1,(nd-want)/60); vx+=(ne.x-P.x)/nd*k*1.2; vy+=(ne.y-P.y)/nd*k*1.2; } }
+     if(ne&&!lowhp){ const want=ch==='twins'?G.twLen()*0.6:ch==='fish'?G.fishR()*0.45:P.rng*0.7+ne.r*0.4; if(nd>want){ const k=Math.min(1,(nd-want)/60); vx+=(ne.x-P.x)/nd*k*1.2; vy+=(ne.y-P.y)/nd*k*1.2; } }
    } else {
      for(const e of G.enemies){ if(e.hp<=0)continue; const dx=P.x-e.x,dy=P.y-e.y,d=Math.hypot(dx,dy); const R=260; if(d<R){const w=(R-d)/R; vx+=dx/(d||1)*w*1.5; vy+=dy/(d||1)*w*1.5;} }
    }
@@ -132,7 +133,7 @@ async def run(b,cfg):
         except Exception as e: r={'err':str(e)[:1500]}
         await pg.close();return r
 VAR={'archer:red':('archer','elf','red'),'archer:holy':('archer','elf','holy'),'wolf:abyss':('wolf','abyss',''),'wolf:crimson':('wolf','crimson','blood'),'wolf:holy':('wolf','crimson','holy'),'wolf:twin':('wolf','twin',''),
-     'snail:venom':('snail','venom',''),'snail:lava':('snail','lava',''),'snail:bomb':('snail','bomb',''),'archer:elf':('archer','elf',''),'archer:skel':('archer','skel',''),'chimera':('chimera','',''),'chimera:flame':('chimera','flame',''),'chimera:dream':('chimera','dream',''),'lizard:rage':('lizard','','rage'),'lizard:water':('lizard','','water'),'twins':('twins','',''),'ghost':('ghost','orb',''),'ghost:knight':('ghost','knight',''),'octo':('octo','',''),'lizard:guard':('lizard','guard','guard'),'wolf:fallen':('wolf','crimson','fallen'),'wolf:blood':('wolf','crimson','blood'),'chimera:wind':('chimera','wind',''),'gun':('gun','','')}
+     'snail:venom':('snail','venom',''),'snail:lava':('snail','lava',''),'snail:bomb':('snail','bomb',''),'archer:elf':('archer','elf',''),'archer:skel':('archer','skel',''),'chimera':('chimera','',''),'chimera:flame':('chimera','flame',''),'chimera:dream':('chimera','dream',''),'lizard:rage':('lizard','','rage'),'lizard:water':('lizard','','water'),'twins':('twins','',''),'ghost':('ghost','orb',''),'ghost:knight':('ghost','knight',''),'octo':('octo','',''),'lizard:guard':('lizard','guard','guard'),'wolf:fallen':('wolf','crimson','fallen'),'wolf:blood':('wolf','crimson','blood'),'chimera:wind':('chimera','wind',''),'gun':('gun','',''),'fish':('fish','','')}
 BHP=int(os.environ.get('BHP','18000'))
 async def main():
     # argv: mode(L|B) variants(json list) N prof tier
