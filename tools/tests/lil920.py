@@ -41,7 +41,7 @@ async def main():
           AI.mirrors();const m=G.LSW.mir[0];o.n=G.LSW.mir.length;o.inEn=G.enemies.includes(m);for(let i=0;i<14;i++){P.inv=1;G.tick(1/30);}
           const h0=m.hp,sh={x:m.x+120,y:m.y-m.r,vx:-700,vy:0,life:1,pierce:1,hit:new Set(),dmg:50,arrow:true,sz:1};G.shards.push(sh);let gone=-1;for(let i=0;i<20;i++){P.inv=1;G.tick(1/30);if(!G.shards.includes(sh)){gone=i;break}}
           o.shotGone=gone;o.refl=G.LSW.bolts.filter(b=>b.k==='refl').length;o.mDmg=Math.round(h0-m.hp);
-          const k0=G.SAVE.dex.kills.lmir|0;G.hurtEnemy(m,m.max*3,0,0,0);o.white=+G.LSW.white.toFixed(2);o.dex=(G.SAVE.dex.kills.lmir|0)-k0;o.busy=AI.busy();o.ex=G.lsExPause(e);
+          const k0=G.SAVE.dex.kills.lmir|0;G.hurtEnemy(m,m.max*3,0,0,0);o.white=+G.LSW.white.toFixed(2);o.stun=+(G.P.stunT||0).toFixed(2);o.dex=(G.SAVE.dex.kills.lmir|0)-k0;o.busy=AI.busy();o.ex=G.lsExPause(e);
           for(let i=0;i<40;i++){P.inv=1;G.tick(1/30);}o.white2=G.LSW.white;
           // 피루엣 · 샹들리에
           G.LSW.bolts=[];AI.cd.pirouette=0;AI.ci=AI.cyc.indexOf('pirouette');e.st='glide';e.stT=0;let mx=0;for(let i=0;i<30*3;i++){P.inv=1;P.x=G.IMAP.cx+500;P.y=G.IMAP.cy+300;G.tick(1/30);mx=Math.max(mx,G.LSW.bolts.length)}o.pirBolts=mx;
