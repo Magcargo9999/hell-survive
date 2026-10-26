@@ -961,7 +961,7 @@ function mkCanvas(w, h) { const c = document.createElement('canvas'); c.width = 
  * 0-1. 저장(영혼 조각 · 영구 강화 · 설정) / 캐릭터 목록 / 소리
  * ============================================================ */
 const SAVE_KEY = 'hellSurvivorSave1';
-const GAME_VER = 'v9.63';
+const GAME_VER = 'v9.64';
 const SAVE_DEF = () => ({
   shards: 0,
   perks: { hp: 0, spd: 0, dmg: 0, exp: 0, magnet: 0, banish: 0, revive: 0, regen: 0, shard: 0, critd: 0, choice: 0 },
@@ -6465,7 +6465,7 @@ function tgDexArt(g, w, h, l) {
    그림: 도트가 없어 코드 그림(lilArt, 저해상도 캔버스를 3배 nearest) — 도트가 오면 아틀라스로 바꾼다 */
 const LS = { hp: 1.8, dm: 1.0, sp: 95, keep: 280, r: 70, bump: 12,
   zR: 200, zRate: 30, chill: 3, chillMul: 0.2, zReset: 1.5,
-  wCd: 22, wWarn: 1.2, wDur: 7, wR: 150, wRho: 130, wSp: 120, wFar: 800, wPct: 0.12, wStun: 1.0, wGrace: 0.6, wNdl: 1.4,
+  wCd: 26, wWarn: 1.2, wDur: 7, wR: 150, wRho: 130, wSp: 120, wFar: 800, wPct: 0.12, wStun: 1.0, wGrace: 0.6, wNdl: 1.4,
   mrCd: 15, mrLife: 12, mrHp: 0.008, mrR: 36, mrGap: 0.25, mrSp: 330, mrSpread: 0.32, mrDm: 9, white: 1.0,
   pCd: 13, pDur: 2.6, pArms: 3, pRate: 0.12, pTurn: 1.6, pSp: 240, pDm: 9,
   cCd: 9, cWarn: 1.2, cR: 105, cDm: 26, cN: 3,
@@ -6548,6 +6548,7 @@ function drawLilBody(g, pose, f, x, y, face, alpha, white) {
   g.restore();
 }
 /* 탄 (서리 깃털 · 반사 냉기탄 · 피루엣 바늘) */
+function phi0(i, base) { return base + (i % 2 ? 1 : -1) * Math.ceil(i / 2) * 0.2618; }
 function lsBolt(x, y, a, sp, dm, k) { if (LSW.bolts.length < 260) LSW.bolts.push({ x, y, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp, a, dm, k: k || 'needle', life: 3.6 }); }
 /* ① 왜곡된 냉기의 거울 — enemies에 들어가 공격받는다 (투사체는 반사, 근접은 그냥 들어감) */
 class FrostMirror {
@@ -6600,7 +6601,7 @@ function lsChand(x, y, delay) { LSW.chand.push({ x, y, t: -(delay || 0), done: f
 class LilserkaAI {
   constructor(e) {
     this.e = e; this.cyc = ['mirror', 'chand', 'waltz', 'pirouette', 'mirror', 'chand']; this.ci = 0;
-    this.cd = { mirror: 3, chand: 5, waltz: 9, pirouette: 12, fan: 2 }; this.bump = 0; this.fired = false; this.side = 1; this.sideT = 3;
+    this.cd = { mirror: 3, chand: 5, waltz: 12, pirouette: 12, fan: 2 }; this.bump = 0; this.fired = false; this.side = 1; this.sideT = 3;
     if (e.bk !== 'lil') Object.assign(e, { bk: 'lil', r: LS.r, st: 'intro', stT: 2.6, an: 'idle', anT: 0, face: -1, moving: false, ph2: false, tele: [] });
   }
   go(st, stT, an) { const e = this.e; e.st = st; e.stT = stT; e.an = an || 'idle'; e.anT = 0; this.fired = false; }
@@ -6637,7 +6638,17 @@ class LilserkaAI {
       if (d > bd) { bd = d; best = [x, y]; } if (d >= LS.wFar - 40) break;
     }
     burst(e.x, e.y - 120, 20, ['#e6f8ff', '#9fd8ff'], 240, 0.5); e.x = best[0]; e.y = best[1]; burst(e.x, e.y - 120, 20, ['#e6f8ff', '#9fd8ff'], 240, 0.5); sfx('zap');
-    const sx = P.x, sy = P.y, phi = Math.atan2(M.cy - sy, M.cx - sx);   // 스포트라이트가 그리는 원은 투기장 안쪽으로
+    const sx = P.x, sy = P.y;   // v9.64: 스포트라이트·릴세르카가 그리는 원이 모두 투기장 안에 들어오는 방향 고름
+    let phi = Math.atan2(sy - M.cy, sx - M.cx), pb = 1e9;
+    for (let i = 0; i < 24; i++) {
+      const ph = phi0(i, Math.atan2(sy - M.cy, sx - M.cx)); let out = 0;
+      for (let k = 0; k < 16; k++) {
+        const a = ph + Math.PI + k / 16 * 6.283, ux = Math.cos(a) - Math.cos(ph + Math.PI), uy = Math.sin(a) - Math.sin(ph + Math.PI);
+        if (!inPoly(sx - ux * LS.wRho, sy - uy * LS.wRho)) out += 2;
+        if (!inPoly(e.x + ux * LS.wRho, e.y + uy * LS.wRho)) out += 1;
+      }
+      if (out < pb) { pb = out; phi = ph; } if (!out) break;
+    }
     LSW.spot = { sx, sy, bx: e.x, by: e.y, phi, th: 0, dir: 1, t: -LS.wWarn, x: sx, y: sy, hold: 0, grace: 0, ndl: 1.0 };
     this.go('waltz', LS.wWarn + LS.wDur, 'spin'); e.invul = false;
     banner = { txt: '릴세르카: 대공작의 왈츠!  나를 비추는 스포트라이트는 릴세르카와 정반대로 움직인다\n원 밖으로 나가면 얼어붙는 시선(최대 체력 12% + 1초 기절) — 원을 따라 춤추세요', t: 4.5, c: '#e6f8ff' };
@@ -6868,6 +6879,7 @@ function drawLilTop(wx, wy) {
   }
   for (const b of LSW.bolts) {   // 얼음 바늘 · 반사 냉기탄
     const x = wx(b.x), y = wy(b.y); if (x < -40 || x > W + 40 || y < -40 || y > H + 40) continue;
+    if (b.k !== 'refl') { ctx.save(); ctx.fillStyle = 'rgba(8,16,48,0.5)'; ctx.beginPath(); ctx.arc(x, y, 15, 0, 6.283); ctx.fill(); ctx.globalCompositeOperation = 'lighter'; ctx.fillStyle = 'rgba(255,80,50,0.55)'; ctx.beginPath(); ctx.arc(x, y, 9, 0, 6.283); ctx.fill(); ctx.restore(); }   // v9.64 맵과 같은 색이라 안 보이던 고드름: 어두운 테두리 + 붉은 위험 빛
     if (IMG.lfx && lfx(b.k === 'refl' ? 'refl' : 'needle', Math.floor(wallT * 14 + b.life * 3) % 4, x, y, 0.55, 1, Math.atan2(b.vy, b.vx) + 0.7)) continue;
     ctx.save(); ctx.translate(x, y); ctx.rotate(Math.atan2(b.vy, b.vx));
     if (b.k === 'refl') { ctx.globalCompositeOperation = 'lighter'; ctx.fillStyle = 'rgba(255,120,170,0.45)'; ctx.beginPath(); ctx.ellipse(0, 0, 18, 9, 0, 0, 6.283); ctx.fill(); ctx.globalCompositeOperation = 'source-over'; }
@@ -15628,6 +15640,7 @@ function openAch() {
 }
 /* v8.71 간략 패치노트 (최근 버전만, 새 버전마다 맨 위에 한 줄 추가) */
 const PATCH = [
+  ['v9.64','[릴세르카] 스포트라이트가 맵 밖으로 나가던 버그 수정(원이 투기장 안에 들어오게 방향 선택) · 왈츠 빈도 낮춤(쿨 22→26초) · 얼음 바늘에 어두운 테두리+붉은 빛을 더해 맵에서 잘 보이게'],
   ['v9.63','[30층 최종 마왕] 지옥의 화염 호랑이 추가 · 지하 30층 개방 — 회전하는 불의 십자가(5초 회전 → 2초 불 뿜기) · 패턴을 안 맞고 3번 연속 넘기면 기절 · 가드 자세(때릴수록 반격 폭발이 커짐) · 연속 돌진 · 멸옥 수플렉스(안전지대로! 잡히면 현재 체력 80% · 잡몹 즉사) · 체력 40% 포식자의 추적(카메라가 호랑이를 따라가고 점선 리듬 돌진) · 업적 2개'],
   ['v9.62','백곰 마왕 — 장벽·균열·빙창·눈보라·동상 그림을 받은 이펙트 도트로 교체(코드 그림 삭제) · 서리바람의 동상 게이지 상승 절반(16→8/초) · 눈보라가 그쳐도 게이지가 저절로 내려가지 않고 얼음 장벽 근처에서만 내려감 · 당구공 돌진 최대 3번 튕김 + 2페이즈 얼음 범퍼 5개를 더 촘촘히 · 튕긴 뒤 어지러움(기절) 삭제'],
   ['v9.61','밸런스 — 보스 심장 드랍 확률 전 마왕 15종 20% → 33% (그 심장을 갖고 있지 않을 때, 레전더리 1%는 그대로)'],
