@@ -961,7 +961,7 @@ function mkCanvas(w, h) { const c = document.createElement('canvas'); c.width = 
  * 0-1. 저장(영혼 조각 · 영구 강화 · 설정) / 캐릭터 목록 / 소리
  * ============================================================ */
 const SAVE_KEY = 'hellSurvivorSave1';
-const GAME_VER = 'v9.55';
+const GAME_VER = 'v9.56';
 const SAVE_DEF = () => ({
   shards: 0,
   perks: { hp: 0, spd: 0, dmg: 0, exp: 0, magnet: 0, banish: 0, revive: 0, regen: 0, shard: 0, critd: 0, choice: 0 },
@@ -10872,14 +10872,14 @@ function drawLasers(wx, wy) {
   }
 }
 /* ---------- v9.03 황금 악마 임프 (지하 21층부터) — 빠르게 달려와 한 대 때리고 도망치는 영혼 조각 운반꾼. 잡으면 영혼 조각 + 상자, 시간이 지나면 사라진다 ---------- */
-const IMP = { from: 20, first: [95, 40], gap: [150, 60], hpK: 0.25, dash: 560, dashMax: 9, fleeK: 0.7, fleeMin: 110, flee: 18, pause: 0.4, hitDm: 0.7, shards: 10000, scale: 0.72, r: 28 };   /* from = P.tier 20(지하 21층) · dash/flee = 속도(px/s) · dashMax = 못 닿으면 사라지는 시간 · flee = 한 대 때린 뒤 도망치는 시간(초) */
+const IMP = { from: 20, first: [95, 40], gap: [150, 60], hpK: 0.25, dash: 448, dashMax: 27, fleeK: 0.56, fleeMin: 88, flee: 54, fleeDist: 1000, pause: 0.4, hitDm: 0.7, shards: 10000, scale: 0.72, r: 28 };   /* from = P.tier 20(지하 21층) · dash/flee = 속도(px/s) · dashMax = 못 닿으면 사라지는 시간 · flee = 한 대 때린 뒤 사라지기까지 시간(초) · fleeDist = 이만큼 멀어지면 그 자리에 멈춤 (v9.56: 속도 -20% · 시간 ×3) */
 const IMPF = {"idle":[[0,0,150,131,75,129],[150,0,150,131,75,129],[300,0,150,131,75,129],[450,0,150,131,75,129],[600,0,150,131,75,129],[750,0,150,131,75,129]],"run":[[0,131,126,120,63,118],[126,131,126,120,63,118],[252,131,126,120,63,118],[378,131,126,120,63,118],[504,131,126,120,63,118],[630,131,126,120,63,118],[756,131,126,120,63,118],[882,131,126,120,63,118],[1008,131,126,120,63,118]],"hit":[[0,251,132,137,66,135],[132,251,132,137,66,135],[264,251,132,137,66,135],[396,251,132,137,66,135]],"col":[[0,388,241,145,120,143],[241,388,241,145,120,143],[482,388,241,145,120,143],[723,388,241,145,120,143],[964,388,241,145,120,143]]};
 let impAt = 1e9;
 const impOf = () => enemies.find(q => q.kind === 'imp' && q.hp > 0);
 function trySpawnImp() {   /* 스폰 틱마다 호출 — 시간이 됐고 필드(성·보스방·미니 보스·챌린지 아님)일 때만 */
   if ((P.tier || 0) < IMP.from || arena || castle || mini || chal || rush || state !== 'play' || gt < impAt || impOf()) return;
   impAt = gt + IMP.gap[0] + rand() * IMP.gap[1]; const e = new GoldImp(); enemies.push(e); markDex('imp', 1);
-  banner = { txt: '✨ 황금 악마 임프 출현!  빠르게 달려와 한 대 때리고 도망친다\n잡으면 영혼 조각 ' + IMP.shards.toLocaleString() + ' + 보물 상자 — 도망치면 사라진다', t: 5, c: '#ffe28a' }; sfx('item');
+  banner = { txt: '✨ 황금 악마 임프 출현!  빠르게 달려와 한 대 때리고 멀리 도망쳐 멈춘다\n잡으면 영혼 조각 ' + IMP.shards.toLocaleString() + ' + 보물 상자 — 오래 두면 사라진다', t: 5, c: '#ffe28a' }; sfx('item');
 }
 class GoldImp {
   constructor() {
@@ -10907,6 +10907,14 @@ class GoldImp {
       if ((this.pause -= dt) <= 0) { this.st = 'flee'; this.life = IMP.flee; this.fled = true; }
     } else {
       if ((this.life -= dt) <= 0) { this.vanish('황금 악마 임프가 영혼 조각을 들고 도망쳤다…'); return; }
+      if (d >= IMP.fleeDist) this.st = 'stay';   // v9.56 1000만큼 도망치면 그 자리에 멈춘다
+    }
+    if (this.st === 'stay') {
+      if ((this.life -= dt) <= 0) { this.vanish('황금 악마 임프가 영혼 조각을 들고 도망쳤다…'); return; }
+      if (d < IMP.fleeDist - 120) this.st = 'flee';   // 다가가면 다시 도망
+      if (Math.abs(dx) > 4) this.face = dx > 0 ? 1 : -1;
+    }
+    if (this.st === 'flee') {
       const sp = Math.max(IMP.fleeMin, (P.spd || 200) * IMP.fleeK) * mul, a = Math.atan2(-dy, -dx) + Math.sin(this.t * 2.1 + this.jig) * 0.6;
       vx = Math.cos(a) * sp; vy = Math.sin(a) * sp; if (Math.abs(vx) > 4) this.face = vx > 0 ? 1 : -1;
     }
@@ -10947,6 +10955,7 @@ function drawImpDeath(m, x, y) {
 }
 function drawUniqHud() {   // 유니크 체력바 · 화면 밖 방향 표시
   if (arena) return;
+  const im = impOf(); if (im && im.fled) edgeArrow(im, '255,210,90', '◆', '#ffe28a');   // v9.56 멈춘 임프 방향 표시
   enemies.filter(q => q.kind === 'uniq' && q.hp > 0).slice(0, 2).forEach((u, ui) => {   // v5.15: 2마리면 체력바 2줄
   const U = UNIQ[u.uk];
   if (!(mini && mini.hp > 0)) {
@@ -14774,7 +14783,7 @@ function openDex() {
   add(gr, { on: d.kills.boss17, trophy: true, name: '영벌의 화염죄수', sub: (d.kills.boss17 || 0) + '회 처치', hint: '<br>지하 26층 마왕 (26층 100% · 27층에서 자주)', draw: cvDexArt });   // v9.40
   add(gr, { on: d.kills.boss18, trophy: true, name: '불구렁이', sub: (d.kills.boss18 || 0) + '회 처치', hint: '<br>지하 28층 마왕 (28층 100% · 29층에서 자주)', draw: snDexArt });   // v9.46
   add(gr, { on: d.kills.lmir, name: '왜곡된 냉기의 거울', sub: (d.kills.lmir || 0) + '개 파괴', hint: '<br>릴세르카가 세운다 · 투사체를 3갈래로 되돌린다 · 깨면 1초 화이트아웃', draw: (g, w, h, l) => { g.save(); g.fillStyle = l ? '#0c0508' : '#9fd8ff'; g.beginPath(); g.ellipse(w / 2, h / 2, w * 0.22, h * 0.4, 0, 0, 6.283); g.fill(); g.restore(); } });
-  add(gr, { on: d.kills.imp, name: '황금 악마 임프', sub: (d.kills.imp || 0) + '마리 처치', hint: '<br>지하 21층부터 가끔 나타나는 영혼 조각 운반꾼 · 빠르게 달려와 한 대 때리고 도망친다 · 잡으면 영혼 조각 10,000 + 보물 상자, 시간이 지나면 사라진다', draw: (g, w, h, l) => { if (IMG.imp) { const r = IMPF.idle[0]; dexSprite(g, w, h, IMG.imp, r[0], r[1], r[2], r[3], false, l, true); } else lockFx(g, w, h, l); } });
+  add(gr, { on: d.kills.imp, name: '황금 악마 임프', sub: (d.kills.imp || 0) + '마리 처치', hint: '<br>지하 21층부터 가끔 나타나는 영혼 조각 운반꾼 · 빠르게 달려와 한 대 때리고 멀리(1000) 도망쳐 멈춘다 · 잡으면 영혼 조각 10,000 + 보물 상자, 54초가 지나면 사라진다', draw: (g, w, h, l) => { if (IMG.imp) { const r = IMPF.idle[0]; dexSprite(g, w, h, IMG.imp, r[0], r[1], r[2], r[3], false, l, true); } else lockFx(g, w, h, l); } });
   { const r = KGF.idle[0]; add(gr, { on: d.kills.boss12, trophy: true, name: '타락한 어인왕', sub: (d.kills.boss12 || 0) + '회 처치', hint: '<br>지하 20층의 최종 마왕 (20층에서만 등장)', draw: (g, w, h, l) => { if (IMG.kng) dexSprite(g, w, h, IMG.kng, r[0], r[1], r[2], r[3], false, l, false); } }); }   // v8.80
   { const vd = (key, f) => (g, w, h, l) => { if (IMG.vft) { const r = VFF[key][f || 0]; dexSprite(g, w, h, IMG.vft, r[0], r[1], r[2], r[3], false, l, false); } else lockFx(g, w, h, l); };   // v8.70 파리지옥 마왕
     add(gr, { on: d.kills.boss11, trophy: true, name: '파리지옥 마왕', sub: (d.kills.boss11 || 0) + '회 처치', hint: '<br>보스 (지하 11층부터 등장 · 11층 100% · 12층에서 자주) · 입힌 피해만큼 흡혈', draw: vd('idle') });
@@ -15227,6 +15236,7 @@ function openAch() {
 }
 /* v8.71 간략 패치노트 (최근 버전만, 새 버전마다 맨 위에 한 줄 추가) */
 const PATCH = [
+  ['v9.56','수정 — 황금 악마 임프: 이속 -20% · 한 대 때린 뒤 거리 1000까지 도망쳐 그 자리에 멈춤(가까이 가면 다시 도망) · 사라지는 시간 3배(접근 9→27초 · 도망 18→54초) · 멈춘 임프 방향 표시'],
   ['v9.55', '[지하 25층 미니 보스] 서리혈랑 추가 — 대공작 릴세르카의 애완 늑대(체력은 보통, 한 방이 아프다): 서리 절단 3연격 · 혈빙 가시(십자) · 빙혈 폭풍(끌어당긴 뒤 고리 폭발, 품 안이나 멀리가 안전) · 체력 45% 영혼의 겨울(분노)'],
   ['v9.54', '[지하 15층 미니 보스] 가시관 무당벌레 추가 — 원예의 여왕 판의 미니 보스(말 2종 15%씩은 그대로): 가시 분출 · 점박이 구슬 · 날갯짓 돌풍 · 체력 40% 분노'],
   ['v9.53', '[팔열지옥 보스맵] 지하 26~30층 보스방을 새 용암 그림으로 교체 — 중앙 오망성 광장 · 위쪽 악마 문 · 아래 계단이 출구 (패턴·마왕 수치는 그대로)'],
