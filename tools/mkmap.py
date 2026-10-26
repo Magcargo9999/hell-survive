@@ -10,6 +10,7 @@ ANCHORS = [
  ('스킬 목록(이름·설명)', r'^const SKILLS = '), ('스킬 쿨타임·스킬 이름 함수', r'^const SKILL_CD|^const skillName'),
  ('공용 카드', r'^const UPGRADES = '), ('캐릭터 전용 카드', r'^const UNIQUE = '), ('조합 카드', r'^const SYNERGIES = '),
  ('마계 물고기 진화(v9.49: 미꾸라지 물방울·마해룡 절대 수압·포식자의 파도)', r'^const FISH_AURA|^const FWAVE|^function updateFish|^function fishOrb|^function startFishWave|^function stepFishWave|^function drawFishWave|^function drawFishAura'),
+ ('화염 호랑이(v9.63: 불의 십자가·완벽 회피 기절·가드 반격·연속 돌진·멸옥 수플렉스·포식자의 추적)', r'^const TG = |^function tgCrossUpdate|^function tgPatEnd|^function tgGuardHit|^function tgSafeSpot|^function tgRwPlan|^class TigerAI|^function updateTgFx|^function tgPushP|^function drawTgFloor|^function drawTgBoss'),
  ('불구렁이(v9.46: 다관절 마디·파열하는 대지·탐욕의 용광로·환영 포위·종말의 똬리)', r'^const SN = |^class SnakeNode|^function snPath|^function snEscapeR|^function snCrackPush|^function snSuckOrb|^class SerpentAI|^function updateSnFx|^function drawSnFloor'),
  ('영벌의 화염죄수(v9.40: 불길 궤적·쇠사슬 도넛·용광로 구슬·속죄 반사·족쇄 해방 돌진)', r'^const CV = |^class HellfirePatch|^function cvChainStep|^function cvTetherStep|^function cvFurnace|^function cvAtone|^class ConvictAI|^function updateCvFx'),
  ('팔한지옥의 대공작 릴세르카(v9.20: 결정화 영역·왈츠·거울·무도회)', r'^const LS = |^class FrostMirror|^class LilserkaAI|^function lsZone|^function updateLilFx'),
