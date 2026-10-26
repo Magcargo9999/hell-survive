@@ -114,6 +114,7 @@ ASSETS = {
     '__FMAP__': 'fmap/fmap.webp',
     '__IMAP__': 'imap/imap.webp',
     '__BEAR__': 'bear/bear.webp',
+    '__BEARFX__': 'bear/bearfx.webp',
     '__LIL__': 'lil/lil.webp',
     '__LILFX__': 'lil/lilfx.webp',
     '__RELKEY__': 'final/relkey.webp', '__RELPHOENIX__': 'final/relphoenix.webp', '__RELFANG__': 'final/relfang.webp',

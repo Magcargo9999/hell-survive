@@ -60,7 +60,7 @@ async def main():
         R=await pg.evaluate("""()=>{const G=__G,P=G.P,o={},e=G.boss,AI=G.pb;G.PBW.fis=[];e.tele=[];e.hp=e.max*0.29;for(let i=0;i<30*3;i++){P.hp=P.max;P.inv=1;G.tick(1/30);"""+STEP+"""}
           o.ph2=e.ph2;o.cyc=AI.cyc.join(',');for(const k in AI.cd)AI.cd[k]=99;G.PBW.bz=null;P.x=G.IMAP.cx+500;P.y=G.IMAP.cy+300;e.x=G.IMAP.cx-300;e.y=G.IMAP.cy-200;
           AI.wq=AI.wallSpots();AI.wallRise();o.bumpers=G.PBW.walls.length;AI.pinAim();let maxN=0,out=0,dash=0,diz=0;
-          for(let i=0;i<30*6;i++){P.hp=P.max;P.inv=1;G.tick(1/30);"""+STEP+"""if(AI.pb)maxN=Math.max(maxN,AI.pb.n);if(e.st==='pbDash')dash++;if(e.st==='pbDizzy')diz++;if(!G.IMAP||e.x<G.IMAP.X0||e.x>G.IMAP.X1||e.y<G.IMAP.Y0||e.y>G.IMAP.Y1)out++;
+          for(let i=0;i<30*6;i++){P.hp=P.max;P.inv=1;G.tick(1/30);"""+STEP+"""if(AI.pb)maxN=Math.max(maxN,AI.pb.n);if(e.st==='pbDash')dash++;if(!G.IMAP||e.x<G.IMAP.X0||e.x>G.IMAP.X1||e.y<G.IMAP.Y0||e.y>G.IMAP.Y1)out++;
             if(i===40){G.render();window.__shot=1}}
           o.bounces=maxN;o.dashF=dash;o.dizzyF=diz;o.outF=out;o.exPause=G.pbExPause(e);return o}""")
         print('P',json.dumps(R,ensure_ascii=False))
