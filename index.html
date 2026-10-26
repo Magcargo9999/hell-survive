@@ -953,7 +953,7 @@ function mkCanvas(w, h) { const c = document.createElement('canvas'); c.width = 
  * 0-1. 저장(영혼 조각 · 영구 강화 · 설정) / 캐릭터 목록 / 소리
  * ============================================================ */
 const SAVE_KEY = 'hellSurvivorSave1';
-const GAME_VER = 'v9.46';
+const GAME_VER = 'v9.47';
 const SAVE_DEF = () => ({
   shards: 0,
   perks: { hp: 0, spd: 0, dmg: 0, exp: 0, magnet: 0, banish: 0, revive: 0, regen: 0, shard: 0, critd: 0, choice: 0 },
@@ -971,7 +971,7 @@ const SAVE_DEF = () => ({
   heart: { inv: [], eq: [], n: 0, got: {} },   // v8.01 보스 심장 (인벤토리 · 장착 슬롯 · 다음 id)
   ach: { done: {}, got: {} },   // v8.80 업적 (달성 · 보상 받음)
 });
-const OPEN_TIER = 24, TOP_TIER = 29;   // v9.24: 6지옥 팔열지옥(지하 26~30층, 내부 25~29) 필드는 만들어 두고 잠금 — 열려면 OPEN_TIER만 올린다
+const OPEN_TIER = 28, TOP_TIER = 29;   // v9.24: 6지옥 팔열지옥(지하 26~30층, 내부 25~29) 필드는 만들어 두고 잠금 — 열려면 OPEN_TIER만 올린다
    // v9.10: 지하 24층(내부 23)까지 개방 · v9.20: 지하 25층(내부 24) 개방 — 5지옥 완성   // v8.99 팔한지옥(5지옥): 층은 25층(0~24)까지 만들어 두고, 지금 열린 곳은 지하 22층(내부 21)까지 — 23~25층은 잠금 (MAX_TIER 19 = 예전 20층 기준: 보스 러시·업적)
 let SAVE = SAVE_DEF();
 function loadSave() {
