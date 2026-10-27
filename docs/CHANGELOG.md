@@ -243,3 +243,6 @@ CLAUDE.md에서 분리. 필요할 때만 `grep -n "키워드" docs/CHANGELOG.md`
 
 ## v9.80
 - 새 마왕 심해의 시체고래(`bk:'whl'`, 템플릿 'v9.80' 블록, `WH`·`WHW`·`WhaleAI`, 아틀라스 `IMG.whl`/`IMG.whlfx` ← `tools/atlas/whl_build.py`·`whlfx_build.py`). 지하 18층 100% · 19층 70% · `ICE_L` 포함, 보스방 `SMAP`. 죽음의 파도 = 방을 10줄로 나눠 한 줄만 비움(`whLane`). 규칙 9 확인 · 테스트 `tools/tests/whl980.py`. 도감 boss20 · 업적 `k_whl`. 심장·보스 러시 없음.
+
+## v9.81
+- 잭팟 머신 '레벨 +1' 증강창이 바로 사라지던 문제: 머신을 닫는 Digit1/Digit2·클릭이 곧바로 카드 선택으로 이어짐 → `choiceGuard`(0.5초) + 슬롯 키 `e.repeat` 무시. 테스트 `tools/tests/slot981.py`(전 캐릭터·레벨). 릴세르카 v9.64/66 수정 적용 확인 `tools/tests/lil981.py`. 주의: 지옥 맵 그림을 기다리느라 `startGame`이 비동기라 옛 테스트는 `state==='play'`를 기다려야 함.

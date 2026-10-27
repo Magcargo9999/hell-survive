@@ -965,7 +965,7 @@ function mkCanvas(w, h) { const c = document.createElement('canvas'); c.width = 
  * 0-1. 저장(영혼 조각 · 영구 강화 · 설정) / 캐릭터 목록 / 소리
  * ============================================================ */
 const SAVE_KEY = 'hellSurvivorSave1';
-const GAME_VER = 'v9.80';
+const GAME_VER = 'v9.81';
 const SAVE_DEF = () => ({
   shards: 0,
   perks: { hp: 0, spd: 0, dmg: 0, exp: 0, magnet: 0, banish: 0, revive: 0, regen: 0, shard: 0, critd: 0, choice: 0 },
@@ -9405,8 +9405,9 @@ function openChoice(title, items, cb, cls) {
   });
   show('levelBox', true);
 }
+let choiceGuard = 0;   // v9.81: 잭팟 머신을 닫은 키·클릭이 그대로 카드 선택이 되어 증강창이 순식간에 사라지던 문제 — 닫은 뒤 0.5초는 카드를 못 고름
 function pickChoice(i) {
-  if (state !== 'levelup') return;
+  if (state !== 'levelup' || performance.now() < choiceGuard) return;
   const u = choices[i]; if (!u || u.locked) return;
   if (practice) practice.picked = true;
   const cb = choiceCb; choiceCb = null;
@@ -10716,6 +10717,7 @@ function slotResult() {
 function closeSlot(used) {
   const u = slotUI; if (!u) return;
   show('slotBox', false); state = 'play'; slotUI = null; P.inv = Math.max(P.inv, 0.5);
+  choiceGuard = performance.now() + 500;
   if (used) { u.m.used = true; u.m.life = Math.min(u.m.life, 1.0); burst(u.m.x, u.m.y - 40, 22, ['#ffe28a', '#ffffff', '#ff8a2a'], 260, 0.8); addRing(u.m.x, u.m.y - 30, 10, 120, 0.5, '255,226,138', 8); }
   else u.m.cool = true;
   if (u.after) u.after();
@@ -16111,6 +16113,7 @@ function openAch() {
 }
 /* v8.71 간략 패치노트 (최근 버전만, 새 버전마다 맨 위에 한 줄 추가) */
 const PATCH = [
+  ['v9.81','[버그] 잭팟 머신(룰렛)으로 레벨업하면 증강 선택창이 순식간에 사라지던 문제 수정 — 머신을 닫은 키·클릭이 그대로 카드 선택이 되던 것(닫은 뒤 0.5초는 카드 선택 잠금 · 키 꾹 누름 무시)'],
   ['v9.80','[새 마왕] 심해의 시체고래 — 지하 18층 100% · 19층 70%(이후 층에서도 가끔) · 어인섬 보스방 · 유령 해류(부채꼴 3줄) · 뼈 소환 · 몸통박치기 · 소용돌이 · 잠수 습격 · 죽음의 파도(한 줄만 비어 있다 — 그 줄로 들어가 피하기) · 체력 35% 원혼 폭주 · 도감 · 업적 (심장·보스 러시는 아직 없음)'],
   ['v9.73','[쿠폰] 문어 마법사 최종 스킨(문어현자) 쿠폰 \'ai소프트웨어학과\'와 그 스킨 삭제 (타락천사 여자 버전도 같은 쿠폰이라 함께 못 켬)'],
   ['v9.72','[불구렁이] 똬리 동안 몸통에는 피해가 안 들어가고 머리만 때릴 수 있음 · [팔열지옥] 26~29층 보스방에도 열기(휴식존 4곳) · [호랑이] 카메라는 호랑이 쪽으로 기울기만 하고(평소 15% · 리듬 돌진 70%) 돌아옴 · 수플렉스 안전지대 더 작고 빠르게(반경 95→75 · 경고 2.6→2.2초) · 불의 십자가는 불 뿜는 동안에도 계속 돎 · [도감] 해금한 캐릭터는 진화 루트에서 스킬을 볼 수 있음 · [연보라 총령] 1진화 렉(진화 순간 0.2초 끊김 + 큰 확대 캔버스) 수정'],
@@ -16364,7 +16367,7 @@ window.addEventListener('keydown', e => {
   else if (state === 'menu' && e.code === 'Digit8' && SAVE.chars.octo) selectChar('octo');
   else if (state === 'menu' && e.code === 'Digit9' && SAVE.chars.gun) selectChar('gun');
   else if ((state === 'dead' || state === 'win') && overShown && (e.code === 'KeyR' || e.code === 'Enter')) startGame(curChar);
-  else if (state === 'slot') slotKey(e.code);
+  else if (state === 'slot') { if (!e.repeat) slotKey(e.code); }
   else if (state === 'play' && e.code === 'KeyE' && !e.repeat) useTeleport();
   else if (state === 'levelup' && ['Digit1', 'Digit2', 'Digit3', 'Digit4'].includes(e.code)) { const i = Number(e.code.slice(5)) - 1; if (e.shiftKey) { const u = choices[i]; if (u && u.ban) u.ban(); } else pickChoice(i); }   // v8.90 Shift+숫자 = 그 카드 삭제
   else if (state === 'play' && (e.code === 'Space' || e.code === 'KeyQ') && !e.repeat) castSkill();
@@ -16429,7 +16432,7 @@ stepDive = skWrap(stepDive, 'dive'); stepRush = skWrap(stepRush, 'rush'); rushSt
 updateAirs = (f => function (...a) { return withSrc('basic', () => f.apply(this, a)); })(updateAirs);   // v6.22: 에어슬래시는 평타 (v6.30: 바로 뒤 천안 난무·브레스 감싸기가 주석에 묻혀 딜미터기에서 빠지던 것 수정)
 { const _tb = thornBlast, _sb = smashBlow; thornBlast = function (...a) { return withSrc('scale', () => _tb.apply(this, a)); }; smashBlow = function (...a) { return withSrc('smash', () => _sb.apply(this, a)); }; }
 shellReflect = skWrap(shellReflect, 'shell'); updateBsig = skWrap(updateBsig, 'bsigil');
-window.__G = { WH, WHW, WhaleAI, whClear, whRoom, whLane, whDexArt, get wh() { return wh; }, hq, hqLow, drawWolf, heatOn, heatArena, arenaRests, arenaRestNearest, openRoutePic, get banner() { return banner; }, isDosanSet, get DSPECIES() { return DSPECIES; }, buildDosanSpecies, BLADE, DF, DPROP_RECTS, dosanTile, imgReady, igniteX, procElem, startFw, spawnFw, spawnUniq, get cam() { return cam; }, TG, TGW, get tg() { return tg; }, tgClear, tgArms, tgCrossAt, tgInSafe, tgCxR, tgPatEnd, tgSafeSpot, tgCam, tgHold, TigerAI, HFUSE_HID, spawnFrw, frwAtk, FRW, spawnLad, lAtk, LAD, LADF, buildCards, rollHeartDrop, heartGain, disHeart, CHARS, inPoly, castSkill, get arena() { return arena; }, FISH, FWAVE, FISHA2, get fwaveQ() { return fwaveQ; }, SN, SNW, get sn() { return snAI; }, snClear, snHall, snEscapeR, pendingConds, rollCards, fishR, shardTotal, calcShards, heartBonus, CV, CVW, HellfirePatch, get cv() { return cvAI; }, cvClear, cvFurnace, pickBossK, get rushQ() { return rushQ; }, get FSPECIES() { return FSPECIES; }, heartMigrate, hRange, IMP, BLD, leadXY, leadDir, HEAT, FF, restNear, restNearest, restAt, updateHeat, isFireSet, fireTile, floorSet, clearGround: () => GROUND.clear(), get TOP_TIER() { return TOP_TIER; }, get OPEN_TIER() { return OPEN_TIER; }, lilArt, drawLilBody, LS, LSW, get ls() { return ls; }, FrostMirror, lsInWedge, lsIce, lsExPause, lsZone, lilDefeated, RD, RDW, RDF, rdOn, get rd() { return rd; }, KarmaBead, FrostMantra, IceLotus, rdAbsorb, rdInGap, rdExPause, rdSilence, rudDefeated, IMP, GoldImp, impOf, trySpawnImp, impDefeated, set impAt(v) { impAt = v; }, LUCK_N, PB, PBW, IMAP, IceWall, Fissure, IceSpear, segDist, FrostMgr, pbOn, pbClear, pbExPause, get pb() { return pb; }, gunMagN, ROLL, get lhead() { return lhead; }, KN, castLostHead, TW, isIceSlip, isIceSet, get ISPECIES() { return ISPECIES; }, ICE_SLIP, ICE_L, OPEN_TIER, TOP_TIER, renderHells, floorSet, pickFloor, iceTile, IF, get lhead() { return lhead; }, KN, isKnight, castLostHead, knightSlash, openGhostRoute, KNIGHT_FORMS, ghostForm, hTitle, relicIcon, heartMake, hOpt, heartBonus, calcShards, GRN, GRW, GRNF, spawnGrn, grnStart, grnPick, TRIAL, chAltarTick, chAltarPlace, chTrialStart, chTrialWin, chTime, chTime0, chDmgT, CH_HARD, CH_BOSS, cardDefs, cardView, ACH, achSync, achClear, openAch, KG, KGW, get kg() { return kg; }, AirGeyser, WaterMirror, MirrorBolt, kgIce, get shards() { return shards; }, set shards(v) { shards = v; }, VF, VFW, get vf() { return vf; }, VfTrap, VfSkull, VfHeart, vfLeech, fuseHearts, rerollHeart, heartBonus, renderFuse, setFu(v) { hFu = v; }, QN, QNW, get qn() { return qn; }, RootBind, SporeSack, QnMush, pickBossK, pctMelee, pctZone, updateDiff, skinG, bhKey, BH_ORDER, heartIcon, relicMaskOn, calcShards, isSlow, isLava, saveSave, svParse, spawnPlant, PL, get GSPECIES() { return GSPECIES; }, get plBalls() { return plBalls; }, synCard, freezeE, availSyn, SYNERGIES, dmName, FD, shkAdd, toxAdd, skSpawnPair, phoenixRevive, mirrorBlock, palPop, updateCutSaws, get shkSp() { return shkSp; }, get toxFl() { return toxFl; }, get zonesRef() { return zones; },
+window.__G = { openSlot, slotResult, slotSpin, WH, WHW, WhaleAI, whClear, whRoom, whLane, whDexArt, get wh() { return wh; }, hq, hqLow, drawWolf, heatOn, heatArena, arenaRests, arenaRestNearest, openRoutePic, get banner() { return banner; }, isDosanSet, get DSPECIES() { return DSPECIES; }, buildDosanSpecies, BLADE, DF, DPROP_RECTS, dosanTile, imgReady, igniteX, procElem, startFw, spawnFw, spawnUniq, get cam() { return cam; }, TG, TGW, get tg() { return tg; }, tgClear, tgArms, tgCrossAt, tgInSafe, tgCxR, tgPatEnd, tgSafeSpot, tgCam, tgHold, TigerAI, HFUSE_HID, spawnFrw, frwAtk, FRW, spawnLad, lAtk, LAD, LADF, buildCards, rollHeartDrop, heartGain, disHeart, CHARS, inPoly, castSkill, get arena() { return arena; }, FISH, FWAVE, FISHA2, get fwaveQ() { return fwaveQ; }, SN, SNW, get sn() { return snAI; }, snClear, snHall, snEscapeR, pendingConds, rollCards, fishR, shardTotal, calcShards, heartBonus, CV, CVW, HellfirePatch, get cv() { return cvAI; }, cvClear, cvFurnace, pickBossK, get rushQ() { return rushQ; }, get FSPECIES() { return FSPECIES; }, heartMigrate, hRange, IMP, BLD, leadXY, leadDir, HEAT, FF, restNear, restNearest, restAt, updateHeat, isFireSet, fireTile, floorSet, clearGround: () => GROUND.clear(), get TOP_TIER() { return TOP_TIER; }, get OPEN_TIER() { return OPEN_TIER; }, lilArt, drawLilBody, LS, LSW, get ls() { return ls; }, FrostMirror, lsInWedge, lsIce, lsExPause, lsZone, lilDefeated, RD, RDW, RDF, rdOn, get rd() { return rd; }, KarmaBead, FrostMantra, IceLotus, rdAbsorb, rdInGap, rdExPause, rdSilence, rudDefeated, IMP, GoldImp, impOf, trySpawnImp, impDefeated, set impAt(v) { impAt = v; }, LUCK_N, PB, PBW, IMAP, IceWall, Fissure, IceSpear, segDist, FrostMgr, pbOn, pbClear, pbExPause, get pb() { return pb; }, gunMagN, ROLL, get lhead() { return lhead; }, KN, castLostHead, TW, isIceSlip, isIceSet, get ISPECIES() { return ISPECIES; }, ICE_SLIP, ICE_L, OPEN_TIER, TOP_TIER, renderHells, floorSet, pickFloor, iceTile, IF, get lhead() { return lhead; }, KN, isKnight, castLostHead, knightSlash, openGhostRoute, KNIGHT_FORMS, ghostForm, hTitle, relicIcon, heartMake, hOpt, heartBonus, calcShards, GRN, GRW, GRNF, spawnGrn, grnStart, grnPick, TRIAL, chAltarTick, chAltarPlace, chTrialStart, chTrialWin, chTime, chTime0, chDmgT, CH_HARD, CH_BOSS, cardDefs, cardView, ACH, achSync, achClear, openAch, KG, KGW, get kg() { return kg; }, AirGeyser, WaterMirror, MirrorBolt, kgIce, get shards() { return shards; }, set shards(v) { shards = v; }, VF, VFW, get vf() { return vf; }, VfTrap, VfSkull, VfHeart, vfLeech, fuseHearts, rerollHeart, heartBonus, renderFuse, setFu(v) { hFu = v; }, QN, QNW, get qn() { return qn; }, RootBind, SporeSack, QnMush, pickBossK, pctMelee, pctZone, updateDiff, skinG, bhKey, BH_ORDER, heartIcon, relicMaskOn, calcShards, isSlow, isLava, saveSave, svParse, spawnPlant, PL, get GSPECIES() { return GSPECIES; }, get plBalls() { return plBalls; }, synCard, freezeE, availSyn, SYNERGIES, dmName, FD, shkAdd, toxAdd, skSpawnPair, phoenixRevive, mirrorBlock, palPop, updateCutSaws, get shkSp() { return shkSp; }, get toxFl() { return toxFl; }, get zonesRef() { return zones; },
   bossDefeated, get IMG() { return IMG; },
   get ready() { return !!IMG.floorD; }, get state() { return state; }, get P() { return P; }, get enemies() { return enemies; }, get orbs() { return orbs; },
   get zones() { return zones; }, get ebul() { return ebul; }, get EYE() { return EYE; }, get shards() { return shards; }, get bigQ() { return bigQ; }, get bombQ() { return bombQ; }, get holyQ() { return holyQ; }, get afx() { return afx; }, get dashQ() { return dashQ; }, get beam() { return beam; }, get evo() { return evo; }, get choices() { return choices; },
