@@ -17,6 +17,7 @@ ANCHORS = [
  ('마하칼 루드라(v9.10: 업보 염주·침묵 진언·만트라·청련·8자 해탈)', r'^const RD = |^class KarmaBead|^function rdPull|^class FrostMantra|^class IceLotus|^class RudraAI|^function updateRudFx'),
  ('황금 악마 임프(v9.03: 21층~ 돌진·도망·10000조각)', r'^const IMP = |^class GoldImp|^function trySpawnImp|^function impDefeated'),
  ('팔한지옥의 백곰 마왕(v9.02: 빙결 투기장·장벽·눈보라·균열·핀볼)', r'^const PB = |^const IMAP = |^class IceWall|^const FrostMgr|^class Fissure|^class PolarBearAI|^function updateBearFx'),
+ ('7지옥 도산과 업경의 심판정(v9.71: 지하 31~35층 필드, 잠김 — 바닥·칼날 지대 출혈·잡몹 8종)', r'^const DF = |^function dosanTile|^const BLADE = |^function updateBlade|^function buildDosanSpecies|^const SET_IMGS'),
  ('팔열지옥 세트·열기·휴식존(v9.24: 지하 26~30층, 잠김)', r'^const FF = |^function fireTile|^const HEAT = |^function updateHeat|^function drawRestZones|^function drawHeatHud'),
  ('팔한지옥 세트(v8.99: 바닥·소품·미끄러운 얼음·잡몹)', r'^const IF = |^function iceTile|^function isIceSlip|^function buildIceSpecies|^const OPEN_TIER'),
  ('유령 기사·듀라한 폼(v8.98)', r'^const KNIGHT_FORMS'), ('유령 기사·잃어버린 머리 로직', r'^class SeveredHeadSummon|^function knightSlash|^function openGhostRoute'),
