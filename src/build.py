@@ -67,7 +67,6 @@ ASSETS = {
     '__GG__': 'gg/gg.webp',
     '__OC__': 'oc/oc.webp',
     '__LG__': 'lg/lg.webp',
-    '__OS__': 'os/os.webp',
     '__BS__': 'bs/bs.webp',
     '__SKB__': 'sk/skb.webp',
     '__SKW__': 'sk/skw.webp',
