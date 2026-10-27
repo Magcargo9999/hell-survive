@@ -15,6 +15,9 @@ SCENES = {
     'mboss': "()=>{const G=__G;G.SAVE.diff.max=9;G.SAVE.shards=9999;G.SAVE.diff.sel=7;G.startGame('ghost');G.P.bossK='skel';__lv(25);G.enemies.length=0;G.raiseCastle();G.enterArena();}",
     'sfield': "()=>{const G=__G;G.SAVE.diff.max=14;G.SAVE.shards=99999;G.SAVE.diff.sel=12;G.startGame('wolf');window.__rt=1;__lv(22);G.setT(560);for(let i=0;i<260;i++)G.spawnEnemy();}",
     'sboss': "()=>{const G=__G;G.SAVE.diff.max=14;G.SAVE.shards=99999;G.SAVE.diff.sel=12;G.startGame('ghost');G.P.bossK='skel';__lv(25);G.enemies.length=0;G.raiseCastle();G.enterArena();}",
+    'ghost0': "()=>{const G=__G;G.SAVE.chars.ghost=true;G.startGame('ghost');window.__rt=0;__lv(8);G.setT(560);for(let i=0;i<260;i++)G.spawnEnemy();}",   # v9.72 구슬 유령 0진화 (기준)
+    'ghost1': "()=>{const G=__G;G.SAVE.chars.ghost=true;G.startGame('ghost');window.__rt=0;__lv(12);G.setT(560);for(let i=0;i<260;i++)G.spawnEnemy();}",   # 연보라 총령 1진화
+    'ghost2': "()=>{const G=__G;G.SAVE.chars.ghost=true;G.startGame('ghost');window.__rt=0;__lv(22);G.setT(560);for(let i=0;i<260;i++)G.spawnEnemy();}",   # 수호령의 총령 최종
     'chal': "()=>{const G=__G;G.SAVE.ch.open=true;G.setChMode(true);G.startGame('octo');__lv(20);G.setT(900);for(let i=0;i<220;i++)G.spawnEnemy();}",
 }
 HOOK = """()=>{window.__ft=[];let l=performance.now();const f=t=>{window.__ft.push(t-l);l=t;requestAnimationFrame(f)};requestAnimationFrame(f);

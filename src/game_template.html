@@ -271,6 +271,10 @@
   .rc b { display: block; color: var(--text); font-size: 13px; }
   .rc.lock b { color: #6a5650; }
   .rc.trophy { border: 2px solid var(--gold); }
+  .rc.sk { cursor: pointer; } .rc.sk:hover { border-color: var(--gold); } .rc.pick { border-color: #ffd27a; box-shadow: 0 0 8px rgba(255,210,122,.55); }
+  .rc i { display: block; font-style: normal; font-size: 11px; color: #ffcf8a; margin-top: 2px; line-height: 1.25; }
+  .rsk { margin-top: 10px; padding: 8px 12px; max-width: min(640px, 92vw); border: 1px solid #6a3a30; border-radius: 8px; background: #140608; color: var(--muted); font-size: 13px; line-height: 1.5; text-align: left; }
+  .rsk b { color: #ffd27a; }
   .setg { margin: 12px 0 2px; color: var(--gold); font-weight: 700; font-size: 13px; text-align: left; }
   .etclist { width: min(560px, 92vw); }
   .etcrow { display: flex; align-items: center; justify-content: space-between; gap: 20px; text-align: left; }
@@ -411,6 +415,7 @@
 <div class="overlay" id="routeBox">
   <h2 id="routeTitle">진화 루트</h2>
   <div class="routewrap"><div id="routeTree"></div></div>
+  <div class="rsk" id="routeSkill"></div>
   <button id="routeClose" class="sm">닫기</button>
 </div>
 
@@ -962,7 +967,7 @@ function mkCanvas(w, h) { const c = document.createElement('canvas'); c.width = 
  * 0-1. 저장(영혼 조각 · 영구 강화 · 설정) / 캐릭터 목록 / 소리
  * ============================================================ */
 const SAVE_KEY = 'hellSurvivorSave1';
-const GAME_VER = 'v9.71';
+const GAME_VER = 'v9.72';
 const SAVE_DEF = () => ({
   shards: 0,
   perks: { hp: 0, spd: 0, dmg: 0, exp: 0, magnet: 0, banish: 0, revive: 0, regen: 0, shard: 0, critd: 0, choice: 0 },
@@ -1189,7 +1194,7 @@ function fireTile(tx, ty) {
   return grp[((h * 1000) | 0) % grp.length];
 }
 /* v9.24 열기: 팔열지옥 필드에 있으면 열기가 천천히 오른다(v9.68: 약 55초에 가득). 맵 곳곳의 휴식존(의식진) 안에 서 있으면 빠르게 식는다.
-   가득 차면 초당 최대 체력의 2.5%가 타들어 간다(보호막·무적 무시). 보스방·챌린지에는 없다. 휴식존은 820px 칸마다 하나(어디서든 가장 가까운 곳이 약 600px 안) */
+   가득 차면 초당 최대 체력의 2.5%가 타들어 간다(보호막·무적 무시). 챌린지에는 없고, 보스방은 26~29층만 있다(v9.72: 광장 안 고정 휴식존 4곳 · 30층 호랑이방은 없음). 휴식존은 820px 칸마다 하나(어디서든 가장 가까운 곳이 약 600px 안) */
 const HEAT = { fill: 1.8, cool: 24, burn: 0.025, tick: 0.5, grid: 820, r: 100, warn: 50 };   // v9.68 열기 2배 빠르게(0.9→1.8) · 휴식존 반경 118→100(-15%)
 function restAt(gx, gy) { return { x: (gx + 0.22 + 0.56 * hash2(gx, gy, 41)) * HEAT.grid, y: (gy + 0.22 + 0.56 * hash2(gx, gy, 43)) * HEAT.grid }; }
 function restNear(x, y, r) {   // 반경 r 안에 휴식존이 있으면 그 휴식존
@@ -1202,9 +1207,17 @@ function restNearest(x, y) {
   for (let j = -2; j <= 2; j++) for (let i = -2; i <= 2; i++) { const z = restAt(gx + i, gy + j), d = (z.x - x) ** 2 + (z.y - y) ** 2; if (d < bd) { bd = d; best = z; } }
   return best;
 }
+/* v9.72 보스방 열기: 지하 26~29층(P.tier 25~28) 마왕전에도 열기가 있다 — 광장 안 고정 휴식존 4곳(가운데 기준 좌우 ±780 · 위아래 −300/+330). 30층(호랑이)은 없음 */
+const HEAT_ARENA_MAX = 28, HEAT_ARENA_Z = [[-780, -300], [780, -300], [-780, 330], [780, 330]];
+const heatArena = () => !!(arena && arena.fire && isFireSet() && !chal && !rush && P.tier <= HEAT_ARENA_MAX);
+const heatOn = () => isFireSet() && !chal && (!arena || heatArena());
+function arenaRests() { const M = IMAP; return HEAT_ARENA_Z.map(([dx, dy]) => ({ x: M.cx + dx, y: M.cy + dy })); }
+function arenaRestNear(x, y, r) { for (const z of arenaRests()) if ((z.x - x) ** 2 + (z.y - y) ** 2 < r * r) return z; return null; }
+function arenaRestNearest(x, y) { let best = null, bd = 1e18; for (const z of arenaRests()) { const d = (z.x - x) ** 2 + (z.y - y) ** 2; if (d < bd) { bd = d; best = z; } } return best; }
 function updateHeat(dt) {
-  if (!isFireSet() || arena || chal) { P.heat = 0; P.inRest = false; return; }
-  P.inRest = !!restNear(P.x, P.y, HEAT.r);
+  if (!heatOn()) { P.heat = 0; P.inRest = false; P.heatA = false; return; }
+  if (!!arena !== !!P.heatA) { P.heat = 0; P.heatA = !!arena; }   // 필드 ↔ 보스방이 바뀌면 열기를 0에서 다시 시작
+  P.inRest = !!(arena ? arenaRestNear(P.x, P.y, HEAT.r) : restNear(P.x, P.y, HEAT.r));
   P.heat = clamp((P.heat || 0) + (P.inRest ? -HEAT.cool : HEAT.fill) * dt, 0, 100);
   if (P.inRest && rand() < 0.4) burst(P.x + (rand() - 0.5) * 30, P.y - 10, 1, ['#bfefff', '#ffffff'], 60, 0.6);
   if (P.heat >= 100) {
@@ -1218,10 +1231,11 @@ function updateHeat(dt) {
   } else P.heatTick = 0;
 }
 function drawRestZones(ox, oy, time) {   // 휴식존: 의식진 바닥(3배 nearest) + 시원한 빛 (코드로 그린 빛, 도트 색은 그대로)
-  if (!isFireSet() || !IMG.ffloor) return;
+  if (!isFireSet() || !IMG.ffloor || !heatOn()) return;
   const cx = -ox + W / 2, cy = -oy + H / 2, gx0 = Math.floor((cx - W / 2 - 200) / HEAT.grid), gx1 = Math.floor((cx + W / 2 + 200) / HEAT.grid), gy0 = Math.floor((cy - H / 2 - 200) / HEAT.grid), gy1 = Math.floor((cy + H / 2 + 200) / HEAT.grid);
-  for (let gy = gy0; gy <= gy1; gy++) for (let gx = gx0; gx <= gx1; gx++) {
-    const z = restAt(gx, gy), x = Math.round(z.x + ox), y = Math.round(z.y + oy), R = HEAT.r, pu = 0.5 + 0.5 * Math.sin(time * 2.2 + gx * 1.7 + gy);
+  const list = []; if (arena) arenaRests().forEach((z, i) => list.push([z, i, 0])); else for (let gy = gy0; gy <= gy1; gy++) for (let gx = gx0; gx <= gx1; gx++) list.push([restAt(gx, gy), gx, gy]);
+  for (const [z, gx, gy] of list) {
+    const x = Math.round(z.x + ox), y = Math.round(z.y + oy), R = HEAT.r, pu = 0.5 + 0.5 * Math.sin(time * 2.2 + gx * 1.7 + gy);
     if (x < -R - 20 || x > W + R + 20 || y < -R - 20 || y > H + R + 20) continue;
     ctx.save();
     const g = ctx.createRadialGradient(x, y, 8, x, y, R); g.addColorStop(0, `rgba(150,230,255,${0.30 + 0.10 * pu})`); g.addColorStop(0.7, 'rgba(90,170,255,0.14)'); g.addColorStop(1, 'rgba(60,120,255,0)');
@@ -1235,7 +1249,7 @@ function drawRestZones(ox, oy, time) {   // 휴식존: 의식진 바닥(3배 nea
   }
 }
 function drawHeatHud() {   // 열기 게이지 (화면 아래 가운데) + 열기가 오르면 가장 가까운 휴식존 방향
-  if (!isFireSet() || arena || chal) return;
+  if (!heatOn()) return;
   const q = clamp((P.heat || 0) / 100, 0, 1), w = Math.min(320, W * 0.5), x = W / 2 - w / 2, y = H - 72, pu = 0.5 + 0.5 * Math.sin(wallT * 9);
   ctx.save();
   if (q > 0.7) { const a = (q - 0.7) / 0.3 * (q >= 1 ? 0.30 + 0.12 * pu : 0.18); const g = ctx.createRadialGradient(W / 2, H / 2, Math.min(W, H) * 0.35, W / 2, H / 2, Math.max(W, H) * 0.7); g.addColorStop(0, 'rgba(255,60,0,0)'); g.addColorStop(1, `rgba(255,70,10,${a})`); ctx.fillStyle = g; ctx.fillRect(0, 0, W, H); }
@@ -1245,7 +1259,7 @@ function drawHeatHud() {   // 열기 게이지 (화면 아래 가운데) + 열�
   ctx.font = 'bold 13px ' + FONT; ctx.textAlign = 'center'; ctx.strokeStyle = '#1a0602'; ctx.lineWidth = 3;
   const tx = P.inRest ? `❄ 휴식존 — 열기 식는 중 ${Math.floor(P.heat)}%` : q >= 1 ? `🔥 열기 가득! 체력이 타들어 간다 — 휴식존(❄)으로` : `🔥 열기 ${Math.floor(P.heat)}%`;
   ctx.strokeText(tx, W / 2, y - 6); ctx.fillStyle = P.inRest ? '#d8f6ff' : q >= 1 ? '#ffd0b0' : '#ffe2c0'; ctx.fillText(tx, W / 2, y - 6); ctx.restore();
-  if (!P.inRest && P.heat >= HEAT.warn) { const z = restNearest(P.x, P.y); if (z) edgeArrow(z, '120,200,255', '❄', '#bfefff'); }
+  if (!P.inRest && P.heat >= HEAT.warn) { const z = arena ? arenaRestNearest(P.x, P.y) : restNearest(P.x, P.y); if (z) edgeArrow(z, '120,200,255', '❄', '#bfefff'); }
 }
 let ISPECIES = [];   /* v8.99 팔한지옥 잡몹 9종 (지하 21~25층, 칸 108×114 · 2프레임) — 순위 r이 높을수록 체력·공격·등장 시간이 오른다 */
 const ICE_MOB = [['빙하 슬라임', 8, 0, 0.9, 99], ['팽귄 병사', 6, 1, 1.1, 100], ['한빙 작은 귀신', 4, 2, 1.15, 100], ['빙저의 기어가는 시체', 5, 3, 0.95, 49], ['설한 늑대령', 2, 4, 1.25, 72],
@@ -1638,8 +1652,8 @@ function enterArena() {
     if (boss && boss.bk === 'skel') tx += '\n스켈레톤 마왕: 정면에 서 있으면 대검으로 내려찍는다 · 체력 66%·33%에 결계(무적) · 첨탑 20초 방치 시 체력 15% 회복 · 해골 전사 2마리 소환';
     if (boss && boss.bk === 'shk') tx += '\n거대 버섯마귀: 바닥에 그림자가 생기면 거대 포자가 떨어진다 (독 장판이 남는다) · 체력 75%·50%·25%에 버섯 군단 소환 — 다 잡을 때까지 받는 피해 -50%';
     if (boss && boss.bk === 'vft') tx += '\n파리지옥 마왕: 나에게 입힌 피해 비율(내 최대 체력 대비 %)만큼 체력을 흡혈한다 · 붉은 포자 = 부채꼴 다발(맞으면 출혈) · 하트 = 닿으면 매혹(보스 쪽으로 끌려감) · 붉은 원 = 내 이동 경로를 예측한 포식의 덫(멈추거나 방향을 바꾸기) · 해골은 달려와 자폭(붙기 전에 베기) · 체력 30% 끝없는 갈증(하트 파동은 밝은 통로로)';
-    if (boss && boss.bk === 'tig') tx += '\n지옥의 화염 호랑이 (지하 30층 최종 마왕): 가운데 불의 십자가가 5초 돌고 2초 불을 뿜는다(팔 끝 바깥 · 팔 사이가 안전) · 패턴을 안 맞고 3번 연속 넘기면 기절\n가드 자세(2초)에 때릴수록 반격 폭발이 커진다 · 멸옥 수플렉스 = 안전지대로! (잡히면 현재 체력 80%) · 체력 40%부터 화면이 호랑이를 따라가고 점선 리듬 돌진';
-    if (boss && boss.bk === 'snk') tx += '\n불구렁이 (지하 28층 마왕): 몸통 마디에 닿아도 아프고, 마디를 때려도 마왕에게 들어간다 · 땅속으로 사라지면 균열이 굳어 용암 참호(벽)가 되고 마지막에 내 자리로 솟구친다(붉은 원 밖으로)\n입을 벌리면 부채꼴로 빨아들인다(버티며 옆으로) · 용암 벽에 갇히면 투사체가 되돌아온다 — 튀어나온 머리에 바짝 붙어 5번 때리기 · 체력 30%부터 보스방 전체를 감싸는 똬리';
+    if (boss && boss.bk === 'tig') tx += '\n지옥의 화염 호랑이 (지하 30층 최종 마왕): 가운데 불의 십자가가 쉬지 않고 돈다 — 5초는 짧게, 2초는 팔이 벽까지 뻗어 불을 뿜는다(팔 끝 바깥 · 팔 사이가 안전) · 패턴을 안 맞고 3번 연속 넘기면 기절\n가드 자세(2초)에 때릴수록 반격 폭발이 커진다 · 멸옥 수플렉스 = 안전지대로! (잡히면 현재 체력 80%) · 체력 40%부터 화면이 호랑이 쪽으로 기울고(리듬 돌진 때 더 많이) 점선 리듬 돌진';
+    if (boss && boss.bk === 'snk') tx += '\n불구렁이 (지하 28층 마왕): 몸통 마디에 닿아도 아프고, 마디를 때려도 마왕에게 들어간다 · 땅속으로 사라지면 균열이 굳어 용암 참호(벽)가 되고 마지막에 내 자리로 솟구친다(붉은 원 밖으로)\n입을 벌리면 부채꼴로 빨아들인다(버티며 옆으로) · 용암 벽에 갇히면 투사체가 되돌아온다 — 튀어나온 머리에 바짝 붙어 5번 때리기 · 체력 30%부터 보스방 전체를 감싸는 똬리 — 똬리 동안은 몸통에 피해가 안 들어가고 가장자리를 도는 머리만 때릴 수 있다';
     if (boss && boss.bk === 'cvt') tx += '\n영벌의 화염죄수 (지하 26층 마왕): 지나간 자리에 지옥불이 오래 남는다(밟으면 화상이 쌓인다) · 주황 예고선 = 쇠사슬(묶이면 5.5초 동안 붉은 원과 바깥 고리 사이에 머물기)\n용광로의 저주 = 구슬이 5초 불탐(식을 때까지 피하기) · 무릎 꿇고 붉은 오라 = 때리면 고통 반사(사거리 밖으로) · 체력 30%부터 예고선을 따라 광폭 돌진';
     if (boss && boss.bk === 'lil') tx += '\n팔한지옥의 대공작 릴세르카 (지하 25층 최종 마왕): 둘레의 결정화 영역에 머물면 동상(100%면 3초 이속·공속 -80%) — 치고 빠지기, 1.5초 벗어나면 초기화\n왈츠 = 내 스포트라이트를 따라가기(밖이면 얼어붙는 시선) · 거울 = 투사체가 3갈래로 반사(깨지면 0.2초 경직) · 체력 25%부터 얼음판 위 회전 안전지대';
     if (boss && boss.bk === 'rud') tx += '\n마하칼 루드라: 얼음 염주는 내 투사체를 끌어당겨 삼키고, 염주 둘레의 마왕에게 가는 피해도 삼킨다(업보 24 = 폭발) — 마왕을 염주에서 떼어 놓기\n푸른 진언 고리에 닿으면 침묵(3초 기본 공격 봉인 · 스킬은 반사) — 고리의 통로로 · 꺾인 얼음 줄 = 만트라 · 붉은 원 = 연꽃 폭발 · 체력 30%부터 8자로 질주하며 지뢰';
@@ -1649,6 +1663,7 @@ function enterArena() {
     if (boss && boss.bk === 'adm') tx += '\n썩어버린 해군 제독: 가까이 붙으면 닻을 빠르게 후려친다(한 번 피하고 다시 붙기) · 파란 줄 = 닻(맞으면 기절 + 끌려감) · 파란 원 = 포탄이 떨어질 자리 · 유령 함포는 부술 수 있다 · 체력 60%에 어인 수병 · 30%에 발악(함포 6문 일제 사격)';
     if (boss && boss.bk === 'tox') tx += '\n이독버섯 마왕: 지나간 자리에 맹독 웅덩이가 오래 남는다 · 분홍 원 = 살점이 떨어질 자리(돌연변이 버섯이 튀어나와 자폭) · 혈관 폭발 = 독 안개(이속·재생 -50%) · 체력 70%·50%에 독 역류 · 25%에 본체가 녹아 독 늪 + 핵심 포자 돌진';
     if (boss && boss.bk === 'angel') tx += '\n타락천사: 붉은 함정은 박자를 어기고 늦게 터진다 · 방패를 들면 등 뒤에서 공격 · 체력 70%에 흑화(원거리)';
+    if (heatArena()) tx += '\n🔥 보스방에도 열기가 오른다 — 광장 네 곳의 휴식존(❄)에서 식힐 수 있다 (가득 차면 체력이 타들어 간다)';
     banner = { txt: tx, t: 9, c: sealed ? '#ff8a7a' : '#ffe28a' };
   });
 }
@@ -5539,7 +5554,7 @@ function cvDexArt(g, w, h, l) {   // 도감 그림
 /* ---------- v9.46 불구렁이 (지하 28층 100% · 29층 70% · 30층은 v9.63부터 화염 호랑이 전용 · 팔열지옥 보스방 = 마왕성 ARENA) — 지옥의 땅을 파헤치며 죄인을 사냥하는, 용암으로 이루어진 거대한 뱀의 형벌자 ----------
    아틀라스 IMG.snk / SNF (tools/atlas/snk_build.py ← 컨셉 시트 한 장: 인게임 줄 대기6·이동8·잠복6·돌출6·공격6·피격4·사망6 + '체표(용암)' 칸을 둥글게 자른 몸통 마디 무늬, 자르기·배경 제거·마스크만)
    시트: 이동·공격·피격 줄은 오른쪽을 본다(대기·잠복·돌출·사망은 정면) · 그리기 ×3 nearest
-   다관절 몸: 머리(보스 본체) 뒤로 몸통 마디(SNW.nodes) 10개(2페이즈 20개)가 줄줄이 따라온다 — 마디에 닿으면 피해, 마디를 때리면 마왕에게 50%(똬리 60%)가 들어간다
+   다관절 몸: 머리(보스 본체) 뒤로 몸통 마디(SNW.nodes) 10개(2페이즈 20개)가 줄줄이 따라온다 — 마디에 닿으면 피해, 마디를 때리면 마왕에게 50%가 들어간다(똬리 동안은 몸통 무피해 · 머리만)
      (마디는 enemies의 kind 'snb' 대리 히트박스 · 피해는 hurtEnemy 맨 앞 snNodeHit 이 마왕에게 넘긴다 · 한 프레임에 한 번만 → 범위 공격이 마디 수만큼 곱해지지 않게)
    상태 머신(SerpentAI.update 의 switch): intro(돌출) → chase(느린 추적) ⇄ 순환 [burrow → devour → encircle → burrow → devour] (각자 쿨타임) · 가까우면 bite 물어뜯기(앞 부채꼴)
    A burrow  : 파열하는 대지 — 잠복(0.9초) → 땅속을 헤엄치며 맵을 3번(2페이즈 4번) 가로지른다. 지나간 자리에 균열(0.75초 예고) → '용암 참호'가 되어 10초 동안 벽(이동 불가 · 닿으면 화상)
@@ -5554,11 +5569,11 @@ function cvDexArt(g, w, h, l) {   // 도감 그림
    D bite    : 물어뜯기 — 가까울 때 앞 부채꼴(0.6초 예고, 0.3초 동안 따라오다 고정)
    체력 30% '종말의 똬리': 2.2초 포효(무적) → 몸이 두 배로 길어지고, 보스방 가장자리를 따라 원을 그려 똬리를 튼다(1.8초 예고 → 20초)
      · 똬리 밖으로 나갈 수 없고, 똬리는 16초 동안 65%까지 좁아진다(가장 작을 때 안쪽이 가로 약 480 · 세로 약 280) · 머리가 1.1초마다 똬리 안쪽에 용암 기둥 2개(1개는 내 자리, 0.9초 예고)
-     · 똬리 몸통 어디를 때려도 마왕에게 60% — 20초 안에 최대한 깎는 DPS 체크 · 20초가 지나면 똬리를 풀고 다시 순환(30초 뒤 다시 똬리)
+     · v9.72: 똬리 몸통에는 피해가 안 들어간다(탄도 몸통을 통과) — 가장자리를 천천히 도는 머리만 때릴 수 있다 · 20초 안에 머리를 최대한 깎는 DPS 체크 · 20초가 지나면 똬리를 풀고 다시 순환(30초 뒤 다시 똬리)
      (원안의 '중심으로 끝까지 좁혀 오는 자기장'은 안전한 곳이 사라져 규칙 9에 걸리므로 65%에서 멈추고 20초 뒤 풀리게 했다)
    규칙 9: 잠복·포식·포위·똬리 중과 참호가 있는 동안에는 난이도 추가 패턴(tierEx)을 멈춘다 (tools/tests/snk946.py) */
 const SN = { hp: 1.5, dm: 1.0, K: 3, r: 70, sp: 95, sp2: 125,
-  nN: 10, nGap: 40, nR0: 44, nR1: 20, tailX: 100, bump: 14, bump2: 18, bodyK: 0.5, bodyK2: 0.6,
+  nN: 10, nGap: 40, nR0: 44, nR1: 20, tailX: 100, bump: 14, bump2: 18, bodyK: 0.5,
   biR: 240, biHalf: 0.8, biWarn: 0.6, biAim: 0.3, biDm: 22, biCd: 3.2,
   buCd: 16, buCd2: 12, dig: 0.9, tuSp: 560, tuSp2: 680, legs: 3, legs2: 4, legMin: 420, legNear: 110, crSeg: 46, crWarn: 0.75, crLife: 10, crLife2: 12, crW: 22, crDm: 14, crDot: 0.03,
   emAim: 0.4, emWarn: 1.6, emR: 170, emRmin: 60, emDm: 26, emOrbs: 7, emVal: 0.025, emUp: 0.8, slow: 150,
@@ -5628,7 +5643,7 @@ class SnakeNode {
   update(dt) {
     this.t += dt; this.flash = Math.max(0, this.flash - dt); this.kx = 0; this.ky = 0; this.hp = 1e9;
     if (!snOn()) { this.hp = 0; return; }
-    const n = SNW.nodes[this.i], live = n && n.on && !boss.under && !boss.invul;
+    const n = SNW.nodes[this.i], live = n && n.on && !boss.under && !boss.invul && !SNW.coil;   // v9.72 똬리 동안엔 몸통을 못 때린다(탄도 통과) — 머리만
     this.invul = !live; if (!live) { this.x = -99999; this.y = -99999; return; }
     this.r = n.r; this.x = n.x; this.y = n.y + n.r * 0.6;
   }
@@ -5636,7 +5651,7 @@ class SnakeNode {
 }
 function snNodeHit(e, dmg, quiet) {   // 마디를 때렸다 → 마왕에게 일부만 (한 프레임에 한 번)
   if (!snOn() || boss.invul || boss.under || SNW.fwT === gt) return;
-  SNW.fwT = gt; e.flash = 0.1; hurtEnemy(boss, dmg * (boss.ph2 && SNW.coil ? SN.bodyK2 : SN.bodyK), 0, 0, 0, quiet);
+  SNW.fwT = gt; e.flash = 0.1; hurtEnemy(boss, dmg * SN.bodyK, 0, 0, 0, quiet);
 }
 function snSyncProxies() {   // 마디 수만큼 대리 히트박스를 둔다 (누가 지웠으면 다시)
   const N = SNW.nodes.length;
@@ -5767,7 +5782,7 @@ class SerpentAI {
     SNW.coil = { cx: H.cx, cy: H.cy, rx: H.rx, ry: H.ry, k: 1, a: a0, form: 0, t: 0, closed: false };
     e.under = false; e.invul = true; this.go('coilForm', SN.coForm, 'walk'); this.plT = 1.2;
     floatNum(e.x, e.y - 300, '종말의 똬리!', '#ff6a3a'); sfx('evolve');
-    banner = { txt: '불구렁이: 종말의 똬리!  거대한 몸이 보스방 가장자리를 감싼다 — 밖으로 나갈 수 없고 점점 좁혀 온다\n똬리 몸통 어디를 때려도 마왕에게 들어간다 (60%) · 20초 안에 최대한 깎으세요 · 용암 기둥(붉은 원)을 피하며', t: 6, c: '#ff8a5a' };
+    banner = { txt: '불구렁이: 종말의 똬리!  거대한 몸이 보스방 가장자리를 감싼다 — 밖으로 나갈 수 없고 점점 좁혀 온다\n몸통에는 피해가 안 들어간다 — 가장자리를 도는 머리만 때리세요 · 20초 안에 최대한 깎으세요 · 용암 기둥(붉은 원)을 피하며', t: 6, c: '#ff8a5a' };
   }
   coilNodes(C) {   // 똬리: 마디를 타원 위에 고르게 · 머리는 그 앞
     const e = this.e, N = SN.nN * 2, L = SNW.nodes; while (L.length < N) L.push({ x: e.x, y: e.y, r: SN.coR, on: false }); L.length = N;
@@ -6087,18 +6102,18 @@ function snDexArt(g, w, h, l) {   // 도감 그림
    아틀라스: 몸 IMG.tig / TGF (tools/atlas/tig_build.py ← 보스 시트, 줄 대기6(앞 3 정면 · 뒤 3 포효)·이동8·공격4·돌진6, 1/3 축소 → ×3 nearest, 이동·공격·돌진 줄은 오른쪽을 봄)
              이펙트 IMG.tigfx / TGX (tools/atlas/tigfx_build.py ← 이펙트·기믹 시트, 1/2 축소, 설명 글씨는 뺌) — 가드·기절·잡기·점프·내리꽂기·빛의 쇄도는 이 시트의 호랑이 그림을 몸 대신 쓴다
    상태 머신(TigerAI.update 의 switch): intro(포효) → chase ⇄ 순환 [dash 연속 돌진 → guard 가드 → suplex 멸옥 수플렉스 → dash → guard] (각자 쿨타임) · 가까우면 claw 할퀴기
-   맵 기믹 — 회전하는 불의 십자가(TGW.cr): 보스방 가운데에서 팔 4개(길이 560)가 시계 방향으로 5초 돌고 → 2초 불 뿜기(0.6초 예고 뒤 멈춘 팔이 광장 벽까지 뻗음) → 다시 5초 … 닿으면 아주 아프다
-     (규칙 9: 돌 때는 팔 끝 바깥(반경 600 밖)이 늘 안전, 불 뿜기 때는 멈춰 있어서 팔 사이 네 구역이 안전 · 아래 출구 통로로는 뻗지 않는다)
+   맵 기믹 — 회전하는 불의 십자가(TGW.cr): 보스방 가운데에서 팔 4개(길이 560)가 시계 방향으로 쉬지 않고 돈다(v9.72) — 5초 도는 동안 길이 560 → 2초 불 뿜기(0.6초 예고 뒤 도는 채로 팔이 광장 벽까지 뻗음, 길이는 매 프레임 다시 잰다) → 다시 5초 … 닿으면 아주 아프다
+     (규칙 9: 돌 때는 팔 끝 바깥(반경 600 밖)이 늘 안전, 불 뿜기 때도 느리게(초당 0.4rad) 돌아 팔 사이 네 구역이 안전(1.4초 동안 약 32° 이동 — 사이 구역 가운데는 ±41°) · 아래 출구 통로로는 뻗지 않는다)
    완벽 회피: 보스 패턴(연속 돌진·가드 반격·수플렉스·할퀴기·리듬 돌진) 하나를 한 대도 안 맞고 넘길 때마다 +1(맞으면 0) → 3번 연속이면 십자가가 잠시 사라지고 보스가 4초 기절
    A guard  : 가드 자세 2초 — 받는 피해 0. 그동안 맞힌 횟수(0.08초에 한 번 셈)만큼 바로 이어지는 반격 폭발이 커지고 빨라진다:
               반경 130 × 1.06^횟수(최대 400) · 그다음 돌진 속도 × 1.04^횟수(최대 1.8)  (원안의 기하급수를 그대로 쓰되 상한을 둠 — 반경 원이 보이는 채로 커지므로 멀어지면 피한다, 규칙 9)
    B dash   : 연속 돌진 3번 — 예고 화살표(0.55초, 앞 0.2초는 나를 따라오다 고정) → 초당 1600으로 쇄도(내 자리 260 너머까지) → 방향 전환 → … → 급정지 근접 타격(앞 부채꼴 0.45초 예고)
-   C suplex : 멸옥 수플렉스 — '!!! 멸옥 수플렉스 !!!' 경고 + 내 둘레 220~330 거리에 안전지대(산소존만 한 크기) 2.6초 → 빛의 속도로 쇄도해 멱살 잡기
+   C suplex : 멸옥 수플렉스 — '!!! 멸옥 수플렉스 !!!' 경고 + 내 둘레 240~310 거리에 안전지대(v9.72: 반경 95→75 · 경고 2.6→2.2초 · 가장 느린 이속 150으로도 닿을 수 있게 거리는 이속×경고 안) → 빛의 속도로 쇄도해 멱살 잡기
               안전지대 안이거나 무적(맞은 직후 무적 시간·구르기·강하·파도 등)이면 빗나가고, 아니면 확정으로 잡힌다 → 들고 높이 점프 → 내리꽂기:
               맵의 모든 잡몹 즉사 + 내 '현재 체력'의 정확히 80% (현재 체력 비례라 이것만으로는 죽지 않는다) · 수플렉스 동안 십자가는 멈추고, 안전지대는 십자가 팔에서 떨어진 곳에만 생긴다
    D claw   : 할퀴기 — 가까울 때 앞 부채꼴(0.55초 예고)
    체력 40% '포식자의 추적': 2.4초 포효(무적) — 목의 염주가 깨지고 불의 십자가가 완전히 사라진다
-     · 카메라가 나 대신 호랑이를 따라간다(화면 밖으로 밀리면 화면 가장자리에 끌려온다) · 이속 = 내 이속 × 1.5 (거리 320을 두고 맴돈다 — 몸통 피해는 돌진 중에만)
+     · 카메라가 호랑이 쪽으로 기운다(v9.72: 평소 15% · 리듬 돌진 때 70%, 끝나면 1.5/초로 내게 돌아온다 — 계속 따라가 어지럽던 것을 고침 · 화면 밖으로 밀리면 화면 가장자리에 끌려온다) · 이속 = 내 이속 × 1.5 (거리 320을 두고 맴돈다 — 몸통 피해는 돌진 중에만)
      · 리듬 회피 돌진: 바닥에 점선 화살표를 먼저 보여 주고(0.9초) 박자마다 한 줄씩 쇄도 — 직선 4박(박마다 나를 다시 겨눔) / 꺾기 3줄 / 연속(평행 3줄, 간격 200) / X자 / 곡선
        (줄 폭 52 — 줄에서 직각으로 70px만 비키면 산다 · 가장 느린 이속 150으로 0.47초 · 줄마다 0.45초 이상 미리 보임 → 규칙 9) · 3번째마다 가드
    규칙 9: 십자가에 다른 패턴이 겹치지 않게 이 마왕은 난이도 추가 패턴(tierEx)을 쓰지 않는다 (tools/tests/tig963.py) */
@@ -6108,7 +6123,7 @@ const TG = { hp: 1.7, dm: 1.0, K: 3, r: 80, sp: 115, bump: 16,
   clR: 230, clHalf: 0.75, clWarn: 0.55, clAim: 0.25, clDm: 24, clCd: 3,
   gdCd: 17, gd: 2, gdIcd: 0.08, cxR0: 130, cxK: 1.06, cxRmax: 400, cxWarn: 0.7, cxDm: 22, spK: 1.04, spMax: 1.8,
   dsCd: 9, dsN: 3, dsWarn: 0.55, dsAim: 0.2, dsSp: 1600, dsOver: 260, dsW: 60, dsDm: 22, finR: 220, finHalf: 0.9, finWarn: 0.45, finDm: 24,
-  sxCd: 24, sxWarn: 2.6, sxR: 95, sxRy: 0.6, sxD0: 220, sxD1: 330, sxPct: 0.8, sxHold: 1.75,
+  sxCd: 24, sxWarn: 2.2, sxR: 75, sxRy: 0.6, sxD0: 240, sxD1: 310, sxPct: 0.8, sxHold: 1.75,
   ph2: 0.4, roar: 2.4, p2K: 1.5, p2Max: 430, p2Dist: 320, prowl: 1.0, rwWarn: 0.9, rwBeat: 0.45, rwLine: 0.65, rwLock: 0.15, rwSp: 1700, rwW: 52, rwDm: 22, rwOver: 260, rwGap: 200, rwLen: 450 };
 const TGF = {"idle": [[0, 0, 76, 95, 37.9, 94], [77, 0, 89, 94, 50.2, 93], [167, 0, 94, 95, 50.0, 94], [262, 0, 100, 89, 54.6, 88], [363, 0, 81, 90, 37.9, 89], [445, 0, 79, 90, 42.4, 89]], "walk": [[0, 96, 72, 69, 48.4, 68], [73, 96, 70, 68, 31.6, 67], [144, 96, 70, 66, 34.3, 65], [215, 96, 67, 68, 34.7, 67], [283, 96, 75, 68, 49.2, 67], [359, 96, 67, 66, 39.2, 65], [427, 96, 71, 67, 41.9, 66], [499, 96, 66, 67, 41.8, 66]], "atk": [[0, 166, 117, 76, 65.3, 75], [118, 166, 104, 77, 58.9, 76], [223, 166, 110, 79, 58.2, 78], [334, 166, 128, 75, 67.5, 74]], "dash": [[0, 246, 72, 76, 41.3, 75], [73, 246, 94, 67, 61.8, 66], [168, 246, 116, 77, 67.6, 76], [285, 246, 95, 83, 45.1, 82], [381, 246, 87, 85, 50.4, 84], [469, 246, 106, 93, 71.0, 92]]};
 const TGX = {"cross": [[0, 0, 62, 57], [63, 0, 78, 61], [142, 0, 103, 72], [246, 0, 88, 74]], "cring": [[335, 0, 72, 36]], "jet": [[408, 0, 133, 59]], "cwarn": [[542, 0, 63, 68]], "czone": [[0, 75, 65, 47]], "cvanish": [[66, 75, 68, 62], [135, 75, 40, 58], [176, 75, 40, 52]], "stun": [[217, 75, 102, 76]], "guard": [[320, 75, 56, 60], [377, 75, 64, 64], [442, 75, 53, 66]], "counter": [[496, 75, 36, 40], [533, 75, 51, 38], [0, 152, 74, 54], [75, 152, 86, 74]], "dwarn": [[162, 152, 74, 24]], "ghost": [[237, 152, 57, 64]], "burst": [[295, 152, 50, 61]], "turn": [[346, 152, 46, 50]], "land": [[393, 152, 72, 60]], "sxwarn": [[466, 152, 82, 50]], "sxdash": [[549, 152, 70, 54]], "grab": [[0, 227, 59, 64]], "jump": [[60, 227, 69, 70]], "slam": [[130, 227, 87, 66]], "quake": [[218, 227, 89, 84]], "safe": [[308, 227, 73, 52]], "danger": [[382, 227, 76, 54]], "ghit": [[459, 227, 38, 61]], "resid": [[498, 227, 41, 55]], "beads": [[540, 227, 98, 55]], "phase": [[0, 312, 91, 53]], "rstr": [[92, 312, 14, 49]], "rzig": [[107, 312, 54, 41]], "rtri": [[162, 312, 42, 48]], "rx": [[205, 312, 40, 44]], "rcurve": [[246, 312, 48, 46]], "spark": [[295, 312, 32, 42]], "crack": [[328, 312, 44, 46]], "smoke": [[373, 312, 43, 48]]};
@@ -6165,6 +6180,7 @@ function tgCrossUpdate(dt) {
     C.t += dt;
     if (C.ph === 'spin') { C.a += TG.crOm * dt; if (C.t >= TG.crSpin) { C.ph = 'breath'; C.t = 0; C.fired = false; C.len = [0, 1, 2, 3].map(k => tgArmLen(C.a + k * Math.PI / 2)); sfx('skill'); } }
     else {
+      C.a += TG.crOm * dt; C.len = [0, 1, 2, 3].map(k => tgArmLen(C.a + k * Math.PI / 2));   // v9.72 불 뿜는 동안에도 계속 돈다(팔 길이는 매 프레임 벽까지 다시 잰다)
       if (!C.fired && C.t >= TG.crBrWarn) { C.fired = true; shake = Math.max(shake, 7); sfx('boom'); }
       if (C.t >= TG.crBr) { C.ph = 'spin'; C.t = 0; }
     }
@@ -9520,13 +9536,16 @@ function hq(img, k = (img === IMG.skelF || img === IMG.liz0 || img === IMG.liz1 
   if (!c) { c = mkCanvas(img.width * k, img.height * k); const g = c.getContext('2d'); g.imageSmoothingEnabled = false; g.drawImage(img, 0, 0, c.width, c.height); HQ.set(img, c); }
   return c;
 }
+/* v9.72 연보라 총령 1진화 렉: 1진화부터 쓰는 gg·dk 시트(1600px)가 2배 확대 캔버스(520만 픽셀)로 만들어져 첫 그림에서 0.2초 끊기고 매 프레임 크게 줄여 그렸다 — 몸을 줄여 그리는 형태(ws<1)는 원본 그대로 그린다 */
+const hqLow = (img, ws) => ((img === IMG.gg || img === IMG.dk) && ws < 1) ? hq(img, 1) : hq(img);
 const formImg = (route, form) => { const rf = ROUTE_FORMS[rk(route, form)] && ROUTE_FORMS[rk(route, form)][form]; return form === 0 ? IMG.base : rf ? IMG[rf.src] : form === 1 ? IMG.pup : IMG.dark; };
 const wolfImg = () => (P.char === 'gun' || P.char === 'archer' || P.char === 'snail' || P.char === 'chimera' || P.char === 'lizard' || P.char === 'twins' || P.char === 'fish' || P.char === 'ghost' || P.char === 'octo') ? IMG[FD().src] : formImg(P.route, P.form);
 function ensureTint(form) {
   if (P.char === 'chimera') return;
   if (P.char === 'lizard') { hq(IMG[lizForm(P.route, form).src]); return; }
   if (P.char === 'twins') { hq(IMG[TWIN_FORMS[form].src]); return; }
-  if (P.char === 'ghost' || P.char === 'octo' || P.char === 'gun' || P.char === 'fish') return;
+  if (P.char === 'ghost') { const D = ghostForm(P.route, form); if (D && IMG[D.src]) hqLow(IMG[D.src], D.ws); return; }   // v9.72 진화 연출 중에 미리 만들어 둔다
+  if (P.char === 'octo' || P.char === 'gun' || P.char === 'fish') return;
   hq(P.char === 'archer' ? IMG[archerForm(P.route, form).src] : formImg(P.route, form));   // 진화 직전에 미리 만들어 두어 끊김을 막는다
 }
 function drawPreview(c, k) {
@@ -12124,7 +12143,9 @@ function update(dt) {
   globs = globs.filter(g => !g.done);
 
   updateFx(dt);
-  const camB = tgCam(), camX = camB ? boss.x : P.x, camY = camB ? boss.y - 60 : P.y - 20, camK = camB ? 5 : 8;   // v9.63 화염 호랑이 2페이즈: 카메라가 호랑이를 따라간다
+  const camB = tgCam();   // v9.63 화염 호랑이 2페이즈 카메라 → v9.72: 호랑이 쪽으로 기울기만 한다 — 평소 15% · 리듬 돌진 때 70%, 끝나면 천천히 내게 돌아온다(계속 호랑이만 쫓아 어지럽던 것)
+  if (camB) { const busy = !!TGW.rw || boss.st === 'rwPre' || boss.st === 'rwRun' || boss.st === 'rwEnd'; TGW.camW = (TGW.camW || 0) + ((busy ? 0.7 : 0.15) - (TGW.camW || 0)) * Math.min(1, dt * 1.5); } else TGW.camW = 0;
+  const cw = camB ? TGW.camW : 0, camX = P.x + (camB ? (boss.x - P.x) * cw : 0), camY = P.y - 20 + (camB ? (boss.y - 60 - (P.y - 20)) * cw : 0), camK = camB ? 4 : 8;
   cam.x += (camX - cam.x) * Math.min(1, dt * camK);
   cam.y += (camY - cam.y) * Math.min(1, dt * camK);
   if (arena) {   // 성 내부: 지도 밖은 보여주지 않는다
@@ -12562,7 +12583,7 @@ function sprTop(img, sx, sy, w, h) {   // v5.11: 프레임에서 처음 보이�
   return (m[k] = t);
 }
 function drawWolf(x, y) {
-  const D = FD(), a = (P.anim === 'attack' && D.anim.frenzy && P.altAtk) ? D.anim.frenzy : D.anim[P.anim] || (P.anim === 'atkMove' ? D.anim.attack : D.anim.idle), img = wolfImg(), H = hq(img), K = H.width / img.width;
+  const D = FD(), a = (P.anim === 'attack' && D.anim.frenzy && P.altAtk) ? D.anim.frenzy : D.anim[P.anim] || (P.anim === 'atkMove' ? D.anim.attack : D.anim.idle), img = wolfImg(), H = hqLow(img, D.ws), K = H.width / img.width;
   let f = Math.floor(P.animT * a.fps);
   f = P.anim === 'idle' || P.anim === 'walk' ? f % a.n : clamp(f, 0, a.n - 1);
   const ws = D.ws * (a.sc || 1) * (evo && !evo.swapped ? 1 + Math.sin(evo.t * 20) * 0.03 : 1);
@@ -12733,6 +12754,7 @@ function render() {
   }
 
   const wx = x => x - cx + W / 2, wy = y => y - cy + H / 2;
+  if (arena && heatArena()) drawRestZones(W / 2 - cx, H / 2 - cy, wallT);   // v9.72 보스방 휴식존 (바닥 위)
 
   // 영혼 구슬
   ctx.imageSmoothingEnabled = false;
@@ -15204,10 +15226,26 @@ const ROUTE_TREE = {   // [키, 다음 형태…] — 키는 도감(charDexData)
   twins: ['twins:0', ['twins:1', 'twins:2']],
   fish: ['fish:0', ['fish:1', 'fish:2']],
 };
+/* v9.72 진화 루트 그림: 해금한 캐릭터는 형태마다 얻는 스킬을 볼 수 있다 (형태를 누르면 설명) — 키 = 도감 항목 key, 값 = 그 형태로 진화할 때 얻는 스킬 (1진화에는 없음 · 연보라 총령·문어 마법사·사슬 악마 예외) */
+const DEX_SKILL = { 'wolf:2': ['howl'], 'wolf:2t': ['cerb'], 'wolf:2c:blood': ['drain'], 'wolf:2c:holy': ['bloodrain'], 'wolf:2c:fallen': ['bsigil'],
+  'snail:V2': ['blast'], 'snail:L2': ['lavaburst'], 'snail:L3': ['lavaburst'], 'snail:B2': ['megabomb'],
+  'archer:2:skel': ['darkarrow'], 'archer:2:red': ['bombshot'], 'archer:2:holy': ['holyshot'],
+  'chimera:2': ['dive'], 'chimera:f2': ['breath'], 'chimera:d2': ['rush'],
+  'lizard:2:rage': ['rage'], 'lizard:2:water': ['tide'], 'lizard:2:guard': ['shell'],
+  'octo:1': ['ele'], 'octo:2': ['otent'], 'gun:2': ['roll'], 'fish:2': ['vwave'],
+  'ghost:1': ['gcharge'], 'ghost:2': ['gsummon'], 'ghost:2k': ['lhead'], 'twins:1': ['whip'], 'twins:2': ['whip'] };
+let routeOwn = false;
+const dexSkName = (fk, k) => (k === 'blast' && fk === 'snail:V2') ? '맹독 대폭파' : (k === 'darkarrow' || k === 'bigarrow') && fk === 'archer:2:skel' ? SKILLS[k].name : SKILLS[k].name;
+function routeSkillShow(o, ks, fk) {   // 형태를 누르면 아래 칸에 스킬 설명
+  const box = $('routeSkill'), nm = o && o.on ? o.name : '아직 보지 못한 형태';
+  box.innerHTML = ks && ks.length ? `<b>${nm}</b> — 얻는 특수 스킬 (SPACE)<br>` + ks.map(k => `<br><b>★ ${dexSkName(fk, k)}</b> · ⏱ 쿨타임 ${SKILL_CD[k] || 14}초<br>${SKILLS[k].desc}<br><span style="color:#c9a98a">${SKILLS[k].sub || ''}</span>`).join('<br>')
+    : `<b>${nm}</b><br>이 형태는 특수 스킬이 없습니다 (스킬은 최종 진화에서 얻습니다).`;
+}
 function routeNode(n, byKey) {
   const arr = typeof n === 'string' ? [n] : n, k = arr[0], o = byKey[k], el = document.createElement('div'); el.className = 'rn';
-  const c = document.createElement('div'); c.className = 'rc' + (o && o.on ? '' : ' lock') + (o && o.trophy ? ' trophy' : '');
-  c.innerHTML = `<canvas width="84" height="68"></canvas><b>${o ? (o.on ? o.name : '???') : ''}</b>`;
+  const ks = DEX_SKILL[k], c = document.createElement('div'); c.className = 'rc' + (o && o.on ? '' : ' lock') + (o && o.trophy ? ' trophy' : '') + (routeOwn ? ' sk' : '');
+  c.innerHTML = `<canvas width="84" height="68"></canvas><b>${o ? (o.on ? o.name : '???') : ''}</b>` + (routeOwn && ks ? `<i>✦ ${ks.map(q => dexSkName(k, q)).join(' · ')}</i>` : '');
+  if (routeOwn) c.addEventListener('click', () => { for (const q of document.querySelectorAll('#routeTree .rc.pick')) q.classList.remove('pick'); c.classList.add('pick'); routeSkillShow(o, ks, k); });
   if (o) { c.title = o.on ? o.sub : String(o.hint || '').replace(/<br>/g, ' ').trim(); try { o.draw(c.querySelector('canvas').getContext('2d'), 84, 68, !o.on); } catch (_) {} }
   el.appendChild(c);
   if (arr.length > 1) { const kk = document.createElement('div'); kk.className = 'rk'; for (const q of arr.slice(1)) kk.appendChild(routeNode(q, byKey)); el.appendChild(kk); }
@@ -15216,7 +15254,8 @@ function routeNode(n, byKey) {
 function openRoutePic(id) {
   const T = ROUTE_TREE[id], C = CHARS[id]; if (!T || !C) return;
   const sec = charDexData().find(q => q.id === id), byKey = {}; if (sec) for (const o of sec.items) byKey[o.key] = o;
-  $('routeTitle').textContent = `${C.name} 진화 루트`;
+  $('routeTitle').textContent = `${C.name} 진화 루트`; routeOwn = !!SAVE.chars[id];
+  $('routeSkill').style.display = routeOwn ? '' : 'none'; $('routeSkill').innerHTML = '형태를 누르면 그 형태에서 얻는 특수 스킬을 볼 수 있습니다 (✦ 표시 = 스킬이 있는 형태)';
   const box = $('routeTree'); box.innerHTML = ''; box.appendChild(routeNode(T, byKey));
   show('routeBox', true);
 }
@@ -15726,6 +15765,7 @@ function openAch() {
 }
 /* v8.71 간략 패치노트 (최근 버전만, 새 버전마다 맨 위에 한 줄 추가) */
 const PATCH = [
+  ['v9.72','[불구렁이] 똬리 동안 몸통에는 피해가 안 들어가고 머리만 때릴 수 있음 · [팔열지옥] 26~29층 보스방에도 열기(휴식존 4곳) · [호랑이] 카메라는 호랑이 쪽으로 기울기만 하고(평소 15% · 리듬 돌진 70%) 돌아옴 · 수플렉스 안전지대 더 작고 빠르게(반경 95→75 · 경고 2.6→2.2초) · 불의 십자가는 불 뿜는 동안에도 계속 돎 · [도감] 해금한 캐릭터는 진화 루트에서 스킬을 볼 수 있음 · [연보라 총령] 1진화 렉(진화 순간 0.2초 끊김 + 큰 확대 캔버스) 수정'],
   ['v9.71','[준비] 7지옥 도산과 업경의 심판정(지하 31~35층) 맵·마물 8종 — 아직 잠김 · 지옥 맵 그림을 다 받기 전에 시작하면 다른 맵으로 시작되던 문제 수정'],
   ['v9.70','[버그] 열충격이 빙결→점화 순서에서도 터짐 · 여왕 뿌리에 묶인 동안 덩굴 채찍·포자 주머니·폭탄 버섯이 멈춤 · 해군 제독 사망 애니메이션 · 파리지옥 매혹 중 물어뜯기 안 함 · 흡혈 문구 정정'],
   ['v9.69','[로딩] 보스방·숨은 보스 제단·유니크 마물 그림은 필요할 때 받아 시작 로딩 약 6MB 감소 · 불러오는 중 막대 표시'],
@@ -16042,7 +16082,7 @@ stepDive = skWrap(stepDive, 'dive'); stepRush = skWrap(stepRush, 'rush'); rushSt
 updateAirs = (f => function (...a) { return withSrc('basic', () => f.apply(this, a)); })(updateAirs);   // v6.22: 에어슬래시는 평타 (v6.30: 바로 뒤 천안 난무·브레스 감싸기가 주석에 묻혀 딜미터기에서 빠지던 것 수정)
 { const _tb = thornBlast, _sb = smashBlow; thornBlast = function (...a) { return withSrc('scale', () => _tb.apply(this, a)); }; smashBlow = function (...a) { return withSrc('smash', () => _sb.apply(this, a)); }; }
 shellReflect = skWrap(shellReflect, 'shell'); updateBsig = skWrap(updateBsig, 'bsigil');
-window.__G = { isDosanSet, get DSPECIES() { return DSPECIES; }, buildDosanSpecies, BLADE, DF, DPROP_RECTS, dosanTile, imgReady, igniteX, procElem, startFw, spawnFw, spawnUniq, get cam() { return cam; }, TG, TGW, get tg() { return tg; }, tgClear, tgArms, tgCrossAt, tgInSafe, tgCxR, tgPatEnd, tgSafeSpot, tgCam, tgHold, TigerAI, HFUSE_HID, spawnFrw, frwAtk, FRW, spawnLad, lAtk, LAD, LADF, buildCards, rollHeartDrop, heartGain, disHeart, CHARS, inPoly, castSkill, get arena() { return arena; }, FISH, FWAVE, FISHA2, get fwaveQ() { return fwaveQ; }, SN, SNW, get sn() { return snAI; }, snClear, snHall, snEscapeR, pendingConds, rollCards, fishR, shardTotal, calcShards, heartBonus, CV, CVW, HellfirePatch, get cv() { return cvAI; }, cvClear, cvFurnace, pickBossK, get rushQ() { return rushQ; }, get FSPECIES() { return FSPECIES; }, heartMigrate, hRange, IMP, BLD, leadXY, leadDir, HEAT, FF, restNear, restNearest, restAt, updateHeat, isFireSet, fireTile, floorSet, clearGround: () => GROUND.clear(), get TOP_TIER() { return TOP_TIER; }, get OPEN_TIER() { return OPEN_TIER; }, lilArt, drawLilBody, LS, LSW, get ls() { return ls; }, FrostMirror, lsInWedge, lsIce, lsExPause, lsZone, lilDefeated, RD, RDW, RDF, rdOn, get rd() { return rd; }, KarmaBead, FrostMantra, IceLotus, rdAbsorb, rdInGap, rdExPause, rdSilence, rudDefeated, IMP, GoldImp, impOf, trySpawnImp, impDefeated, set impAt(v) { impAt = v; }, LUCK_N, PB, PBW, IMAP, IceWall, Fissure, IceSpear, segDist, FrostMgr, pbOn, pbClear, pbExPause, get pb() { return pb; }, gunMagN, ROLL, get lhead() { return lhead; }, KN, castLostHead, TW, isIceSlip, isIceSet, get ISPECIES() { return ISPECIES; }, ICE_SLIP, ICE_L, OPEN_TIER, TOP_TIER, renderHells, floorSet, pickFloor, iceTile, IF, get lhead() { return lhead; }, KN, isKnight, castLostHead, knightSlash, openGhostRoute, KNIGHT_FORMS, ghostForm, hTitle, relicIcon, heartMake, hOpt, heartBonus, calcShards, GRN, GRW, GRNF, spawnGrn, grnStart, grnPick, TRIAL, chAltarTick, chAltarPlace, chTrialStart, chTrialWin, chTime, chTime0, chDmgT, CH_HARD, CH_BOSS, cardDefs, cardView, ACH, achSync, achClear, openAch, KG, KGW, get kg() { return kg; }, AirGeyser, WaterMirror, MirrorBolt, kgIce, get shards() { return shards; }, set shards(v) { shards = v; }, VF, VFW, get vf() { return vf; }, VfTrap, VfSkull, VfHeart, vfLeech, fuseHearts, rerollHeart, heartBonus, renderFuse, setFu(v) { hFu = v; }, QN, QNW, get qn() { return qn; }, RootBind, SporeSack, QnMush, pickBossK, pctMelee, pctZone, updateDiff, skinG, bhKey, BH_ORDER, heartIcon, relicMaskOn, calcShards, isSlow, isLava, saveSave, svParse, spawnPlant, PL, get GSPECIES() { return GSPECIES; }, get plBalls() { return plBalls; }, synCard, freezeE, availSyn, SYNERGIES, dmName, FD, shkAdd, toxAdd, skSpawnPair, phoenixRevive, mirrorBlock, palPop, updateCutSaws, get shkSp() { return shkSp; }, get toxFl() { return toxFl; }, get zonesRef() { return zones; },
+window.__G = { hq, hqLow, drawWolf, heatOn, heatArena, arenaRests, arenaRestNearest, openRoutePic, get banner() { return banner; }, isDosanSet, get DSPECIES() { return DSPECIES; }, buildDosanSpecies, BLADE, DF, DPROP_RECTS, dosanTile, imgReady, igniteX, procElem, startFw, spawnFw, spawnUniq, get cam() { return cam; }, TG, TGW, get tg() { return tg; }, tgClear, tgArms, tgCrossAt, tgInSafe, tgCxR, tgPatEnd, tgSafeSpot, tgCam, tgHold, TigerAI, HFUSE_HID, spawnFrw, frwAtk, FRW, spawnLad, lAtk, LAD, LADF, buildCards, rollHeartDrop, heartGain, disHeart, CHARS, inPoly, castSkill, get arena() { return arena; }, FISH, FWAVE, FISHA2, get fwaveQ() { return fwaveQ; }, SN, SNW, get sn() { return snAI; }, snClear, snHall, snEscapeR, pendingConds, rollCards, fishR, shardTotal, calcShards, heartBonus, CV, CVW, HellfirePatch, get cv() { return cvAI; }, cvClear, cvFurnace, pickBossK, get rushQ() { return rushQ; }, get FSPECIES() { return FSPECIES; }, heartMigrate, hRange, IMP, BLD, leadXY, leadDir, HEAT, FF, restNear, restNearest, restAt, updateHeat, isFireSet, fireTile, floorSet, clearGround: () => GROUND.clear(), get TOP_TIER() { return TOP_TIER; }, get OPEN_TIER() { return OPEN_TIER; }, lilArt, drawLilBody, LS, LSW, get ls() { return ls; }, FrostMirror, lsInWedge, lsIce, lsExPause, lsZone, lilDefeated, RD, RDW, RDF, rdOn, get rd() { return rd; }, KarmaBead, FrostMantra, IceLotus, rdAbsorb, rdInGap, rdExPause, rdSilence, rudDefeated, IMP, GoldImp, impOf, trySpawnImp, impDefeated, set impAt(v) { impAt = v; }, LUCK_N, PB, PBW, IMAP, IceWall, Fissure, IceSpear, segDist, FrostMgr, pbOn, pbClear, pbExPause, get pb() { return pb; }, gunMagN, ROLL, get lhead() { return lhead; }, KN, castLostHead, TW, isIceSlip, isIceSet, get ISPECIES() { return ISPECIES; }, ICE_SLIP, ICE_L, OPEN_TIER, TOP_TIER, renderHells, floorSet, pickFloor, iceTile, IF, get lhead() { return lhead; }, KN, isKnight, castLostHead, knightSlash, openGhostRoute, KNIGHT_FORMS, ghostForm, hTitle, relicIcon, heartMake, hOpt, heartBonus, calcShards, GRN, GRW, GRNF, spawnGrn, grnStart, grnPick, TRIAL, chAltarTick, chAltarPlace, chTrialStart, chTrialWin, chTime, chTime0, chDmgT, CH_HARD, CH_BOSS, cardDefs, cardView, ACH, achSync, achClear, openAch, KG, KGW, get kg() { return kg; }, AirGeyser, WaterMirror, MirrorBolt, kgIce, get shards() { return shards; }, set shards(v) { shards = v; }, VF, VFW, get vf() { return vf; }, VfTrap, VfSkull, VfHeart, vfLeech, fuseHearts, rerollHeart, heartBonus, renderFuse, setFu(v) { hFu = v; }, QN, QNW, get qn() { return qn; }, RootBind, SporeSack, QnMush, pickBossK, pctMelee, pctZone, updateDiff, skinG, bhKey, BH_ORDER, heartIcon, relicMaskOn, calcShards, isSlow, isLava, saveSave, svParse, spawnPlant, PL, get GSPECIES() { return GSPECIES; }, get plBalls() { return plBalls; }, synCard, freezeE, availSyn, SYNERGIES, dmName, FD, shkAdd, toxAdd, skSpawnPair, phoenixRevive, mirrorBlock, palPop, updateCutSaws, get shkSp() { return shkSp; }, get toxFl() { return toxFl; }, get zonesRef() { return zones; },
   bossDefeated, get IMG() { return IMG; },
   get ready() { return !!IMG.floorD; }, get state() { return state; }, get P() { return P; }, get enemies() { return enemies; }, get orbs() { return orbs; },
   get zones() { return zones; }, get ebul() { return ebul; }, get EYE() { return EYE; }, get shards() { return shards; }, get bigQ() { return bigQ; }, get bombQ() { return bombQ; }, get holyQ() { return holyQ; }, get afx() { return afx; }, get dashQ() { return dashQ; }, get beam() { return beam; }, get evo() { return evo; }, get choices() { return choices; },

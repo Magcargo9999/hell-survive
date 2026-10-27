@@ -15,8 +15,8 @@ async def main():
     async with async_playwright() as pw:
         b = await pw.chromium.launch(); pg = await h301.newpage(b, 1280, 720); errs = []
         pg.on('pageerror', lambda e: errs.append(str(e))); pg.on('console', lambda m: errs.append(m.text) if m.type == 'error' else None)
-        await pg.wait_for_function('__G.IMG&&__G.IMG.boss', timeout=90000)
-        await pg.evaluate("()=>{window.__cl=()=>{const P=__G.P;P.inv=0;P.shield=0;P.dodge=0;P.pals=[];P.up.guard=0;P.rel.mirror=0;P.armor=1;P.taken=1};window.__tk=()=>{const G=__G;G.tick(1/30);if(G.state!=='play'&&G.state!=='over'&&G.state!=='win')__s()};window.__free=()=>{const AI=__G.sn;for(const k in AI.cd)AI.cd[k]=99}}")
+        await pg.wait_for_function('__G.IMG&&__G.IMG.boss', timeout=90000); await pg.wait_for_function("__G.imgReady(['arena','fmap'])", timeout=120000, polling=1000)   # v9.72 보스방 그림(LAZY)이 와야 enterArena가 바로 열린다
+        await pg.evaluate("()=>{window.__cl=()=>{const P=__G.P;P.inv=0;P.shield=0;P.dodge=0;P.pals=[];P.up.guard=0;P.rel.mirror=0;P.armor=1;P.taken=1};window.__tk=()=>{const G=__G;if(G.P)G.P.heat=0;G.tick(1/30);if(G.state!=='play'&&G.state!=='over'&&G.state!=='win')__s()};window.__free=()=>{const AI=__G.sn;for(const k in AI.cd)AI.cd[k]=99}}")
         R = {}
         R['A'] = await ev(pg, """()=>{const G=__G,o={};const cnt=(t,k)=>{const c={};for(let i=0;i<4000;i++){const q=G.pickBossK(t);c[q]=(c[q]||0)+1}return Math.round((c[k]||0)/40)};
           o.t27=cnt(27,'snk');o.t28=cnt(28,'snk');o.t29=cnt(29,'snk');o.t26=cnt(26,'snk');o.t25=cnt(25,'snk');
