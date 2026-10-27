@@ -962,7 +962,7 @@ function mkCanvas(w, h) { const c = document.createElement('canvas'); c.width = 
  * 0-1. 저장(영혼 조각 · 영구 강화 · 설정) / 캐릭터 목록 / 소리
  * ============================================================ */
 const SAVE_KEY = 'hellSurvivorSave1';
-const GAME_VER = 'v9.69';
+const GAME_VER = 'v9.70';
 const SAVE_DEF = () => ({
   shards: 0,
   perks: { hp: 0, spd: 0, dmg: 0, exp: 0, magnet: 0, banish: 0, revive: 0, regen: 0, shard: 0, critd: 0, choice: 0 },
@@ -1584,7 +1584,7 @@ function enterArena() {
     let tx = rush ? `⚔ 보스 러시 ${rush.i + 1}/${BR_N} — ${BR_NAME[P.bossK]} (난이도 ${P.tier + 1})\n출구는 봉인되었다 · 쓰러뜨리면 체력이 회복되고 ${BR.up}레벨 올라 증강을 ${BR.up}번 고른다` : sealed ? '출구가 봉인되었다!  이제 마왕을 쓰러뜨리는 수밖에 없다' : '마왕전 시작!  성 밖으로 나갈 수 있는 기회는 딱 1번\n맵 아래쪽 출구 ▼ 에 잠시 머물면 나갈 수 있어요 (나가면 마왕은 체력 회복)';
     if (boss && boss.bk === 'skel') tx += '\n스켈레톤 마왕: 정면에 서 있으면 대검으로 내려찍는다 · 체력 66%·33%에 결계(무적) · 첨탑 20초 방치 시 체력 15% 회복 · 해골 전사 2마리 소환';
     if (boss && boss.bk === 'shk') tx += '\n거대 버섯마귀: 바닥에 그림자가 생기면 거대 포자가 떨어진다 (독 장판이 남는다) · 체력 75%·50%·25%에 버섯 군단 소환 — 다 잡을 때까지 받는 피해 -50%';
-    if (boss && boss.bk === 'vft') tx += '\n파리지옥 마왕: 나에게 입힌 피해만큼 체력을 흡혈한다 · 붉은 포자 = 부채꼴 다발(맞으면 출혈) · 하트 = 닿으면 매혹(보스 쪽으로 끌려감) · 붉은 원 = 내 이동 경로를 예측한 포식의 덫(멈추거나 방향을 바꾸기) · 해골은 달려와 자폭(붙기 전에 베기) · 체력 30% 끝없는 갈증(하트 파동은 밝은 통로로)';
+    if (boss && boss.bk === 'vft') tx += '\n파리지옥 마왕: 나에게 입힌 피해 비율(내 최대 체력 대비 %)만큼 체력을 흡혈한다 · 붉은 포자 = 부채꼴 다발(맞으면 출혈) · 하트 = 닿으면 매혹(보스 쪽으로 끌려감) · 붉은 원 = 내 이동 경로를 예측한 포식의 덫(멈추거나 방향을 바꾸기) · 해골은 달려와 자폭(붙기 전에 베기) · 체력 30% 끝없는 갈증(하트 파동은 밝은 통로로)';
     if (boss && boss.bk === 'tig') tx += '\n지옥의 화염 호랑이 (지하 30층 최종 마왕): 가운데 불의 십자가가 5초 돌고 2초 불을 뿜는다(팔 끝 바깥 · 팔 사이가 안전) · 패턴을 안 맞고 3번 연속 넘기면 기절\n가드 자세(2초)에 때릴수록 반격 폭발이 커진다 · 멸옥 수플렉스 = 안전지대로! (잡히면 현재 체력 80%) · 체력 40%부터 화면이 호랑이를 따라가고 점선 리듬 돌진';
     if (boss && boss.bk === 'snk') tx += '\n불구렁이 (지하 28층 마왕): 몸통 마디에 닿아도 아프고, 마디를 때려도 마왕에게 들어간다 · 땅속으로 사라지면 균열이 굳어 용암 참호(벽)가 되고 마지막에 내 자리로 솟구친다(붉은 원 밖으로)\n입을 벌리면 부채꼴로 빨아들인다(버티며 옆으로) · 용암 벽에 갇히면 투사체가 되돌아온다 — 튀어나온 머리에 바짝 붙어 5번 때리기 · 체력 30%부터 보스방 전체를 감싸는 똬리';
     if (boss && boss.bk === 'cvt') tx += '\n영벌의 화염죄수 (지하 26층 마왕): 지나간 자리에 지옥불이 오래 남는다(밟으면 화상이 쌓인다) · 주황 예고선 = 쇠사슬(묶이면 5.5초 동안 붉은 원과 바깥 고리 사이에 머물기)\n용광로의 저주 = 구슬이 5초 불탐(식을 때까지 피하기) · 무릎 꿇고 붉은 오라 = 때리면 고통 반사(사거리 밖으로) · 체력 30%부터 예고선을 따라 광폭 돌진';
@@ -6948,7 +6948,7 @@ const VF = { hp: 1.1, dm: 1.0, sp: 58, r: 70, K: 2.1, leech: 0.035,   // v8.70 �
 const VFF = {"idle":[[0,0,118,79,59,79],[120,0,108,74,54,74],[230,0,108,77,54,77],[340,0,119,73,59,73],[461,0,125,78,62,78],[588,0,143,79,71,79]],"walk":[[733,0,87,71,43,71],[822,0,80,71,40,71],[904,0,83,73,41,73],[989,0,105,76,52,76],[1096,0,78,75,39,75],[1176,0,91,76,45,76],[1269,0,90,72,45,72],[1361,0,109,74,54,74],[1472,0,81,78,40,78]],"atk":[[0,81,97,88,48,88],[99,81,124,82,62,82],[225,81,89,82,44,82],[316,81,99,82,49,82],[417,81,68,84,34,84],[487,81,90,82,45,82],[579,81,115,83,57,83],[696,81,133,88,66,88]],"hit":[[831,81,128,119,64,119],[961,81,133,110,66,110],[1096,81,133,106,66,106],[1231,81,145,119,72,119]],"death":[[1378,81,145,113,72,113],[0,202,147,114,73,114],[149,202,148,114,74,114],[299,202,147,115,73,115],[448,202,76,113,38,113],[526,202,181,119,90,119]],"heart":[[709,202,32,37,16,18]],"spore":[[743,202,34,21,17,10]],"trap":[[779,202,36,48,18,48],[817,202,33,28,16,28],[852,202,56,52,28,52],[910,202,48,50,24,50],[960,202,63,82,31,82],[1025,202,86,115,43,115]]};
 const VFW = { spores: [], hearts: [], traps: [], fx: [], wave: null, death: null, fog: null };   // 보스와 따로 움직이는 것들
 const vfM = () => (1 - 0.04 * TP()) / bossTempo() / (boss && boss.ph2 ? VF.tempo : 1);   // 쿨타임 · 회복 시간 배율 (경고 시간에는 안 쓴다)
-function vfLeech(lost) {   // 패시브 흡혈: 나에게 입힌 피해만큼 보스가 회복
+function vfLeech(lost) {   // 패시브 흡혈: 나에게 입힌 피해 비율(내 최대 체력 대비 %)만큼 보스 최대 체력 비례로 회복
   const e = boss; if (!e || e.bk !== 'vft' || e.hp <= 0 || !(lost > 0) || !P.max) return;
   const h = Math.min(e.max - e.hp, e.max * VF.leech * lost / P.max); if (h <= 0) return;
   e.hp += h; VFW.leech = (VFW.leech || 0) + h;
@@ -7154,7 +7154,7 @@ class VenusAI {
         const sp = VF.sp * (e.ph2 ? VF.tempo : 1) * (P.bleedT > 0 ? VF.smell : 1) * (1 + (bossTempo() - 1) * 0.7) * (e.slowT > 0 ? 0.7 : 1);   // 피 냄새: 출혈 중이면 더 빨리
         if (d > e.r + 60) e.moving = bossMove(e, e.x + leadDir(e, d, dx, dy)[0] * sp * dt, e.y + leadDir(e, d, dx, dy)[1] * sp * dt);
         e.an = e.moving ? 'walk' : 'idle';
-        if (d < VF.biR - 30 && this.cd.bite <= 0) { this.bite(); break; }   // 가까우면(매혹으로 끌려오면) 물어뜯기가 먼저
+        if (d < VF.biR - 30 && this.cd.bite <= 0 && !(P.charmT > 0)) { this.bite(); break; }   // 가까우면(매혹으로 끌려오면) 물어뜯기가 먼저
         if (e.stT <= 0) this.next();
         break; }
       case 'spray':   // A: 0.6초 숨 들이쉬기 → 다발 2번(2페이즈 3번)
@@ -7378,6 +7378,7 @@ class SporeSack {
   update(dt) {
     this.t += dt; this.flash = Math.max(0, this.flash - dt); this.orbCd = Math.max(0, this.orbCd - dt);
     if (state !== 'play' || trans) return;
+    if (P.bindT > 0) return;   // v9.70 묶여 있는 동안은 도망칠 수 없으니 도화선이 멈춘다
     if ((this.fuse -= dt) <= 0) this.explode();
   }
   explode() {
@@ -7412,13 +7413,13 @@ class QnMush {
     this.t += dt; this.flash = Math.max(0, this.flash - dt); this.orbCd = Math.max(0, this.orbCd - dt); this.bump -= dt;
     if (this.pop > 0) { this.pop -= dt; return; }
     if (state !== 'play' || trans) return;
-    if (this.fuse > 0) { if ((this.fuse -= dt) <= 0) this.explode(); return; }
+    if (this.fuse > 0) { if (P.bindT > 0) return; if ((this.fuse -= dt) <= 0) this.explode(); return; }   // v9.70 묶인 동안 도화선 정지
     if (this.stage < 2 && (this.grow -= dt) <= 0) this.setStage(this.stage + 1);
     const dx = P.x - this.x, dy = P.y - this.y, d = Math.hypot(dx, dy) || 1; let sp = this.sp; if (this.slowT > 0) { this.slowT -= dt; sp *= 0.5; } if (this.rootT > gt) sp = 0;
     const nx = this.x + (dx / d * sp + this.kx) * dt, ny = this.y + (dy / d * sp + this.ky) * dt; if (inPoly(nx, ny)) { this.x = nx; this.y = ny; }
     const k = Math.exp(-8 * dt); this.kx *= k; this.ky *= k; if (Math.abs(dx) > 4) this.face = dx > 0 ? 1 : -1;
     if (this.stage === 2) { if (d < 95 + PR()) this.fuse = QN.mFuse; }
-    else if (d < this.r + 16 + PR() && this.bump <= 0) { this.bump = 0.9; qnHit(QN.mBump); }
+    else if (d < this.r + 16 + PR() && this.bump <= 0 && !(P.bindT > 0)) { this.bump = 0.9; qnHit(QN.mBump); }
   }
   explode() {
     this.hp = 0; QNW.fx.push({ k: 'mboom', x: this.x, y: this.y, t: 0, life: 0.5 }); sfx('hit'); shake = Math.max(shake, 5);
@@ -7483,7 +7484,7 @@ class QueenAI {
     this.go('lash', dur + 0.3, 'atk'); this.cd.lash = QN.lashCd * m;
     e.tele.push({ k: 'fan', x: e.x, y: e.y - 20, ang: Math.atan2(P.y - e.y, P.x - e.x), half: QN.lashHalf, len: QN.lashR, t: 0, dur, done: false, rgb: '255,80,120', fire: t => {
       addRing(t.x, t.y, 20, t.len, 0.3, '255,90,130', 8); shake = Math.max(shake, 7); sfx('boom');
-      if (state === 'play' && admInFan(t, P.x, P.y, 10 + PR())) qnHit(QN.lashDm);
+      if (state === 'play' && !(P.bindT > 0) && admInFan(t, P.x, P.y, 10 + PR())) qnHit(QN.lashDm);   // v9.70 묶인 동안은 맞지 않는다
       const p = P.pet; if (p && !p.down && admInFan(t, p.x, p.y, 8)) petHurt(p, QN.lashDm);
     } });
   }
@@ -7519,7 +7520,7 @@ class QueenAI {
         const sp = QN.sp * (e.ph2 ? 1.15 : 1) * (1 + (bossTempo() - 1) * 0.7) * (e.slowT > 0 ? 0.7 : 1);
         if (d > e.r + 70) e.moving = bossMove(e, e.x + leadDir(e, d, dx, dy)[0] * sp * dt, e.y + leadDir(e, d, dx, dy)[1] * sp * dt);
         e.an = e.moving ? 'walk' : 'idle';
-        if (d < QN.lashR - 30 && this.cd.lash <= 0) { this.lash(); break; }   // 가까이 붙으면 덩굴 채찍이 먼저
+        if (d < QN.lashR - 30 && this.cd.lash <= 0 && !(P.bindT > 0)) { this.lash(); break; }   // 가까이 붙으면 덩굴 채찍이 먼저
         if (e.stT <= 0) this.next();
         break; }
       case 'cannon':   // A: 0.55초 기 모으기 → 양쪽 캐논 번갈아 연사
@@ -7965,7 +7966,7 @@ function bossDefeated() {
   const e = boss; boss = null; ebul = []; try { achSync(); } catch (_) {}   // v8.91 마왕 토벌 업적 표시
   if (e.bk === 'skel') { skDeath = { x: e.x, y: e.y, face: e.face, t: 0 }; enemies = enemies.filter(q => q.kind !== 'skh' && q.kind !== 'skm' && !q.adds); skp = []; }
   if (e.bk === 'angel') { anDeath = { x: e.x, y: e.y, face: e.face, t: 0 }; anOrbs = []; }
-  if (e.bk === 'adm') { admDeath = { x: e.x, y: e.y, face: e.face, t: 0 }; admClear(); }   // v8.40
+  if (e.bk === 'adm') { admClear(); admDeath = { x: e.x, y: e.y, face: e.face, t: 0 }; }   // v8.40 (v9.70: admClear가 admDeath를 지워서 사망 애니메이션이 안 나오던 순서 오류)
   if (e.bk === 'qn') qnDefeated(e);   // v8.63
   if (e.bk === 'vft') vfDefeated(e);   // v8.70
   if (e.bk === 'kng') kgDefeated(e);   // v8.80
@@ -12331,6 +12332,7 @@ function igniteX(e, force) {
   if (e.hp <= 0) return;
   e.ignT = 3 + (P.syn.forge ? 2 : 0); e.ignAcc = e.ignAcc || 0;
   if (force && !(e.ignFx > gt)) { e.ignFx = gt + 1; burst(e.x, e.y - e.r, 5, ['#ff8a2a', '#ffd27a'], 120, 0.4); }
+  thermalCheck(e);   // v9.70 어떤 경로로 점화가 걸려도(대장장이 검 포함) 이미 얼어 있으면 열충격
 }
 function procElem(e) {   /* hurtEnemy에서 (지속 피해가 아닌) 일반 적중마다 */
   const f = P.up.freeze | 0, g = P.up.ignite | 0;
@@ -13049,7 +13051,7 @@ function drawHud() {
     if (P.stunT > 0) L.push(['기절!', '#ffe28a']);
     if (P.dotT > 0) L.push([`화상 ${P.dotT.toFixed(1)}s`, '#ff9a4a']);
     if (P.hypT > 0) L.push([`방향 반전 ${P.hypT.toFixed(1)}s (이동 키가 반대로)`, '#ff9ad8']);
-    if (P.charmT > 0) L.push([`매혹 ${P.charmT.toFixed(1)}s (보스 쪽으로 끌려감 · 스킬은 사용 가능)`, '#ff6ab0']);
+    if (P.charmT > 0) L.push([`매혹 ${P.charmT.toFixed(1)}s (보스 쪽으로 끌려감 · 매혹 중엔 물어뜯기 안 함 · 스킬은 사용 가능)`, '#ff6ab0']);
     if (kgIce()) L.push(['미끄러운 바닥 (키를 떼도 미끄러짐)', '#9fe6ff']);
     else if ((P.slipT || 0) > 0) L.push(['미끄러운 얼음 (방향 전환이 느리고 키를 떼도 미끄러짐)', '#9fe6ff']);
     if (KGW.tether && kgOn()) { const q = kgFloorD(P.x, P.y, KGW.tether.x, KGW.tether.y) / KG.teR; L.push([`물줄기 사슬 ${Math.max(0, KGW.tether.life - KGW.tether.t).toFixed(1)}s (반경 ${Math.round(q * 100)}% · 100% 넘으면 체력 절반)`, q > 0.75 ? '#ff8a8a' : '#7ad8ff']); }
@@ -15206,7 +15208,7 @@ function openDex() {
   add(gr, { on: d.kills.imp, name: '황금 악마 임프', sub: (d.kills.imp || 0) + '마리 처치', hint: '<br>지하 21층부터 가끔 나타나는 영혼 조각 운반꾼 · 빠르게 달려와 한 대 때리고 멀리(1000) 도망쳐 멈춘다 · 잡으면 영혼 조각 10,000 + 보물 상자, 54초가 지나면 사라진다', draw: (g, w, h, l) => { if (IMG.imp) { const r = IMPF.idle[0]; dexSprite(g, w, h, IMG.imp, r[0], r[1], r[2], r[3], false, l, true); } else lockFx(g, w, h, l); } });
   { const r = KGF.idle[0]; add(gr, { on: d.kills.boss12, trophy: true, name: '타락한 어인왕', sub: (d.kills.boss12 || 0) + '회 처치', hint: '<br>지하 20층의 최종 마왕 (20층에서만 등장)', draw: (g, w, h, l) => { if (IMG.kng) dexSprite(g, w, h, IMG.kng, r[0], r[1], r[2], r[3], false, l, false); } }); }   // v8.80
   { const vd = (key, f) => (g, w, h, l) => { if (IMG.vft) { const r = VFF[key][f || 0]; dexSprite(g, w, h, IMG.vft, r[0], r[1], r[2], r[3], false, l, false); } else lockFx(g, w, h, l); };   // v8.70 파리지옥 마왕
-    add(gr, { on: d.kills.boss11, trophy: true, name: '파리지옥 마왕', sub: (d.kills.boss11 || 0) + '회 처치', hint: '<br>보스 (지하 11층부터 등장 · 11층 100% · 12층에서 자주) · 입힌 피해만큼 흡혈', draw: vd('idle') });
+    add(gr, { on: d.kills.boss11, trophy: true, name: '파리지옥 마왕', sub: (d.kills.boss11 || 0) + '회 처치', hint: '<br>보스 (지하 11층부터 등장 · 11층 100% · 12층에서 자주) · 입힌 피해 비율(내 최대 체력 대비 %)만큼 흡혈', draw: vd('idle') });
     add(gr, { on: d.kills.vskull, name: '피에 굶주린 해골', sub: (d.kills.vskull || 0) + '마리 처치', hint: '<br>파리지옥 마왕이 뿌리에서 토해 낸다 · 빠르게 달려와 자폭 (죽이면 터지지 않는다)', draw: (g, w, h, l) => { const S = SPECIES.find(q => q.name === '해골 병사'); if (S) dexSprite(g, w, h, S.frames[0].img, 0, 0, MOB.cw, MOB.ch, false, l, false); else lockFx(g, w, h, l); } }); }
   { const c0 = CMF.idle[0], a0 = ABF.body[0];
     add(gr, { on: d.kills.cut, name: '절단안의 짐승', sub: (d.kills.cut || 0) + '회 처치', hint: '<br>미니 보스 (∞ 챌린지)', draw: (g, w, h, l) => dexSprite(g, w, h, IMG.cm, c0[0], c0[1], c0[2], c0[3], false, l, true) });
@@ -15660,6 +15662,7 @@ function openAch() {
 }
 /* v8.71 간략 패치노트 (최근 버전만, 새 버전마다 맨 위에 한 줄 추가) */
 const PATCH = [
+  ['v9.70','[버그] 열충격이 빙결→점화 순서에서도 터짐 · 여왕 뿌리에 묶인 동안 덩굴 채찍·포자 주머니·폭탄 버섯이 멈춤 · 해군 제독 사망 애니메이션 · 파리지옥 매혹 중 물어뜯기 안 함 · 흡혈 문구 정정'],
   ['v9.69','[로딩] 보스방·숨은 보스 제단·유니크 마물 그림은 필요할 때 받아 시작 로딩 약 6MB 감소 · 불러오는 중 막대 표시'],
   ['v9.68','[팔열지옥] 열기가 2배 빨리 참(약 55초에 가득) · 휴식존 크기 -15% · [로딩] 그림을 다 받은 뒤에 나머지를 받고, 한 번 받은 그림은 저장해 다음 접속부터 바로 시작'],
   ['v9.67','[속도] 도감 열기 1.5초→0.16초(칸 그림을 나눠 그림) · 시작할 때 그림 해독이 화면을 멈추던 것 완화(메인 스레드 밖에서 해독 · 나중에 쓰는 그림은 2장씩 순서대로)'],
@@ -15974,7 +15977,7 @@ stepDive = skWrap(stepDive, 'dive'); stepRush = skWrap(stepRush, 'rush'); rushSt
 updateAirs = (f => function (...a) { return withSrc('basic', () => f.apply(this, a)); })(updateAirs);   // v6.22: 에어슬래시는 평타 (v6.30: 바로 뒤 천안 난무·브레스 감싸기가 주석에 묻혀 딜미터기에서 빠지던 것 수정)
 { const _tb = thornBlast, _sb = smashBlow; thornBlast = function (...a) { return withSrc('scale', () => _tb.apply(this, a)); }; smashBlow = function (...a) { return withSrc('smash', () => _sb.apply(this, a)); }; }
 shellReflect = skWrap(shellReflect, 'shell'); updateBsig = skWrap(updateBsig, 'bsigil');
-window.__G = { startFw, spawnFw, spawnUniq, get cam() { return cam; }, TG, TGW, get tg() { return tg; }, tgClear, tgArms, tgCrossAt, tgInSafe, tgCxR, tgPatEnd, tgSafeSpot, tgCam, tgHold, TigerAI, HFUSE_HID, spawnFrw, frwAtk, FRW, spawnLad, lAtk, LAD, LADF, buildCards, rollHeartDrop, heartGain, disHeart, CHARS, inPoly, castSkill, get arena() { return arena; }, FISH, FWAVE, FISHA2, get fwaveQ() { return fwaveQ; }, SN, SNW, get sn() { return snAI; }, snClear, snHall, snEscapeR, pendingConds, rollCards, fishR, shardTotal, calcShards, heartBonus, CV, CVW, HellfirePatch, get cv() { return cvAI; }, cvClear, cvFurnace, pickBossK, get rushQ() { return rushQ; }, get FSPECIES() { return FSPECIES; }, heartMigrate, hRange, IMP, BLD, leadXY, leadDir, HEAT, FF, restNear, restNearest, restAt, updateHeat, isFireSet, fireTile, floorSet, clearGround: () => GROUND.clear(), get TOP_TIER() { return TOP_TIER; }, get OPEN_TIER() { return OPEN_TIER; }, lilArt, drawLilBody, LS, LSW, get ls() { return ls; }, FrostMirror, lsInWedge, lsIce, lsExPause, lsZone, lilDefeated, RD, RDW, RDF, rdOn, get rd() { return rd; }, KarmaBead, FrostMantra, IceLotus, rdAbsorb, rdInGap, rdExPause, rdSilence, rudDefeated, IMP, GoldImp, impOf, trySpawnImp, impDefeated, set impAt(v) { impAt = v; }, LUCK_N, PB, PBW, IMAP, IceWall, Fissure, IceSpear, segDist, FrostMgr, pbOn, pbClear, pbExPause, get pb() { return pb; }, gunMagN, ROLL, get lhead() { return lhead; }, KN, castLostHead, TW, isIceSlip, isIceSet, get ISPECIES() { return ISPECIES; }, ICE_SLIP, ICE_L, OPEN_TIER, TOP_TIER, renderHells, floorSet, pickFloor, iceTile, IF, get lhead() { return lhead; }, KN, isKnight, castLostHead, knightSlash, openGhostRoute, KNIGHT_FORMS, ghostForm, hTitle, relicIcon, heartMake, hOpt, heartBonus, calcShards, GRN, GRW, GRNF, spawnGrn, grnStart, grnPick, TRIAL, chAltarTick, chAltarPlace, chTrialStart, chTrialWin, chTime, chTime0, chDmgT, CH_HARD, CH_BOSS, cardDefs, cardView, ACH, achSync, achClear, openAch, KG, KGW, get kg() { return kg; }, AirGeyser, WaterMirror, MirrorBolt, kgIce, get shards() { return shards; }, set shards(v) { shards = v; }, VF, VFW, get vf() { return vf; }, VfTrap, VfSkull, VfHeart, vfLeech, fuseHearts, rerollHeart, heartBonus, renderFuse, setFu(v) { hFu = v; }, QN, QNW, get qn() { return qn; }, RootBind, SporeSack, QnMush, pickBossK, pctMelee, pctZone, updateDiff, skinG, bhKey, BH_ORDER, heartIcon, relicMaskOn, calcShards, isSlow, isLava, saveSave, svParse, spawnPlant, PL, get GSPECIES() { return GSPECIES; }, get plBalls() { return plBalls; }, synCard, freezeE, availSyn, SYNERGIES, dmName, FD, shkAdd, toxAdd, skSpawnPair, phoenixRevive, mirrorBlock, palPop, updateCutSaws, get shkSp() { return shkSp; }, get toxFl() { return toxFl; }, get zonesRef() { return zones; },
+window.__G = { igniteX, procElem, startFw, spawnFw, spawnUniq, get cam() { return cam; }, TG, TGW, get tg() { return tg; }, tgClear, tgArms, tgCrossAt, tgInSafe, tgCxR, tgPatEnd, tgSafeSpot, tgCam, tgHold, TigerAI, HFUSE_HID, spawnFrw, frwAtk, FRW, spawnLad, lAtk, LAD, LADF, buildCards, rollHeartDrop, heartGain, disHeart, CHARS, inPoly, castSkill, get arena() { return arena; }, FISH, FWAVE, FISHA2, get fwaveQ() { return fwaveQ; }, SN, SNW, get sn() { return snAI; }, snClear, snHall, snEscapeR, pendingConds, rollCards, fishR, shardTotal, calcShards, heartBonus, CV, CVW, HellfirePatch, get cv() { return cvAI; }, cvClear, cvFurnace, pickBossK, get rushQ() { return rushQ; }, get FSPECIES() { return FSPECIES; }, heartMigrate, hRange, IMP, BLD, leadXY, leadDir, HEAT, FF, restNear, restNearest, restAt, updateHeat, isFireSet, fireTile, floorSet, clearGround: () => GROUND.clear(), get TOP_TIER() { return TOP_TIER; }, get OPEN_TIER() { return OPEN_TIER; }, lilArt, drawLilBody, LS, LSW, get ls() { return ls; }, FrostMirror, lsInWedge, lsIce, lsExPause, lsZone, lilDefeated, RD, RDW, RDF, rdOn, get rd() { return rd; }, KarmaBead, FrostMantra, IceLotus, rdAbsorb, rdInGap, rdExPause, rdSilence, rudDefeated, IMP, GoldImp, impOf, trySpawnImp, impDefeated, set impAt(v) { impAt = v; }, LUCK_N, PB, PBW, IMAP, IceWall, Fissure, IceSpear, segDist, FrostMgr, pbOn, pbClear, pbExPause, get pb() { return pb; }, gunMagN, ROLL, get lhead() { return lhead; }, KN, castLostHead, TW, isIceSlip, isIceSet, get ISPECIES() { return ISPECIES; }, ICE_SLIP, ICE_L, OPEN_TIER, TOP_TIER, renderHells, floorSet, pickFloor, iceTile, IF, get lhead() { return lhead; }, KN, isKnight, castLostHead, knightSlash, openGhostRoute, KNIGHT_FORMS, ghostForm, hTitle, relicIcon, heartMake, hOpt, heartBonus, calcShards, GRN, GRW, GRNF, spawnGrn, grnStart, grnPick, TRIAL, chAltarTick, chAltarPlace, chTrialStart, chTrialWin, chTime, chTime0, chDmgT, CH_HARD, CH_BOSS, cardDefs, cardView, ACH, achSync, achClear, openAch, KG, KGW, get kg() { return kg; }, AirGeyser, WaterMirror, MirrorBolt, kgIce, get shards() { return shards; }, set shards(v) { shards = v; }, VF, VFW, get vf() { return vf; }, VfTrap, VfSkull, VfHeart, vfLeech, fuseHearts, rerollHeart, heartBonus, renderFuse, setFu(v) { hFu = v; }, QN, QNW, get qn() { return qn; }, RootBind, SporeSack, QnMush, pickBossK, pctMelee, pctZone, updateDiff, skinG, bhKey, BH_ORDER, heartIcon, relicMaskOn, calcShards, isSlow, isLava, saveSave, svParse, spawnPlant, PL, get GSPECIES() { return GSPECIES; }, get plBalls() { return plBalls; }, synCard, freezeE, availSyn, SYNERGIES, dmName, FD, shkAdd, toxAdd, skSpawnPair, phoenixRevive, mirrorBlock, palPop, updateCutSaws, get shkSp() { return shkSp; }, get toxFl() { return toxFl; }, get zonesRef() { return zones; },
   bossDefeated, get IMG() { return IMG; },
   get ready() { return !!IMG.floorD; }, get state() { return state; }, get P() { return P; }, get enemies() { return enemies; }, get orbs() { return orbs; },
   get zones() { return zones; }, get ebul() { return ebul; }, get EYE() { return EYE; }, get shards() { return shards; }, get bigQ() { return bigQ; }, get bombQ() { return bombQ; }, get holyQ() { return holyQ; }, get afx() { return afx; }, get dashQ() { return dashQ; }, get beam() { return beam; }, get evo() { return evo; }, get choices() { return choices; },

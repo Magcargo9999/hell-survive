@@ -234,3 +234,4 @@ CLAUDE.md에서 분리. 필요할 때만 `grep -n "키워드" docs/CHANGELOG.md`
 - 9.69 로딩: `arena`·`bmap`·`uniq`·`fwb`·`fwfx` LAZY로(필수 약 44→38MB, `imgReady()`로 보스방 입장·숨은 보스·유니크 소환 때 확인) · 로딩 화면 진행 막대
 - 9.68 팔열지옥 열기 `HEAT.fill` 0.9→1.8(2배, 약 55초에 가득) · 휴식존 `HEAT.r` 118→100(-15%) · 로딩: LAZY 그림은 필수 그림을 다 받은 뒤 시작(`lazyPump`) · `heart`·`skb` LAZY로 · 그림 캐시 서비스 워커 `sw.js`(해시 주소 cache-first, 재접속 17초→2.9초 @20Mbps)
 - 9.67 속도: 도감 칸 그림 분할 그리기(`dexPump`, 1.5초→0.16초) · 그림 불러오기를 fetch→blob→createImageBitmap(메인 스레드 해독 3.4초→0.1초) · LAZY 그림 2장씩 순차 로드(`lazyPump`, 실패분만 4초마다 재시도 `LAZY_FAIL`)
+- 9.70 버그: 열충격 `igniteX`도 `thermalCheck`(빙결→점화 순서) · 여왕 속박(`P.bindT`) 중 덩굴 채찍 시작·판정, 포자 주머니·폭탄 버섯 도화선 정지 · 제독 `admClear`가 `admDeath`를 지우던 순서 수정 · 파리지옥 매혹 중 물어뜯기 안 함 · 흡혈 문구를 '입힌 피해 비율(최대 체력 대비 %)'로 정정(실제 회복 = 보스 최대 체력×`VF.leech`×잃은 체력÷내 최대 체력, 하트 파동 72%는 통로 3갈래가 있어 의도로 유지)
