@@ -108,6 +108,8 @@ ASSETS = {
     '__CVT__': 'cvt/cvt.webp',
     '__SNK__': 'snk/snk.webp',
     '__TIG__': 'tig/tig.webp',
+    '__WHL__': 'whl/whl.webp',
+    '__WHLFX__': 'whlfx/whlfx.webp',
     '__TIGFX__': 'tig/tigfx.webp',
     '__RUD__': 'rud/rud.webp',
     '__RUDFX__': 'rud/rudfx.webp',

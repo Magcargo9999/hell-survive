@@ -240,3 +240,6 @@ CLAUDE.md에서 분리. 필요할 때만 `grep -n "키워드" docs/CHANGELOG.md`
 
 ## v9.73
 - 쿠폰 `ai소프트웨어학과`와 문어 마법사 최종 스킨(문어현자, OCTO_SKIN·os 그림) 삭제. 타락천사 여자 버전(angelSkin)은 켜는 곳이 없어짐.
+
+## v9.80
+- 새 마왕 심해의 시체고래(`bk:'whl'`, 템플릿 'v9.80' 블록, `WH`·`WHW`·`WhaleAI`, 아틀라스 `IMG.whl`/`IMG.whlfx` ← `tools/atlas/whl_build.py`·`whlfx_build.py`). 지하 18층 100% · 19층 70% · `ICE_L` 포함, 보스방 `SMAP`. 죽음의 파도 = 방을 10줄로 나눠 한 줄만 비움(`whLane`). 규칙 9 확인 · 테스트 `tools/tests/whl980.py`. 도감 boss20 · 업적 `k_whl`. 심장·보스 러시 없음.
