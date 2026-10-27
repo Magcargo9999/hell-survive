@@ -278,7 +278,7 @@
 </style>
 </head>
 <body>
-<div id="ldBox" style="position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:10px;background:#0b0610;color:#e8d8ff;font:bold 16px 'Noto Sans KR','Malgun Gothic',sans-serif"><div>지옥의 생존자</div><div id="ldTxt" style="font-size:13px;opacity:.8">불러오는 중… 0%</div></div>
+<div id="ldBox" style="position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:10px;background:#0b0610;color:#e8d8ff;font:bold 16px 'Noto Sans KR','Malgun Gothic',sans-serif"><div>지옥의 생존자</div><div id="ldTxt" style="font-size:13px;opacity:.8">불러오는 중… 0%</div><div style="width:min(300px,70vw);height:8px;border-radius:5px;background:#2a1838;overflow:hidden"><div id="ldBar" style="width:0%;height:100%;background:linear-gradient(90deg,#7a2bd8,#ff5a8a);transition:width .25s"></div></div><div id="ldSub" style="font-size:12px;opacity:.55;font-weight:normal">처음 한 번만 오래 걸리고, 다음 접속부터는 금방 시작돼요</div></div>
 <canvas id="c"></canvas>
 
 <div class="overlay show" id="startBox">
@@ -962,7 +962,7 @@ function mkCanvas(w, h) { const c = document.createElement('canvas'); c.width = 
  * 0-1. 저장(영혼 조각 · 영구 강화 · 설정) / 캐릭터 목록 / 소리
  * ============================================================ */
 const SAVE_KEY = 'hellSurvivorSave1';
-const GAME_VER = 'v9.68';
+const GAME_VER = 'v9.69';
 const SAVE_DEF = () => ({
   shards: 0,
   perks: { hp: 0, spd: 0, dmg: 0, exp: 0, magnet: 0, banish: 0, revive: 0, regen: 0, shard: 0, critd: 0, choice: 0 },
@@ -1569,6 +1569,7 @@ function clearField() {   // 마왕전 입장처럼 맵을 옮길 때: 필드의
 }
 function enterArena() {
   if (trans) return;
+  if (!imgReady(['arena'])) { if (!enterArena.w) { enterArena.w = 1; setTimeout(() => { enterArena.w = 0; enterArena(); }, 250); } return; }   // v9.69 보스방 그림이 아직 안 왔으면 잠깐 기다린다
   startTrans(() => {
     const sealed = P.exitLeft <= 0, an = P.bossK === 'angel';
     arena = an ? { sealed, hold: 0, k: 'angel' } : { sealed, hold: 0 }; if (castle) castle.force = 0;
@@ -2136,6 +2137,7 @@ function enterBloodArena() {
   });
 }
 function spawnFw() {
+  if (!imgReady(['bmap', 'fwb', 'fwfx'])) { setTimeout(spawnFw, 250); return; }   // v9.69
   const hp = FW_HP * (1 + 0.3 * P.tier);
   boss = { kind: 'boss', bk: 'fw', x: BMAP.cx, y: BMAP.cy - 70, kx: 0, ky: 0, sp: 0, spec: null, sc: 1, r: 64, hp, max: hp, dmg: 0, exp: 0, elite: false, flash: 0, t: 0, orbCd: 0, slowT: 0,
     noKB: true, invul: true, face: -1, st: 'intro', stT: 2.6, rage: false, last: '', tele: [], jh: 0, an: 'drain', fr: -1, giant: 0, gT: 0, gCd: 0, n: 0, legs: 0, leg: null, ghost: [], touchCd: 0, poolAcc: 0, dv: null, dashHit: false };
@@ -7947,6 +7949,7 @@ const SNAP_KEYS = ['char', 'route', 'fin', 'form', 'skill', 'lvl', 'max', 'dmg',
   'orbsN', 'orbR', 'orbW', 'orbD', 'shardN', 'trailBonus', 'trailR', 'trailD', 'magma', 'expMul', 'up', 'syn', 'rel', 'contracts', 'contractN', 'gmax', 'teleN', 'fangN', 'potions', 'tier', 'banish', 'magPull'];
 function snapP() { const o = {}; for (const k of SNAP_KEYS) if (P[k] !== undefined) o[k] = JSON.parse(JSON.stringify(P[k])); o.when = Date.now(); return o; }
 function startFw() {
+  if (!imgReady(['bmap', 'fwb', 'fwfx'])) { setTimeout(startFw, 250); return; }   // v9.69
   const S = SAVE.fw.snap; if (!S) return;
   curChar = S.char; audioInit(); reset(S.char);
   for (const k of SNAP_KEYS) if (S[k] !== undefined && k !== 'tier') P[k] = JSON.parse(JSON.stringify(S[k]));
@@ -10798,6 +10801,7 @@ const UNIQ = {
 const UNIQ_P = 0.0011;     // 스폰 틱마다 나올 확률 (틱이 초당 2~3번이라 낮게 잡아야 8분 안에 각자 절반쯤은 만난다)
 const uniqHp = () => Math.max(1250 + 2 * gt, 585 * (1 + gt / 100)) * (1 + 0.3 * (P.tier || 0));   // 같은 시각 정예의 1.5~2배 · 미니 보스처럼 한 방에 녹지 않게
 function spawnUniq(k) {
+  if (!imgReady(['uniq'])) return;   // v9.69 그림이 아직이면 이번엔 건너뜀
   const U = UNIQ[k], a = rand() * 6.283, d = Math.hypot(W, H) / 2 + 100, hp = uniqHp() * U.hpK;
   P.uniqSeen[k] = true; if (k === 'shroom') { P.shN = (P.shN | 0) + 1; P.uniqSeen[k] = P.shN >= 2; }   // v6.62: 대형 버섯 괴물은 한 판에 2번까지
   uniqCd = (P.tier || 0) >= 3 ? 40 : 80;
@@ -15656,6 +15660,7 @@ function openAch() {
 }
 /* v8.71 간략 패치노트 (최근 버전만, 새 버전마다 맨 위에 한 줄 추가) */
 const PATCH = [
+  ['v9.69','[로딩] 보스방·숨은 보스 제단·유니크 마물 그림은 필요할 때 받아 시작 로딩 약 6MB 감소 · 불러오는 중 막대 표시'],
   ['v9.68','[팔열지옥] 열기가 2배 빨리 참(약 55초에 가득) · 휴식존 크기 -15% · [로딩] 그림을 다 받은 뒤에 나머지를 받고, 한 번 받은 그림은 저장해 다음 접속부터 바로 시작'],
   ['v9.67','[속도] 도감 열기 1.5초→0.16초(칸 그림을 나눠 그림) · 시작할 때 그림 해독이 화면을 멈추던 것 완화(메인 스레드 밖에서 해독 · 나중에 쓰는 그림은 2장씩 순서대로)'],
   ['v9.66','[릴세르카 거울] 체력 대폭 상향(10초 넘게 버팀) · 깨지면 화이트아웃 대신 0.2초 경직 · 소환 때 마법진·"거울 소환!" 예고'],
@@ -15969,7 +15974,7 @@ stepDive = skWrap(stepDive, 'dive'); stepRush = skWrap(stepRush, 'rush'); rushSt
 updateAirs = (f => function (...a) { return withSrc('basic', () => f.apply(this, a)); })(updateAirs);   // v6.22: 에어슬래시는 평타 (v6.30: 바로 뒤 천안 난무·브레스 감싸기가 주석에 묻혀 딜미터기에서 빠지던 것 수정)
 { const _tb = thornBlast, _sb = smashBlow; thornBlast = function (...a) { return withSrc('scale', () => _tb.apply(this, a)); }; smashBlow = function (...a) { return withSrc('smash', () => _sb.apply(this, a)); }; }
 shellReflect = skWrap(shellReflect, 'shell'); updateBsig = skWrap(updateBsig, 'bsigil');
-window.__G = { get cam() { return cam; }, TG, TGW, get tg() { return tg; }, tgClear, tgArms, tgCrossAt, tgInSafe, tgCxR, tgPatEnd, tgSafeSpot, tgCam, tgHold, TigerAI, HFUSE_HID, spawnFrw, frwAtk, FRW, spawnLad, lAtk, LAD, LADF, buildCards, rollHeartDrop, heartGain, disHeart, CHARS, inPoly, castSkill, get arena() { return arena; }, FISH, FWAVE, FISHA2, get fwaveQ() { return fwaveQ; }, SN, SNW, get sn() { return snAI; }, snClear, snHall, snEscapeR, pendingConds, rollCards, fishR, shardTotal, calcShards, heartBonus, CV, CVW, HellfirePatch, get cv() { return cvAI; }, cvClear, cvFurnace, pickBossK, get rushQ() { return rushQ; }, get FSPECIES() { return FSPECIES; }, heartMigrate, hRange, IMP, BLD, leadXY, leadDir, HEAT, FF, restNear, restNearest, restAt, updateHeat, isFireSet, fireTile, floorSet, clearGround: () => GROUND.clear(), get TOP_TIER() { return TOP_TIER; }, get OPEN_TIER() { return OPEN_TIER; }, lilArt, drawLilBody, LS, LSW, get ls() { return ls; }, FrostMirror, lsInWedge, lsIce, lsExPause, lsZone, lilDefeated, RD, RDW, RDF, rdOn, get rd() { return rd; }, KarmaBead, FrostMantra, IceLotus, rdAbsorb, rdInGap, rdExPause, rdSilence, rudDefeated, IMP, GoldImp, impOf, trySpawnImp, impDefeated, set impAt(v) { impAt = v; }, LUCK_N, PB, PBW, IMAP, IceWall, Fissure, IceSpear, segDist, FrostMgr, pbOn, pbClear, pbExPause, get pb() { return pb; }, gunMagN, ROLL, get lhead() { return lhead; }, KN, castLostHead, TW, isIceSlip, isIceSet, get ISPECIES() { return ISPECIES; }, ICE_SLIP, ICE_L, OPEN_TIER, TOP_TIER, renderHells, floorSet, pickFloor, iceTile, IF, get lhead() { return lhead; }, KN, isKnight, castLostHead, knightSlash, openGhostRoute, KNIGHT_FORMS, ghostForm, hTitle, relicIcon, heartMake, hOpt, heartBonus, calcShards, GRN, GRW, GRNF, spawnGrn, grnStart, grnPick, TRIAL, chAltarTick, chAltarPlace, chTrialStart, chTrialWin, chTime, chTime0, chDmgT, CH_HARD, CH_BOSS, cardDefs, cardView, ACH, achSync, achClear, openAch, KG, KGW, get kg() { return kg; }, AirGeyser, WaterMirror, MirrorBolt, kgIce, get shards() { return shards; }, set shards(v) { shards = v; }, VF, VFW, get vf() { return vf; }, VfTrap, VfSkull, VfHeart, vfLeech, fuseHearts, rerollHeart, heartBonus, renderFuse, setFu(v) { hFu = v; }, QN, QNW, get qn() { return qn; }, RootBind, SporeSack, QnMush, pickBossK, pctMelee, pctZone, updateDiff, skinG, bhKey, BH_ORDER, heartIcon, relicMaskOn, calcShards, isSlow, isLava, saveSave, svParse, spawnPlant, PL, get GSPECIES() { return GSPECIES; }, get plBalls() { return plBalls; }, synCard, freezeE, availSyn, SYNERGIES, dmName, FD, shkAdd, toxAdd, skSpawnPair, phoenixRevive, mirrorBlock, palPop, updateCutSaws, get shkSp() { return shkSp; }, get toxFl() { return toxFl; }, get zonesRef() { return zones; },
+window.__G = { startFw, spawnFw, spawnUniq, get cam() { return cam; }, TG, TGW, get tg() { return tg; }, tgClear, tgArms, tgCrossAt, tgInSafe, tgCxR, tgPatEnd, tgSafeSpot, tgCam, tgHold, TigerAI, HFUSE_HID, spawnFrw, frwAtk, FRW, spawnLad, lAtk, LAD, LADF, buildCards, rollHeartDrop, heartGain, disHeart, CHARS, inPoly, castSkill, get arena() { return arena; }, FISH, FWAVE, FISHA2, get fwaveQ() { return fwaveQ; }, SN, SNW, get sn() { return snAI; }, snClear, snHall, snEscapeR, pendingConds, rollCards, fishR, shardTotal, calcShards, heartBonus, CV, CVW, HellfirePatch, get cv() { return cvAI; }, cvClear, cvFurnace, pickBossK, get rushQ() { return rushQ; }, get FSPECIES() { return FSPECIES; }, heartMigrate, hRange, IMP, BLD, leadXY, leadDir, HEAT, FF, restNear, restNearest, restAt, updateHeat, isFireSet, fireTile, floorSet, clearGround: () => GROUND.clear(), get TOP_TIER() { return TOP_TIER; }, get OPEN_TIER() { return OPEN_TIER; }, lilArt, drawLilBody, LS, LSW, get ls() { return ls; }, FrostMirror, lsInWedge, lsIce, lsExPause, lsZone, lilDefeated, RD, RDW, RDF, rdOn, get rd() { return rd; }, KarmaBead, FrostMantra, IceLotus, rdAbsorb, rdInGap, rdExPause, rdSilence, rudDefeated, IMP, GoldImp, impOf, trySpawnImp, impDefeated, set impAt(v) { impAt = v; }, LUCK_N, PB, PBW, IMAP, IceWall, Fissure, IceSpear, segDist, FrostMgr, pbOn, pbClear, pbExPause, get pb() { return pb; }, gunMagN, ROLL, get lhead() { return lhead; }, KN, castLostHead, TW, isIceSlip, isIceSet, get ISPECIES() { return ISPECIES; }, ICE_SLIP, ICE_L, OPEN_TIER, TOP_TIER, renderHells, floorSet, pickFloor, iceTile, IF, get lhead() { return lhead; }, KN, isKnight, castLostHead, knightSlash, openGhostRoute, KNIGHT_FORMS, ghostForm, hTitle, relicIcon, heartMake, hOpt, heartBonus, calcShards, GRN, GRW, GRNF, spawnGrn, grnStart, grnPick, TRIAL, chAltarTick, chAltarPlace, chTrialStart, chTrialWin, chTime, chTime0, chDmgT, CH_HARD, CH_BOSS, cardDefs, cardView, ACH, achSync, achClear, openAch, KG, KGW, get kg() { return kg; }, AirGeyser, WaterMirror, MirrorBolt, kgIce, get shards() { return shards; }, set shards(v) { shards = v; }, VF, VFW, get vf() { return vf; }, VfTrap, VfSkull, VfHeart, vfLeech, fuseHearts, rerollHeart, heartBonus, renderFuse, setFu(v) { hFu = v; }, QN, QNW, get qn() { return qn; }, RootBind, SporeSack, QnMush, pickBossK, pctMelee, pctZone, updateDiff, skinG, bhKey, BH_ORDER, heartIcon, relicMaskOn, calcShards, isSlow, isLava, saveSave, svParse, spawnPlant, PL, get GSPECIES() { return GSPECIES; }, get plBalls() { return plBalls; }, synCard, freezeE, availSyn, SYNERGIES, dmName, FD, shkAdd, toxAdd, skSpawnPair, phoenixRevive, mirrorBlock, palPop, updateCutSaws, get shkSp() { return shkSp; }, get toxFl() { return toxFl; }, get zonesRef() { return zones; },
   bossDefeated, get IMG() { return IMG; },
   get ready() { return !!IMG.floorD; }, get state() { return state; }, get P() { return P; }, get enemies() { return enemies; }, get orbs() { return orbs; },
   get zones() { return zones; }, get ebul() { return ebul; }, get EYE() { return EYE; }, get shards() { return shards; }, get bigQ() { return bigQ; }, get bombQ() { return bombQ; }, get holyQ() { return holyQ; }, get afx() { return afx; }, get dashQ() { return dashQ; }, get beam() { return beam; }, get evo() { return evo; }, get choices() { return choices; },
@@ -16010,14 +16015,17 @@ function silhouette(img, color) {
   g.drawImage(img, 0, 0); g.globalCompositeOperation = 'source-atop'; g.fillStyle = color; g.fillRect(0, 0, c.width, c.height);
   return c;
 }
-const LAZY_IMG = ['heart', 'skb', 'tig', 'tigfx', 'frw', 'lad', 'fmap', 'imap', 'bear', 'bearfx', 'fish1', 'fish2', 'snk', 'cvt', 'fmob', 'ffloor', 'fprops', 'rud', 'rudfx', 'lil', 'lfx', 'imp', 'ifloor', 'iprops', 'imob', 'dk', 'kng', 'vft', 'qn', 'gmob', 'gnm', 'zom', 'adm', 'gfloor', 'gprops', 'gmap', 'drophb', 'droppo', 'chm', 'cm', 'ab', 'grn', 'an', 'anfx', 'amap', 'mmap', 'smap', 'horse', 'an2', 'shk', 'statue', 'sk_gunH', 'sk_gunE', 'sk_wolfB', 'skA_wolfB', 'sk_ghostU', 'skA_ghostU', 'sk_wolfE', 'sk_lizG', 'skA_lizG', 'sk_ghostG', 'skA_ghostG', 'sk_twS', 'skA_twS', 'skA_gunH', 'skA_gunE', 'skA_wolfE', 'sh', 'mimic', 'sktw', 'skelF', 'skelFa', 'tox'];   // 시작하자마자 쓰지 않는 그림은 따로 (시작 화면이 빨리 뜨게): 드랍 아이템 · 챌린지 · 타락천사
+const LAZY_IMG = ['arena', 'bmap', 'uniq', 'fwb', 'fwfx', 'heart', 'skb', 'tig', 'tigfx', 'frw', 'lad', 'fmap', 'imap', 'bear', 'bearfx', 'fish1', 'fish2', 'snk', 'cvt', 'fmob', 'ffloor', 'fprops', 'rud', 'rudfx', 'lil', 'lfx', 'imp', 'ifloor', 'iprops', 'imob', 'dk', 'kng', 'vft', 'qn', 'gmob', 'gnm', 'zom', 'adm', 'gfloor', 'gprops', 'gmap', 'drophb', 'droppo', 'chm', 'cm', 'ab', 'grn', 'an', 'anfx', 'amap', 'mmap', 'smap', 'horse', 'an2', 'shk', 'statue', 'sk_gunH', 'sk_gunE', 'sk_wolfB', 'skA_wolfB', 'sk_ghostU', 'skA_ghostU', 'sk_wolfE', 'sk_lizG', 'skA_lizG', 'sk_ghostG', 'skA_ghostG', 'sk_twS', 'skA_twS', 'skA_gunH', 'skA_gunE', 'skA_wolfE', 'sh', 'mimic', 'sktw', 'skelF', 'skelFa', 'tox'];   // 시작하자마자 쓰지 않는 그림은 따로 (시작 화면이 빨리 뜨게): 드랍 아이템 · 챌린지 · 타락천사
 const LAZY_BUSY = {}, LAZY_FAIL = {};
+function imgReady(keys) {   // v9.69 나중에 받는 그림이 다 왔는지 — 아직이면 지금 받도록 하고 false
+  let ok = true; for (const k of keys) if (!IMG[k]) { ok = false; lazyLoad(k); } return ok;
+}
 function lazyLoad(k) {   // v9.59 나중에 불러오는 그림: 네트워크가 끊겨 실패해도 몇 초 뒤 다시 시도한다 (예전엔 한 번 실패하면 그 판 내내 그림이 없어 보스 몸이 그림자만 보였다)
   if (IMG[k] || LAZY_BUSY[k] || !SRC[k]) return Promise.resolve(); LAZY_BUSY[k] = true;
   return loadImg(SRC[k]).then(i => { delete LAZY_FAIL[k]; IMG[k] = i; if (k === 'kng' || k === 'vft' || k === 'qn' || k === 'cm' || k === 'ab' || k === 'grn' || k === 'horse' || k === 'shk' || k === 'statue' || k === 'tox' || k === 'adm' || k === 'zom' || k === 'lad' || k === 'frw' || k === 'gnm') IMG[k + 'W'] = silhouette(i, '#ffffff'); if (k === 'gmob') try { buildGardSpecies(); } catch (_) {} if (k === 'imob') try { buildIceSpecies(); } catch (_) {} if (k === 'fmob') try { buildFireSpecies(); } catch (_) {} }).catch(() => { LAZY_FAIL[k] = true; }).then(() => { LAZY_BUSY[k] = false; });
 }
 // v9.67 프레임 드랍: 나중에 쓰는 그림 78장을 한꺼번에 해독하면 시작 직후 60~230ms짜리 멈춤이 줄줄이 생겼다 → 2장씩 틈을 두고 순서대로 불러온다 (자주 쓰는 것 먼저). 실패한 것만 4초마다 다시 시도.
-const LAZY_PRI = ['drophb', 'droppo', 'heart', 'skb', 'horse', 'mimic', 'sh', 'shk', 'statue', 'an', 'anfx', 'amap', 'an2', 'mmap', 'smap', 'sktw', 'skelF', 'skelFa', 'tox', 'sk_gunH', 'sk_gunE', 'sk_wolfB', 'sk_ghostU', 'sk_wolfE', 'sk_lizG', 'sk_ghostG', 'sk_twS'];
+const LAZY_PRI = ['arena', 'drophb', 'droppo', 'uniq', 'heart', 'skb', 'fwb', 'fwfx', 'bmap', 'horse', 'mimic', 'sh', 'shk', 'statue', 'an', 'anfx', 'amap', 'an2', 'mmap', 'smap', 'sktw', 'skelF', 'skelFa', 'tox', 'sk_gunH', 'sk_gunE', 'sk_wolfB', 'sk_ghostU', 'sk_wolfE', 'sk_lizG', 'sk_ghostG', 'sk_twS'];
 const LAZY_ORD = LAZY_PRI.filter(k => LAZY_IMG.includes(k)).concat(LAZY_IMG.filter(k => !LAZY_PRI.includes(k)));
 function lazyPump() {   // v9.68 꼭 필요한 그림(LD_KEYS)을 다 받은 뒤에 시작 — 같이 받으면 대역폭을 나눠 써서 시작 로딩이 길어졌다
   let i = 0;
@@ -16027,7 +16035,7 @@ function lazyPump() {   // v9.68 꼭 필요한 그림(LD_KEYS)을 다 받은 뒤
 setInterval(() => { for (const k in LAZY_FAIL) if (!IMG[k]) lazyLoad(k); }, 4000);
 try { if ('serviceWorker' in navigator && /^https?:/.test(location.protocol)) navigator.serviceWorker.register('sw.js').catch(() => {}); } catch (_) {}   // v9.68 그림 캐시(sw.js)
 const LD_KEYS = Object.keys(SRC).filter(k => !LAZY_IMG.includes(k)); let ldN = 0;   // v8.14 시작 전 꼭 필요한 그림만 기다린다 (진행률 표시)
-Promise.all(LD_KEYS.map(k => loadImg(SRC[k]).then(i => { IMG[k] = i; ldN++; const e = document.getElementById('ldTxt'); if (e) e.textContent = `불러오는 중… ${Math.round(ldN / LD_KEYS.length * 100)}%`; }))).then(() => {
+Promise.all(LD_KEYS.map(k => loadImg(SRC[k]).then(i => { IMG[k] = i; ldN++; const e = document.getElementById('ldTxt'); if (e) e.textContent = `불러오는 중… ${Math.round(ldN / LD_KEYS.length * 100)}% (${ldN}/${LD_KEYS.length})`; const bb = document.getElementById('ldBar'); if (bb) bb.style.width = Math.round(ldN / LD_KEYS.length * 100) + '%'; }))).then(() => {
   setTimeout(lazyPump, 300);   // IMG.이름 = SRC.이름
   { const b = document.getElementById('ldBox'); if (b) b.remove(); }
   IMG.miniW = silhouette(IMG.mini, '#ffffff'); IMG.floorD = toneFloor(IMG.floor); try { buildMushSpecies(); buildSeaSpecies(); } catch (_) {}
@@ -16038,7 +16046,7 @@ Promise.all(LD_KEYS.map(k => loadImg(SRC[k]).then(i => { IMG[k] = i; ldN++; cons
   buildCards();
   reset();
   requestAnimationFrame(t => { last = t; loop(t); });
-  setTimeout(() => { try { hq(IMG.boss, 2); const wc = mkCanvas(2, 2).getContext('2d'); for (const k of ['arena', 'castle', 'boss', 'mini']) wc.drawImage(IMG[k], 0, 0, 2, 2);
+  setTimeout(() => { try { hq(IMG.boss, 2); const wc = mkCanvas(2, 2).getContext('2d'); for (const k of ['arena', 'castle', 'boss', 'mini']) if (IMG[k]) wc.drawImage(IMG[k], 0, 0, 2, 2);
     const tw = mkCanvas(900, 40).getContext('2d'); for (const f of ['bold 13px', 'bold 16px', 'bold 20px']) { tw.font = f + ' ' + FONT; tw.fillText('마왕성 강제 입장 후 성 밖으로 나갈 기회는 딱 한 번 출구 봉인됨 이동 속도 부족 기술 정상 원숭이 마왕 분노 ▼▲ ☠ ✔ 특수 스킬 획득 게이지 발동 진화 조건 달성 독약', 0, 20); }
   } catch (_) {} }, 900);   // 마왕전 진입 시 끊김 방지: 큰 그림을 미리 해독·확대해 둔다
 }).catch(e => { const x = document.getElementById('ldTxt'); if (x) { x.style.color = '#ff8a8a'; x.textContent = '그림을 불러오지 못했습니다. 인터넷 연결을 확인하고 새로고침(F5) 해 주세요.'; } });
