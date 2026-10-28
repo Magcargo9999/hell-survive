@@ -682,7 +682,7 @@ const GUN_AMMO = {
   F: { name: '불씨탄', p: 0.15, dm: 2.0, rgb: '255,60,50', spr: 'bF', hit: 'xF', burn: 3 },    // 2배 피해 · 관통 · 3초 지속 피해
   B: { name: '공포탄', p: 0.05, dm: 0.1, rgb: '190,90,255', spr: 'bB', hit: 'xB' },          // 꽝 (10%)
 };
-const gunMagN = () => GUN.mag + (P.up.gMag | 0);   // v9.02 확장 탄창: 1장마다 +1발 (6 → 9)
+const gunMagN = () => GUN.mag;   // v9.83: 확장 탄창 카드 삭제 — 탄창은 늘 6발 (이름은 그대로 두고 호출부 유지)
 const GUN = { mag: 6, reload: 1.0, sp: 900, burnK: 0.18 };   // 탄창 · 재장전(초) · 탄 속도 · 불씨 지속 피해(0.5초마다 공격력 비율)
 const GUN_FORMS = [
   { src: 'gun', name: '악마 총잡이', ws: 0.82, flip: 1, hitF: 0, sh: 20, hy: 62, pv: GUNA.i0[0].slice(0, 4), rgb: '255,90,110', c1: '#ff5a6e', c2: '#ffd0d8',
@@ -697,17 +697,16 @@ const gunRange = () => (P.rng * 3.2 + 40) * (P.form >= 2 ? 1.06 : 1);   // 보�
 const gunReload = () => GUN.reload * (1 - 0.15 * (P.up.gReload | 0));
 const gunSpec = k => (k === 'R' || k === 'F') ? 1 + 0.12 * (P.up.gSpec | 0) : 1;   // v6.46: 15% → 12%
 function gunRoll1() {   // 탄 하나 뽑기
-  const f = GUN_AMMO.F.p + 0.06 * (P.up.gEmber | 0), r = rand();   // v9.02 불씨 각인 +5%p → +6%p
-  return r < f ? 'F' : r < f + GUN_AMMO.R.p ? 'R' : r < f + GUN_AMMO.R.p + GUN_AMMO.B.p ? 'B' : 'N';
+  const f = GUN_AMMO.F.p + 0.06 * (P.up.gEmber | 0), r = rand(), rp = GUN_AMMO.R.p + 0.06 * (P.up.gRico | 0);   // v9.02 불씨 각인 +5%p → +6%p · v9.83 도탄 각성: 도탄 확률 +6%p씩
+  return r < f ? 'F' : r < f + rp ? 'R' : r < f + rp + GUN_AMMO.B.p ? 'B' : 'N';
 }
 function gunLoad() {
   const n = gunMagN(); P.mag = []; for (let i = 0; i < n; i++) P.mag.push(gunRoll1()); P.magI = 0;
-  if (P.syn.gEmberMag && !P.mag.includes('F')) P.mag[(rand() * n) | 0] = 'F';   // v9.02 ★불씨 탄띠: 불씨탄 최소 1발 보장
 }
 function gunMuzzle() { const D = FD(); return [P.x + P.face * 34 * D.ws * 1.2, P.y - 50 * D.ws]; }
 function gunFire(k, ang, src) {   // 탄 한 발 발사
   const A = GUN_AMMO[k], [ox, oy] = gunMuzzle(), sp = GUN.sp;
-  shards.push({ src, x: ox, y: oy, vx: Math.cos(ang) * sp, vy: Math.sin(ang) * sp, life: gunRange() / sp, pierce: k === 'F' ? 99 : k === 'R' ? 1 + A.bounce : 1, hit: new Set(), dmg: P.dmg * A.dm * gunSpec(k), gun: k, kb: k === 'F' ? 260 : 150, sz: 1, eb: 0 });
+  shards.push({ src, x: ox, y: oy, vx: Math.cos(ang) * sp, vy: Math.sin(ang) * sp, life: gunRange() / sp, pierce: k === 'F' ? 99 : k === 'R' ? 1 + A.bounce : 1, hit: new Set(), dmg: P.dmg * A.dm * gunSpec(k), d0: P.dmg * A.dm * gunSpec(k), gun: k, kb: k === 'F' ? 260 : 150, sz: 1, eb: 0 });
   gunFx.push({ k: 'muz', x: ox, y: oy, t: 0, life: 0.1, rgb: A.rgb, ang });
 }
 function gunShot() {   // 평타: 탄창의 다음 탄을 쏜다 · 6발을 다 쓰면 재장전
@@ -747,6 +746,7 @@ function gunHit(s, e) {   // 탄이 적에게 맞았을 때: 이펙트 · 불씨
   const A = GUN_AMMO[s.gun];
   if (gunFx.length < 80) gunFx.push({ k: A.hit, x: e.x, y: e.y - e.r, t: 0, life: 0.32, i: (rand() * GUNA[A.hit].length) | 0 });
   if (s.gun === 'F') { e.burnT = A.burn; e.burnD = P.dmg * GUN.burnK * gunSpec('F'); e.burnSrc = 'g:F'; }
+  if (s.gun === 'R' && P.up.gRico) s.dmg += s.d0 * 0.1;   // v9.83 도탄 각성: 적에게 맞을 때마다 이 탄의 피해 +10% (처음 피해 기준 누적)
   if (s.gun === 'R' && s.pierce > 1) {   // 가까운 다른 적에게 튕긴다
     let t2 = null, bd = 420 * 420;
     for (const o of enemies) { if (o.hp <= 0 || o.invul || s.hit.has(o)) continue; const dd = (o.x - s.x) ** 2 + (o.y - o.r - s.y) ** 2; if (dd < bd) { bd = dd; t2 = o; } }
@@ -965,7 +965,7 @@ function mkCanvas(w, h) { const c = document.createElement('canvas'); c.width = 
  * 0-1. 저장(영혼 조각 · 영구 강화 · 설정) / 캐릭터 목록 / 소리
  * ============================================================ */
 const SAVE_KEY = 'hellSurvivorSave1';
-const GAME_VER = 'v9.83';
+const GAME_VER = 'v9.84';
 const SAVE_DEF = () => ({
   shards: 0,
   perks: { hp: 0, spd: 0, dmg: 0, exp: 0, magnet: 0, banish: 0, revive: 0, regen: 0, shard: 0, critd: 0, choice: 0 },
@@ -9292,7 +9292,7 @@ const UNIQUE = {
     { id: 'gReload', name: '빠른 장전', max: 3, txt: n => `재장전 시간 -15% (1초 → ${(1 - 0.15 * n).toFixed(2)}초)`, apply: () => {} },
     { id: 'gSpec', name: '특수탄 강화', max: 3, txt: n => `불씨탄 · 도탄 피해 +12% (합계 +${12 * n}%)`, apply: () => {} },
     { id: 'gEmber', name: '불씨 각인', max: 3, txt: n => `불씨탄 확률 +6%p (${15 + 6 * n}% · 일반탄 ${55 - 6 * n}%)`, apply: () => {} },
-    { id: 'gMag', name: '확장 탄창', max: 3, txt: n => `탄창 +1발 (${GUN.mag + n}발 — 재장전 횟수가 줄고 구르기 난사도 늘어남)`, apply: () => {} },
+    { id: 'gRico', name: '도탄 각성', max: 3, txt: n => `도탄이 적에게 맞을 때마다 그 탄의 피해 +10% (최대 3번 튕김) · 도탄 확률 +6%p (${25 + 6 * n}%)`, apply: () => {} },
     { id: 'gBounty', name: '현상금 사냥', max: 3, txt: n => `처치할 때마다 1.5초 동안 이속 +2% (최대 ${1 + 2 * n}중첩)`, apply: () => {} },
   ],
   ghost: [
@@ -9328,7 +9328,6 @@ const SYNERGIES = [
   { id: 'lifeOrb',   name: '불사의 영혼', txt: '경험치 구슬마다 체력 회복',        need: ['heart', 'magnet'] },
   { id: 'tstorm',    name: '폭풍 낙뢰',   txt: '낙뢰 쿨타임 -20% · +2발 · 피해 -8%',            need: ['thunder', 'speed'] },
   { id: 'bstorm',    name: '칼날 폭풍',   txt: '칼날 +2개 · 크기 +62%',            need: ['blade', 'range'] },
-  { id: 'gEmberMag', name: '불씨 탄띠',  txt: '재장전할 때마다 불씨탄이 최소 1발 들어간다', need: ['gMag', 'gEmber'], only: 'gun', apply: p => { p.syn.gEmberMag = true; } },
   { id: 'glacier',   name: '빙하 충격파', txt: '충격파에 맞은 적은 반드시 빙결 · 빙결 중 받는 피해 +10% → +25%', need: ['freeze', 'nova'] },
   { id: 'forge',     name: '달궈진 칼날', txt: '칼날에 맞은 적은 반드시 점화 · 점화 지속 +2초 · 점화 피해 +30%', need: ['ignite', 'blade'] },
   { id: 'shock',     name: '열충격',      txt: '점화와 빙결이 함께 걸린 적이 터져 주변에 공격력 220% 피해 (점화는 사라짐 · 적마다 3초에 한 번) · 점화 중인 적은 빙결, 빙결 중인 적은 점화 확률 ×2', need: ['ignite', 'freeze'] },
@@ -16139,6 +16138,7 @@ function openAch() {
 }
 /* v8.71 간략 패치노트 (최근 버전만, 새 버전마다 맨 위에 한 줄 추가) */
 const PATCH = [
+  ['v9.84','[악마 총잡이] 확장 탄창 카드·조합 [불씨 탄띠] 삭제 → 도탄 전용 카드 [도탄 각성] 추가 — 도탄이 적에게 맞을 때마다 그 탄 피해 +10% 누적 · 도탄 확률 +6%p(최대 3장)'],
   ['v9.83','[마계 물고기] 물오라가 보스·미니 보스·유니크에게 오라 한 번마다 최대 체력의 0.6%를 추가로 입힘(공격력 ×9.6 상한) · 공용 [불길 오라] 카드를 물고기도 고를 수 있게 함'],
   ['v9.82','[버그] 시체고래 죽음의 파도: 빈 줄이 맵 밖에 생겨 못 피하던 문제 수정 — 맵 안에서 닿을 수 있는 줄만 안전 줄로 고름 · [팔열지옥] 열기가 더 빨리 차고(초당 2.2) 휴식존에서 더 천천히 식고(14) 움직이면 더 빨리 오른다(3.4) · [UI] 열기·동상 게이지 2배 크기로 위로 옮겨 스킬 쿨타임과 안 겹침 · [불구렁이] 땅속 참호 패턴: 속도 2배(1120/1360) · 참호 유지 5초(전 10초) · 무작위가 아니라 내가 지나온 길을 따라가고 내 코앞 280 안으로는 붙지 않음'],
   ['v9.81','[버그] 잭팟 머신(룰렛)으로 레벨업하면 증강 선택창이 순식간에 사라지던 문제 수정 — 머신을 닫은 키·클릭이 그대로 카드 선택이 되던 것(닫은 뒤 0.5초는 카드 선택 잠금 · 키 꾹 누름 무시)'],
@@ -16461,7 +16461,7 @@ stepDive = skWrap(stepDive, 'dive'); stepRush = skWrap(stepRush, 'rush'); rushSt
 updateAirs = (f => function (...a) { return withSrc('basic', () => f.apply(this, a)); })(updateAirs);   // v6.22: 에어슬래시는 평타 (v6.30: 바로 뒤 천안 난무·브레스 감싸기가 주석에 묻혀 딜미터기에서 빠지던 것 수정)
 { const _tb = thornBlast, _sb = smashBlow; thornBlast = function (...a) { return withSrc('scale', () => _tb.apply(this, a)); }; smashBlow = function (...a) { return withSrc('smash', () => _sb.apply(this, a)); }; }
 shellReflect = skWrap(shellReflect, 'shell'); updateBsig = skWrap(updateBsig, 'bsigil');
-window.__G = { updateFish, openSlot, slotResult, slotSpin, WH, WHW, WhaleAI, whClear, whRoom, whLane, whLaneOk, whDexArt, get wh() { return wh; }, hq, hqLow, drawWolf, heatOn, heatArena, arenaRests, arenaRestNearest, openRoutePic, get banner() { return banner; }, isDosanSet, get DSPECIES() { return DSPECIES; }, buildDosanSpecies, BLADE, DF, DPROP_RECTS, dosanTile, imgReady, igniteX, procElem, startFw, spawnFw, spawnUniq, get cam() { return cam; }, TG, TGW, get tg() { return tg; }, tgClear, tgArms, tgCrossAt, tgInSafe, tgCxR, tgPatEnd, tgSafeSpot, tgCam, tgHold, TigerAI, HFUSE_HID, spawnFrw, frwAtk, FRW, spawnLad, lAtk, LAD, LADF, buildCards, rollHeartDrop, heartGain, disHeart, CHARS, inPoly, castSkill, get arena() { return arena; }, FISH, FWAVE, FISHA2, get fwaveQ() { return fwaveQ; }, SN, SNW, get sn() { return snAI; }, snClear, snHall, snEscapeR, pendingConds, rollCards, fishR, shardTotal, calcShards, heartBonus, CV, CVW, HellfirePatch, get cv() { return cvAI; }, cvClear, cvFurnace, pickBossK, get rushQ() { return rushQ; }, get FSPECIES() { return FSPECIES; }, heartMigrate, hRange, IMP, BLD, leadXY, leadDir, HEAT, FF, restNear, restNearest, restAt, updateHeat, isFireSet, fireTile, floorSet, clearGround: () => GROUND.clear(), get TOP_TIER() { return TOP_TIER; }, get OPEN_TIER() { return OPEN_TIER; }, lilArt, drawLilBody, LS, LSW, get ls() { return ls; }, FrostMirror, lsInWedge, lsIce, lsExPause, lsZone, lilDefeated, RD, RDW, RDF, rdOn, get rd() { return rd; }, KarmaBead, FrostMantra, IceLotus, rdAbsorb, rdInGap, rdExPause, rdSilence, rudDefeated, IMP, GoldImp, impOf, trySpawnImp, impDefeated, set impAt(v) { impAt = v; }, LUCK_N, PB, PBW, IMAP, IceWall, Fissure, IceSpear, segDist, FrostMgr, pbOn, pbClear, pbExPause, get pb() { return pb; }, gunMagN, ROLL, get lhead() { return lhead; }, KN, castLostHead, TW, isIceSlip, isIceSet, get ISPECIES() { return ISPECIES; }, ICE_SLIP, ICE_L, OPEN_TIER, TOP_TIER, renderHells, floorSet, pickFloor, iceTile, IF, get lhead() { return lhead; }, KN, isKnight, castLostHead, knightSlash, openGhostRoute, KNIGHT_FORMS, ghostForm, hTitle, relicIcon, heartMake, hOpt, heartBonus, calcShards, GRN, GRW, GRNF, spawnGrn, grnStart, grnPick, TRIAL, chAltarTick, chAltarPlace, chTrialStart, chTrialWin, chTime, chTime0, chDmgT, CH_HARD, CH_BOSS, cardDefs, cardView, ACH, achSync, achClear, openAch, KG, KGW, get kg() { return kg; }, AirGeyser, WaterMirror, MirrorBolt, kgIce, get shards() { return shards; }, set shards(v) { shards = v; }, VF, VFW, get vf() { return vf; }, VfTrap, VfSkull, VfHeart, vfLeech, fuseHearts, rerollHeart, heartBonus, renderFuse, setFu(v) { hFu = v; }, QN, QNW, get qn() { return qn; }, RootBind, SporeSack, QnMush, pickBossK, pctMelee, pctZone, updateDiff, skinG, bhKey, BH_ORDER, heartIcon, relicMaskOn, calcShards, isSlow, isLava, saveSave, svParse, spawnPlant, PL, get GSPECIES() { return GSPECIES; }, get plBalls() { return plBalls; }, synCard, freezeE, availSyn, SYNERGIES, dmName, FD, shkAdd, toxAdd, skSpawnPair, phoenixRevive, mirrorBlock, palPop, updateCutSaws, get shkSp() { return shkSp; }, get toxFl() { return toxFl; }, get zonesRef() { return zones; },
+window.__G = { gunRoll1, gunHit, updateFish, openSlot, slotResult, slotSpin, WH, WHW, WhaleAI, whClear, whRoom, whLane, whLaneOk, whDexArt, get wh() { return wh; }, hq, hqLow, drawWolf, heatOn, heatArena, arenaRests, arenaRestNearest, openRoutePic, get banner() { return banner; }, isDosanSet, get DSPECIES() { return DSPECIES; }, buildDosanSpecies, BLADE, DF, DPROP_RECTS, dosanTile, imgReady, igniteX, procElem, startFw, spawnFw, spawnUniq, get cam() { return cam; }, TG, TGW, get tg() { return tg; }, tgClear, tgArms, tgCrossAt, tgInSafe, tgCxR, tgPatEnd, tgSafeSpot, tgCam, tgHold, TigerAI, HFUSE_HID, spawnFrw, frwAtk, FRW, spawnLad, lAtk, LAD, LADF, buildCards, rollHeartDrop, heartGain, disHeart, CHARS, inPoly, castSkill, get arena() { return arena; }, FISH, FWAVE, FISHA2, get fwaveQ() { return fwaveQ; }, SN, SNW, get sn() { return snAI; }, snClear, snHall, snEscapeR, pendingConds, rollCards, fishR, shardTotal, calcShards, heartBonus, CV, CVW, HellfirePatch, get cv() { return cvAI; }, cvClear, cvFurnace, pickBossK, get rushQ() { return rushQ; }, get FSPECIES() { return FSPECIES; }, heartMigrate, hRange, IMP, BLD, leadXY, leadDir, HEAT, FF, restNear, restNearest, restAt, updateHeat, isFireSet, fireTile, floorSet, clearGround: () => GROUND.clear(), get TOP_TIER() { return TOP_TIER; }, get OPEN_TIER() { return OPEN_TIER; }, lilArt, drawLilBody, LS, LSW, get ls() { return ls; }, FrostMirror, lsInWedge, lsIce, lsExPause, lsZone, lilDefeated, RD, RDW, RDF, rdOn, get rd() { return rd; }, KarmaBead, FrostMantra, IceLotus, rdAbsorb, rdInGap, rdExPause, rdSilence, rudDefeated, IMP, GoldImp, impOf, trySpawnImp, impDefeated, set impAt(v) { impAt = v; }, LUCK_N, PB, PBW, IMAP, IceWall, Fissure, IceSpear, segDist, FrostMgr, pbOn, pbClear, pbExPause, get pb() { return pb; }, gunMagN, ROLL, get lhead() { return lhead; }, KN, castLostHead, TW, isIceSlip, isIceSet, get ISPECIES() { return ISPECIES; }, ICE_SLIP, ICE_L, OPEN_TIER, TOP_TIER, renderHells, floorSet, pickFloor, iceTile, IF, get lhead() { return lhead; }, KN, isKnight, castLostHead, knightSlash, openGhostRoute, KNIGHT_FORMS, ghostForm, hTitle, relicIcon, heartMake, hOpt, heartBonus, calcShards, GRN, GRW, GRNF, spawnGrn, grnStart, grnPick, TRIAL, chAltarTick, chAltarPlace, chTrialStart, chTrialWin, chTime, chTime0, chDmgT, CH_HARD, CH_BOSS, cardDefs, cardView, ACH, achSync, achClear, openAch, KG, KGW, get kg() { return kg; }, AirGeyser, WaterMirror, MirrorBolt, kgIce, get shards() { return shards; }, set shards(v) { shards = v; }, VF, VFW, get vf() { return vf; }, VfTrap, VfSkull, VfHeart, vfLeech, fuseHearts, rerollHeart, heartBonus, renderFuse, setFu(v) { hFu = v; }, QN, QNW, get qn() { return qn; }, RootBind, SporeSack, QnMush, pickBossK, pctMelee, pctZone, updateDiff, skinG, bhKey, BH_ORDER, heartIcon, relicMaskOn, calcShards, isSlow, isLava, saveSave, svParse, spawnPlant, PL, get GSPECIES() { return GSPECIES; }, get plBalls() { return plBalls; }, synCard, freezeE, availSyn, SYNERGIES, dmName, FD, shkAdd, toxAdd, skSpawnPair, phoenixRevive, mirrorBlock, palPop, updateCutSaws, get shkSp() { return shkSp; }, get toxFl() { return toxFl; }, get zonesRef() { return zones; },
   bossDefeated, get IMG() { return IMG; },
   get ready() { return !!IMG.floorD; }, get state() { return state; }, get P() { return P; }, get enemies() { return enemies; }, get orbs() { return orbs; },
   get zones() { return zones; }, get ebul() { return ebul; }, get EYE() { return EYE; }, get shards() { return shards; }, get bigQ() { return bigQ; }, get bombQ() { return bombQ; }, get holyQ() { return holyQ; }, get afx() { return afx; }, get dashQ() { return dashQ; }, get beam() { return beam; }, get evo() { return evo; }, get choices() { return choices; },

@@ -72,7 +72,7 @@ async def main():
         print('K',json.dumps(R,ensure_ascii=False))
         # 같은 버전의 다른 수정
         R=await pg.evaluate("""()=>{const G=__G,o={};
-          G.startGame('gun');let P=G.P;__lv(21);o.roll=G.ROLL.n;P.up.gMag=3;G.gunLoad();o.mag=P.mag.length;P.up.gEmber=3;P.syn.gEmberMag=true;let none=0;for(let i=0;i<300;i++){G.gunLoad();if(!P.mag.includes('F'))none++}o.noEmber=none;
+          G.startGame('gun');let P=G.P;__lv(21);o.roll=G.ROLL.n;G.gunLoad();o.mag=P.mag.length;P.up.gEmber=3;P.syn.gEmberMag=true;let none=0;for(let i=0;i<300;i++){G.gunLoad();if(!P.mag.includes('F'))none++}o.noEmber=none;
           G.startGame('ghost');P=G.P;window.__rt=1;__lv(21);window.__rt=1;o.route=P.route;o.form=P.form;G.castLostHead();const h=G.lhead;o.headLife=h&&h.life;o.hasHurt=!!(h&&h.hurt);o.dm=G.KN.lh.dm;
           G.startGame('chimera');P=G.P;window.__rt=0;__lv(21);o.chim=[P.route,P.form,+P.dmg.toFixed(1)];
           return o}""")
