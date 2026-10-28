@@ -124,6 +124,8 @@ ASSETS = {
     '__RELKEY__': 'final/relkey.webp', '__RELPHOENIX__': 'final/relphoenix.webp', '__RELFANG__': 'final/relfang.webp',
     '__HFW__': 'heart/hfw.webp',
     '__DK__': 'dk/dk.webp',
+    '__DOK__': 'dok/dok.webp',
+    '__DOKFX__': 'dokfx/dokfx.webp',
     '__SKWOLFE__': 'skin/wolfE.webp',
     '__TOX__': 'tox/tox.webp',
     '__KNG__': 'kng/kng.webp', '__VFT__': 'vft/vft.webp', '__QN__': 'qn/qn.webp', '__ADM__': 'adm/adm.webp', '__ZOM__': 'zom/zom.webp', '__GMOB__': 'gard/gmob.webp', '__GNM__': 'gard/gnm.webp',
