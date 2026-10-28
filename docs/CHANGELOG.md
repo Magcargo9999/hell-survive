@@ -249,3 +249,6 @@ CLAUDE.md에서 분리. 필요할 때만 `grep -n "키워드" docs/CHANGELOG.md`
 
 ## v9.82
 - 시체고래 죽음의 파도 안전 줄: `whLaneOk`(맵 안·경로 이동 가능)로만 선택 · 열기 `HEAT` fill 2.2 / move 3.4 / cool 14 · 열기·빙결 게이지 폭 640·높이 20·y=H-150 · 불구렁이 파열하는 대지: `SNW.trail` 이동 경로 추적(`snTrailPath`), `SN.tuSp` 1120/1360, `crLife` 5/6, `trKeep` 280. 테스트 `tools/tests/v982.py`
+
+## v9.83
+- 마계 물고기 물오라: 보스·미니·유니크에게 오라 한 번마다 최대 체력 0.6%(`FISH.pct`, 상한 `pctCap` 공격력×12 × 수압 배율) 추가 · 공용 [불길 오라] 카드의 `noChar:'fish'` 제거 · 일시정지 안내·캐릭터 소개 문구 갱신. 테스트 `tools/tests/fish983.py`
