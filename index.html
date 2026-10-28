@@ -393,7 +393,7 @@
   <div class="hslots" id="hSlots"></div><p id="hSum" class="hsum"></p>
   <div class="hfuse" id="hFuse"></div>
   <div class="hmain"><div class="hinv" id="hInv"></div><div class="hcore" id="hCore"></div></div>
-  <p class="gprob" id="hHelp" style="display:none">심장이 떨어지는 마왕 16종: 원숭이 · 마안군주 · 스켈레톤 · 타락천사 · 거대 버섯마귀 · 이독버섯 · 해군 제독 · 원예의 여왕 · 파리지옥 · 어인왕 · 백곰 · 루드라 · 릴세르카 · 화염죄수 · 불구렁이 · 화염 호랑이<br>마왕 16종은 종류마다 그 심장을 보유 중이 아닐 때만(처치 시 33%) 떨어짐 · 분해하면 다시 떨어짐 · 챌린지·숨은 보스 제외 · [보스의 심장] (레어) · 떨어질 때 1% 확률로 레전더리 · 재설정 비용은 등급별 레어 ◆500 · 에픽 ◆600 · 유니크 ◆700 · 레전더리 ◆800: 레어→에픽 30% · 에픽→유니크 20% · 유니크→레전더리 5% 등급 상승, 옵션(공격력 · 최대 체력 · 공격 속도 각 1/3)과 수치를 다시 뽑음<br>등급별 수치: 레어 1~3% · 에픽 4~6% · 유니크 7~9% · 레전더리 15~20% · 최대 5개 장착 (효과는 다음 판 시작부터)<br>합성: 레전더리 심장 3개를 합성 칸에 넣으면 모두 사라지고 [끔찍한 심장] 1개(레어 · 옵션 2줄 · 보스 무관 · 여러 개 가능)가 생김 · 그 보스 심장이 하나도 안 남으면 다시 드랍 · 옵션 2줄 심장은 재설정할 때 두 줄을 모두 다시 뽑음 · 끔찍한 심장 3개를 넣으면 [지옥 심장] 1개(레어 · 옵션 3줄)</p>
+  <p class="gprob" id="hHelp" style="display:none">심장이 떨어지는 마왕 17종: 원숭이 · 마안군주 · 스켈레톤 · 타락천사 · 거대 버섯마귀 · 이독버섯 · 해군 제독 · 원예의 여왕 · 파리지옥 · 어인왕 · 백곰 · 루드라 · 릴세르카 · 화염죄수 · 불구렁이 · 화염 호랑이 · 검 도깨비<br>마왕 17종은 종류마다 그 심장을 보유 중이 아닐 때만(처치 시 33%) 떨어짐 · 분해하면 다시 떨어짐 · 챌린지·숨은 보스 제외 · [보스의 심장] (레어) · 떨어질 때 1% 확률로 레전더리 · 재설정 비용은 등급별 레어 ◆500 · 에픽 ◆600 · 유니크 ◆700 · 레전더리 ◆800: 레어→에픽 30% · 에픽→유니크 20% · 유니크→레전더리 5% 등급 상승, 옵션(공격력 · 최대 체력 · 공격 속도 각 1/3)과 수치를 다시 뽑음<br>등급별 수치: 레어 1~3% · 에픽 4~6% · 유니크 7~9% · 레전더리 15~20% · 최대 5개 장착 (효과는 다음 판 시작부터)<br>합성: 레전더리 심장 3개를 합성 칸에 넣으면 모두 사라지고 [끔찍한 심장] 1개(레어 · 옵션 2줄 · 보스 무관 · 여러 개 가능)가 생김 · 그 보스 심장이 하나도 안 남으면 다시 드랍 · 옵션 2줄 심장은 재설정할 때 두 줄을 모두 다시 뽑음 · 끔찍한 심장 3개를 넣으면 [지옥 심장] 1개(레어 · 옵션 3줄)</p>
 </div>
 <div id="hfx"></div>
 
@@ -965,7 +965,7 @@ function mkCanvas(w, h) { const c = document.createElement('canvas'); c.width = 
  * 0-1. 저장(영혼 조각 · 영구 강화 · 설정) / 캐릭터 목록 / 소리
  * ============================================================ */
 const SAVE_KEY = 'hellSurvivorSave1';
-const GAME_VER = 'v10.03';
+const GAME_VER = 'v10.04';
 const SAVE_DEF = () => ({
   shards: 0,
   perks: { hp: 0, spd: 0, dmg: 0, exp: 0, magnet: 0, banish: 0, revive: 0, regen: 0, shard: 0, critd: 0, choice: 0 },
@@ -15368,7 +15368,7 @@ const DOK = { hp: 1.6, dm: 1.0, K: 2.0, r: 56, spK: 0.95, spMax: 285, bump: 14,
   daCd: 7, daWarn: 0.55, daSp: 2000, daLen: 760, daW: 70, daDm: 24, wvWind: 0.45, wvN: 3, wvSp: 0.5, wvSpd: 640, wvR: 22, wvDm: 18, wvLen: 1100,
   gdCd: 13, gdT: 1.5, gdRaise: 0.5, gdIcd: 0.25, gdN: 3, gdR: 210, gdCut: 0.1, bind: 1.0, bindImm: 3, tpAt: 0.35, exR: 260, exHalf: 1.1, exDm: 42,
   znCd: 28, znJump: 0.7, znRain: 1.2, znT: 10, znHx: 520, znHy: 300, znBand: 46, wallDm: 10, wallCd: 0.6, bleed: 3, bleedK: 0.025,
-  spN: 6, spN2: 7, spSp: 380, spSp2: 420, spR: 95, spDm: 16, spIcd: 0.5, spWind: 0.9, spPause: 0.2,
+  spN: 6, spN2: 7, spSp: 1140, spSp2: 1260, spR: 95, spDm: 16, spIcd: 0.5, spWind: 1.3, spPause: 0.4,
   drCd: 16, drN: 3, drGap: 0.5, drWarn: 1.0, drR: 115, drDm: 22, cbWind: 0.8, cbHalf: 75, cbLen: 200, cbSp: 520, cbT: 0.9, cbTick: 0.18, cbDm: 9,
   ph2: 0.3, roar: 1.8, tempo: 1.25 };
 const DOKF = {"idle":[[0,0,130,100,83.0,99],[132,0,113,103,66.0,102],[247,0,97,105,51.0,104],[346,0,107,108,48.0,107],[455,0,104,109,49.0,108],[561,0,117,105,47.0,104],[680,0,114,111,51.0,110]],"walk":[[796,0,117,96,70.0,95],[915,0,115,97,68.0,96],[1032,0,121,100,49.0,99],[1155,0,108,99,52.0,98],[1265,0,115,96,53.0,95],[1382,0,120,97,60.0,96],[1504,0,115,99,58.0,98]],"atk":[[1621,0,125,89,70.0,88],[1748,0,159,93,72.0,92],[1909,0,138,102,60.0,101],[0,113,102,99,52.0,98],[104,113,142,117,60.0,116],[248,113,157,99,81.0,98]],"combo":[[407,113,105,85,61.0,84],[514,113,113,85,53.0,84],[629,113,97,88,56.0,87],[728,113,100,93,50.0,92],[830,113,104,92,58.0,91],[936,113,128,93,69.0,92],[1066,113,131,97,68.0,96]],"guard":[[1199,113,80,78,38.0,77],[1281,113,69,78,33.0,77],[1352,113,63,82,27.0,81]],"hit":[[1417,113,71,70,40.0,69],[1490,113,70,75,34.0,74],[1562,113,76,79,36.0,78]],"stun":[[1640,113,86,68,34.0,67],[1728,113,99,60,61.0,59],[1829,113,115,47,54.0,46]],"death":[[1946,113,94,82,52.0,81],[0,232,88,73,47.0,72],[90,232,95,71,50.0,70],[187,232,114,75,56.0,74],[303,232,192,88,76.0,87],[497,232,222,88,105.0,87]]};
@@ -16262,7 +16262,7 @@ const hRoll = g => { const st = ['atk', 'hp', 'aspd', 'shard'][(Math.random() * 
 const hLines = h => { const o = [[h.st, h.v]]; if (h.st2) o.push([h.st2, h.v2]); if (h.st3) o.push([h.st3, h.v3]); return o; };
 const HEART = { drop: 0.33, legend: 0.01, slots: 5 };
 const heartCost = h => HG[h.g].cost;   // v8.09: 심장 등급(강화 단계)에 따라 레어 500 · 에픽 600 · 유니크 700 · 레전더리 800
-const BH = { angel: '타락천사', shk: '거대 버섯마귀', skel: '스켈레톤 마왕', eye: '마안군주', monkey: '원숭이 마왕', tox: '이독버섯 마왕', adm: '썩어버린 해군 제독', qn: '타락한 원예의 여왕', vft: '파리지옥 마왕', kng: '타락한 어인왕', bear: '팔한지옥의 백곰 마왕', rud: '마하칼 루드라', lil: '팔한지옥의 대공작 릴세르카', cvt: '영벌의 화염죄수', snk: '불구렁이', tig: '지옥의 화염 호랑이' }, BH_ORDER = ['angel', 'shk', 'skel', 'eye', 'monkey', 'tox', 'adm', 'qn', 'vft', 'kng', 'bear', 'rud', 'lil', 'cvt', 'snk', 'tig'];   // v10.01 16번째 줄 = 지옥의 화염 호랑이 · v9.60 9~15번째 줄 = 파리지옥·어인왕·백곰·루드라·릴세르카·화염죄수·불구렁이   // v8.66 여왕 심장 = 8번째 줄   // 보스 종류별 심장 (도트 줄 순서)
+const BH = { angel: '타락천사', shk: '거대 버섯마귀', skel: '스켈레톤 마왕', eye: '마안군주', monkey: '원숭이 마왕', tox: '이독버섯 마왕', adm: '썩어버린 해군 제독', qn: '타락한 원예의 여왕', vft: '파리지옥 마왕', kng: '타락한 어인왕', bear: '팔한지옥의 백곰 마왕', rud: '마하칼 루드라', lil: '팔한지옥의 대공작 릴세르카', cvt: '영벌의 화염죄수', snk: '불구렁이', tig: '지옥의 화염 호랑이', dok: '검 도깨비 마왕' }, BH_ORDER = ['angel', 'shk', 'skel', 'eye', 'monkey', 'tox', 'adm', 'qn', 'vft', 'kng', 'bear', 'rud', 'lil', 'cvt', 'snk', 'tig', 'dok'];   // v10.04 17번째 줄 = 검 도깨비 마왕(도트 오기 전까지 임시 그림) · v10.01 16번째 줄 = 지옥의 화염 호랑이 · v9.60 9~15번째 줄 = 파리지옥·어인왕·백곰·루드라·릴세르카·화염죄수·불구렁이   // v8.66 여왕 심장 = 8번째 줄   // 보스 종류별 심장 (도트 줄 순서)
 const bhKey = e => e.bk && BH[e.bk] ? e.bk : (e.bk ? null : 'monkey');   // v9.60 심장이 있는 마왕은 BH가 정한다 (타락 혈랑왕·챌린지 마왕은 null)
 const hRand = (a, b) => a + Math.floor(Math.random() * (b - a + 1));
 const hOpt = h => hLines(h).map(([st, v]) => `${HSTAT[st]} +${v}%`).join(' · ');   // v8.66: 합성한 심장은 옵션 2줄
@@ -16328,7 +16328,8 @@ function heartIcon(g, s, b) {   // v8.09: 보스별 도트 (IMG.heart 4열=등�
   if (b === 'fw' && IMG.hfw) { const c = mkCanvas(s, s), x = c.getContext('2d'); x.imageSmoothingQuality = 'high'; x.drawImage(IMG.hfw, 0, 0, s, s); return (HICON[key] = c); }   // v8.94 타락한 혈랑의 심장 도트
   if (b === 'fuse3' && IMG.hfuse3) { const c = mkCanvas(s, s), x = c.getContext('2d'); x.imageSmoothingQuality = 'high'; x.drawImage(IMG.hfuse3, 0, 0, s, s); return (HICON[key] = c); }   // v8.92 지옥 심장 도트
   if (b === 'fuse' && IMG.hfuse) { const c = mkCanvas(s, s), x = c.getContext('2d'); x.imageSmoothingQuality = 'high'; x.drawImage(IMG.hfuse, 0, 0, s, s); return (HICON[key] = c); }   // v8.90 끔찍한 심장 도트 (등급은 칸 테두리 색)
-  if (IMG.heart && b !== 'fuse' && b !== 'fuse3' && b !== 'fw') { const c = mkCanvas(s, s), x = c.getContext('2d'); x.imageSmoothingQuality = 'high'; x.drawImage(IMG.heart, HG_ORDER.indexOf(g) * 256, Math.max(0, BH_ORDER.indexOf(b || 'angel')) * 256, 256, 256, 0, 0, s, s); return (HICON[key] = c); }
+  if (IMG.heart && b !== 'fuse' && b !== 'fuse3' && b !== 'fw' && (Math.max(0, BH_ORDER.indexOf(b || 'angel')) + 1) * 256 <= IMG.heart.height) {   // v10.04 도트 줄이 아직 없으면 아래 임시 그림
+    const c = mkCanvas(s, s), x = c.getContext('2d'); x.imageSmoothingQuality = 'high'; x.drawImage(IMG.heart, HG_ORDER.indexOf(g) * 256, Math.max(0, BH_ORDER.indexOf(b || 'angel')) * 256, 256, 256, 0, 0, s, s); return (HICON[key] = c); }
   const c = mkCanvas(s, s), x = c.getContext('2d'), G = HG[g], k = s / 100;
   const glow = x.createRadialGradient(50 * k, 52 * k, 4 * k, 50 * k, 52 * k, 50 * k); glow.addColorStop(0, `rgba(${G.rgb},0.55)`); glow.addColorStop(1, `rgba(${G.rgb},0)`);
   x.fillStyle = glow; x.fillRect(0, 0, s, s);
@@ -16475,7 +16476,7 @@ const ACH = [
   { id: 'h4', icon: '🌊', name: '어인섬의 지배자', desc: '지하 20층 마왕(타락한 어인왕) 처치 — 4지옥 어인섬 정복', tier: 19, reward: 12000 },
   { id: 'br', icon: '⚔', name: '마왕 학살자', desc: '⚔ 보스 러시 완주 — 마왕 10종을 연달아 쓰러뜨리기', tier: -1, rush: true, reward: 15000 },
 ];
-const HB_KILL = { angel: 'boss6', shk: 'boss7', skel: 'boss4', eye: 'boss2', monkey: 'boss', tox: 'boss8', adm: 'boss9', qn: 'boss10', vft: 'boss11', kng: 'boss12', bear: 'boss14', rud: 'boss15', lil: 'boss16', cvt: 'boss17', snk: 'boss18', tig: 'boss19' };   // 심장이 있는 마왕 15종의 도감 처치 키
+const HB_KILL = { angel: 'boss6', shk: 'boss7', skel: 'boss4', eye: 'boss2', monkey: 'boss', tox: 'boss8', adm: 'boss9', qn: 'boss10', vft: 'boss11', kng: 'boss12', bear: 'boss14', rud: 'boss15', lil: 'boss16', cvt: 'boss17', snk: 'boss18', tig: 'boss19', dok: 'boss21' };   // 심장이 있는 마왕 15종의 도감 처치 키
 for (const bk of BH_ORDER) ACH.push({ id: 'hb_' + bk, icon: '💗', name: BH[bk] + ' 토벌', desc: `${BH[bk]} 10번 처치 — 보상으로 ${BH[bk]}의 심장 (레어)`, kill: HB_KILL[bk], need: 10, heart: bk });   // v8.91 마왕마다 하나씩: 처음 쓰러뜨리면 그 보스의 심장
 ACH.push({ id: 'hb_fw', icon: '🩸', name: '타락한 혈랑왕 사냥꾼', desc: '숨은 보스 타락한 혈랑왕 300번 처치 — 보상으로 타락한 혈랑의 심장 (레어 · 옵션 3줄)', kill: 'boss3', need: 300, heart: 'fw' });   // v8.94
 const LUCK_N = 10;
@@ -16525,6 +16526,7 @@ function openAch() {
 }
 /* v8.71 간략 패치노트 (최근 버전만, 새 버전마다 맨 위에 한 줄 추가) */
 const PATCH = [
+  ['v10.04','[검 도깨비] 결계 안 회전 베기 돌진 속도 3배(예고 1.3초 · 줄 사이 정지 0.4초) · 검 도깨비 마왕 심장 추가(도트는 임시 그림)'],
   ['v10.03','[호랑이] 2페이즈에도 카메라가 호랑이에게 딸려가지 않음 · 2페이즈 리듬 돌진은 항상 박자마다 나를 겨눠 직선으로 돌진 · [황금 임프] 처치로 받은 영혼 조각 10,000이 결과창에도 표시됨'],
   ['v10.02','[불구렁이] 땅파기 균열이 내 길을 따라간 뒤에도 바닥을 가로질러 3~5줄 더 그어 서로 엇갈리는 용암 참호 그물이 됨(참호 5초→약 8초) · 빨아들이기 대폭 강화(끌어당김 105→185 · 2페이즈 125→215, 부채꼴 반각 43°→57°, 한 번 삼킬 때 물림은 1번만)'],
   ['v10.01','[호랑이] 불의 십자가가 멈추지 않고 팔이 늘 벽까지 뻗음(불 뿜기 삭제) · 2페이즈엔 반대로 더 빠르게 돎 · 연속 돌진 5번을 다 피하면 기절 → 가드(한 번이라도 맞으면 기절 없음) · 지옥의 화염 호랑이 심장 추가'],
