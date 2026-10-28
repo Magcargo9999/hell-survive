@@ -246,3 +246,6 @@ CLAUDE.md에서 분리. 필요할 때만 `grep -n "키워드" docs/CHANGELOG.md`
 
 ## v9.81
 - 잭팟 머신 '레벨 +1' 증강창이 바로 사라지던 문제: 머신을 닫는 Digit1/Digit2·클릭이 곧바로 카드 선택으로 이어짐 → `choiceGuard`(0.5초) + 슬롯 키 `e.repeat` 무시. 테스트 `tools/tests/slot981.py`(전 캐릭터·레벨). 릴세르카 v9.64/66 수정 적용 확인 `tools/tests/lil981.py`. 주의: 지옥 맵 그림을 기다리느라 `startGame`이 비동기라 옛 테스트는 `state==='play'`를 기다려야 함.
+
+## v9.82
+- 시체고래 죽음의 파도 안전 줄: `whLaneOk`(맵 안·경로 이동 가능)로만 선택 · 열기 `HEAT` fill 2.2 / move 3.4 / cool 14 · 열기·빙결 게이지 폭 640·높이 20·y=H-150 · 불구렁이 파열하는 대지: `SNW.trail` 이동 경로 추적(`snTrailPath`), `SN.tuSp` 1120/1360, `crLife` 5/6, `trKeep` 280. 테스트 `tools/tests/v982.py`

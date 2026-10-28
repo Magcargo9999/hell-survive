@@ -965,7 +965,7 @@ function mkCanvas(w, h) { const c = document.createElement('canvas'); c.width = 
  * 0-1. 저장(영혼 조각 · 영구 강화 · 설정) / 캐릭터 목록 / 소리
  * ============================================================ */
 const SAVE_KEY = 'hellSurvivorSave1';
-const GAME_VER = 'v9.81';
+const GAME_VER = 'v9.82';
 const SAVE_DEF = () => ({
   shards: 0,
   perks: { hp: 0, spd: 0, dmg: 0, exp: 0, magnet: 0, banish: 0, revive: 0, regen: 0, shard: 0, critd: 0, choice: 0 },
@@ -1193,7 +1193,7 @@ function fireTile(tx, ty) {
 }
 /* v9.24 열기: 팔열지옥 필드에 있으면 열기가 천천히 오른다(v9.68: 약 55초에 가득). 맵 곳곳의 휴식존(의식진) 안에 서 있으면 빠르게 식는다.
    가득 차면 초당 최대 체력의 2.5%가 타들어 간다(보호막·무적 무시). 챌린지에는 없고, 보스방은 26~29층만 있다(v9.72: 광장 안 고정 휴식존 4곳 · 30층 호랑이방은 없음). 휴식존은 820px 칸마다 하나(어디서든 가장 가까운 곳이 약 600px 안) */
-const HEAT = { fill: 1.8, cool: 24, burn: 0.025, tick: 0.5, grid: 820, r: 100, warn: 50 };   // v9.68 열기 2배 빠르게(0.9→1.8) · 휴식존 반경 118→100(-15%)
+const HEAT = { fill: 2.2, move: 3.4, cool: 14, burn: 0.025, tick: 0.5, grid: 820, r: 100, warn: 50 };   // v9.68 열기 2배 빠르게(0.9→1.8) · 휴식존 반경 118→100(-15%)
 function restAt(gx, gy) { return { x: (gx + 0.22 + 0.56 * hash2(gx, gy, 41)) * HEAT.grid, y: (gy + 0.22 + 0.56 * hash2(gx, gy, 43)) * HEAT.grid }; }
 function restNear(x, y, r) {   // 반경 r 안에 휴식존이 있으면 그 휴식존
   const gx = Math.floor(x / HEAT.grid), gy = Math.floor(y / HEAT.grid);
@@ -1216,7 +1216,7 @@ function updateHeat(dt) {
   if (!heatOn()) { P.heat = 0; P.inRest = false; P.heatA = false; return; }
   if (!!arena !== !!P.heatA) { P.heat = 0; P.heatA = !!arena; }   // 필드 ↔ 보스방이 바뀌면 열기를 0에서 다시 시작
   P.inRest = !!(arena ? arenaRestNear(P.x, P.y, HEAT.r) : restNear(P.x, P.y, HEAT.r));
-  P.heat = clamp((P.heat || 0) + (P.inRest ? -HEAT.cool : HEAT.fill) * dt, 0, 100);
+  P.heat = clamp((P.heat || 0) + (P.inRest ? -HEAT.cool : (P.moving ? HEAT.move : HEAT.fill)) * dt, 0, 100);   // v9.82 서 있으면 2.2/초 · 움직이면 3.4/초 · 식는 속도 24→14
   if (P.inRest && rand() < 0.4) burst(P.x + (rand() - 0.5) * 30, P.y - 10, 1, ['#bfefff', '#ffffff'], 60, 0.6);
   if (P.heat >= 100) {
     P.heatTick = (P.heatTick || 0) - dt;
@@ -1248,15 +1248,15 @@ function drawRestZones(ox, oy, time) {   // 휴식존: 의식진 바닥(3배 nea
 }
 function drawHeatHud() {   // 열기 게이지 (화면 아래 가운데) + 열기가 오르면 가장 가까운 휴식존 방향
   if (!heatOn()) return;
-  const q = clamp((P.heat || 0) / 100, 0, 1), w = Math.min(320, W * 0.5), x = W / 2 - w / 2, y = H - 72, pu = 0.5 + 0.5 * Math.sin(wallT * 9);
+  const q = clamp((P.heat || 0) / 100, 0, 1), w = Math.min(640, W * 0.92), x = W / 2 - w / 2, y = H - 150, pu = 0.5 + 0.5 * Math.sin(wallT * 9);   // v9.82 게이지 2배 크기 + 스킬 칸 위로
   ctx.save();
   if (q > 0.7) { const a = (q - 0.7) / 0.3 * (q >= 1 ? 0.30 + 0.12 * pu : 0.18); const g = ctx.createRadialGradient(W / 2, H / 2, Math.min(W, H) * 0.35, W / 2, H / 2, Math.max(W, H) * 0.7); g.addColorStop(0, 'rgba(255,60,0,0)'); g.addColorStop(1, `rgba(255,70,10,${a})`); ctx.fillStyle = g; ctx.fillRect(0, 0, W, H); }
-  ctx.fillStyle = 'rgba(24,6,2,0.82)'; ctx.fillRect(x - 3, y - 3, w + 6, 16);
-  ctx.fillStyle = q >= 1 ? `rgb(255,${Math.round(40 + 60 * pu)},20)` : q > 0.7 ? '#ff6a1c' : '#ffa53a'; ctx.fillRect(x, y, w * q, 10);
-  ctx.strokeStyle = P.inRest ? '#bfefff' : '#ffd7a0'; ctx.lineWidth = 1; ctx.strokeRect(x - 0.5, y - 0.5, w + 1, 11);
-  ctx.font = 'bold 13px ' + FONT; ctx.textAlign = 'center'; ctx.strokeStyle = '#1a0602'; ctx.lineWidth = 3;
+  ctx.fillStyle = 'rgba(24,6,2,0.82)'; ctx.fillRect(x - 4, y - 4, w + 8, 28);
+  ctx.fillStyle = q >= 1 ? `rgb(255,${Math.round(40 + 60 * pu)},20)` : q > 0.7 ? '#ff6a1c' : '#ffa53a'; ctx.fillRect(x, y, w * q, 20);
+  ctx.strokeStyle = P.inRest ? '#bfefff' : '#ffd7a0'; ctx.lineWidth = 2; ctx.strokeRect(x - 1, y - 1, w + 2, 22);
+  ctx.font = 'bold 22px ' + FONT; ctx.textAlign = 'center'; ctx.strokeStyle = '#1a0602'; ctx.lineWidth = 4;
   const tx = P.inRest ? `❄ 휴식존 — 열기 식는 중 ${Math.floor(P.heat)}%` : q >= 1 ? `🔥 열기 가득! 체력이 타들어 간다 — 휴식존(❄)으로` : `🔥 열기 ${Math.floor(P.heat)}%`;
-  ctx.strokeText(tx, W / 2, y - 6); ctx.fillStyle = P.inRest ? '#d8f6ff' : q >= 1 ? '#ffd0b0' : '#ffe2c0'; ctx.fillText(tx, W / 2, y - 6); ctx.restore();
+  ctx.strokeText(tx, W / 2, y - 10); ctx.fillStyle = P.inRest ? '#d8f6ff' : q >= 1 ? '#ffd0b0' : '#ffe2c0'; ctx.fillText(tx, W / 2, y - 10); ctx.restore();
   if (!P.inRest && P.heat >= HEAT.warn) { const z = arena ? arenaRestNearest(P.x, P.y) : restNearest(P.x, P.y); if (z) edgeArrow(z, '120,200,255', '❄', '#bfefff'); }
 }
 let ISPECIES = [];   /* v8.99 팔한지옥 잡몹 9종 (지하 21~25층, 칸 108×114 · 2프레임) — 순위 r이 높을수록 체력·공격·등장 시간이 오른다 */
@@ -1652,7 +1652,7 @@ function enterArena() {
     if (boss && boss.bk === 'vft') tx += '\n파리지옥 마왕: 나에게 입힌 피해 비율(내 최대 체력 대비 %)만큼 체력을 흡혈한다 · 붉은 포자 = 부채꼴 다발(맞으면 출혈) · 하트 = 닿으면 매혹(보스 쪽으로 끌려감) · 붉은 원 = 내 이동 경로를 예측한 포식의 덫(멈추거나 방향을 바꾸기) · 해골은 달려와 자폭(붙기 전에 베기) · 체력 30% 끝없는 갈증(하트 파동은 밝은 통로로)';
     if (boss && boss.bk === 'whl') tx += '\n심해의 시체고래 (지하 18층 마왕): 붉은 줄 = 유령 해류가 날아갈 길(줄 사이로) · 흰 테두리 원 = 곧 솟구칠 자리 · 소용돌이는 끌어당기지만 달리면 빠져나온다\n★ 죽음의 파도: 한 줄만 빈 밝은 줄로 들어가 피하기 (파란 줄은 파도가 훑고 간다) · 체력 35% 원혼 폭주';
     if (boss && boss.bk === 'tig') tx += '\n지옥의 화염 호랑이 (지하 30층 최종 마왕): 가운데 불의 십자가가 쉬지 않고 돈다 — 5초는 짧게, 2초는 팔이 벽까지 뻗어 불을 뿜는다(팔 끝 바깥 · 팔 사이가 안전) · 패턴을 안 맞고 3번 연속 넘기면 기절\n가드 자세(2초)에 때릴수록 반격 폭발이 커진다 · 멸옥 수플렉스 = 안전지대로! (잡히면 현재 체력 80%) · 체력 40%부터 화면이 호랑이 쪽으로 기울고(리듬 돌진 때 더 많이) 점선 리듬 돌진';
-    if (boss && boss.bk === 'snk') tx += '\n불구렁이 (지하 28층 마왕): 몸통 마디에 닿아도 아프고, 마디를 때려도 마왕에게 들어간다 · 땅속으로 사라지면 균열이 굳어 용암 참호(벽)가 되고 마지막에 내 자리로 솟구친다(붉은 원 밖으로)\n입을 벌리면 부채꼴로 빨아들인다(버티며 옆으로) · 용암 벽에 갇히면 투사체가 되돌아온다 — 튀어나온 머리에 바짝 붙어 5번 때리기 · 체력 30%부터 보스방 전체를 감싸는 똬리 — 똬리 동안은 몸통에 피해가 안 들어가고 가장자리를 도는 머리만 때릴 수 있다';
+    if (boss && boss.bk === 'snk') tx += '\n불구렁이 (지하 28층 마왕): 몸통 마디에 닿아도 아프고, 마디를 때려도 마왕에게 들어간다 · 땅속으로 사라지면 내가 지나온 길을 따라 빠르게 헤엄치며 균열이 굳어 용암 참호(벽, 5초)가 되고 마지막에 내 자리로 솟구친다(붉은 원 밖으로)\n입을 벌리면 부채꼴로 빨아들인다(버티며 옆으로) · 용암 벽에 갇히면 투사체가 되돌아온다 — 튀어나온 머리에 바짝 붙어 5번 때리기 · 체력 30%부터 보스방 전체를 감싸는 똬리 — 똬리 동안은 몸통에 피해가 안 들어가고 가장자리를 도는 머리만 때릴 수 있다';
     if (boss && boss.bk === 'cvt') tx += '\n영벌의 화염죄수 (지하 26층 마왕): 지나간 자리에 지옥불이 오래 남는다(밟으면 화상이 쌓인다) · 주황 예고선 = 쇠사슬(묶이면 5.5초 동안 붉은 원과 바깥 고리 사이에 머물기)\n용광로의 저주 = 구슬이 5초 불탐(식을 때까지 피하기) · 무릎 꿇고 붉은 오라 = 때리면 고통 반사(사거리 밖으로) · 체력 30%부터 예고선을 따라 광폭 돌진';
     if (boss && boss.bk === 'lil') tx += '\n팔한지옥의 대공작 릴세르카 (지하 25층 최종 마왕): 둘레의 결정화 영역에 머물면 동상(100%면 3초 이속·공속 -80%) — 치고 빠지기, 1.5초 벗어나면 초기화\n왈츠 = 내 스포트라이트를 따라가기(밖이면 얼어붙는 시선) · 거울 = 투사체가 3갈래로 반사(깨지면 0.2초 경직) · 체력 25%부터 얼음판 위 회전 안전지대';
     if (boss && boss.bk === 'rud') tx += '\n마하칼 루드라: 얼음 염주는 내 투사체를 끌어당겨 삼키고, 염주 둘레의 마왕에게 가는 피해도 삼킨다(업보 24 = 폭발) — 마왕을 염주에서 떼어 놓기\n푸른 진언 고리에 닿으면 침묵(3초 기본 공격 봉인 · 스킬은 반사) — 고리의 통로로 · 꺾인 얼음 줄 = 만트라 · 붉은 원 = 연꽃 폭발 · 체력 30%부터 8자로 질주하며 지뢰';
@@ -1662,7 +1662,7 @@ function enterArena() {
     if (boss && boss.bk === 'adm') tx += '\n썩어버린 해군 제독: 가까이 붙으면 닻을 빠르게 후려친다(한 번 피하고 다시 붙기) · 파란 줄 = 닻(맞으면 기절 + 끌려감) · 파란 원 = 포탄이 떨어질 자리 · 유령 함포는 부술 수 있다 · 체력 60%에 어인 수병 · 30%에 발악(함포 6문 일제 사격)';
     if (boss && boss.bk === 'tox') tx += '\n이독버섯 마왕: 지나간 자리에 맹독 웅덩이가 오래 남는다 · 분홍 원 = 살점이 떨어질 자리(돌연변이 버섯이 튀어나와 자폭) · 혈관 폭발 = 독 안개(이속·재생 -50%) · 체력 70%·50%에 독 역류 · 25%에 본체가 녹아 독 늪 + 핵심 포자 돌진';
     if (boss && boss.bk === 'angel') tx += '\n타락천사: 붉은 함정은 박자를 어기고 늦게 터진다 · 방패를 들면 등 뒤에서 공격 · 체력 70%에 흑화(원거리)';
-    if (heatArena()) tx += '\n🔥 보스방에도 열기가 오른다 — 광장 네 곳의 휴식존(❄)에서 식힐 수 있다 (가득 차면 체력이 타들어 간다)';
+    if (heatArena()) tx += '\n🔥 보스방에도 열기가 오른다 — 광장 네 곳의 휴식존(❄)에서 식힐 수 있다 · 움직이면 더 빨리 오른다 (가득 차면 체력이 타들어 간다)';
     banner = { txt: tx, t: 9, c: sealed ? '#ff8a7a' : '#ffe28a' };
   });
 }
@@ -4675,14 +4675,14 @@ function drawBearScreen(wx, wy) {   // 화면 마지막 층(비네트 뒤): 냉�
 function drawBearFrost(bw) {   // 동상 게이지 (화면 아래 가운데, 스킬 칸 위)
   if (!pbOn()) return;
   if (!PBW.bz && PBW.frost <= 0 && !(P.frzT > 0)) return;
-  const w = Math.min(320, bw * 0.6), x = W / 2 - w / 2, y = H - 100, q = clamp(PBW.frost / 100, 0, 1), hi = q > 0.7, pu = 0.5 + 0.5 * Math.sin(wallT * 10);
-  ctx.save(); ctx.fillStyle = 'rgba(4,12,30,0.8)'; ctx.fillRect(x - 3, y - 3, w + 6, 16);
-  ctx.fillStyle = P.frzT > 0 ? '#ffffff' : hi ? `rgb(255,${Math.round(150 + 80 * pu)},${Math.round(200 + 55 * pu)})` : '#9fd8ff'; ctx.fillRect(x, y, w * (P.frzT > 0 ? 1 : q), 10);
-  ctx.strokeStyle = '#e6f8ff'; ctx.lineWidth = 1; ctx.strokeRect(x - 0.5, y - 0.5, w + 1, 11);
-  ctx.font = 'bold 13px ' + FONT; ctx.textAlign = 'center'; ctx.strokeStyle = '#04101e'; ctx.lineWidth = 3;
+  const w = Math.min(640, W * 0.92), x = W / 2 - w / 2, y = H - 150, q = clamp(PBW.frost / 100, 0, 1), hi = q > 0.7, pu = 0.5 + 0.5 * Math.sin(wallT * 10);
+  ctx.save(); ctx.fillStyle = 'rgba(4,12,30,0.8)'; ctx.fillRect(x - 4, y - 4, w + 8, 28);
+  ctx.fillStyle = P.frzT > 0 ? '#ffffff' : hi ? `rgb(255,${Math.round(150 + 80 * pu)},${Math.round(200 + 55 * pu)})` : '#9fd8ff'; ctx.fillRect(x, y, w * (P.frzT > 0 ? 1 : q), 20);
+  ctx.strokeStyle = '#e6f8ff'; ctx.lineWidth = 2; ctx.strokeRect(x - 1, y - 1, w + 2, 22);
+  ctx.font = 'bold 22px ' + FONT; ctx.textAlign = 'center'; ctx.strokeStyle = '#04101e'; ctx.lineWidth = 4;
   const tx = P.frzT > 0 ? '❄ 얼어붙음!' : '❄ 동상 ' + Math.floor(PBW.frost) + ' / 100' + (PBW.bz && PBW.bz.shade ? '  (바람 그늘)' : PBW.bz ? '  — 장벽 뒤로!' : PBW.frost > 0 ? '  (장벽 근처에서 내려감)' : '');
-  ctx.strokeText(tx, W / 2, y - 6); ctx.fillStyle = hi ? '#ffd0e0' : '#e6f8ff'; ctx.fillText(tx, W / 2, y - 6); ctx.restore();
-  bearSp('frost', P.frzT > 0 || PBW.frost >= 80 ? 2 : PBW.frost >= 50 ? 1 : 0, x - 22, y + 14, 0.7, 1, { ax: 0.5 });
+  ctx.strokeText(tx, W / 2, y - 10); ctx.fillStyle = hi ? '#ffd0e0' : '#e6f8ff'; ctx.fillText(tx, W / 2, y - 10); ctx.restore();
+  bearSp('frost', P.frzT > 0 || PBW.frost >= 80 ? 2 : PBW.frost >= 50 ? 1 : 0, x - 44, y + 28, 1.4, 1, { ax: 0.5 });
 }
 function bearDexArt(g, w, h, l) {   // 도감 그림
   if (IMG.bear && BEARF.idle) { const fr = BEARF.idle[0], k = Math.min((w - 4) / fr[2], (h - 4) / fr[3]); g.save(); g.imageSmoothingEnabled = false; g.drawImage(IMG.bear, fr[0], fr[1], fr[2], fr[3], (w - fr[2] * k) / 2, h - 2 - fr[3] * k, fr[2] * k, fr[3] * k); if (l) { g.globalCompositeOperation = 'source-atop'; g.fillStyle = '#0c0508'; g.fillRect(0, 0, w, h); } g.restore(); return; }
@@ -5558,7 +5558,7 @@ function cvDexArt(g, w, h, l) {   // 도감 그림
    다관절 몸: 머리(보스 본체) 뒤로 몸통 마디(SNW.nodes) 10개(2페이즈 20개)가 줄줄이 따라온다 — 마디에 닿으면 피해, 마디를 때리면 마왕에게 50%가 들어간다(똬리 동안은 몸통 무피해 · 머리만)
      (마디는 enemies의 kind 'snb' 대리 히트박스 · 피해는 hurtEnemy 맨 앞 snNodeHit 이 마왕에게 넘긴다 · 한 프레임에 한 번만 → 범위 공격이 마디 수만큼 곱해지지 않게)
    상태 머신(SerpentAI.update 의 switch): intro(돌출) → chase(느린 추적) ⇄ 순환 [burrow → devour → encircle → burrow → devour] (각자 쿨타임) · 가까우면 bite 물어뜯기(앞 부채꼴)
-   A burrow  : 파열하는 대지 — 잠복(0.9초) → 땅속을 헤엄치며 맵을 3번(2페이즈 4번) 가로지른다. 지나간 자리에 균열(0.75초 예고) → '용암 참호'가 되어 10초 동안 벽(이동 불가 · 닿으면 화상)
+   A burrow  : 파열하는 대지 — 잠복(0.9초) → (v9.82) 내가 최근 6초 동안 지나온 길을 따라 속도 1120(2페이즈 1360)으로 헤엄친다(내 자리 280 안으로는 안 붙음 · 안 움직였으면 내 둘레 호). 지나간 자리에 균열(0.75초 예고) → '용암 참호'가 되어 5초 동안 벽(이동 불가 · 닿으면 화상)
                → 활동 구역이 쪼개진 채 내 자리에 돌출 예고(앞 0.4초는 따라오다 고정 · 1.6초) → 돌출 폭발. 폭발 반경은 '지금 구역에서 1.2초 안에 갈 수 있는 가장 먼 곳'으로 맞춘다
                (가장 느린 이속 150 기준 · 최소 60 ~ 최대 170 — 참호에 갇혀도 피할 자리가 반드시 남는다, 규칙 9) · 돌출할 때 땅속의 영혼 구슬(7 + 단계)이 튀어나온다
    B devour  : 탐욕의 용광로 — 상반신만 내밀고 입을 벌린다(0.8초 예고) → 3.2초 동안 부채꼴(맵 끝까지) 흡입: 나는 초당 105(2페이즈 125)로 끌려간다(가장 느린 이속 150보다 약함 → 버티며 걸으면 빠져나간다)
@@ -5576,7 +5576,8 @@ function cvDexArt(g, w, h, l) {   // 도감 그림
 const SN = { hp: 1.5, dm: 1.0, K: 3, r: 70, sp: 95, sp2: 125,
   nN: 10, nGap: 40, nR0: 44, nR1: 20, tailX: 100, bump: 14, bump2: 18, bodyK: 0.5,
   biR: 240, biHalf: 0.8, biWarn: 0.6, biAim: 0.3, biDm: 22, biCd: 3.2,
-  buCd: 16, buCd2: 12, dig: 0.9, tuSp: 560, tuSp2: 680, legs: 3, legs2: 4, legMin: 420, legNear: 110, crSeg: 46, crWarn: 0.75, crLife: 10, crLife2: 12, crW: 22, crDm: 14, crDot: 0.03,
+  buCd: 16, buCd2: 12, dig: 0.9, tuSp: 1120, tuSp2: 1360, legs: 3, legs2: 4, legMin: 420, legNear: 110, trKeep: 280, trLen: 1500, trStep: 130, trMin: 260, trSec: 6, crSeg: 46, crWarn: 0.75, crLife: 5, crLife2: 6,   // v9.82 땅속 속도 ×2 · 참호 시간 ½ · 길은 내 이동 경로(trKeep 안으론 안 붙음)
+  crW: 22, crDm: 14, crDot: 0.03,
   emAim: 0.4, emWarn: 1.6, emR: 170, emRmin: 60, emDm: 26, emOrbs: 7, emVal: 0.025, emUp: 0.8, slow: 150,
   dvCd: 20, dvCd2: 16, gape: 0.8, suck: 3.2, suHalf: 0.75, suPull: 105, suPull2: 125, suOrb: 420, mouth: 120, suDm: 24,
   fbBase: 6, fbPer: 1, fbMax: 26, fbSp: 260, fbR: 15, fbDm: 14, fbLife: 3.4, fbGap2: 0.45,
@@ -5586,7 +5587,7 @@ const SN = { hp: 1.5, dm: 1.0, K: 3, r: 70, sp: 95, sp2: 125,
 const SNF = {"idle":[[0,0,107,78,52.0,77],[109,0,105,78,50.0,77],[216,0,102,78,49.0,77],[320,0,106,78,52.0,77],[428,0,101,78,47.0,77],[531,0,110,78,50.0,77]],"walk":[[643,0,90,71,44.0,70],[735,0,86,62,43.0,61],[823,0,90,61,42.0,60],[915,0,96,60,47.0,59],[1013,0,97,61,45.0,59],[1112,0,93,57,43.0,56],[1207,0,99,57,44.0,55],[0,80,93,61,41.0,60]],"burrow":[[95,80,97,81,48.0,80],[194,80,105,77,52.0,76],[301,80,111,75,55.0,74],[414,80,119,79,60.0,78],[535,80,118,77,60.0,76],[655,80,131,59,67.0,58]],"emerge":[[788,80,118,77,61.0,76],[908,80,119,66,60.0,65],[1029,80,118,77,58.0,76],[1149,80,121,82,57.0,81],[1272,80,116,82,57.0,81],[0,164,122,82,59.0,81]],"atk":[[124,164,82,73,21.0,72],[208,164,85,67,24.0,66],[295,164,86,69,28.0,68],[383,164,76,68,22.0,67],[461,164,89,71,34.0,68],[552,164,93,76,45.5,75]],"hit":[[647,164,76,72,35.0,71],[725,164,78,56,37.5,54],[805,164,80,69,35.0,68],[887,164,81,66,40.0,65]],"death":[[970,164,81,68,40.0,67],[1053,164,86,71,43.0,69],[1141,164,91,69,45.0,67],[1234,164,97,62,48.0,60],[0,248,93,56,45.0,55],[95,248,85,53,39.0,52]],"scale":[[182,248,76,76,38.0,75]]};
 const SN_RIGHT = { walk: 1, atk: 1, hit: 1 };   // 시트에서 오른쪽을 보는 줄 (나머지는 정면)
 const SN_RGB = '255,90,30';   // 이 마왕의 경고색 (용암 주홍) — 규격표 ④ 보스별 경고색 고정
-const SNW = { nodes: [], px: [], cracks: [], path: null, ring: null, hd: null, coil: null, balls: [], bolts: [], fx: [], suck: null, ate: 0, rfSum: 0, fwT: -1, hall: null, cells: null, death: null, dotT: 0 };
+const SNW = { trail: [], trT: 0, nodes: [], px: [], cracks: [], path: null, ring: null, hd: null, coil: null, balls: [], bolts: [], fx: [], suck: null, ate: 0, rfSum: 0, fwT: -1, hall: null, cells: null, death: null, dotT: 0 };
 let snAI = null;
 const snOn = () => !!(boss && boss.bk === 'snk' && boss.hp > 0);
 const snM = () => (1 - 0.04 * TP()) / bossTempo();   // 쿨타임 배율 (예고 시간에는 안 쓴다)
@@ -5677,6 +5678,23 @@ function snPath(e) {
   }
   return L;
 }
+function snTrailPath(e) {   // v9.82 내가 지나온 길을 따라 헤엄친다 — 내 지금 자리 trKeep 안으로는 붙지 않는다 (규칙 9). 움직임이 거의 없으면 내 둘레 호를 그린다
+  const L = [[e.x, e.y]], tr = SNW.trail.filter(q => gt - q[2] <= SN.trSec); let acc = 0, last = null;
+  const farOk = (x, y) => Math.hypot(x - P.x, y - P.y) >= SN.trKeep && (!last || segDist(P.x, P.y, last[0], last[1], x, y) >= SN.trKeep * 0.8);
+  for (const q of tr) {
+    if (last && Math.hypot(q[0] - last[0], q[1] - last[1]) < SN.trStep) continue;
+    if (!inPoly(q[0], q[1]) || !farOk(q[0], q[1])) { if (last && L.length > 1) break; else continue; }
+    if (last) acc += Math.hypot(q[0] - last[0], q[1] - last[1]);
+    L.push([q[0], q[1]]); last = [q[0], q[1]]; if (acc >= SN.trLen) break;
+  }
+  if (L.length < 3 || acc < SN.trMin) {   // 거의 안 움직였다: 내 둘레(trKeep+60) 호를 돈다
+    const L2 = [[e.x, e.y]], a0 = rand() * 6.283, dir = rand() < 0.5 ? 1 : -1, R0 = SN.trKeep + 60;
+    for (let k = 0; k < 5; k++) { const a = a0 + dir * k * 0.55, x = P.x + Math.cos(a) * R0, y = P.y + Math.sin(a) * R0 * 0.8; if (inPoly(x, y) && snLineIn(L2[L2.length - 1][0], L2[L2.length - 1][1], x, y)) L2.push([x, y]); }
+    if (L2.length >= 3) return L2;
+    return snPath(e);
+  }
+  return L;
+}
 function snCrack(ax, ay, bx, by, e) { SNW.cracks.push({ ax, ay, bx, by, t: 0, hard: false, life: e.ph2 ? SN.crLife2 : SN.crLife, seed: rand() * 6 }); }
 const snCrackAt = (x, y, pad) => SNW.cracks.some(c => c.hard && c.life > 0.3 && segDist(x, y, c.ax, c.ay, c.bx, c.by) < SN.crW + (pad || 0));
 function snEscapeR(sx, sy, tsec) {   // 지금 구역 안에서 tsec 초(가장 느린 이속 기준) 안에 갈 수 있는 곳 중 폭발 중심에서 가장 먼 거리
@@ -5746,7 +5764,7 @@ class SerpentAI {
     const e = this.e, k = this.cyc[this.ci], m = snM(); this.ci = (this.ci + 1) % this.cyc.length;
     if (this.cd[k] > 0) return;
     if (k === 'burrow') { this.cd.burrow = (e.ph2 ? SN.buCd2 : SN.buCd) * m; this.dig('tunnel'); floatNum(e.x, e.y - 300, '파열하는 대지!', '#ffb07a'); sfx('skill');
-      banner = { txt: '불구렁이: 파열하는 대지!  땅속을 헤엄치며 지나간 자리가 용암 참호(벽)가 된다\n균열이 굳기 전에 비키고, 마지막에 내 자리로 솟구친다 — 붉은 원 밖으로', t: 4.5, c: '#ffb07a' }; }
+      banner = { txt: '불구렁이: 파열하는 대지!  내가 지나온 길을 따라 땅속을 헤엄치며 지나간 자리가 용암 참호(벽, 5초)가 된다\n균열이 굳기 전에 비키고, 마지막에 내 자리로 솟구친다 — 붉은 원 밖으로', t: 4.5, c: '#ffb07a' }; }
     else if (k === 'devour') { this.cd.devour = (e.ph2 ? SN.dvCd2 : SN.dvCd) * m; this.go('gape', SN.gape, 'gape'); SNW.ate = 0; SNW.suck = { ph: 'gape', t: 0, ang: Math.atan2(P.y - e.y, P.x - e.x) };
       floatNum(e.x, e.y - 300, '탐욕의 용광로!', '#ffd27a'); sfx('skill');
       banner = { txt: '불구렁이: 탐욕의 용광로!  부채꼴 안은 입 쪽으로 끌려간다 — 버티며 옆으로 빠져나가세요\n바닥의 영혼 구슬을 삼킨 만큼 용암 구체가 늘어난다 (먼저 먹으면 덜 뱉는다)', t: 4.5, c: '#ffd27a' }; }
@@ -5794,6 +5812,7 @@ class SerpentAI {
   update(dt) {
     const e = this.e;
     e.t += dt; e.anT += dt; e.flash = Math.max(0, e.flash - dt);
+    if ((SNW.trT -= dt) <= 0) { SNW.trT = 0.1; SNW.trail.push([P.x, P.y, gt]); while (SNW.trail.length && gt - SNW.trail[0][2] > SN.trSec + 1) SNW.trail.shift(); }   // v9.82 내 이동 경로 기록
     if (state !== 'play' || trans) return;
     for (const t of e.tele) {
       t.t += dt; if (t.t < 0) continue;
@@ -5830,7 +5849,7 @@ class SerpentAI {
         if (e.anT > SN.dig * 0.55) e.invul = true;
         if (e.stT <= 0) {
           e.under = true; e.invul = true; for (const q of SNW.nodes) q.on = false;
-          if (this.then === 'tunnel') { SNW.path = snPath(e); this.leg = 1; this.cx0 = e.x; this.cy0 = e.y; this.go('tunnel', 30, 'none'); }
+          if (this.then === 'tunnel') { SNW.path = snTrailPath(e); this.leg = 1; this.cx0 = e.x; this.cy0 = e.y; this.go('tunnel', 30, 'none'); }
           else { SNW.ring = { x: P.x, y: P.y, r: SN.enR0, t: 0, ph: 'warn' }; SNW.hd = null; SNW.hdHits = 0; SNW.rfSum = 0; this.hdT = SN.enWarn + 0.6; this.go('ring', SN.enWarn + SN.enT, 'none'); }
         }
         break;
@@ -5840,8 +5859,8 @@ class SerpentAI {
           e.tele.push({ k: 'circle', x: P.x, y: P.y, r: SN.emR, ry: SN.emR * SN.enRy, t: 0, dur: SN.emWarn, follow: SN.emAim, nofire: true, done: false, rgb: SN_RGB, sn: 'em' }); break; }
         const [tx, ty] = Lp[this.leg], vx = tx - e.x, vy = ty - e.y, dd = Math.hypot(vx, vy) || 1, s = Math.min(dd, sp * dt), end = s >= dd - 0.01;
         e.x += vx / dd * s; e.y += vy / dd * s;
-        if (Math.hypot(e.x - this.cx0, e.y - this.cy0) >= SN.crSeg || end) { snCrack(this.cx0, this.cy0, e.x, e.y, e); this.cx0 = e.x; this.cy0 = e.y; }
-        if (end) this.leg++;
+        if (this.leg >= 2 && (Math.hypot(e.x - this.cx0, e.y - this.cy0) >= SN.crSeg || end)) { snCrack(this.cx0, this.cy0, e.x, e.y, e); this.cx0 = e.x; this.cy0 = e.y; }   // 첫 구간(내 길 시작점으로 가는 길)에는 균열 없음
+        if (end) { this.leg++; if (this.leg === 2) { this.cx0 = e.x; this.cy0 = e.y; } }
         if (rand() < dt * 30) burst(e.x + (rand() - 0.5) * 50, e.y - rand() * 20, 1, ['#ff7a2a', '#ffd27a', '#3a0a04'], 120, 0.5);
         break; }
       case 'lurk': {   // 돌출 예고: 앞 0.4초는 나를 따라오다 고정 → 고정되는 순간 지금 구역에서 피할 수 있는 크기로 폭발 반경을 맞춘다
@@ -5939,7 +5958,7 @@ class SerpentAI {
 function initSnBoss(b) { snClear(); b.hp *= SN.hp; b.max *= SN.hp; snAI = new SerpentAI(b); snChainReset(b); markDex('boss18', 1); }
 function updateSnBoss(e, dt) { if (!snAI || snAI.e !== e) snAI = new SerpentAI(e); snAI.update(dt); }
 function snClear() {
-  SNW.nodes = []; for (const p of SNW.px) p.hp = 0; SNW.px = []; try { if (enemies.some(q => q.kind === 'snb')) enemies = enemies.filter(q => q.kind !== 'snb'); } catch (_) {} SNW.cracks = []; SNW.path = null; SNW.ring = null; SNW.hd = null; SNW.hdHits = 0; SNW.coil = null; SNW.balls = []; SNW.bolts = []; SNW.fx = []; SNW.suck = null; SNW.ate = 0; SNW.rfSum = 0; SNW.touch = false; SNW.hall = null; snAI = null;
+  SNW.trail = []; SNW.trT = 0; SNW.nodes = []; for (const p of SNW.px) p.hp = 0; SNW.px = []; try { if (enemies.some(q => q.kind === 'snb')) enemies = enemies.filter(q => q.kind !== 'snb'); } catch (_) {} SNW.cracks = []; SNW.path = null; SNW.ring = null; SNW.hd = null; SNW.hdHits = 0; SNW.coil = null; SNW.balls = []; SNW.bolts = []; SNW.fx = []; SNW.suck = null; SNW.ate = 0; SNW.rfSum = 0; SNW.touch = false; SNW.hall = null; snAI = null;
 }
 function snDefeated(e) { SNW.death = { x: e.x, y: e.y, t: 0, nodes: SNW.nodes.map(q => ({ x: q.x, y: q.y, r: q.r })) }; snClear(); }
 function updateSnFx(dt) {
@@ -6980,13 +6999,13 @@ function drawLilScreen(wx, wy) {   // 무도회 눈보라(안전지대 밖) · �
 }
 function drawLilFrost(bw) {   // 동상 게이지 (결정화 영역)
   if (!lsOn() || (LSW.frost <= 0 && !(P.chillT > 0))) return;
-  const w = Math.min(320, bw * 0.6), x = W / 2 - w / 2, y = H - 100, q = clamp(LSW.frost / 100, 0, 1), pu = 0.5 + 0.5 * Math.sin(wallT * 10);
-  ctx.save(); ctx.fillStyle = 'rgba(4,12,30,0.8)'; ctx.fillRect(x - 3, y - 3, w + 6, 16);
-  ctx.fillStyle = P.chillT > 0 ? '#ffffff' : q > 0.7 ? `rgb(255,${Math.round(150 + 80 * pu)},${Math.round(200 + 55 * pu)})` : '#9fd8ff'; ctx.fillRect(x, y, w * (P.chillT > 0 ? P.chillT / LS.chill : q), 10);
-  ctx.strokeStyle = '#e6f8ff'; ctx.lineWidth = 1; ctx.strokeRect(x - 0.5, y - 0.5, w + 1, 11);
-  ctx.font = 'bold 13px ' + FONT; ctx.textAlign = 'center'; ctx.strokeStyle = '#04101e'; ctx.lineWidth = 3;
+  const w = Math.min(640, W * 0.92), x = W / 2 - w / 2, y = H - 150, q = clamp(LSW.frost / 100, 0, 1), pu = 0.5 + 0.5 * Math.sin(wallT * 10);
+  ctx.save(); ctx.fillStyle = 'rgba(4,12,30,0.8)'; ctx.fillRect(x - 4, y - 4, w + 8, 28);
+  ctx.fillStyle = P.chillT > 0 ? '#ffffff' : q > 0.7 ? `rgb(255,${Math.round(150 + 80 * pu)},${Math.round(200 + 55 * pu)})` : '#9fd8ff'; ctx.fillRect(x, y, w * (P.chillT > 0 ? P.chillT / LS.chill : q), 20);
+  ctx.strokeStyle = '#e6f8ff'; ctx.lineWidth = 2; ctx.strokeRect(x - 1, y - 1, w + 2, 22);
+  ctx.font = 'bold 22px ' + FONT; ctx.textAlign = 'center'; ctx.strokeStyle = '#04101e'; ctx.lineWidth = 4;
   const tx = P.chillT > 0 ? `❄ 동결 감속! (이속·공속 -80%) ${P.chillT.toFixed(1)}s` : `❄ 동상 ${Math.floor(LSW.frost)}%` + (LSW.outT > 0 ? `  — ${Math.max(0, LS.zReset - LSW.outT).toFixed(1)}초 뒤 초기화` : '  (결정화 영역 — 1.5초 벗어나면 초기화)');
-  ctx.strokeText(tx, W / 2, y - 6); ctx.fillStyle = q > 0.7 ? '#ffd0e0' : '#e6f8ff'; ctx.fillText(tx, W / 2, y - 6); ctx.restore();
+  ctx.strokeText(tx, W / 2, y - 10); ctx.fillStyle = q > 0.7 ? '#ffd0e0' : '#e6f8ff'; ctx.fillText(tx, W / 2, y - 10); ctx.restore();
 }
 function lilDexArt(g, w, h, l) {
   if (IMG.lil && LILF.idle) { const f = LILF.idle[0], k = Math.min((w - 4) / f[2] * 1.1, (h - 4) / f[3]); g.save(); g.imageSmoothingEnabled = false; g.drawImage(IMG.lil, f[0], f[1], f[2], f[3], (w - f[2] * k) / 2, h - 2 - f[3] * k, f[2] * k, f[3] * k); if (l) { g.globalCompositeOperation = 'source-atop'; g.fillStyle = '#0c0508'; g.fillRect(0, 0, w, h); } g.restore(); return; }
@@ -15026,6 +15045,11 @@ function whRoom() {   // 보스방(둥근 방) 영역 — 파도가 훑는 줄�
   for (const [x, y] of pts) { x0 = Math.min(x0, x); x1 = Math.max(x1, x); y0 = Math.min(y0, y); y1 = Math.max(y1, y); }
   return { x0, x1, y0, y1, band: (y1 - y0) / WH.waN };
 }
+function whLaneOk(i, R, x, y) {   // v9.82 안전 줄은 내 자리에서 곧게 걸어 들어갈 수 있는 줄만 (둥근 방이라 위·아래 줄은 방 밖일 수 있다)
+  const ty = R.y0 + (i + 0.5) * R.band, st = Math.max(1, Math.ceil(Math.abs(ty - y) / 40));
+  for (let k = 1; k <= st; k++) if (!inPoly(x, y + (ty - y) * k / st)) return false;
+  return inPoly(x, ty) && inPoly(x - 90, ty) && inPoly(x + 90, ty);
+}
 const whLane = (y, R) => { const i = Math.floor((y - R.y0) / R.band); return i >= 0 && i < WH.waN ? i : -1; };
 function whSpot(cx, cy, dMin, dMax, tries) {
   for (let i = 0; i < (tries || 30); i++) { const a = rand() * 6.283, d = dMin + rand() * (dMax - dMin), x = cx + Math.cos(a) * d, y = cy + Math.sin(a) * d / 1.5; if (inPoly(x, y) && inPoly(x, y + 30)) return [x, y]; }
@@ -15190,8 +15214,9 @@ function updateWhFx(dt) {
         if (V.i >= V.n) { WHW.wv = null; }
         else {
           const R = V.R, pl = whLane(P.y, R), N = WH.waN, cand = [];
-          for (let i = 0; i < N; i++) { const off = pl < 0 ? 9 : Math.abs(i - pl); if (pl < 0 ? true : off >= 1 && off <= WH.waNear) cand.push(i); }
-          const safe = cand.length ? cand[(rand() * cand.length) | 0] : (rand() * N) | 0, dir = V.i % 2 === 0 ? 1 : -1;
+          for (let i = 0; i < N; i++) { const off = pl < 0 ? 9 : Math.abs(i - pl); if ((pl < 0 || (off >= 1 && off <= WH.waNear)) && whLaneOk(i, R, P.x, P.y)) cand.push(i); }
+          if (!cand.length) for (let i = 0; i < N; i++) if (i === pl || whLaneOk(i, R, P.x, P.y)) cand.push(i);   // 규칙 9: 갈 수 있는 줄이 없으면 내 줄이나 걸어갈 수 있는 아무 줄
+          const safe = cand.length ? cand[(rand() * cand.length) | 0] : Math.max(0, pl), dir = V.i % 2 === 0 ? 1 : -1;
           V.cur = { safe, dir, t: 0, warn: e.ph2 ? WH.waWarn2 : WH.waWarn, hit: false, R, go: false }; V.i++;
           floatNum(P.x, P.y - 120, '밝은 줄로!', '#ffffff'); sfx('skill');
         }
@@ -16113,6 +16138,7 @@ function openAch() {
 }
 /* v8.71 간략 패치노트 (최근 버전만, 새 버전마다 맨 위에 한 줄 추가) */
 const PATCH = [
+  ['v9.82','[버그] 시체고래 죽음의 파도: 빈 줄이 맵 밖에 생겨 못 피하던 문제 수정 — 맵 안에서 닿을 수 있는 줄만 안전 줄로 고름 · [팔열지옥] 열기가 더 빨리 차고(초당 2.2) 휴식존에서 더 천천히 식고(14) 움직이면 더 빨리 오른다(3.4) · [UI] 열기·동상 게이지 2배 크기로 위로 옮겨 스킬 쿨타임과 안 겹침 · [불구렁이] 땅속 참호 패턴: 속도 2배(1120/1360) · 참호 유지 5초(전 10초) · 무작위가 아니라 내가 지나온 길을 따라가고 내 코앞 280 안으로는 붙지 않음'],
   ['v9.81','[버그] 잭팟 머신(룰렛)으로 레벨업하면 증강 선택창이 순식간에 사라지던 문제 수정 — 머신을 닫은 키·클릭이 그대로 카드 선택이 되던 것(닫은 뒤 0.5초는 카드 선택 잠금 · 키 꾹 누름 무시)'],
   ['v9.80','[새 마왕] 심해의 시체고래 — 지하 18층 100% · 19층 70%(이후 층에서도 가끔) · 어인섬 보스방 · 유령 해류(부채꼴 3줄) · 뼈 소환 · 몸통박치기 · 소용돌이 · 잠수 습격 · 죽음의 파도(한 줄만 비어 있다 — 그 줄로 들어가 피하기) · 체력 35% 원혼 폭주 · 도감 · 업적 (심장·보스 러시는 아직 없음)'],
   ['v9.73','[쿠폰] 문어 마법사 최종 스킨(문어현자) 쿠폰 \'ai소프트웨어학과\'와 그 스킨 삭제 (타락천사 여자 버전도 같은 쿠폰이라 함께 못 켬)'],
@@ -16432,7 +16458,7 @@ stepDive = skWrap(stepDive, 'dive'); stepRush = skWrap(stepRush, 'rush'); rushSt
 updateAirs = (f => function (...a) { return withSrc('basic', () => f.apply(this, a)); })(updateAirs);   // v6.22: 에어슬래시는 평타 (v6.30: 바로 뒤 천안 난무·브레스 감싸기가 주석에 묻혀 딜미터기에서 빠지던 것 수정)
 { const _tb = thornBlast, _sb = smashBlow; thornBlast = function (...a) { return withSrc('scale', () => _tb.apply(this, a)); }; smashBlow = function (...a) { return withSrc('smash', () => _sb.apply(this, a)); }; }
 shellReflect = skWrap(shellReflect, 'shell'); updateBsig = skWrap(updateBsig, 'bsigil');
-window.__G = { openSlot, slotResult, slotSpin, WH, WHW, WhaleAI, whClear, whRoom, whLane, whDexArt, get wh() { return wh; }, hq, hqLow, drawWolf, heatOn, heatArena, arenaRests, arenaRestNearest, openRoutePic, get banner() { return banner; }, isDosanSet, get DSPECIES() { return DSPECIES; }, buildDosanSpecies, BLADE, DF, DPROP_RECTS, dosanTile, imgReady, igniteX, procElem, startFw, spawnFw, spawnUniq, get cam() { return cam; }, TG, TGW, get tg() { return tg; }, tgClear, tgArms, tgCrossAt, tgInSafe, tgCxR, tgPatEnd, tgSafeSpot, tgCam, tgHold, TigerAI, HFUSE_HID, spawnFrw, frwAtk, FRW, spawnLad, lAtk, LAD, LADF, buildCards, rollHeartDrop, heartGain, disHeart, CHARS, inPoly, castSkill, get arena() { return arena; }, FISH, FWAVE, FISHA2, get fwaveQ() { return fwaveQ; }, SN, SNW, get sn() { return snAI; }, snClear, snHall, snEscapeR, pendingConds, rollCards, fishR, shardTotal, calcShards, heartBonus, CV, CVW, HellfirePatch, get cv() { return cvAI; }, cvClear, cvFurnace, pickBossK, get rushQ() { return rushQ; }, get FSPECIES() { return FSPECIES; }, heartMigrate, hRange, IMP, BLD, leadXY, leadDir, HEAT, FF, restNear, restNearest, restAt, updateHeat, isFireSet, fireTile, floorSet, clearGround: () => GROUND.clear(), get TOP_TIER() { return TOP_TIER; }, get OPEN_TIER() { return OPEN_TIER; }, lilArt, drawLilBody, LS, LSW, get ls() { return ls; }, FrostMirror, lsInWedge, lsIce, lsExPause, lsZone, lilDefeated, RD, RDW, RDF, rdOn, get rd() { return rd; }, KarmaBead, FrostMantra, IceLotus, rdAbsorb, rdInGap, rdExPause, rdSilence, rudDefeated, IMP, GoldImp, impOf, trySpawnImp, impDefeated, set impAt(v) { impAt = v; }, LUCK_N, PB, PBW, IMAP, IceWall, Fissure, IceSpear, segDist, FrostMgr, pbOn, pbClear, pbExPause, get pb() { return pb; }, gunMagN, ROLL, get lhead() { return lhead; }, KN, castLostHead, TW, isIceSlip, isIceSet, get ISPECIES() { return ISPECIES; }, ICE_SLIP, ICE_L, OPEN_TIER, TOP_TIER, renderHells, floorSet, pickFloor, iceTile, IF, get lhead() { return lhead; }, KN, isKnight, castLostHead, knightSlash, openGhostRoute, KNIGHT_FORMS, ghostForm, hTitle, relicIcon, heartMake, hOpt, heartBonus, calcShards, GRN, GRW, GRNF, spawnGrn, grnStart, grnPick, TRIAL, chAltarTick, chAltarPlace, chTrialStart, chTrialWin, chTime, chTime0, chDmgT, CH_HARD, CH_BOSS, cardDefs, cardView, ACH, achSync, achClear, openAch, KG, KGW, get kg() { return kg; }, AirGeyser, WaterMirror, MirrorBolt, kgIce, get shards() { return shards; }, set shards(v) { shards = v; }, VF, VFW, get vf() { return vf; }, VfTrap, VfSkull, VfHeart, vfLeech, fuseHearts, rerollHeart, heartBonus, renderFuse, setFu(v) { hFu = v; }, QN, QNW, get qn() { return qn; }, RootBind, SporeSack, QnMush, pickBossK, pctMelee, pctZone, updateDiff, skinG, bhKey, BH_ORDER, heartIcon, relicMaskOn, calcShards, isSlow, isLava, saveSave, svParse, spawnPlant, PL, get GSPECIES() { return GSPECIES; }, get plBalls() { return plBalls; }, synCard, freezeE, availSyn, SYNERGIES, dmName, FD, shkAdd, toxAdd, skSpawnPair, phoenixRevive, mirrorBlock, palPop, updateCutSaws, get shkSp() { return shkSp; }, get toxFl() { return toxFl; }, get zonesRef() { return zones; },
+window.__G = { openSlot, slotResult, slotSpin, WH, WHW, WhaleAI, whClear, whRoom, whLane, whLaneOk, whDexArt, get wh() { return wh; }, hq, hqLow, drawWolf, heatOn, heatArena, arenaRests, arenaRestNearest, openRoutePic, get banner() { return banner; }, isDosanSet, get DSPECIES() { return DSPECIES; }, buildDosanSpecies, BLADE, DF, DPROP_RECTS, dosanTile, imgReady, igniteX, procElem, startFw, spawnFw, spawnUniq, get cam() { return cam; }, TG, TGW, get tg() { return tg; }, tgClear, tgArms, tgCrossAt, tgInSafe, tgCxR, tgPatEnd, tgSafeSpot, tgCam, tgHold, TigerAI, HFUSE_HID, spawnFrw, frwAtk, FRW, spawnLad, lAtk, LAD, LADF, buildCards, rollHeartDrop, heartGain, disHeart, CHARS, inPoly, castSkill, get arena() { return arena; }, FISH, FWAVE, FISHA2, get fwaveQ() { return fwaveQ; }, SN, SNW, get sn() { return snAI; }, snClear, snHall, snEscapeR, pendingConds, rollCards, fishR, shardTotal, calcShards, heartBonus, CV, CVW, HellfirePatch, get cv() { return cvAI; }, cvClear, cvFurnace, pickBossK, get rushQ() { return rushQ; }, get FSPECIES() { return FSPECIES; }, heartMigrate, hRange, IMP, BLD, leadXY, leadDir, HEAT, FF, restNear, restNearest, restAt, updateHeat, isFireSet, fireTile, floorSet, clearGround: () => GROUND.clear(), get TOP_TIER() { return TOP_TIER; }, get OPEN_TIER() { return OPEN_TIER; }, lilArt, drawLilBody, LS, LSW, get ls() { return ls; }, FrostMirror, lsInWedge, lsIce, lsExPause, lsZone, lilDefeated, RD, RDW, RDF, rdOn, get rd() { return rd; }, KarmaBead, FrostMantra, IceLotus, rdAbsorb, rdInGap, rdExPause, rdSilence, rudDefeated, IMP, GoldImp, impOf, trySpawnImp, impDefeated, set impAt(v) { impAt = v; }, LUCK_N, PB, PBW, IMAP, IceWall, Fissure, IceSpear, segDist, FrostMgr, pbOn, pbClear, pbExPause, get pb() { return pb; }, gunMagN, ROLL, get lhead() { return lhead; }, KN, castLostHead, TW, isIceSlip, isIceSet, get ISPECIES() { return ISPECIES; }, ICE_SLIP, ICE_L, OPEN_TIER, TOP_TIER, renderHells, floorSet, pickFloor, iceTile, IF, get lhead() { return lhead; }, KN, isKnight, castLostHead, knightSlash, openGhostRoute, KNIGHT_FORMS, ghostForm, hTitle, relicIcon, heartMake, hOpt, heartBonus, calcShards, GRN, GRW, GRNF, spawnGrn, grnStart, grnPick, TRIAL, chAltarTick, chAltarPlace, chTrialStart, chTrialWin, chTime, chTime0, chDmgT, CH_HARD, CH_BOSS, cardDefs, cardView, ACH, achSync, achClear, openAch, KG, KGW, get kg() { return kg; }, AirGeyser, WaterMirror, MirrorBolt, kgIce, get shards() { return shards; }, set shards(v) { shards = v; }, VF, VFW, get vf() { return vf; }, VfTrap, VfSkull, VfHeart, vfLeech, fuseHearts, rerollHeart, heartBonus, renderFuse, setFu(v) { hFu = v; }, QN, QNW, get qn() { return qn; }, RootBind, SporeSack, QnMush, pickBossK, pctMelee, pctZone, updateDiff, skinG, bhKey, BH_ORDER, heartIcon, relicMaskOn, calcShards, isSlow, isLava, saveSave, svParse, spawnPlant, PL, get GSPECIES() { return GSPECIES; }, get plBalls() { return plBalls; }, synCard, freezeE, availSyn, SYNERGIES, dmName, FD, shkAdd, toxAdd, skSpawnPair, phoenixRevive, mirrorBlock, palPop, updateCutSaws, get shkSp() { return shkSp; }, get toxFl() { return toxFl; }, get zonesRef() { return zones; },
   bossDefeated, get IMG() { return IMG; },
   get ready() { return !!IMG.floorD; }, get state() { return state; }, get P() { return P; }, get enemies() { return enemies; }, get orbs() { return orbs; },
   get zones() { return zones; }, get ebul() { return ebul; }, get EYE() { return EYE; }, get shards() { return shards; }, get bigQ() { return bigQ; }, get bombQ() { return bombQ; }, get holyQ() { return holyQ; }, get afx() { return afx; }, get dashQ() { return dashQ; }, get beam() { return beam; }, get evo() { return evo; }, get choices() { return choices; },
