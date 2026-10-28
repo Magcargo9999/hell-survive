@@ -965,7 +965,7 @@ function mkCanvas(w, h) { const c = document.createElement('canvas'); c.width = 
  * 0-1. 저장(영혼 조각 · 영구 강화 · 설정) / 캐릭터 목록 / 소리
  * ============================================================ */
 const SAVE_KEY = 'hellSurvivorSave1';
-const GAME_VER = 'v10.01';
+const GAME_VER = 'v10.02';
 const SAVE_DEF = () => ({
   shards: 0,
   perks: { hp: 0, spd: 0, dmg: 0, exp: 0, magnet: 0, banish: 0, revive: 0, regen: 0, shard: 0, critd: 0, choice: 0 },
@@ -1654,7 +1654,7 @@ function enterArena() {
     if (boss && boss.bk === 'dok') tx += '\n검 도깨비 마왕 (지하 31·32층 마왕): 붉은 줄 = 쾌검 돌진 · 돌진이 끝나면 내 쪽으로 검기 3갈래(줄 사이로) · 가드 중에는 붉은 원 안에서 3번 때리면 반격 (원 밖으로 나가거나 공격을 멈추세요)\n★ 검총의 결계: 검날 벽 안에 10초 갇힌다 — 바닥의 붉은 길(회전 베기)만 비키기 · 체력 30% 무형검: 업경 장판 3번 뒤 연속 베기';
     if (boss && boss.bk === 'whl') tx += '\n심해의 시체고래 (지하 18층 마왕): 붉은 줄 = 유령 해류가 날아갈 길(줄 사이로) · 흰 테두리 원 = 곧 솟구칠 자리 · 소용돌이는 끌어당기지만 달리면 빠져나온다\n★ 죽음의 파도: 한 줄만 빈 밝은 줄로 들어가 피하기 (파란 줄은 파도가 훑고 간다) · 체력 35% 원혼 폭주';
     if (boss && boss.bk === 'tig') tx += '\n지옥의 화염 호랑이 (지하 30층 최종 마왕): 가운데 불의 십자가가 멈추지 않고 돈다 — 팔은 광장 벽까지 뻗는다(팔 사이가 안전, 가운데 가까이에서 같이 돌면 따라갈 수 있다) · 연속 돌진 5번을 한 번도 안 맞고 다 피하면 기절한 뒤 가드\n가드 자세(2초)에 때릴수록 반격 폭발이 커진다 · 멸옥 수플렉스 = 안전지대로! (잡히면 현재 체력 80%) · 체력 40%부터 화면이 호랑이 쪽으로 기울고(리듬 돌진 때 더 많이) 점선 리듬 돌진';
-    if (boss && boss.bk === 'snk') tx += '\n불구렁이 (지하 28층 마왕): 몸통 마디에 닿아도 아프고, 마디를 때려도 마왕에게 들어간다 · 땅속으로 사라지면 내가 지나온 길을 따라 빠르게 헤엄치며 균열이 굳어 용암 참호(벽, 5초)가 되고 마지막에 내 자리로 솟구친다(붉은 원 밖으로)\n입을 벌리면 부채꼴로 빨아들인다(버티며 옆으로) · 용암 벽에 갇히면 투사체가 되돌아온다 — 튀어나온 머리에 바짝 붙어 5번 때리기 · 체력 30%부터 보스방 전체를 감싸는 똬리 — 똬리 동안은 몸통에 피해가 안 들어가고 가장자리를 도는 머리만 때릴 수 있다';
+    if (boss && boss.bk === 'snk') tx += '\n불구렁이 (지하 28층 마왕): 몸통 마디에 닿아도 아프고, 마디를 때려도 마왕에게 들어간다 · 땅속으로 사라지면 내가 지나온 길을 따라 빠르게 헤엄치며 균열이 굳어 용암 참호(벽, 약 8초)가 되고 — 내 길이 끝나도 바닥을 가로질러 계속 긋는다 — 마지막에 내 자리로 솟구친다(붉은 원 밖으로)\n입을 벌리면 넓은 부채꼴로 세게 빨아들인다(끌려가며 옆으로 빠져나가기 — 참호가 길을 막는다) · 용암 벽에 갇히면 투사체가 되돌아온다 — 튀어나온 머리에 바짝 붙어 5번 때리기 · 체력 30%부터 보스방 전체를 감싸는 똬리 — 똬리 동안은 몸통에 피해가 안 들어가고 가장자리를 도는 머리만 때릴 수 있다';
     if (boss && boss.bk === 'cvt') tx += '\n영벌의 화염죄수 (지하 26층 마왕): 지나간 자리에 지옥불이 오래 남는다(밟으면 화상이 쌓인다) · 주황 예고선 = 쇠사슬(묶이면 5.5초 동안 붉은 원과 바깥 고리 사이에 머물기)\n용광로의 저주 = 구슬이 5초 불탐(식을 때까지 피하기) · 무릎 꿇고 붉은 오라 = 때리면 고통 반사(사거리 밖으로) · 체력 30%부터 예고선을 따라 광폭 돌진';
     if (boss && boss.bk === 'lil') tx += '\n팔한지옥의 대공작 릴세르카 (지하 25층 최종 마왕): 둘레의 결정화 영역에 머물면 동상(100%면 3초 이속·공속 -80%) — 치고 빠지기, 1.5초 벗어나면 초기화\n왈츠 = 내 스포트라이트를 따라가기(밖이면 얼어붙는 시선) · 거울 = 투사체가 3갈래로 반사(깨지면 0.2초 경직) · 체력 25%부터 얼음판 위 회전 안전지대';
     if (boss && boss.bk === 'rud') tx += '\n마하칼 루드라: 얼음 염주는 내 투사체를 끌어당겨 삼키고, 염주 둘레의 마왕에게 가는 피해도 삼킨다(업보 24 = 폭발) — 마왕을 염주에서 떼어 놓기\n푸른 진언 고리에 닿으면 침묵(3초 기본 공격 봉인 · 스킬은 반사) — 고리의 통로로 · 꺾인 얼음 줄 = 만트라 · 붉은 원 = 연꽃 폭발 · 체력 30%부터 8자로 질주하며 지뢰';
@@ -5572,7 +5572,7 @@ function cvDexArt(g, w, h, l) {   // 도감 그림
    A burrow  : 파열하는 대지 — 잠복(0.9초) → (v9.82) 내가 최근 6초 동안 지나온 길을 따라 속도 1120(2페이즈 1360)으로 헤엄친다(내 자리 280 안으로는 안 붙음 · 안 움직였으면 내 둘레 호). 지나간 자리에 균열(0.75초 예고) → '용암 참호'가 되어 5초 동안 벽(이동 불가 · 닿으면 화상)
                → 활동 구역이 쪼개진 채 내 자리에 돌출 예고(앞 0.4초는 따라오다 고정 · 1.6초) → 돌출 폭발. 폭발 반경은 '지금 구역에서 1.2초 안에 갈 수 있는 가장 먼 곳'으로 맞춘다
                (가장 느린 이속 150 기준 · 최소 60 ~ 최대 170 — 참호에 갇혀도 피할 자리가 반드시 남는다, 규칙 9) · 돌출할 때 땅속의 영혼 구슬(7 + 단계)이 튀어나온다
-   B devour  : 탐욕의 용광로 — 상반신만 내밀고 입을 벌린다(0.8초 예고) → 3.2초 동안 부채꼴(맵 끝까지) 흡입: 나는 초당 105(2페이즈 125)로 끌려간다(가장 느린 이속 150보다 약함 → 버티며 걸으면 빠져나간다)
+   B devour  : 탐욕의 용광로 — 상반신만 내밀고 입을 벌린다(0.8초 예고) → 3.2초 동안 부채꼴(맵 끝까지) 흡입: 나는 초당 185(2페이즈 215)로 끌려간다(v10.02 대폭 강화 · 반각 57°. 가장 느린 이속 150은 정면으로는 못 버티지만 옆걸음으로 부채꼴 밖까지 약 1.3~2초 → 입 앞 400px 밖이면 빠져나간다 · 물림은 한 번 삼킬 때 1번만)
                입 앞 120 안 = 물어뜯기 · 맵의 모든 영혼 구슬이 입으로 빨려 들어간다(내 자석 범위 안의 구슬은 내가 먼저 먹는다)
                → 화구 토사: 삼킨 구슬 수만큼 용암 구체가 늘어난다(6 + 1개씩 · 최대 26) · 사방으로 고르게 흩뿌린다(14개가 넘으면 두 번에 나눠 엇갈리게 — 구체 사이 틈으로 빠진다)
    C encircle: 불길의 환영 포위 — 잠복 → 내 둘레에 원형 용암 벽(1초 예고 · 반경 400 → 7초 동안 210까지 좁아짐 · 9초) — 밖으로 못 나가고 닿으면 화상
@@ -5587,10 +5587,10 @@ function cvDexArt(g, w, h, l) {   // 도감 그림
 const SN = { hp: 1.5, dm: 1.0, K: 3, r: 70, sp: 95, sp2: 125,
   nN: 10, nGap: 40, nR0: 44, nR1: 20, tailX: 100, bump: 14, bump2: 18, bodyK: 0.5,
   biR: 240, biHalf: 0.8, biWarn: 0.6, biAim: 0.3, biDm: 22, biCd: 3.2,
-  buCd: 16, buCd2: 12, dig: 0.9, tuSp: 1120, tuSp2: 1360, legs: 3, legs2: 4, legMin: 420, legNear: 110, trKeep: 280, trLen: 1500, trStep: 130, trMin: 260, trSec: 6, crSeg: 46, crWarn: 0.75, crLife: 5, crLife2: 6,   // v9.82 땅속 속도 ×2 · 참호 시간 ½ · 길은 내 이동 경로(trKeep 안으론 안 붙음)
+  buCd: 16, buCd2: 12, dig: 0.9, tuSp: 1120, tuSp2: 1360, legs: 3, legs2: 4, legMin: 420, legNear: 110, trKeep: 280, trLen: 1500, trStep: 130, trMin: 260, trSec: 6, crSeg: 56, crWarn: 0.75, crLife: 8, crLife2: 9, xLegs: 3, xLegs2: 5, xKeep: 210, xMin: 520, xMax: 1200,   // v9.82 땅속 속도 ×2 · 참호 시간 ½ · 길은 내 이동 경로(trKeep 안으론 안 붙음)
   crW: 22, crDm: 14, crDot: 0.03,
   emAim: 0.4, emWarn: 1.6, emR: 170, emRmin: 60, emDm: 26, emOrbs: 7, emVal: 0.025, emUp: 0.8, slow: 150,
-  dvCd: 20, dvCd2: 16, gape: 0.8, suck: 3.2, suHalf: 0.75, suPull: 105, suPull2: 125, suOrb: 420, mouth: 120, suDm: 24,
+  dvCd: 20, dvCd2: 16, gape: 0.8, suck: 3.2, suHalf: 1.0, suPull: 185, suPull2: 215, suOrb: 420, mouth: 120, suDm: 24,
   fbBase: 6, fbPer: 1, fbMax: 26, fbSp: 260, fbR: 15, fbDm: 14, fbLife: 3.4, fbGap2: 0.45,
   enCd: 26, enCd2: 22, enWarn: 1.0, enT: 9, enR0: 400, enR1: 210, enShr: 7, enRy: 0.62, enDot: 0.04, hdGap: 2.0, hdWarn: 0.75, hdR: 85, hdDm: 18, hdUp: 1.6, enHits: 5, hdNear: 230, hdIcd: 0.15, stun: 2.4,
   rfSp: 300, rfR: 12, rfPct: 0.03, rfCap: 0.15, rfLife: 3,
@@ -5689,6 +5689,25 @@ function snPath(e) {
   }
   return L;
 }
+function snSegX(a, b, c, d) {   // 선분 ab 와 cd 가 교차하는가
+  const o = (p, q, r) => (q[0] - p[0]) * (r[1] - p[1]) - (q[1] - p[1]) * (r[0] - p[0]);
+  return o(a, b, c) * o(a, b, d) < 0 && o(c, d, a) * o(c, d, b) < 0;
+}
+function snXLegs(e, L) {   // v10.02 내 길이 끝난 뒤에도 땅속을 계속 돌며 바닥을 가로지르는 줄을 더 긋는다 (앞서 그은 줄과 많이 엇갈리는 곳을 고른다 — 내 둘레 xKeep 안으로는 안 지난다)
+  const H = snHall(), n = e.ph2 ? SN.xLegs2 : SN.xLegs; let x = L[L.length - 1][0], y = L[L.length - 1][1];
+  for (let k = 0; k < n; k++) {
+    let best = null, bs = -1e9;
+    for (let tr = 0; tr < 160 && !(best && tr >= 60); tr++) {   // 60번 안에 못 찾으면 조건을 풀어 더 찾는다
+      const c = H.cells[(rand() * H.cells.length) | 0]; if (!c) break; const lax = tr >= 60;
+      const len = Math.hypot(c[0] - x, c[1] - y); if (len < (lax ? 300 : SN.xMin) || len > SN.xMax) continue;
+      if (segDist(P.x, P.y, x, y, c[0], c[1]) < (lax ? 140 : SN.xKeep) || !snLineIn(x, y, c[0], c[1])) continue;
+      let cr = 0; for (let i = 1; i < L.length - 1; i++) if (snSegX(L[i - 1], L[i], [x, y], c)) cr++;
+      const sc = cr * 40 + rand() * 50; if (sc > bs) { bs = sc; best = c; }
+    }
+    if (!best) break; L.push([best[0], best[1]]); x = best[0]; y = best[1];
+  }
+  return L;
+}
 function snTrailPath(e) {   // v9.82 내가 지나온 길을 따라 헤엄친다 — 내 지금 자리 trKeep 안으로는 붙지 않는다 (규칙 9). 움직임이 거의 없으면 내 둘레 호를 그린다
   const L = [[e.x, e.y]], tr = SNW.trail.filter(q => gt - q[2] <= SN.trSec); let acc = 0, last = null;
   const farOk = (x, y) => Math.hypot(x - P.x, y - P.y) >= SN.trKeep && (!last || segDist(P.x, P.y, last[0], last[1], x, y) >= SN.trKeep * 0.8);
@@ -5775,7 +5794,7 @@ class SerpentAI {
     const e = this.e, k = this.cyc[this.ci], m = snM(); this.ci = (this.ci + 1) % this.cyc.length;
     if (this.cd[k] > 0) return;
     if (k === 'burrow') { this.cd.burrow = (e.ph2 ? SN.buCd2 : SN.buCd) * m; this.dig('tunnel'); floatNum(e.x, e.y - 300, '파열하는 대지!', '#ffb07a'); sfx('skill');
-      banner = { txt: '불구렁이: 파열하는 대지!  내가 지나온 길을 따라 땅속을 헤엄치며 지나간 자리가 용암 참호(벽, 5초)가 된다\n균열이 굳기 전에 비키고, 마지막에 내 자리로 솟구친다 — 붉은 원 밖으로', t: 4.5, c: '#ffb07a' }; }
+      banner = { txt: '불구렁이: 파열하는 대지!  내가 지나온 길을 따라 땅속을 헤엄치며 지나간 자리가 용암 참호(벽, 약 8초)가 된다 — 내 길이 끝나도 바닥을 가로질러 계속 긋는다\n균열이 굳기 전에 비키고, 마지막에 내 자리로 솟구친다 — 붉은 원 밖으로', t: 4.5, c: '#ffb07a' }; }
     else if (k === 'devour') { this.cd.devour = (e.ph2 ? SN.dvCd2 : SN.dvCd) * m; this.go('gape', SN.gape, 'gape'); SNW.ate = 0; SNW.suck = { ph: 'gape', t: 0, ang: Math.atan2(P.y - e.y, P.x - e.x) };
       floatNum(e.x, e.y - 300, '탐욕의 용광로!', '#ffd27a'); sfx('skill');
       banner = { txt: '불구렁이: 탐욕의 용광로!  부채꼴 안은 입 쪽으로 끌려간다 — 버티며 옆으로 빠져나가세요\n바닥의 영혼 구슬을 삼킨 만큼 용암 구체가 늘어난다 (먼저 먹으면 덜 뱉는다)', t: 4.5, c: '#ffd27a' }; }
@@ -5860,7 +5879,7 @@ class SerpentAI {
         if (e.anT > SN.dig * 0.55) e.invul = true;
         if (e.stT <= 0) {
           e.under = true; e.invul = true; for (const q of SNW.nodes) q.on = false;
-          if (this.then === 'tunnel') { SNW.path = snTrailPath(e); this.leg = 1; this.cx0 = e.x; this.cy0 = e.y; this.go('tunnel', 30, 'none'); }
+          if (this.then === 'tunnel') { SNW.path = snXLegs(e, snTrailPath(e)); this.leg = 1; this.cx0 = e.x; this.cy0 = e.y; this.go('tunnel', 30, 'none'); }
           else { SNW.ring = { x: P.x, y: P.y, r: SN.enR0, t: 0, ph: 'warn' }; SNW.hd = null; SNW.hdHits = 0; SNW.rfSum = 0; this.hdT = SN.enWarn + 0.6; this.go('ring', SN.enWarn + SN.enT, 'none'); }
         }
         break;
@@ -5891,7 +5910,7 @@ class SerpentAI {
         if (state === 'play' && Math.abs(angDiff(Math.atan2(my, mx), S.ang)) < SN.suHalf && md > 30) {
           const pull = (e.ph2 ? SN.suPull2 : SN.suPull) * dt, nx = P.x - mx / md * pull, ny = P.y - my / md * pull;
           if (inPoly(nx, ny) && !snCrackAt(nx, ny, PR_W)) { P.x = nx; P.y = ny; }
-          if (md < SN.mouth && this.bump <= 0) { this.bump = 0.8; snHit(SN.suDm); floatNum(P.x, P.y - 100, '삼켜질 뻔했다!', '#ffb07a'); }
+          if (md < SN.mouth && this.bump <= 0 && !S.bit) { this.bump = 0.8; S.bit = true; snHit(SN.suDm); floatNum(P.x, P.y - 100, '삼켜질 뻔했다!', '#ffb07a'); }
         }
         if (rand() < dt * 30) { const a = S.ang + (rand() - 0.5) * 2 * SN.suHalf, r = 200 + rand() * 600; SNW.fx.push({ k: 'wind', x: m.x + Math.cos(a) * r, y: m.y + Math.sin(a) * r, t: 0, a }); }
         if (e.stT <= 0) { const n = clamp(SN.fbBase + SNW.ate * SN.fbPer, SN.fbBase, SN.fbMax); SNW.suck = null; this.spitN = n;
@@ -16505,6 +16524,7 @@ function openAch() {
 }
 /* v8.71 간략 패치노트 (최근 버전만, 새 버전마다 맨 위에 한 줄 추가) */
 const PATCH = [
+  ['v10.02','[불구렁이] 땅파기 균열이 내 길을 따라간 뒤에도 바닥을 가로질러 3~5줄 더 그어 서로 엇갈리는 용암 참호 그물이 됨(참호 5초→약 8초) · 빨아들이기 대폭 강화(끌어당김 105→185 · 2페이즈 125→215, 부채꼴 반각 43°→57°, 한 번 삼킬 때 물림은 1번만)'],
   ['v10.01','[호랑이] 불의 십자가가 멈추지 않고 팔이 늘 벽까지 뻗음(불 뿜기 삭제) · 2페이즈엔 반대로 더 빠르게 돎 · 연속 돌진 5번을 다 피하면 기절 → 가드(한 번이라도 맞으면 기절 없음) · 지옥의 화염 호랑이 심장 추가'],
   ['v9.86','[7지옥] 보스방 맵 추가(받은 도산과 업경의 심판정 그림) + 지하 31·32층 열림 — 30층 호랑이를 깨면 31층, 31층을 깨면 32층이 열린다'],
   ['v9.85','[검 도깨비 마왕] 지하 31층 마왕(32층에서 자주) 추가 — 쾌검 돌진→검기 3갈래 · 귀신의 흘리기(가드 원 안 3번 때리면 사슬 반격) · 검총의 결계(10초 검날 벽 + 회전 베기) · 체력 30% 무형검(낙하 3번→연속 베기). 층은 아직 잠김'],
@@ -16831,7 +16851,7 @@ stepDive = skWrap(stepDive, 'dive'); stepRush = skWrap(stepRush, 'rush'); rushSt
 updateAirs = (f => function (...a) { return withSrc('basic', () => f.apply(this, a)); })(updateAirs);   // v6.22: 에어슬래시는 평타 (v6.30: 바로 뒤 천안 난무·브레스 감싸기가 주석에 묻혀 딜미터기에서 빠지던 것 수정)
 { const _tb = thornBlast, _sb = smashBlow; thornBlast = function (...a) { return withSrc('scale', () => _tb.apply(this, a)); }; smashBlow = function (...a) { return withSrc('smash', () => _sb.apply(this, a)); }; }
 shellReflect = skWrap(shellReflect, 'shell'); updateBsig = skWrap(updateBsig, 'bsigil');
-window.__G = { tgArmsAt, tgC, tgCrossOm, tgDashDone, DOK, DOKW, DokkaebiAI, dokClear, dokZoneBox, dokSpinPath, get dok() { return dok; }, gunRoll1, gunHit, updateFish, openSlot, slotResult, slotSpin, WH, WHW, WhaleAI, whClear, whRoom, whLane, whLaneOk, whDexArt, get wh() { return wh; }, hq, hqLow, drawWolf, heatOn, heatArena, arenaRests, arenaRestNearest, openRoutePic, get banner() { return banner; }, isDosanSet, get DSPECIES() { return DSPECIES; }, buildDosanSpecies, BLADE, DF, DPROP_RECTS, dosanTile, imgReady, igniteX, procElem, startFw, spawnFw, spawnUniq, get cam() { return cam; }, TG, TGW, get tg() { return tg; }, tgClear, tgArms, tgCrossAt, tgInSafe, tgCxR, tgPatEnd, tgSafeSpot, tgCam, tgHold, TigerAI, HFUSE_HID, spawnFrw, frwAtk, FRW, spawnLad, lAtk, LAD, LADF, buildCards, rollHeartDrop, heartGain, disHeart, CHARS, inPoly, castSkill, get arena() { return arena; }, FISH, FWAVE, FISHA2, get fwaveQ() { return fwaveQ; }, SN, SNW, get sn() { return snAI; }, snClear, snHall, snEscapeR, pendingConds, rollCards, fishR, shardTotal, calcShards, heartBonus, CV, CVW, HellfirePatch, get cv() { return cvAI; }, cvClear, cvFurnace, pickBossK, get rushQ() { return rushQ; }, get FSPECIES() { return FSPECIES; }, heartMigrate, hRange, IMP, BLD, leadXY, leadDir, HEAT, FF, restNear, restNearest, restAt, updateHeat, isFireSet, fireTile, floorSet, clearGround: () => GROUND.clear(), get TOP_TIER() { return TOP_TIER; }, get OPEN_TIER() { return OPEN_TIER; }, lilArt, drawLilBody, LS, LSW, get ls() { return ls; }, FrostMirror, lsInWedge, lsIce, lsExPause, lsZone, lilDefeated, RD, RDW, RDF, rdOn, get rd() { return rd; }, KarmaBead, FrostMantra, IceLotus, rdAbsorb, rdInGap, rdExPause, rdSilence, rudDefeated, IMP, GoldImp, impOf, trySpawnImp, impDefeated, set impAt(v) { impAt = v; }, LUCK_N, PB, PBW, IMAP, IceWall, Fissure, IceSpear, segDist, FrostMgr, pbOn, pbClear, pbExPause, get pb() { return pb; }, gunMagN, ROLL, get lhead() { return lhead; }, KN, castLostHead, TW, isIceSlip, isIceSet, get ISPECIES() { return ISPECIES; }, ICE_SLIP, ICE_L, OPEN_TIER, TOP_TIER, renderHells, floorSet, pickFloor, iceTile, IF, get lhead() { return lhead; }, KN, isKnight, castLostHead, knightSlash, openGhostRoute, KNIGHT_FORMS, ghostForm, hTitle, relicIcon, heartMake, hOpt, heartBonus, calcShards, GRN, GRW, GRNF, spawnGrn, grnStart, grnPick, TRIAL, chAltarTick, chAltarPlace, chTrialStart, chTrialWin, chTime, chTime0, chDmgT, CH_HARD, CH_BOSS, cardDefs, cardView, ACH, achSync, achClear, openAch, KG, KGW, get kg() { return kg; }, AirGeyser, WaterMirror, MirrorBolt, kgIce, get shards() { return shards; }, set shards(v) { shards = v; }, VF, VFW, get vf() { return vf; }, VfTrap, VfSkull, VfHeart, vfLeech, fuseHearts, rerollHeart, heartBonus, renderFuse, setFu(v) { hFu = v; }, QN, QNW, get qn() { return qn; }, RootBind, SporeSack, QnMush, pickBossK, pctMelee, pctZone, updateDiff, skinG, bhKey, BH_ORDER, heartIcon, relicMaskOn, calcShards, isSlow, isLava, saveSave, svParse, spawnPlant, PL, get GSPECIES() { return GSPECIES; }, get plBalls() { return plBalls; }, synCard, freezeE, availSyn, SYNERGIES, dmName, FD, shkAdd, toxAdd, skSpawnPair, phoenixRevive, mirrorBlock, palPop, updateCutSaws, get shkSp() { return shkSp; }, get toxFl() { return toxFl; }, get zonesRef() { return zones; },
+window.__G = { snMouth, snHall, tgArmsAt, tgC, tgCrossOm, tgDashDone, DOK, DOKW, DokkaebiAI, dokClear, dokZoneBox, dokSpinPath, get dok() { return dok; }, gunRoll1, gunHit, updateFish, openSlot, slotResult, slotSpin, WH, WHW, WhaleAI, whClear, whRoom, whLane, whLaneOk, whDexArt, get wh() { return wh; }, hq, hqLow, drawWolf, heatOn, heatArena, arenaRests, arenaRestNearest, openRoutePic, get banner() { return banner; }, isDosanSet, get DSPECIES() { return DSPECIES; }, buildDosanSpecies, BLADE, DF, DPROP_RECTS, dosanTile, imgReady, igniteX, procElem, startFw, spawnFw, spawnUniq, get cam() { return cam; }, TG, TGW, get tg() { return tg; }, tgClear, tgArms, tgCrossAt, tgInSafe, tgCxR, tgPatEnd, tgSafeSpot, tgCam, tgHold, TigerAI, HFUSE_HID, spawnFrw, frwAtk, FRW, spawnLad, lAtk, LAD, LADF, buildCards, rollHeartDrop, heartGain, disHeart, CHARS, inPoly, castSkill, get arena() { return arena; }, FISH, FWAVE, FISHA2, get fwaveQ() { return fwaveQ; }, SN, SNW, get sn() { return snAI; }, snClear, snHall, snEscapeR, pendingConds, rollCards, fishR, shardTotal, calcShards, heartBonus, CV, CVW, HellfirePatch, get cv() { return cvAI; }, cvClear, cvFurnace, pickBossK, get rushQ() { return rushQ; }, get FSPECIES() { return FSPECIES; }, heartMigrate, hRange, IMP, BLD, leadXY, leadDir, HEAT, FF, restNear, restNearest, restAt, updateHeat, isFireSet, fireTile, floorSet, clearGround: () => GROUND.clear(), get TOP_TIER() { return TOP_TIER; }, get OPEN_TIER() { return OPEN_TIER; }, lilArt, drawLilBody, LS, LSW, get ls() { return ls; }, FrostMirror, lsInWedge, lsIce, lsExPause, lsZone, lilDefeated, RD, RDW, RDF, rdOn, get rd() { return rd; }, KarmaBead, FrostMantra, IceLotus, rdAbsorb, rdInGap, rdExPause, rdSilence, rudDefeated, IMP, GoldImp, impOf, trySpawnImp, impDefeated, set impAt(v) { impAt = v; }, LUCK_N, PB, PBW, IMAP, IceWall, Fissure, IceSpear, segDist, FrostMgr, pbOn, pbClear, pbExPause, get pb() { return pb; }, gunMagN, ROLL, get lhead() { return lhead; }, KN, castLostHead, TW, isIceSlip, isIceSet, get ISPECIES() { return ISPECIES; }, ICE_SLIP, ICE_L, OPEN_TIER, TOP_TIER, renderHells, floorSet, pickFloor, iceTile, IF, get lhead() { return lhead; }, KN, isKnight, castLostHead, knightSlash, openGhostRoute, KNIGHT_FORMS, ghostForm, hTitle, relicIcon, heartMake, hOpt, heartBonus, calcShards, GRN, GRW, GRNF, spawnGrn, grnStart, grnPick, TRIAL, chAltarTick, chAltarPlace, chTrialStart, chTrialWin, chTime, chTime0, chDmgT, CH_HARD, CH_BOSS, cardDefs, cardView, ACH, achSync, achClear, openAch, KG, KGW, get kg() { return kg; }, AirGeyser, WaterMirror, MirrorBolt, kgIce, get shards() { return shards; }, set shards(v) { shards = v; }, VF, VFW, get vf() { return vf; }, VfTrap, VfSkull, VfHeart, vfLeech, fuseHearts, rerollHeart, heartBonus, renderFuse, setFu(v) { hFu = v; }, QN, QNW, get qn() { return qn; }, RootBind, SporeSack, QnMush, pickBossK, pctMelee, pctZone, updateDiff, skinG, bhKey, BH_ORDER, heartIcon, relicMaskOn, calcShards, isSlow, isLava, saveSave, svParse, spawnPlant, PL, get GSPECIES() { return GSPECIES; }, get plBalls() { return plBalls; }, synCard, freezeE, availSyn, SYNERGIES, dmName, FD, shkAdd, toxAdd, skSpawnPair, phoenixRevive, mirrorBlock, palPop, updateCutSaws, get shkSp() { return shkSp; }, get toxFl() { return toxFl; }, get zonesRef() { return zones; },
   bossDefeated, get IMG() { return IMG; },
   get ready() { return !!IMG.floorD; }, get state() { return state; }, get P() { return P; }, get enemies() { return enemies; }, get orbs() { return orbs; },
   get zones() { return zones; }, get ebul() { return ebul; }, get EYE() { return EYE; }, get shards() { return shards; }, get bigQ() { return bigQ; }, get bombQ() { return bombQ; }, get holyQ() { return holyQ; }, get afx() { return afx; }, get dashQ() { return dashQ; }, get beam() { return beam; }, get evo() { return evo; }, get choices() { return choices; },
