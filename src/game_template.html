@@ -965,7 +965,7 @@ function mkCanvas(w, h) { const c = document.createElement('canvas'); c.width = 
  * 0-1. 저장(영혼 조각 · 영구 강화 · 설정) / 캐릭터 목록 / 소리
  * ============================================================ */
 const SAVE_KEY = 'hellSurvivorSave1';
-const GAME_VER = 'v10.02';
+const GAME_VER = 'v10.03';
 const SAVE_DEF = () => ({
   shards: 0,
   perks: { hp: 0, spd: 0, dmg: 0, exp: 0, magnet: 0, banish: 0, revive: 0, regen: 0, shard: 0, critd: 0, choice: 0 },
@@ -1653,7 +1653,7 @@ function enterArena() {
     if (boss && boss.bk === 'vft') tx += '\n파리지옥 마왕: 나에게 입힌 피해 비율(내 최대 체력 대비 %)만큼 체력을 흡혈한다 · 붉은 포자 = 부채꼴 다발(맞으면 출혈) · 하트 = 닿으면 매혹(보스 쪽으로 끌려감) · 붉은 원 = 내 이동 경로를 예측한 포식의 덫(멈추거나 방향을 바꾸기) · 해골은 달려와 자폭(붙기 전에 베기) · 체력 30% 끝없는 갈증(하트 파동은 밝은 통로로)';
     if (boss && boss.bk === 'dok') tx += '\n검 도깨비 마왕 (지하 31·32층 마왕): 붉은 줄 = 쾌검 돌진 · 돌진이 끝나면 내 쪽으로 검기 3갈래(줄 사이로) · 가드 중에는 붉은 원 안에서 3번 때리면 반격 (원 밖으로 나가거나 공격을 멈추세요)\n★ 검총의 결계: 검날 벽 안에 10초 갇힌다 — 바닥의 붉은 길(회전 베기)만 비키기 · 체력 30% 무형검: 업경 장판 3번 뒤 연속 베기';
     if (boss && boss.bk === 'whl') tx += '\n심해의 시체고래 (지하 18층 마왕): 붉은 줄 = 유령 해류가 날아갈 길(줄 사이로) · 흰 테두리 원 = 곧 솟구칠 자리 · 소용돌이는 끌어당기지만 달리면 빠져나온다\n★ 죽음의 파도: 한 줄만 빈 밝은 줄로 들어가 피하기 (파란 줄은 파도가 훑고 간다) · 체력 35% 원혼 폭주';
-    if (boss && boss.bk === 'tig') tx += '\n지옥의 화염 호랑이 (지하 30층 최종 마왕): 가운데 불의 십자가가 멈추지 않고 돈다 — 팔은 광장 벽까지 뻗는다(팔 사이가 안전, 가운데 가까이에서 같이 돌면 따라갈 수 있다) · 연속 돌진 5번을 한 번도 안 맞고 다 피하면 기절한 뒤 가드\n가드 자세(2초)에 때릴수록 반격 폭발이 커진다 · 멸옥 수플렉스 = 안전지대로! (잡히면 현재 체력 80%) · 체력 40%부터 화면이 호랑이 쪽으로 기울고(리듬 돌진 때 더 많이) 점선 리듬 돌진';
+    if (boss && boss.bk === 'tig') tx += '\n지옥의 화염 호랑이 (지하 30층 최종 마왕): 가운데 불의 십자가가 멈추지 않고 돈다 — 팔은 광장 벽까지 뻗는다(팔 사이가 안전, 가운데 가까이에서 같이 돌면 따라갈 수 있다) · 연속 돌진 5번을 한 번도 안 맞고 다 피하면 기절한 뒤 가드\n가드 자세(2초)에 때릴수록 반격 폭발이 커진다 · 멸옥 수플렉스 = 안전지대로! (잡히면 현재 체력 80%) · 체력 40%부터 박자마다 나를 겨누는 점선 리듬 돌진';
     if (boss && boss.bk === 'snk') tx += '\n불구렁이 (지하 28층 마왕): 몸통 마디에 닿아도 아프고, 마디를 때려도 마왕에게 들어간다 · 땅속으로 사라지면 내가 지나온 길을 따라 빠르게 헤엄치며 균열이 굳어 용암 참호(벽, 약 8초)가 되고 — 내 길이 끝나도 바닥을 가로질러 계속 긋는다 — 마지막에 내 자리로 솟구친다(붉은 원 밖으로)\n입을 벌리면 넓은 부채꼴로 세게 빨아들인다(끌려가며 옆으로 빠져나가기 — 참호가 길을 막는다) · 용암 벽에 갇히면 투사체가 되돌아온다 — 튀어나온 머리에 바짝 붙어 5번 때리기 · 체력 30%부터 보스방 전체를 감싸는 똬리 — 똬리 동안은 몸통에 피해가 안 들어가고 가장자리를 도는 머리만 때릴 수 있다';
     if (boss && boss.bk === 'cvt') tx += '\n영벌의 화염죄수 (지하 26층 마왕): 지나간 자리에 지옥불이 오래 남는다(밟으면 화상이 쌓인다) · 주황 예고선 = 쇠사슬(묶이면 5.5초 동안 붉은 원과 바깥 고리 사이에 머물기)\n용광로의 저주 = 구슬이 5초 불탐(식을 때까지 피하기) · 무릎 꿇고 붉은 오라 = 때리면 고통 반사(사거리 밖으로) · 체력 30%부터 예고선을 따라 광폭 돌진';
     if (boss && boss.bk === 'lil') tx += '\n팔한지옥의 대공작 릴세르카 (지하 25층 최종 마왕): 둘레의 결정화 영역에 머물면 동상(100%면 3초 이속·공속 -80%) — 치고 빠지기, 1.5초 벗어나면 초기화\n왈츠 = 내 스포트라이트를 따라가기(밖이면 얼어붙는 시선) · 거울 = 투사체가 3갈래로 반사(깨지면 0.2초 경직) · 체력 25%부터 얼음판 위 회전 안전지대';
@@ -6184,7 +6184,7 @@ let tg = null;
 const tgOn = () => !!(boss && boss.bk === 'tig' && boss.hp > 0);
 const tgM = () => (1 - 0.04 * TP()) / bossTempo();   // 쿨타임 배율 (예고 시간에는 안 쓴다)
 const tgC = () => [IMAP.cx, IMAP.cy];
-const tgCam = () => !!(tg && tg.e.ph2 && tgOn() && arena && state === 'play');
+const tgCam = () => false;   // v10.03 카메라는 호랑이에게 딸려가지 않는다(늘 나를 따라간다)
 const tgHold = () => !!(TGW.held && tgOn());
 const tgExPause = () => true;   // 규칙 9: 십자가 위에 추가 패턴을 겹치지 않는다
 function tgHit(d) { const h0 = P.hp; bossHit(d * TG.dm); if (P.hp < h0) TGW.hitF = true; }
@@ -6323,8 +6323,9 @@ class TigerAI {
     sfx('evolve'); shake = Math.max(shake, 6); addRing(e.x, e.y - 20, 20, 240, 0.6, TG_RGB, 10);
   }
   sxRelease() { TGW.safe = null; }
-  rwStart() {
-    const e = this.e, types = ['line', 'zig', 'tri', 'x', 'curve'], ty = types[(rand() * types.length) | 0];
+  rwStart() {   // v10.03 리듬 돌진은 항상 직선 4연속 — 박마다 나를 다시 겨눈다
+
+    const e = this.e, types = ['line'], ty = types[(rand() * types.length) | 0];
     const NAME = { line: '직선 4연속', zig: '꺾기', tri: '연속(평행 3줄)', x: 'X자', curve: '곡선' };
     TGW.rw = { ty, segs: ty === 'line' ? [] : tgRwPlan(ty, e), i: 0, n: ty === 'line' ? 4 : 0 };
     if (ty === 'line') this.rwLinePre(TG.rwWarn); else this.go('rwPre', TG.rwWarn, 'crouch');
@@ -6460,7 +6461,7 @@ class TigerAI {
     this.go('roar', TG.roar, 'roar'); e.invul = true; this.ci = 0; this.cd.guard = 6;
     tgFx('beads', e.x + e.face * 30, e.y - 120, 2.4, 1.4, { mid: true }); TGW.cut = 1.6;
     addRing(e.x, e.y - 100, 20, 900, 1.2, TG_RGB, 18); burst(e.x, e.y - 140, 70, ['#ffe08a', '#ff7a1a', '#ff3a14', '#3a0a04', '#ffffff'], 460, 1.1); shake = 20; sfx('evolve');
-    banner = { txt: '화염 호랑이: 염주가 깨졌다 — 포식자의 추적!  불의 십자가가 반대로 더 빠르게 돌고, 화면이 호랑이를 따라간다\n바닥의 점선 화살표 = 곧 그 줄로 쇄도한다 — 박자에 맞춰 줄에서 직각으로 비켜라', t: 5, c: '#ffb050' };
+    banner = { txt: '화염 호랑이: 염주가 깨졌다 — 포식자의 추적!  불의 십자가가 반대로 더 빠르게 돌고, 호랑이는 박자마다 나를 겨눠 돌진한다\n바닥의 점선 화살표 = 곧 그 줄로 쇄도한다 — 박자에 맞춰 줄에서 직각으로 비켜라', t: 5, c: '#ffb050' };
   }
 }
 function initTgBoss(b) { tgClear(); b.hp *= TG.hp; b.max *= TG.hp; b.x = IMAP.bx; b.y = IMAP.by; tg = new TigerAI(b); TGW.cr = { a: 0, p2: false, van: -0.8, len: [0, 0, 0, 0] }; markDex('boss19', 1); }
@@ -11457,7 +11458,7 @@ class GoldImp {
   }
 }
 function impDefeated(e) {
-  SAVE.shards += IMP.shards; saveSave(); goalAdd('kills');
+  SAVE.shards += IMP.shards; P.impShards = (P.impShards | 0) + IMP.shards; saveSave(); goalAdd('kills');   // v10.03 결과창에도 표시
   udeath.push({ x: e.x, y: e.y, face: e.face, t: 0, uk: 'imp' }); dropChest(e.x, e.y + 8);
   orbs.push({ x: e.x, y: e.y, val: Math.round(P.need * 0.25), t: rand() * 6 });
   burst(e.x, e.y - 30, 40, ['#ffe28a', '#fff6c0', '#c8a040', '#ff6a1c', '#a02aff'], 320, 0.9); addRing(e.x, e.y - 24, 10, 240, 0.65, '255,220,120', 10); shake = Math.max(shake, 8); sfx('chest');
@@ -14951,7 +14952,7 @@ function showOver(win) {
   $('overTitle').textContent = rush ? (win ? '⚔ 보스 러시 완주!' : '쓰러졌습니다') : win ? (P.fwRun ? '타락한 혈랑왕을 쓰러뜨렸다!' : '마왕을 쓰러뜨렸다!') : '쓰러졌습니다';
   const m = Math.floor(gt / 60), s = Math.floor(gt % 60);
   $('overStats').innerHTML = `생존 시간 ${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')} · 레벨 ${P.lvl} · 처치 ${P.kills}`;
-  $('overShards').textContent = `영혼 조각 +${P.earned}  (보유 ${SAVE.shards})` + (P.goalDone ? `  ·  런 목표 ${P.goalDone}개 (+${P.goalShards})` : '') + (P.mimicShards ? `  ·  미믹 +${P.mimicShards}` : '') + (win && P.fee ? `  ·  참가비 ${P.fee} 반환 포함` : '');
+  $('overShards').textContent = `영혼 조각 +${P.earned}  (보유 ${SAVE.shards})` + (P.goalDone ? `  ·  런 목표 ${P.goalDone}개 (+${P.goalShards})` : '') + (P.mimicShards ? `  ·  미믹 +${P.mimicShards}` : '') + (P.impShards ? `  ·  황금 임프 +${P.impShards.toLocaleString()}` : '') + (win && P.fee ? `  ·  참가비 ${P.fee} 반환 포함` : '');
   if (rush) $('overStats').innerHTML += `<br><span style="color:#ffb05a">⚔ 보스 러시 — 처치한 마왕 ${rush.kills}/${BR_N}${rush.kills ? ' (' + rush.ord.slice(0, rush.kills).map(k => BR_NAME[k]).join(' · ') + ')' : ''}  ·  난이도 ${P.tier + 1}</span><br><span style="font-size:13px">러시 보상 +${rush.shards}${win ? '  (완주 보너스 포함)' : ''}  ·  최고 기록 ${SAVE.rush.best | 0}/${BR_N} · 완주 ${SAVE.rush.clears | 0}회</span>`;
   if (rush && rush.ach) $('overStats').innerHTML += `<br><span style="color:var(--gold)">🏆 업적 달성: ${rush.ach.name}  (시작 화면 🏆 업적에서 보상 받기)</span>`;
   if (win && P.rushOpen) $('overStats').innerHTML += `<br><span style="color:#ffb05a">🔓 ⚔ 보스 러시 모드 해금!  (시작 화면 [⚔ 보스 러시])</span>`;
@@ -16524,6 +16525,7 @@ function openAch() {
 }
 /* v8.71 간략 패치노트 (최근 버전만, 새 버전마다 맨 위에 한 줄 추가) */
 const PATCH = [
+  ['v10.03','[호랑이] 2페이즈에도 카메라가 호랑이에게 딸려가지 않음 · 2페이즈 리듬 돌진은 항상 박자마다 나를 겨눠 직선으로 돌진 · [황금 임프] 처치로 받은 영혼 조각 10,000이 결과창에도 표시됨'],
   ['v10.02','[불구렁이] 땅파기 균열이 내 길을 따라간 뒤에도 바닥을 가로질러 3~5줄 더 그어 서로 엇갈리는 용암 참호 그물이 됨(참호 5초→약 8초) · 빨아들이기 대폭 강화(끌어당김 105→185 · 2페이즈 125→215, 부채꼴 반각 43°→57°, 한 번 삼킬 때 물림은 1번만)'],
   ['v10.01','[호랑이] 불의 십자가가 멈추지 않고 팔이 늘 벽까지 뻗음(불 뿜기 삭제) · 2페이즈엔 반대로 더 빠르게 돎 · 연속 돌진 5번을 다 피하면 기절 → 가드(한 번이라도 맞으면 기절 없음) · 지옥의 화염 호랑이 심장 추가'],
   ['v9.86','[7지옥] 보스방 맵 추가(받은 도산과 업경의 심판정 그림) + 지하 31·32층 열림 — 30층 호랑이를 깨면 31층, 31층을 깨면 32층이 열린다'],
