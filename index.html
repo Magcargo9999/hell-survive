@@ -71,7 +71,8 @@
   .hcell.rare { border-color: #8a8a98; } .hcell.epic { border-color: #b45cff; } .hcell.unique { border-color: #ffd23a; } .hcell.legend { border-color: #3dff7a; box-shadow: 0 0 10px #3dff7a; }
   .hcell .hlk, .hslot .hlk { position: absolute; top: 2px; left: 4px; font-size: 13px; }
   .hslot { position: relative; }
-  #hLock.on { border-color: #ffe28a; color: var(--gold); }
+  #hLock.on, .hl.on { border-color: #ffe28a; color: var(--gold); }
+  .hlines { display: flex; gap: 6px; flex-wrap: wrap; justify-content: center; margin: 6px 0 2px; }
   .hfuse { margin: 0 auto 10px; max-width: 820px; padding: 8px 10px; border-radius: 12px; background: rgba(20, 6, 14, 0.85); border: 1px solid #5a3a48; } .hfh { color: #ffb0d0; font-weight: bold; font-size: 16px; } .hfh small { color: #c9a8b4; font-weight: normal; font-size: 13px; margin-left: 6px; }
   .hfrow { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; margin-top: 6px; } .hfrow i { color: #ffb0d0; font-style: normal; } .hslot.fz { width: 72px; height: 84px; } .hslot.fz img { width: 44px; height: 44px; } .hcell .hfu { position: absolute; top: 2px; left: 50%; transform: translateX(-50%); font-size: 13px; color: #ffb0d0; }
   .hcell .heq { position: absolute; top: 2px; right: 4px; font-size: 13px; color: var(--gold); }
@@ -393,7 +394,7 @@
   <div class="hslots" id="hSlots"></div><p id="hSum" class="hsum"></p>
   <div class="hfuse" id="hFuse"></div>
   <div class="hmain"><div class="hinv" id="hInv"></div><div class="hcore" id="hCore"></div></div>
-  <p class="gprob" id="hHelp" style="display:none">심장이 떨어지는 마왕 17종: 원숭이 · 마안군주 · 스켈레톤 · 타락천사 · 거대 버섯마귀 · 이독버섯 · 해군 제독 · 원예의 여왕 · 파리지옥 · 어인왕 · 백곰 · 루드라 · 릴세르카 · 화염죄수 · 불구렁이 · 화염 호랑이 · 검 도깨비<br>마왕 17종은 종류마다 그 심장을 보유 중이 아닐 때만(처치 시 33%) 떨어짐 · 분해하면 다시 떨어짐 · 챌린지·숨은 보스 제외 · [보스의 심장] (레어) · 떨어질 때 1% 확률로 레전더리 · 재설정 비용은 등급별 레어 ◆500 · 에픽 ◆600 · 유니크 ◆700 · 레전더리 ◆800: 레어→에픽 30% · 에픽→유니크 20% · 유니크→레전더리 5% 등급 상승, 옵션(공격력 · 최대 체력 · 공격 속도 각 1/3)과 수치를 다시 뽑음<br>등급별 수치: 레어 1~3% · 에픽 4~6% · 유니크 7~9% · 레전더리 15~20% · 최대 5개 장착 (효과는 다음 판 시작부터)<br>합성: 레전더리 심장 3개를 합성 칸에 넣으면 모두 사라지고 [끔찍한 심장] 1개(레어 · 옵션 2줄 · 보스 무관 · 여러 개 가능)가 생김 · 그 보스 심장이 하나도 안 남으면 다시 드랍 · 옵션 2줄 심장은 재설정할 때 두 줄을 모두 다시 뽑음 · 끔찍한 심장 3개를 넣으면 [지옥 심장] 1개(레어 · 옵션 3줄)</p>
+  <p class="gprob" id="hHelp" style="display:none">심장이 떨어지는 마왕 17종: 원숭이 · 마안군주 · 스켈레톤 · 타락천사 · 거대 버섯마귀 · 이독버섯 · 해군 제독 · 원예의 여왕 · 파리지옥 · 어인왕 · 백곰 · 루드라 · 릴세르카 · 화염죄수 · 불구렁이 · 화염 호랑이 · 검 도깨비<br>마왕 17종은 종류마다 그 심장을 보유 중이 아닐 때만(처치 시 33%) 떨어짐 · 분해하면 다시 떨어짐 · 챌린지·숨은 보스 제외 · [보스의 심장] (레어) · 떨어질 때 1% 확률로 레전더리 · 재설정 비용은 등급별 레어 ◆500 · 에픽 ◆600 · 유니크 ◆700 · 레전더리 ◆800 (옵션 2줄 이상 심장은 줄마다 잠글 수 있고, 잠근 줄은 그대로 남는 대신 잠금 하나당 비용 ×2): 레어→에픽 30% · 에픽→유니크 20% · 유니크→레전더리 5% 등급 상승, 옵션(공격력 · 최대 체력 · 공격 속도 각 1/3)과 수치를 다시 뽑음<br>등급별 수치: 레어 1~3% · 에픽 4~6% · 유니크 7~9% · 레전더리 15~20% · 최대 5개 장착 (효과는 다음 판 시작부터)<br>합성: 레전더리 심장 3개를 합성 칸에 넣으면 모두 사라지고 [끔찍한 심장] 1개(레어 · 옵션 2줄 · 보스 무관 · 여러 개 가능)가 생김 · 그 보스 심장이 하나도 안 남으면 다시 드랍 · 옵션 2줄 심장은 재설정할 때 두 줄을 모두 다시 뽑음 · 끔찍한 심장 3개를 넣으면 [지옥 심장] 1개(레어 · 옵션 3줄)</p>
 </div>
 <div id="hfx"></div>
 
@@ -683,7 +684,8 @@ const GUN_AMMO = {
   B: { name: '공포탄', p: 0.05, dm: 0.1, rgb: '190,90,255', spr: 'bB', hit: 'xB' },          // 꽝 (10%)
 };
 const gunMagN = () => GUN.mag;   // v9.83: 확장 탄창 카드 삭제 — 탄창은 늘 6발 (이름은 그대로 두고 호출부 유지)
-const GUN = { mag: 6, reload: 1.0, sp: 900, burnK: 0.18 };   // 탄창 · 재장전(초) · 탄 속도 · 불씨 지속 피해(0.5초마다 공격력 비율)
+const GUN = { mag: 6, reload: 1.0, sp: 900, burnK: 0.18 };
+const GCRYO = { max: 5, life: 8, per: 0.6, R: 130, pct: 0.003 };   // v10.05 조합 [서리 도탄]: 서리 최대 5중첩(8초) · 불씨탄이 터뜨리면 중첩당 공격력 60% · 모든 총알 최대 체력 0.3% 추가   // 탄창 · 재장전(초) · 탄 속도 · 불씨 지속 피해(0.5초마다 공격력 비율)
 const GUN_FORMS = [
   { src: 'gun', name: '악마 총잡이', ws: 0.82, flip: 1, hitF: 0, sh: 20, hy: 62, pv: GUNA.i0[0].slice(0, 4), rgb: '255,90,110', c1: '#ff5a6e', c2: '#ffd0d8',
     L: { idle: 'i0', walk: 'w0', attack: 'a0', hit: 'h0', death: 'd0' }, anim: { idle: { n: 4, fps: 5 }, walk: { n: 6, fps: 10 }, attack: { n: 2, fps: 12 }, hit: { n: 3, fps: 14 }, death: { n: 5, fps: 7 } } },
@@ -742,10 +744,21 @@ function gunBounty() {   // 현상금 사냥: 처치할 때마다 이속 +2% 중
   P.bountyN = Math.min(1 + 2 * n, (P.bountyN || 0) + 1); P.bountyT = 1.5;
 }
 const gunSpdMul = () => P.bountyT > 0 ? 1 + 0.02 * (P.bountyN || 0) : 1;
+function gunCryo(s, e) {   // v10.05 서리 도탄: 도탄이 맞으면 서리 +1 · 불씨탄이 맞으면 서리를 모두 터뜨림 · 모든 총알은 최대 체력 0.3% 추가 피해 (보스 · 마물 모두)
+  withSrc('gCryo', () => { if (e.hp > 0) hurtEnemy(e, Math.min(e.max * GCRYO.pct, P.dmg * PCT_CAP), 0, 0, 0, 'pct'); });
+  if (e.cryoT < gt) e.cryoN = 0;
+  if (s.gun === 'R' && e.hp > 0) { e.cryoN = Math.min(GCRYO.max, (e.cryoN | 0) + 1); e.cryoT = gt + GCRYO.life; addRing(e.x, e.y - e.r, 4, 26 + 6 * e.cryoN, 0.25, '184,246,255', 3); if (!(e.cryoFt > gt)) { e.cryoFt = gt + 0.35; floatNum(e.x, e.y - e.r - 24, '❄' + e.cryoN, '#bfefff'); } }
+  else if (s.gun === 'F' && (e.cryoN | 0) > 0) {
+    const n = e.cryoN, R = GCRYO.R + 8 * n, x = e.x, y = e.y - e.r; e.cryoN = 0; e.cryoT = 0;
+    addRing(x, y, 8, R, 0.35, '200,230,255', 7); addRing(x, y, 6, R * 0.6, 0.3, '255,140,50', 5); burst(x, y, 10 + 3 * n, ['#9fe0ff', '#ffffff', '#ff8a2a'], 240, 0.5); sfx('boom'); floatNum(x, y - 30, '서리 폭발 ×' + n, '#ffffff');
+    withSrc('gCryo', () => { for (const o of enemies) { if (o.hp <= 0) continue; const dx = o.x - e.x, dy = o.y - e.y, d = Math.hypot(dx, dy) || 1; if (d < R + o.r) hurtEnemy(o, P.dmg * GCRYO.per * n, dx / d, dy / d, 60); } });
+  }
+}
 function gunHit(s, e) {   // 탄이 적에게 맞았을 때: 이펙트 · 불씨 · 도탄
   const A = GUN_AMMO[s.gun];
   if (gunFx.length < 80) gunFx.push({ k: A.hit, x: e.x, y: e.y - e.r, t: 0, life: 0.32, i: (rand() * GUNA[A.hit].length) | 0 });
   if (s.gun === 'F') { e.burnT = A.burn; e.burnD = P.dmg * GUN.burnK * gunSpec('F'); e.burnSrc = 'g:F'; }
+  if (P.syn.gCryo) gunCryo(s, e);   // v10.05
   if (s.gun === 'R' && P.up.gRico) s.dmg += s.d0 * 0.1;   // v9.83 도탄 각성: 적에게 맞을 때마다 이 탄의 피해 +10% (처음 피해 기준 누적)
   if (s.gun === 'R' && s.pierce > 1) {   // 가까운 다른 적에게 튕긴다
     let t2 = null, bd = 420 * 420;
@@ -762,11 +775,11 @@ function gunEdge(s) {   // 도탄: 화면 끝에 닿으면 튕긴다 (최대 2�
   if (s.y < y0 + 6 && s.vy < 0 || s.y > y1 - 6 && s.vy > 0) { s.vy = -s.vy; b = true; }
   if (b) { s.eb++; s.life = Math.max(s.life, 0.5); if (gunFx.length < 80) gunFx.push({ k: 'xR', x: s.x, y: s.y, t: 0, life: 0.25, i: 2 }); }
 }
-/* 최종 스킬: 구르기 — 4초 안에 2번 (v9.02: 3 → 2) · 구를 때마다 탄창의 탄을 전부 쏘고 재장전 */
-const ROLL = { n: 2, win: 4, dur: 0.26 };
+/* 최종 스킬: 구르기 — 4초 안에 3번 (v9.02: 3 → 2 · v10.05: 2 → 3) · 구를 때마다 탄창의 탄을 전부 쏘고 재장전 */
+const ROLL = { n: 3, win: 4, dur: 0.26 };
 function gunRollStart() {
   rollQ = { n: ROLL.n, t: ROLL.win, d: null, first: true };
-  banner = { txt: '구르기!  4초 안에 SPACE로 1번 더 구를 수 있어요', t: 2.2, c: '#ffb0c0' };
+  banner = { txt: `구르기!  4초 안에 SPACE로 ${ROLL.n - 1}번 더 구를 수 있어요`, t: 2.2, c: '#ffb0c0' };
   gunRoll();
 }
 function gunRoll() {
@@ -906,7 +919,7 @@ const skillName = k => (k === 'blast' && P.char === 'snail' && P.form === 2) ? '
 const SKILL_BRIEF = {"vwave": "걷던 방향으로 파도를 타고 돌진", "roll": "무적 구르기 + 탄창 일제 사격", "cerb": "세 머리로 적을 차례로 물어뜯기", "drain": "주변 적의 피를 빨아 체력 회복", "bloodrain": "핏빛 기둥을 비처럼 내리꽂기", "howl": "주변 적을 밀쳐내고 느리게", "megabomb": "거대 폭탄을 던져 연쇄 폭발", "lavaburst": "용암탄을 쏟아 붓기", "breath": "앞쪽 부채꼴로 화염 뿜기", "rush": "무적으로 적 사이를 연속 돌진", "dive": "날아올라 적 무리에 내려꽂기", "blast": "깔아 둔 독 자국을 한꺼번에 폭파", "darkarrow": "거대한 검은 화살로 밀어내기", "bigarrow": "기를 모아 관통 화살 한 발", "backdash": "무적으로 물러나며 화살 부채꼴 발사", "bombshot": "빈 곳으로 백스텝하며 폭발 화살", "holyshot": "누르고 모아서 쏘는 신성한 화살", "rage": "잠시 공격 속도 폭증", "tide": "즉시 체력 회복 + 적 밀쳐내기", "whip": "사슬을 던지고 휘둘러 폭발", "bsigil": "발밑에 적을 끌어당기는 핏빛 진", "shell": "받는 피해를 줄이고 되돌려주기", "ele": "코끼리가 직선으로 짓밟기", "otent": "문어 다리가 연달아 솟아 후려치기", "gcharge": "관통하는 거대 구슬 발사", "lhead": "머리가 따로 날아가 적을 추격", "gsummon": "수호령이 대신 맞고 폭발", "laser": "앞쪽으로 광선 훑기", "zone": "발밑에 불길 지대 깔기", "meteor": "하늘에서 운석 낙하"};   // v9.64 선택 카드 앞면: 한 줄 요약 (자세한 설명·수치는 누르면 뒷면)
 const SKILLS = {
   vwave:  { name: '포식자의 파도', desc: '[공허의 마해룡 전용] 걷던 방향으로 공허의 파도를 두르고 길게 날아갑니다 (0.7초 · 약 670px · 무적). 지나간 길의 적에게 공격력의 650% 피해를 주고 양옆으로 밀어냅니다.', sub: '걷던 방향 · 적마다 한 번 · 날아가는 동안 무적' },
-  roll:   { name: '구르기', desc: '[악마처형자 전용] 4초 동안 짧게 2번 구를 수 있습니다 (SPACE를 다시 누르면 한 번 더). 구를 때마다 (재장전 중이어도 즉시 장전해서) 탄창의 탄을 짧은 간격으로 모두 쏘고 바로 재장전합니다. 구르는 동안 무적.', sub: '2회 · 4초 안에 다 쓰지 않으면 증발 · 구를 때마다 남은 탄 난사' },
+  roll:   { name: '구르기', desc: '[악마처형자 전용] 4초 동안 짧게 3번 구를 수 있습니다 (SPACE를 다시 누르면 한 번 더). 구를 때마다 (재장전 중이어도 즉시 장전해서) 탄창의 탄을 짧은 간격으로 모두 쏘고 바로 재장전합니다. 구르는 동안 무적.', sub: '3회 · 4초 안에 다 쓰지 않으면 증발 · 구를 때마다 남은 탄 난사' },
   cerb:   { name: '삼두 연쇄 물기', desc: '[삼두 전용] 세 머리가 가까운 적을 차례로 물어뜯습니다. 한 번마다 범위 피해와 강한 넉백, 둔화.', sub: '3연속 · 서로 다른 적 · 범위 피해' },
   drain:  { name: '피의 갈취', desc: '[혈랑 전용] 사방의 적에게서 피를 짜내 큰 피해를 주고, 맞힌 적 수만큼 체력을 회복합니다.', sub: '반경 400 · 적 1마리당 체력 +2% (최대 15%)' },
   bloodrain: { name: '신성한 피의 비', desc: '[성혈랑 전용] 3초 동안 성스러운 핏빛 기둥이 적들 위로 연달아 내리꽂히며, 명중할 때마다 체력을 조금 회복합니다. 맞은 적은 2초간 느려집니다.', sub: '기둥 15개 · 범위 피해 · 명중 시 회복 · 둔화' },
@@ -965,7 +978,7 @@ function mkCanvas(w, h) { const c = document.createElement('canvas'); c.width = 
  * 0-1. 저장(영혼 조각 · 영구 강화 · 설정) / 캐릭터 목록 / 소리
  * ============================================================ */
 const SAVE_KEY = 'hellSurvivorSave1';
-const GAME_VER = 'v10.04';
+const GAME_VER = 'v10.05';
 const SAVE_DEF = () => ({
   shards: 0,
   perks: { hp: 0, spd: 0, dmg: 0, exp: 0, magnet: 0, banish: 0, revive: 0, regen: 0, shard: 0, critd: 0, choice: 0 },
@@ -8476,7 +8489,7 @@ function updateCastle(dt, ox, oy) {
     if (!trans.done && trans.t >= trans.dur / 2) { trans.done = true; trans.cb(); }
     if (trans.t >= trans.dur) trans = null;
   }
-  if (banner) { banner.t -= dt; if (banner.t <= 0) banner = null; }
+  if (banner) { banner.t -= dt / ((boss || arena) ? 2 : 1); if (banner.t <= 0) banner = null; }   // v10.05 보스전 안내는 2배 오래
   if (arena) {
     if (!inPoly(P.x, P.y)) { if (inPoly(P.x, oy)) P.y = oy; else if (inPoly(ox, P.y)) P.x = ox; else { P.x = ox; P.y = oy; } }
     pbWallPush();   // v9.02 얼음 장벽 (AABB)
@@ -9341,6 +9354,7 @@ const SYNERGIES = [
   { id: 'corpse',    name: '부패 폭발',   txt: '독 자국 위에서 죽은 적이 폭발',    need: ['range', 'claw'], only: 'snail',
     alt: { lava: ['용암 폭발', '용암 위에서 죽은 적이 폭발'] } },
   { id: 'galeWing',  name: '질풍 날개',   txt: '에어슬래시 +1갈래 · 피해 +30%',    need: ['airA', 'airB'], only: 'chimera', apply: p => { p.syn.gale = true; } },
+  { id: 'gCryo',     name: '서리 도탄',   txt: '도탄이 맞으면 적에게 서리가 쌓임 (최대 5중첩 · 8초) · 불씨탄이 맞으면 서리를 모두 터뜨려 범위 피해 (중첩당 공격력 60%) · 모든 총알이 보스 · 마물에게 최대 체력의 0.3% 추가 피해 (한 발당 내 공격력 ×4까지)', need: ['gRico', 'gSpec'], only: 'gun' },   // v10.05
   { id: 'ricochet',  name: '도탄 사격',   txt: '처치 시 근처 적에게 화살이 튕김',  need: ['claw', 'shard'], only: 'archer' },
   { id: 'lifeOrb',   name: '불사의 영혼', txt: '경험치 구슬마다 체력 회복',        need: ['heart', 'magnet'] },
   { id: 'tstorm',    name: '폭풍 낙뢰',   txt: '낙뢰 쿨타임 -20% · +2발 · 피해 -8%',            need: ['thunder', 'speed'] },
@@ -13222,11 +13236,12 @@ function drawHud() {
     ctx.fillStyle = '#0c1a10'; ctx.fillRect(18, H - 30, w, 10); ctx.fillStyle = '#4de08a'; ctx.fillRect(18, H - 30, w * Math.max(0, q.hp / q.max), 10); ctx.restore();
   }
   if (banner && state !== 'levelup' && state !== 'slot') {
-    ctx.save(); ctx.globalAlpha = Math.min(1, banner.t); ctx.font = 'bold 16px ' + FONT; ctx.textAlign = 'center';
-    const ls = wrapTxt(banner.txt, W - 70), tw = Math.max(...ls.map(l => ctx.measureText(l).width)) + 36;
-    const by0 = arena ? 126 : 86;
-    ctx.fillStyle = 'rgba(10,4,16,0.74)'; ctx.fillRect(W / 2 - tw / 2, by0, tw, ls.length * 24 + 10);
-    ctx.fillStyle = banner.c || '#ffd36a'; ls.forEach((l, i) => ctx.fillText(l, W / 2, by0 + 23 + i * 24)); ctx.restore();
+    ctx.save(); ctx.globalAlpha = Math.min(1, banner.t); ctx.textAlign = 'center';
+    const by0 = arena ? 126 : 86; let bs = (boss || arena) ? 2 : 1, ls;   // v10.05 보스전 안내 글씨 2배 (화면을 넘으면 조금씩 줄임)
+    for (;;) { ctx.font = 'bold ' + (16 * bs) + 'px ' + FONT; ls = wrapTxt(banner.txt, W - 70); if (bs <= 1 || ls.length * 24 * bs + 10 < H - by0 - 20) break; bs = Math.max(1, bs - 0.125); }
+    const tw = Math.max(...ls.map(l => ctx.measureText(l).width)) + 36, lh = 24 * bs;
+    ctx.fillStyle = 'rgba(10,4,16,0.74)'; ctx.fillRect(W / 2 - tw / 2, by0, tw, ls.length * lh + 10);
+    ctx.fillStyle = banner.c || '#ffd36a'; ls.forEach((l, i) => ctx.fillText(l, W / 2, by0 + 23 * bs + i * lh)); ctx.restore();
   }
   drawControlsTip(); drawPracticeHud(); drawHeatHud(); drawPoisonArrow(); drawCastleHud(); drawSlotArrows(); drawRelicHud(); drawUniqHud(); { const im = impOf(); if (im && !arena) edgeArrow(im, '255,210,60', '$', '#ffe28a'); } chHud();
   if (darkT > 0) { const k = Math.min(1, darkT / 1.6), a = Math.pow(k, 1.4) * 0.92, dg = ctx.createRadialGradient(W / 2, H / 2, Math.min(W, H) * 0.08, W / 2, H / 2, Math.max(W, H) * 0.65); dg.addColorStop(0, `rgba(0,0,0,${a * 0.55})`); dg.addColorStop(1, `rgba(0,0,0,${a})`); ctx.fillStyle = dg; ctx.fillRect(0, 0, W, H); }
@@ -15024,7 +15039,7 @@ const WH = { hp: 1.35, dm: 1.0, sp: 72, r: 100, K: 2.7, bump: 10,
   slCd: 12, slWarn: 1.4, slR: 160, slDm: 21,
   voCd: 17, voN: 2, voN2: 3, voR: 230, voCore: 100, voPull: 105, voGrow: 0.8, voLife: 6.5, voDm: 7, voTick: 0.45,
   diCd: 14, diTrack: 1.8, diLock: 0.9, diSp: 100, diR: 165, diDm: 22, diKnock: 150,
-  waCd: 22, waN: 10, waWarn: 2.7, waWarn2: 2.4, waSp: 780, waDm: 26, waNear: 2, waN2: 3, waThick: 110,
+  waCd: 22, waN: 10, waWarn: 2.7, waWarn2: 2.4, waSp: 2340, waDm: 26, waNear: 2, waN2: 3, waThick: 110,
   biR: 130, biWarn: 0.7, biDm: 18, biCd: 3.2,
   ph2: 0.35, roar: 2.4, tempo: 1.3 };
 const WHF = {"idle":[[0,0,220,88,110.0,87],[222,0,242,88,121.0,87],[466,0,217,88,108.5,87],[685,0,228,88,114.0,87],[915,0,229,88,114.5,87],[1146,0,208,87,104.0,85]],"walk":[[0,90,174,88,87.0,83],[176,90,177,88,88.5,83],[355,90,166,88,83.0,80],[523,90,173,81,86.5,77],[698,90,186,84,93.0,79],[886,90,174,85,87.0,82],[1062,90,175,80,87.5,77],[0,180,180,82,90.0,79]],"bite":[[182,180,205,87,102.5,86],[389,180,231,87,115.5,86],[622,180,234,87,117.0,86],[858,180,305,87,152.5,86],[1165,180,205,87,102.5,86],[0,269,222,87,111.0,86]],"leap":[[224,269,216,80,108.0,79],[442,269,258,91,129.0,90]],"dive":[[702,269,263,76,131.5,75],[967,269,207,74,103.5,73],[0,362,231,69,115.5,66],[233,362,237,76,118.5,75],[472,362,242,76,121.0,75],[716,362,242,76,121.0,75]],"hit":[[960,362,163,84,81.5,83],[1125,362,147,86,73.5,82],[0,450,142,86,71.0,84],[144,450,163,83,81.5,81]],"death":[[309,450,135,86,67.5,85],[446,450,136,76,68.0,74],[584,450,131,82,65.5,80],[717,450,124,76,62.0,74],[843,450,107,69,53.5,66],[952,450,147,81,73.5,80]]};
@@ -15245,10 +15260,11 @@ function updateWhFx(dt) {
       const W = V.cur, R = W.R; W.t += dt;
       if (!W.go && W.t >= W.warn) { W.go = true; W.t = 0; sfx('boom'); shake = Math.max(shake, 8); }
       if (W.go) {
-        const sp = WH.waSp * (e.ph2 ? 1.08 : 1), span = R.x1 - R.x0 + 400; W.fx = W.dir > 0 ? R.x0 - 200 + sp * W.t : R.x1 + 200 - sp * W.t;
+        const sp = WH.waSp * (e.ph2 ? 1.08 : 1), span = R.x1 - R.x0 + 400; const pfx = W.fx === undefined ? null : W.fx; W.fx = W.dir > 0 ? R.x0 - 200 + sp * W.t : R.x1 + 200 - sp * W.t;
+        const wlo = Math.min(pfx === null ? W.fx : pfx, W.fx) - WH.waThick, whi = Math.max(pfx === null ? W.fx : pfx, W.fx) + WH.waThick;   // v10.05 속도 3배라 지난 프레임 사이도 훑는다
         const li = whLane(P.y, R);
-        if (!W.hit && li >= 0 && li !== W.safe && Math.abs(P.x - W.fx) < WH.waThick) { W.hit = true; whHit(WH.waDm); shake = Math.max(shake, 12); burst(P.x, P.y - 40, 24, ['#9fe6ff', '#ffffff', '#2a6aa8'], 340, 0.5); }
-        const p = P.pet; if (p && !p.down) { const pl = whLane(p.y, R); if (pl >= 0 && pl !== W.safe && Math.abs(p.x - W.fx) < WH.waThick && !W.petHit) { W.petHit = true; petHurt(p, WH.waDm); } }
+        if (!W.hit && li >= 0 && li !== W.safe && P.x > wlo && P.x < whi) { W.hit = true; whHit(WH.waDm); shake = Math.max(shake, 12); burst(P.x, P.y - 40, 24, ['#9fe6ff', '#ffffff', '#2a6aa8'], 340, 0.5); }
+        const p = P.pet; if (p && !p.down) { const pl = whLane(p.y, R); if (pl >= 0 && pl !== W.safe && p.x > wlo && p.x < whi && !W.petHit) { W.petHit = true; petHurt(p, WH.waDm); } }
         if (W.t * sp >= span) { V.cur = null; V.gap = 0.9; }
       }
     }
@@ -15367,8 +15383,8 @@ const DOK = { hp: 1.6, dm: 1.0, K: 2.0, r: 56, spK: 0.95, spMax: 285, bump: 14,
   slR: 175, slHalf: 1.0, slWarn: 0.5, slDm: 20, slCd: 1.6,
   daCd: 7, daWarn: 0.55, daSp: 2000, daLen: 760, daW: 70, daDm: 24, wvWind: 0.45, wvN: 3, wvSp: 0.5, wvSpd: 640, wvR: 22, wvDm: 18, wvLen: 1100,
   gdCd: 13, gdT: 1.5, gdRaise: 0.5, gdIcd: 0.25, gdN: 3, gdR: 210, gdCut: 0.1, bind: 1.0, bindImm: 3, tpAt: 0.35, exR: 260, exHalf: 1.1, exDm: 42,
-  znCd: 28, znJump: 0.7, znRain: 1.2, znT: 10, znHx: 520, znHy: 300, znBand: 46, wallDm: 10, wallCd: 0.6, bleed: 3, bleedK: 0.025,
-  spN: 6, spN2: 7, spSp: 1140, spSp2: 1260, spR: 95, spDm: 16, spIcd: 0.5, spWind: 1.3, spPause: 0.4,
+  znCd: 28, znJump: 0.44, znRain: 0.75, znT: 10, znHx: 520, znHy: 300, znBand: 46, wallDm: 10, wallCd: 0.6, bleed: 3, bleedK: 0.025,
+  spN: 6, spN2: 7, spSp: 1824, spSp2: 2016, spR: 95, spDm: 16, spIcd: 0.5, spWind: 1.3, spPause: 0.25,
   drCd: 16, drN: 3, drGap: 0.5, drWarn: 1.0, drR: 115, drDm: 22, cbWind: 0.8, cbHalf: 75, cbLen: 200, cbSp: 520, cbT: 0.9, cbTick: 0.18, cbDm: 9,
   ph2: 0.3, roar: 1.8, tempo: 1.25 };
 const DOKF = {"idle":[[0,0,130,100,83.0,99],[132,0,113,103,66.0,102],[247,0,97,105,51.0,104],[346,0,107,108,48.0,107],[455,0,104,109,49.0,108],[561,0,117,105,47.0,104],[680,0,114,111,51.0,110]],"walk":[[796,0,117,96,70.0,95],[915,0,115,97,68.0,96],[1032,0,121,100,49.0,99],[1155,0,108,99,52.0,98],[1265,0,115,96,53.0,95],[1382,0,120,97,60.0,96],[1504,0,115,99,58.0,98]],"atk":[[1621,0,125,89,70.0,88],[1748,0,159,93,72.0,92],[1909,0,138,102,60.0,101],[0,113,102,99,52.0,98],[104,113,142,117,60.0,116],[248,113,157,99,81.0,98]],"combo":[[407,113,105,85,61.0,84],[514,113,113,85,53.0,84],[629,113,97,88,56.0,87],[728,113,100,93,50.0,92],[830,113,104,92,58.0,91],[936,113,128,93,69.0,92],[1066,113,131,97,68.0,96]],"guard":[[1199,113,80,78,38.0,77],[1281,113,69,78,33.0,77],[1352,113,63,82,27.0,81]],"hit":[[1417,113,71,70,40.0,69],[1490,113,70,75,34.0,74],[1562,113,76,79,36.0,78]],"stun":[[1640,113,86,68,34.0,67],[1728,113,99,60,61.0,59],[1829,113,115,47,54.0,46]],"death":[[1946,113,94,82,52.0,81],[0,232,88,73,47.0,72],[90,232,95,71,50.0,70],[187,232,114,75,56.0,74],[303,232,192,88,76.0,87],[497,232,222,88,105.0,87]]};
@@ -16261,7 +16277,8 @@ const hRange = (g, st) => st === 'shard' ? { min: HSHARD[g][0], max: HSHARD[g][1
 const hRoll = g => { const st = ['atk', 'hp', 'aspd', 'shard'][(Math.random() * 4) | 0], R = hRange(g, st); return { st, v: hRand(R.min, R.max) }; };
 const hLines = h => { const o = [[h.st, h.v]]; if (h.st2) o.push([h.st2, h.v2]); if (h.st3) o.push([h.st3, h.v3]); return o; };
 const HEART = { drop: 0.33, legend: 0.01, slots: 5 };
-const heartCost = h => HG[h.g].cost;   // v8.09: 심장 등급(강화 단계)에 따라 레어 500 · 에픽 600 · 유니크 700 · 레전더리 800
+const hLocks = h => h.ll ? h.ll.slice(0, hLines(h).length).filter(Boolean).length : 0;   // v10.05 잠근 줄 수
+const heartCost = h => HG[h.g].cost * Math.pow(2, hLocks(h));   // v10.05 줄 잠금 하나당 재설정 비용 ×2   // v8.09: 심장 등급(강화 단계)에 따라 레어 500 · 에픽 600 · 유니크 700 · 레전더리 800
 const BH = { angel: '타락천사', shk: '거대 버섯마귀', skel: '스켈레톤 마왕', eye: '마안군주', monkey: '원숭이 마왕', tox: '이독버섯 마왕', adm: '썩어버린 해군 제독', qn: '타락한 원예의 여왕', vft: '파리지옥 마왕', kng: '타락한 어인왕', bear: '팔한지옥의 백곰 마왕', rud: '마하칼 루드라', lil: '팔한지옥의 대공작 릴세르카', cvt: '영벌의 화염죄수', snk: '불구렁이', tig: '지옥의 화염 호랑이', dok: '검 도깨비 마왕' }, BH_ORDER = ['angel', 'shk', 'skel', 'eye', 'monkey', 'tox', 'adm', 'qn', 'vft', 'kng', 'bear', 'rud', 'lil', 'cvt', 'snk', 'tig', 'dok'];   // v10.04 17번째 줄 = 검 도깨비 마왕(도트 오기 전까지 임시 그림) · v10.01 16번째 줄 = 지옥의 화염 호랑이 · v9.60 9~15번째 줄 = 파리지옥·어인왕·백곰·루드라·릴세르카·화염죄수·불구렁이   // v8.66 여왕 심장 = 8번째 줄   // 보스 종류별 심장 (도트 줄 순서)
 const bhKey = e => e.bk && BH[e.bk] ? e.bk : (e.bk ? null : 'monkey');   // v9.60 심장이 있는 마왕은 BH가 정한다 (타락 혈랑왕·챌린지 마왕은 null)
 const hRand = (a, b) => a + Math.floor(Math.random() * (b - a + 1));
@@ -16277,15 +16294,17 @@ function heartGain(g, b) { const h = heartMake(g, b); if (b === 'fw') { for (con
 function rerollHeart(id) {   // 재설정: 조각 500 → 등급업 판정 → 스탯 종류·수치 재배정
   const h = SAVE.heart.inv.find(q => q.id === id); if (!h) return { err: '심장이 없습니다' };
   if (h.lock) return { err: '잠긴 심장입니다 — 잠금을 풀어야 재설정할 수 있어요' };   // v8.51 잠금
+  if (hLocks(h) >= hLines(h).length) h.ll = [];   // 모든 줄이 잠긴 옛 상태 방지
   const cost = heartCost(h); if (SAVE.shards < cost) return { err: '영혼 조각이 부족합니다' };
   SAVE.shards -= cost;
   const before = { g: h.g, st: h.st, v: h.v, st2: h.st2, v2: h.v2, st3: h.st3, v3: h.v3 }, G = HG[h.g]; let up = false;
   const hadNext = !!G.next; if (G.next && Math.random() < G.up) { h.g = G.next; up = true; SAVE.dex.seen['heart:' + (h.b || 'angel') + ':' + h.g] = 1; }
   let ach = null;   /* v9.03 '진정한 불운의 아이콘': 등급업 가능한 심장을 연속 10번 재설정해도 등급업이 한 번도 없으면 달성 */
   if (hadNext) { SAVE.heart.dry = up ? 0 : (SAVE.heart.dry | 0) + 1; if (SAVE.heart.dry >= LUCK_N && !SAVE.ach.done.luck) { SAVE.ach.done.luck = 1; ach = ACH.find(q => q.id === 'luck'); achBadge(); } }
-  let r = hRoll(h.g); h.st = r.st; h.v = r.v;
-  if (h.st2) { r = hRoll(h.g); h.st2 = r.st; h.v2 = r.v; }   // v8.66: 2줄이면 두 줄 모두
-  if (h.st3) { r = hRoll(h.g); h.st3 = r.st; h.v3 = r.v; }   // v8.92: 3줄이면 세 줄 모두
+  const LK = h.ll || [];   // v10.05 잠근 줄은 그대로
+  let r; if (!LK[0]) { r = hRoll(h.g); h.st = r.st; h.v = r.v; }
+  if (h.st2 && !LK[1]) { r = hRoll(h.g); h.st2 = r.st; h.v2 = r.v; }   // v8.66: 2줄이면 두 줄 모두
+  if (h.st3 && !LK[2]) { r = hRoll(h.g); h.st3 = r.st; h.v3 = r.v; }   // v8.92: 3줄이면 세 줄 모두
   saveSave(); return { before, after: { g: h.g, st: h.st, v: h.v, st2: h.st2, v2: h.v2, st3: h.st3, v3: h.v3 }, up, ach };
 }
 const HFUSE_HID = { p: 0.05 };   // v9.57 히든: 레전더리 3개 합성이 이 확률로 '지옥 심장'(옵션 3줄)이 된다 (화면엔 안 알림)
@@ -16394,9 +16413,15 @@ function renderHeart() {
     <div class="harrow">${nx ? `<b style="color:${G.col}">${G.name}</b> <i>▶▶▶</i> <b style="color:${nx.col}">${nx.name}</b> <span>등급 상승 ${Math.round(G.up * 100)}%</span>` : `<b style="color:${G.col}">최고 등급</b> <span>수치만 다시 뽑아요 (${G.min}~${G.max}% · 영혼 조각 ${HSHARD[h.g][0]}~${HSHARD[h.g][1]}%)</span>`}</div>
     <div class="horb ${h.g}"><div class="hring"></div><img src="${heartImg(h.g, 150, h.b)}"></div>
     <div class="hopt">${hOpt(h)} <small>(${G.name} 범위 ${G.min}~${G.max}% · 영혼 조각 ${HSHARD[h.g][0]}~${HSHARD[h.g][1]}%)</small></div>
+    ${hLines(h).length > 1 ? `<div class="hlines">${hLines(h).map(([st, v], i) => `<button class="sm hl ${h.ll && h.ll[i] ? 'on' : ''}" data-i="${i}">${h.ll && h.ll[i] ? '🔒' : '🔓'} ${HSTAT[st]} +${v}%</button>`).join('')}</div><p class="hsum" style="margin:0">줄을 눌러 잠그면 재설정해도 그대로 · 잠금 하나당 재설정 비용 ×2 (최대 ${hLines(h).length - 1}줄)</p>` : ''}
     ${hLast ? `<div class="hcube"><div><small>이전</small><b style="color:${HG[hLast.before.g].col}">[${HG[hLast.before.g].name}] ${hOpt(hLast.before)}</b></div><i>➜</i><div><small>이후</small><b style="color:${HG[hLast.after.g].col}">[${HG[hLast.after.g].name}] ${hOpt(hLast.after)}</b></div></div>` : ''}
     <div class="hcost"><span>재설정 비용</span><b>◆ ${heartCost(h)}</b><span>보유</span><b class="${SAVE.shards < heartCost(h) ? 'lack' : ''}">◆ ${SAVE.shards}</b></div>
     <div class="row"><button id="hReroll" ${h.lock || SAVE.shards < heartCost(h) ? 'disabled' : ''}>${h.lock ? '🔒 잠김' : '재설정'}</button><button class="sm ${h.lock ? 'on' : ''}" id="hLock">${h.lock ? '🔒 잠금 해제' : '🔓 옵션 잠금'}</button><button class="sm" id="hEquip">${eq ? '장착 해제' : '장착'}</button><button class="sm" id="hDis" ${h.lock ? 'disabled' : ''}>분해 (+${G.dis})</button><button class="sm" id="hFuseIn" ${h.lock || h.g !== 'legend' ? 'disabled' : ''}>${hFu.includes(h.id) ? '합성 칸에서 빼기' : '합성 칸에 넣기'}</button></div>${h.lock ? '<p class="hsum">🔒 잠금 중 — 이 옵션은 재설정·분해되지 않아요</p>' : ''}`;
+  core.querySelectorAll('.hl').forEach(b => b.onclick = () => {   // v10.05 줄 잠금 (2줄 이상 심장)
+    const i = +b.dataset.i, n = hLines(h).length; h.ll = (h.ll || []).slice(0, n); while (h.ll.length < n) h.ll.push(false);
+    if (!h.ll[i] && hLocks(h) + 1 >= n) { $('hSum').textContent = '모든 줄을 잠글 수는 없어요 — 한 줄은 풀어 두세요'; return; }
+    h.ll[i] = !h.ll[i]; saveSave(); try { sfx('item'); } catch (_) {} renderHeart();
+  });
   $('hLock').onclick = () => { h.lock = !h.lock; saveSave(); try { sfx('item'); } catch (_) {} renderHeart(); };   // v8.51: 마음에 드는 옵션을 잠가 두면 실수로 재설정·분해하지 않는다
   $('hReroll').onclick = () => {
     const r = rerollHeart(h.id); if (r.err) return;
@@ -16526,6 +16551,7 @@ function openAch() {
 }
 /* v8.71 간략 패치노트 (최근 버전만, 새 버전마다 맨 위에 한 줄 추가) */
 const PATCH = [
+  ['v10.05','[시체고래] 죽음의 파도 속도 3배 · [보스전] 안내 글씨 2배·표시 시간 2배 · [심장] 옵션 2줄 이상 심장은 줄마다 잠글 수 있음(잠근 줄은 재설정해도 그대로, 잠금 하나당 재설정 비용 ×2) · [검 도깨비] 검총의 결계 전체 속도 1.6배(착지·검의 비·회전 베기 속도·줄 사이 정지, 예고 1.3초는 그대로) · [악마처형자] 구르기 2번→3번 · [악마 총잡이] 조합 카드 ★서리 도탄 추가(도탄 서리 중첩 → 불씨탄 폭발 · 모든 총알 최대 체력 0.3% 추가 피해)'],
   ['v10.04','[검 도깨비] 결계 안 회전 베기 돌진 속도 3배(예고 1.3초 · 줄 사이 정지 0.4초) · 검 도깨비 마왕 심장 추가(도트는 임시 그림)'],
   ['v10.03','[호랑이] 2페이즈에도 카메라가 호랑이에게 딸려가지 않음 · 2페이즈 리듬 돌진은 항상 박자마다 나를 겨눠 직선으로 돌진 · [황금 임프] 처치로 받은 영혼 조각 10,000이 결과창에도 표시됨'],
   ['v10.02','[불구렁이] 땅파기 균열이 내 길을 따라간 뒤에도 바닥을 가로질러 3~5줄 더 그어 서로 엇갈리는 용암 참호 그물이 됨(참호 5초→약 8초) · 빨아들이기 대폭 강화(끌어당김 105→185 · 2페이즈 125→215, 부채꼴 반각 43°→57°, 한 번 삼킬 때 물림은 1번만)'],
