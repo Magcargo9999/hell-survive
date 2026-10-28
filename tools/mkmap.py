@@ -44,7 +44,7 @@ ANCHORS = [
  ('가시관 무당벌레 (미니 보스)', r'v9\.54 가시관 무당벌레|^function updateLad|^function lAtk'),
  ('서리혈랑 (미니 보스)', r'v9\.55 서리혈랑|^function updateFrw|^function frwAtk'),
  ('식물원 잡몹·네임드(가시덩굴·식인 꽃·거대 달팽이)', r'^let GSPECIES|v8\.53 악마 식물원|^function plantStep|^function drawPlantMob'),
- ('⚔ 보스 러시', r'v8\.50 ⚔ 보스 러시|^function startRush|^function rushWin'),
+ ('⚔ 보스 러시 (v10.10 BossRushManager · 마석 · 주사기)', r'v10\.10 ⚔ 보스 러시|^class BossRushManager|^function startRush|^function useSyringe|^function stoneGain|^function bossExPaused'),
  ('썩어버린 해군 제독', r'v8\.40 썩어버린 해군 제독|^function updateAdmBoss|^function applyPull|^function updateAdmCannon|^const ADM_L'),
  ('파리지옥 마왕', r'v8\.70 파리지옥 마왕|^class VenusAI|^class VfTrap|^class VfSkull|^class VfHeart|^function updateVfFx|^function drawVfScreen'),
  ('타락한 원예의 여왕', r'v8\.63 타락한 원예의 여왕|^class QueenAI|^class RootBind|^class SporeSack|^class QnMush|^function drawQnScreen'),

@@ -72,6 +72,8 @@
   .hcell .hlk, .hslot .hlk { position: absolute; top: 2px; left: 4px; font-size: 13px; }
   .hslot { position: relative; }
   #hLock.on, .hl.on { border-color: #ffe28a; color: var(--gold); }
+  .hstn { display: inline-flex; align-items: center; gap: 4px; margin: 3px; padding: 3px 8px; border-radius: 8px; border: 1px solid #5a3a48; background: rgba(0,0,0,0.3); cursor: pointer; font-size: 13px; } .hstn.on { border-color: #ffe28a; box-shadow: 0 0 6px rgba(255,226,138,0.5); } .hstn i { font-style: normal; font-size: 16px; }
+  .hsyr { margin: 6px auto 2px; max-width: 360px; } .hsyr .bar { height: 10px; border-radius: 6px; background: #2a0a18; overflow: hidden; border: 1px solid #5a3a48; } .hsyr .bar i { display: block; height: 100%; background: linear-gradient(90deg, #ff4a8a, #ffd0f0); }
   .hlines { display: flex; gap: 6px; flex-wrap: wrap; justify-content: center; margin: 6px 0 2px; }
   .hfuse { margin: 0 auto 10px; max-width: 820px; padding: 8px 10px; border-radius: 12px; background: rgba(20, 6, 14, 0.85); border: 1px solid #5a3a48; } .hfh { color: #ffb0d0; font-weight: bold; font-size: 16px; } .hfh small { color: #c9a8b4; font-weight: normal; font-size: 13px; margin-left: 6px; }
   .hfrow { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; margin-top: 6px; } .hfrow i { color: #ffb0d0; font-style: normal; } .hslot.fz { width: 72px; height: 84px; } .hslot.fz img { width: 44px; height: 44px; } .hcell .hfu { position: absolute; top: 2px; left: 50%; transform: translateX(-50%); font-size: 13px; color: #ffb0d0; }
@@ -393,8 +395,9 @@
   <div class="gtop"><span id="hShards" style="color:var(--gold);font-weight:bold"></span><button id="hHelpBtn" class="sm help" title="도움말">?</button><button id="hClose" class="sm">닫기</button></div>
   <div class="hslots" id="hSlots"></div><p id="hSum" class="hsum"></p>
   <div class="hfuse" id="hFuse"></div>
+  <div class="hfuse" id="hStone"></div>
   <div class="hmain"><div class="hinv" id="hInv"></div><div class="hcore" id="hCore"></div></div>
-  <p class="gprob" id="hHelp" style="display:none">심장이 떨어지는 마왕 17종: 원숭이 · 마안군주 · 스켈레톤 · 타락천사 · 거대 버섯마귀 · 이독버섯 · 해군 제독 · 원예의 여왕 · 파리지옥 · 어인왕 · 백곰 · 루드라 · 릴세르카 · 화염죄수 · 불구렁이 · 화염 호랑이 · 검 도깨비<br>마왕 17종은 종류마다 그 심장을 보유 중이 아닐 때만(처치 시 33%) 떨어짐 · 분해하면 다시 떨어짐 · 챌린지·숨은 보스 제외 · [보스의 심장] (레어) · 떨어질 때 1% 확률로 레전더리 · 재설정 비용은 등급별 레어 ◆500 · 에픽 ◆600 · 유니크 ◆700 · 레전더리 ◆800 (옵션 2줄 이상 심장은 줄마다 잠글 수 있고, 잠근 줄은 그대로 남는 대신 잠금 하나당 비용 ×2): 레어→에픽 30% · 에픽→유니크 20% · 유니크→레전더리 5% 등급 상승, 옵션(공격력 · 최대 체력 · 공격 속도 각 1/3)과 수치를 다시 뽑음<br>등급별 수치: 레어 1~3% · 에픽 4~6% · 유니크 7~9% · 레전더리 15~20% · 최대 5개 장착 (효과는 다음 판 시작부터)<br>합성: 레전더리 심장 3개를 합성 칸에 넣으면 모두 사라지고 [끔찍한 심장] 1개(레어 · 옵션 2줄 · 보스 무관 · 여러 개 가능)가 생김 · 그 보스 심장이 하나도 안 남으면 다시 드랍 · 옵션 2줄 심장은 재설정할 때 두 줄을 모두 다시 뽑음 · 끔찍한 심장 3개를 넣으면 [지옥 심장] 1개(레어 · 옵션 3줄)</p>
+  <p class="gprob" id="hHelp" style="display:none">심장이 떨어지는 마왕 17종: 원숭이 · 마안군주 · 스켈레톤 · 타락천사 · 거대 버섯마귀 · 이독버섯 · 해군 제독 · 원예의 여왕 · 파리지옥 · 어인왕 · 백곰 · 루드라 · 릴세르카 · 화염죄수 · 불구렁이 · 화염 호랑이 · 검 도깨비<br>마왕 17종은 종류마다 그 심장을 보유 중이 아닐 때만(처치 시 33%) 떨어짐 · 분해하면 다시 떨어짐 · 보스 러시에서도 떨어짐 · 챌린지·숨은 보스 제외 · [보스의 심장] (레어) · 떨어질 때 1% 확률로 레전더리 · 재설정 비용은 등급별 레어 ◆500 · 에픽 ◆600 · 유니크 ◆700 · 레전더리 ◆800 (옵션 2줄 이상 심장은 줄마다 잠글 수 있고, 잠근 줄은 그대로 남는 대신 잠금 하나당 비용 ×2): 레어→에픽 30% · 에픽→유니크 20% · 유니크→레전더리 5% 등급 상승, 옵션(공격력 · 최대 체력 · 공격 속도 각 1/3)과 수치를 다시 뽑음<br>등급별 수치: 레어 1~3% · 에픽 4~6% · 유니크 7~9% · 레전더리 15~20% · 최대 5개 장착 (효과는 다음 판 시작부터)<br>합성: 레전더리 심장 3개를 합성 칸에 넣으면 모두 사라지고 [끔찍한 심장] 1개(레어 · 옵션 2줄 · 보스 무관 · 여러 개 가능)가 생김 · 그 보스 심장이 하나도 안 남으면 다시 드랍 · 옵션 2줄 심장은 재설정할 때 두 줄을 모두 다시 뽑음 · 끔찍한 심장 3개를 넣으면 [지옥 심장] 1개(레어 · 옵션 3줄)<br>주사기(보스 러시 완주 보상): 옵션 3줄 심장에만 사용 · 1개당 게이지 3~10% 무작위 · 100%가 되면 4번째 옵션 칸이 영구로 열림(그 등급 범위에서 무작위 옵션) · 보스 러시에서는 장착한 심장의 옵션이 적용되지 않음</p>
 </div>
 <div id="hfx"></div>
 
@@ -911,7 +914,7 @@ const SNAIL_ROUTES = {
 //  중간      : 신성한 피의 비 12 · 피의 갈취 11 · 삼두 연쇄 물기 10 · 신성화살 12 · 물의 주술 16 (회복량을 줄이고 자주 쓰게)
 //  낮음 → 짧게: 폭발 화살 6 · 큰 화살/후방 도약 7 · 울부짖음 8 · 독 자국 폭파 8 · 천공 강하 8 · 화염 브레스 9
 const SKILL_CD = { vwave: 12, lhead: 28, roll: 11, megabomb: 11, shell: 16, ele: 12, otent: 15, gcharge: 9, gsummon: 24, lavaburst: 18, rush: 15, rage: 14, whip: 12, bsigil: 11, bloodrain: 12, drain: 11, cerb: 10, holyshot: 12, tide: 16, bombshot: 6, bigarrow: 7, darkarrow: 10, backdash: 7, howl: 8, blast: 8, dive: 8, breath: 9, laser: 10, zone: 10, meteor: 10 };
-const skillCd = () => ((window.__SKCD && window.__SKCD[P.skill]) || SKILL_CD[P.skill] || 14);
+const skillCd = () => ((window.__SKCD && window.__SKCD[P.skill]) || SKILL_CD[P.skill] || 14) * (1 - 0.1 * (P.up.brCool | 0));   // v10.10 보스 러시 전용 증강 [시간 왜곡]
 const SKILL_UNIQUE = { fish: 'vwave', wolf: 'howl', snail: 'blast', archer: 'bigarrow', chimera: 'dive', lizard: 'rage', twins: 'whip' };
 const uniqueSkill = () => (P.char === 'chimera' && P.route === 'dream') ? 'rush' : (P.char === 'chimera' && P.route === 'flame') ? 'breath' : (P.char === 'snail' && P.route === 'lava') ? 'lavaburst' : (P.char === 'snail' && P.route === 'bomb') ? 'megabomb' : (P.char === 'wolf' && P.route === 'twin') ? 'cerb' : (P.char === 'wolf' && P.route === 'crimson') ? (P.fin === 'holy' ? 'bloodrain' : P.fin === 'fallen' ? 'bsigil' : 'drain') : SKILL_UNIQUE[P.char];
 const uniqueSkills = () => P.char === 'gun' ? ['roll'] : P.char === 'octo' ? [P.form >= 2 ? 'otent' : 'ele'] : P.char === 'ghost' ? (P.route === 'knight' ? (P.form >= 2 ? ['lhead'] : []) : [P.form >= 2 ? 'gsummon' : 'gcharge']) : P.char === 'lizard' ? [P.fin === 'guard' ? 'shell' : P.fin === 'water' ? 'tide' : 'rage'] : P.char === 'archer' ? (P.route === 'elf' && P.fin ? [P.fin === 'holy' ? 'holyshot' : 'bombshot'] : (P.route === 'skel' ? ['darkarrow'] : ['bigarrow', 'backdash'])) : [uniqueSkill()];
@@ -978,7 +981,7 @@ function mkCanvas(w, h) { const c = document.createElement('canvas'); c.width = 
  * 0-1. 저장(영혼 조각 · 영구 강화 · 설정) / 캐릭터 목록 / 소리
  * ============================================================ */
 const SAVE_KEY = 'hellSurvivorSave1';
-const GAME_VER = 'v10.05';
+const GAME_VER = 'v10.10';
 const SAVE_DEF = () => ({
   shards: 0,
   perks: { hp: 0, spd: 0, dmg: 0, exp: 0, magnet: 0, banish: 0, revive: 0, regen: 0, shard: 0, critd: 0, choice: 0 },
@@ -987,7 +990,8 @@ const SAVE_DEF = () => ({
   diff: { max: 0, sel: 0, fw: false },
   holyBlood: false,   // v6.03: 신성한 피를 먹었다 (성혈랑 최종 진화 해금)
   fw: { wins: {}, open: false, cleared: false, snap: null },   // 숨은 보스: 혈랑/성혈랑 클리어 기록 · 마지막 클리어 스펙
-  rush: { open: false, best: 0, clears: 0 },   // v8.50 보스 러시 (해금 · 최고 처치 수 · 완주 횟수)
+  rush: { open: false, best: 0, clears: 0, tix: 0, syr: 0, o30: false },   // v8.50 보스 러시 (해금 · 최고 처치 수 · 완주 횟수) · v10.10 스킨 뽑기권 · 주사기 · 30층 해금 안내
+  stone: { inv: [], eq: null, n: 0 },   // v10.10 마석 (보스 러시 완주 보상)
   ch: { open: false, frag: 0, best: 0, rune: {}, tr: { rat: false, pouch: false, mirror: false } },   // v6.20: 챌린지 모드 (해금 · 룬 조각 · 룬 · 보물)
   set: { nums: true, calm: false, sfx: 0.7, bgm: 0.35, speed: 1, joy: ('ontouchstart' in window) },
   skin: { own: {}, frag: {}, on: {}, pity: 0, pulls: 0 },   // v7.30 스킨 가챠
@@ -1006,6 +1010,7 @@ function loadSave() {
     if (j && j.chars && j.chars.mage && !('archer' in j.chars)) j.chars.archer = true;   // 예전 뼈 마법사를 샀다면 궁수로 이어받는다
     if (j) SAVE = { shards: +j.shards || 0, perks: Object.assign(d.perks, j.perks), chars: Object.assign(d.chars, j.chars), dex: { seen: Object.assign({}, j.dex && j.dex.seen), kills: Object.assign({}, j.dex && j.dex.kills), final: Object.assign({}, j.dex && j.dex.final), goals: +(j.dex && j.dex.goals) || 0 }, diff: Object.assign(d.diff, j.diff), holyBlood: !!j.holyBlood, fw: Object.assign(d.fw, j.fw), set: Object.assign(d.set, j.set), rush: Object.assign(d.rush, j.rush), ch: Object.assign(d.ch, j.ch, { rune: Object.assign({}, j.ch && j.ch.rune), tr: Object.assign(d.ch.tr, j.ch && j.ch.tr) }), skin: Object.assign(d.skin, j.skin, { own: Object.assign({}, j.skin && j.skin.own), frag: Object.assign({}, j.skin && j.skin.frag) }), heart: { inv: (j.heart && Array.isArray(j.heart.inv)) ? j.heart.inv : [], eq: (j.heart && Array.isArray(j.heart.eq)) ? j.heart.eq.slice(0, 5) : [], n: (j.heart && +j.heart.n) || 0, got: (j.heart && j.heart.got && typeof j.heart.got === 'object') ? j.heart.got : {} }, cp: (j.cp && typeof j.cp === 'object') ? j.cp : {} };
     if (j) SAVE.playT = Math.max(0, +j.playT || 0);
+    SAVE.stone = (j && j.stone && Array.isArray(j.stone.inv)) ? { inv: j.stone.inv, eq: j.stone.eq || null, n: +j.stone.n || 0 } : d.stone;   // v10.10 마석
     if (j) SAVE.ach = { done: Object.assign({}, j.ach && j.ach.done), got: Object.assign({}, j.ach && j.ach.got) };   // v8.80
     delete SAVE.chars.mage;
     if (j) {   // v8.99 새 층이 생겨도 이미 깬 층은 다시 깰 필요 없다: 지하 20층 클리어 기록(보스 러시 해금 · 마지막 마왕 기록)이 있으면 21층까지 열어 준다
@@ -1564,7 +1569,7 @@ let fwaveQ = null;   // v9.49 포식자의 파도 (공허의 마해룡 스킬)
 let airs = [], diveQ = null, breathQ = null, rushQ = null, cfx = [], ebul = [], bombQ = null, holyQ = null, afx = [], bombT = [], holyPtr = null;   // 키메라: 에어슬래시 · 천공 강하 · 효과
 let eleQ = null, tentQ = null, octoFx = [];   // 문어 마법사: 코끼리 돌진 · 문어 다리 · 히든 몹 이펙트
 let slots = [], slotPlan = [], slotUI = null, uniqCd = 0, lasers = [], udeath = [], eyeF = null, tpBtn = { x: 0, y: 0, w: 0, h: 0 };   // 잭팟 머신 · 유니크 마물 · 성유물
-let rush = null, rushMode = false;   // v8.50 보스 러시
+let rush = null, rushMode = false, rushBoot = false;   // v8.50 보스 러시 · v10.10 rushBoot = 보스 러시 시작 중(newPlayer가 심장·마석을 안 넣는다)
 let castle = null, arena = null, trans = null, banner = null, boss = null, winT = 0, darkT = 0, smokes = [];
 /* ---------- 마왕성 (Lv.25에 솟아오름) / 성 내부 맵 ---------- */
 const CAS = { s: 0.62, gx: 0.472, gate: 24 };   // 크기 배율, 성문 위치(그림 너비 비율), 성문 통로 반폭
@@ -1660,7 +1665,7 @@ function enterArena() {
     const S0 = arena.mush ? BM().start : an ? AMAP.start : ARENA.start; P.x = S0[0]; P.y = S0[1]; cam.x = P.x; cam.y = P.y - 20; placeAllies();
     P.hp = P.max; P.healBank = P.max * 0.12;   // 마왕전은 체력을 가득 채우고 시작한다
     spawnBoss(); itemT = 14;
-    let tx = rush ? `⚔ 보스 러시 ${rush.i + 1}/${BR_N} — ${BR_NAME[P.bossK]} (난이도 ${P.tier + 1})\n출구는 봉인되었다 · 쓰러뜨리면 체력이 회복되고 ${BR.up}레벨 올라 증강을 ${BR.up}번 고른다` : sealed ? '출구가 봉인되었다!  이제 마왕을 쓰러뜨리는 수밖에 없다' : '마왕전 시작!  성 밖으로 나갈 수 있는 기회는 딱 1번\n맵 아래쪽 출구 ▼ 에 잠시 머물면 나갈 수 있어요 (나가면 마왕은 체력 회복)';
+    let tx = rush ? `⚔ 보스 러시 라운드 ${rush.round}/${BR_N} — ${BR_NAME[P.bossK]} (난이도 ${P.tier + 1})\n출구는 봉인되었다 · 맵 기믹: ${rush.modTxt()} · 이동 속도 ${BR.spdMin}~${BR.spdMax} · 심장 옵션 없음` : sealed ? '출구가 봉인되었다!  이제 마왕을 쓰러뜨리는 수밖에 없다' : '마왕전 시작!  성 밖으로 나갈 수 있는 기회는 딱 1번\n맵 아래쪽 출구 ▼ 에 잠시 머물면 나갈 수 있어요 (나가면 마왕은 체력 회복)';
     if (boss && boss.bk === 'skel') tx += '\n스켈레톤 마왕: 정면에 서 있으면 대검으로 내려찍는다 · 체력 66%·33%에 결계(무적) · 첨탑 20초 방치 시 체력 15% 회복 · 해골 전사 2마리 소환';
     if (boss && boss.bk === 'shk') tx += '\n거대 버섯마귀: 바닥에 그림자가 생기면 거대 포자가 떨어진다 (독 장판이 남는다) · 체력 75%·50%·25%에 버섯 군단 소환 — 다 잡을 때까지 받는 피해 -50%';
     if (boss && boss.bk === 'vft') tx += '\n파리지옥 마왕: 나에게 입힌 피해 비율(내 최대 체력 대비 %)만큼 체력을 흡혈한다 · 붉은 포자 = 부채꼴 다발(맞으면 출혈) · 하트 = 닿으면 매혹(보스 쪽으로 끌려감) · 붉은 원 = 내 이동 경로를 예측한 포식의 덫(멈추거나 방향을 바꾸기) · 해골은 달려와 자폭(붙기 전에 베기) · 체력 30% 끝없는 갈증(하트 파동은 밝은 통로로)';
@@ -2091,11 +2096,12 @@ function bossLand(e) {
     e.stT = 1.55;
   }
 }
+function bossExPaused(e) { return !(!(e.bk === 'tox' && (toxFog || e.st === 'collapse')) && !(e.bk === 'adm' && (e.st === 'frenzy' || admPull || admNC() >= 5)) && !(e.bk === 'qn' && (e.ph2 || e.st === 'intro' || P.bindT > 0 || QNW.roots.some(r => r.pending))) && !(e.bk === 'kng' && (e.ph2 || e.st === 'intro' || e.st === 'tide' || KGW.tether || KGW.ring || e.st === 'charge' || e.st === 'dash')) && !(e.bk === 'bear' && pbExPause(e)) && !(e.bk === 'rud' && rdExPause(e)) && !(e.bk === 'lil' && lsExPause(e)) && !(e.bk === 'cvt' && cvExPause(e)) && !(e.bk === 'snk' && snExPause(e)) && !(e.bk === 'tig' && tgExPause(e)) && !(e.bk === 'whl' && whExPause(e)) && !(e.bk === 'dok' && dokExPause(e)) && !(e.bk === 'vft' && (e.st === 'intro' || e.st === 'thirst' || VFW.wave || P.charmT > 0 || VFW.traps.some(t => t.combo)))); }   // v10.10 마왕의 큰 패턴 중 (난이도 추가 패턴 · 보스 러시 맵 기믹을 쉰다 — 규칙 9)
 function updateBoss(e, dt) {
   if (e.bk === 'ab') { updateAbBoss(e, dt); return; }
   if (e.bk === 'grn') { updateGrnBoss(e, dt); return; }
   if (e.ex === undefined) tierExInit(e);
-  if (!(e.bk === 'tox' && (toxFog || e.st === 'collapse')) && !(e.bk === 'adm' && (e.st === 'frenzy' || admPull || admNC() >= 5)) && !(e.bk === 'qn' && (e.ph2 || e.st === 'intro' || P.bindT > 0 || QNW.roots.some(r => r.pending))) && !(e.bk === 'kng' && (e.ph2 || e.st === 'intro' || e.st === 'tide' || KGW.tether || KGW.ring || e.st === 'charge' || e.st === 'dash')) && !(e.bk === 'bear' && pbExPause(e)) && !(e.bk === 'rud' && rdExPause(e)) && !(e.bk === 'lil' && lsExPause(e)) && !(e.bk === 'cvt' && cvExPause(e)) && !(e.bk === 'snk' && snExPause(e)) && !(e.bk === 'tig' && tgExPause(e)) && !(e.bk === 'whl' && whExPause(e)) && !(e.bk === 'dok' && dokExPause(e)) && !(e.bk === 'vft' && (e.st === 'intro' || e.st === 'thirst' || VFW.wave || P.charmT > 0 || VFW.traps.some(t => t.combo)))) tierEx(e, dt);   // v8.63 여왕: 2페이즈·묶인 중·뿌리 예고 중에는 추가 패턴을 멈춘다 (규칙 9)   // v8.40: 제독 발악 포효·끌려가는 중·함포 5문 이상이면 멈춘다 (규칙 9)   // v8.20: 독 안개(이속 -50%)·붕괴 중에는 난이도 추가 패턴을 멈춘다 (규칙 9)
+  if (!bossExPaused(e)) tierEx(e, dt);   // v8.63 여왕: 2페이즈·묶인 중·뿌리 예고 중에는 추가 패턴을 멈춘다 (규칙 9)   // v8.40: 제독 발악 포효·끌려가는 중·함포 5문 이상이면 멈춘다 (규칙 9)   // v8.20: 독 안개(이속 -50%)·붕괴 중에는 난이도 추가 패턴을 멈춘다 (규칙 9)
   if (e.bk === 'eye') { updateEyeBoss(e, dt); return; }
   if (e.bk === 'fw') { updateFwBoss(e, dt); return; }
   if (e.bk === 'skel') { updateSkBoss(e, dt); return; }
@@ -4220,7 +4226,7 @@ function drawKgScreen(wx, wy) {   // 화면 마지막 층(비네트 뒤): 심해
   for (const b of KGW.bolts) b.draw(wx, wy);
 }
 function drawKgO2(bx, by, bw) {   // 산소 게이지 (화면 아래 가운데, 스킬 칸 위 — 위쪽은 출구 안내와 겹친다)
-  if (!kgOn() || P.o2 === undefined) return;
+  if ((!kgOn() && !rushO2On()) || P.o2 === undefined) return;
   const w = Math.min(320, bw * 0.6), x = W / 2 - w / 2, y = H - 100, q = clamp(P.o2 / KG.o2Max, 0, 1), low = q < 0.3, pu = 0.5 + 0.5 * Math.sin(wallT * 10);
   ctx.save(); ctx.fillStyle = 'rgba(4,12,30,0.8)'; ctx.fillRect(x - 3, y - 3, w + 6, 16);
   ctx.fillStyle = low ? `rgba(255,${Math.round(90 + 80 * pu)},90,1)` : '#4ac8ff'; ctx.fillRect(x, y, w * q, 10);
@@ -6495,16 +6501,16 @@ function tgPushP() {   // 2페이즈 카메라 고정: 화면 밖으로 나가�
   P.x = x; P.y = y;
 }
 /* 그리기 */
-function drawTgCross(wx, wy) {
-  const C = TGW.cr; if (!C) return; const [cx, cy] = tgC(), sx = wx(cx), sy = wy(cy);
+function drawTgCross(wx, wy, C = TGW.cr, cen = tgC(), omv = tgCrossOm(), al = 1) {   // v10.10 보스 러시 십자가도 같은 그림
+  if (!C) return; const [cx, cy] = cen, sx = wx(cx), sy = wy(cy);
   if (C.van > 0) { const f = Math.min(2, ((1 - C.van / 1.2) * 3) | 0); tfx('cvanish', f, sx, sy, 3, Math.min(1, C.van * 1.5), { rot: C.a, mid: true, add: true }); }
-  const inA = C.van < 0 ? 1 + C.van / 0.8 : 1, jf = TGX.jet[0], om = tgCrossOm() > 0 ? 1 : -1;
+  const inA = (C.van < 0 ? 1 + C.van / 0.8 : 1) * al, jf = TGX.jet[0], om = omv > 0 ? 1 : -1;
   tfx('cring', 0, sx, sy, 3.2, (C.p2 ? 0.8 : 0.55) * inA, { rot: C.a * 2 * om, mid: true, add: true });   // 회전 잔상(2페이즈는 반대로·진하게)
   for (let k = 0; k < 4; k++) {   // 팔 = 불 뿜기 이펙트 도트를 팔 길이(벽까지)만큼 늘인다
     const a = C.a + k * Math.PI / 2, L = C.len[k] || TG.crR, r0 = 60;
     tfx('jet', 0, sx + Math.cos(a) * r0, sy + Math.sin(a) * r0, 1, inA * 0.95, { rot: a, ax: 0, mid: true, sx: (L - r0) / jf[2], sy: (TG.crW * 2.8) / jf[3], add: !!C.p2 });
   }
-  tfx('cross', C.p2 ? 2 : 0, sx, sy, 3, inA, { rot: C.a, mid: true });
+  tfx('cross', C.p2 ? 2 : 0, sx, sy, 3, Math.max(inA, al * 0.6), { rot: C.a, mid: true });
 }
 function drawTgFloor(wx, wy) {
   if (!tgOn()) return;
@@ -8100,12 +8106,13 @@ function bossDefeated() {
   if (arena) arena.cleared = true;
   addRing(e.x, e.y - 40, 20, 600, 1.0, '255,200,90', 16); addRing(e.x, e.y - 40, 10, 360, 0.7, '255,80,50', 12);
   burst(e.x, e.y - 50, 80, ['#ff3a2a', '#ffb05a', '#ffffff', '#3a2a2a'], 520, 1.2); shake = 24; sfx('evolve');
-  const hbk = chal || rush ? null : bhKey(e), hg = rollHeartDrop(hbk); if (hg) { items.push({ type: 'bheart', g: hg, b: hbk, x: e.x, y: e.y + 20, t: 0 }); if (hg === 'legend') playUpgradeEffect('legend', '✦ 레전더리 심장 출현! ✦'); }   // v8.01 보스 심장 20% (1% 레전더리)
+  const hbk = chal ? null : bhKey(e), hg = rollHeartDrop(hbk); if (hg) { if (rush) { const h = heartGain(hg, hbk); rush.hearts.push({ round: rush.i + 1, h }); floatNum(P.x, P.y - 130, '💗 ' + hTitle(h), HG[hg].col); } else items.push({ type: 'bheart', g: hg, b: hbk, x: e.x, y: e.y + 20, t: 0 }); if (hg === 'legend') playUpgradeEffect('legend', '✦ 레전더리 심장 출현! ✦'); }   // v8.01 보스 심장 20% (1% 레전더리)
   if (chal) { chBossWin(e); return; }   // v6.20: 챌린지는 계속된다
   if (rush) { rushWin(e); return; }   // v8.50 보스 러시: 다음 마왕으로
   banner = { txt: '마왕을 쓰러뜨렸다!', t: 6 };
   const refund = P.fee || 0; P.earned = shardTotal(Math.round(150 * tierMul())) + refund; SAVE.shards += P.earned;   // 클리어 보너스 +150 (단계 배율) + 참가비 반환
-  P.rushOpen = false; if (P.tier >= MAX_TIER && !SAVE.rush.open) { SAVE.rush.open = true; P.rushOpen = true; }   // v8.50: 지하 20층까지 클리어 → 보스 러시
+  P.rushOpen = false; if (P.tier >= MAX_TIER && !SAVE.rush.open) SAVE.rush.open = true;   // 지하 20층 클리어 기록 (마계 물고기 해금에 쓴다)
+  if (P.tier >= 29 && !SAVE.rush.o30) { SAVE.rush.o30 = true; P.rushOpen = true; }   // v10.10: 보스 러시 해금 = 지하 30층 마왕 처치
   SAVE.diff.clr = Math.max(SAVE.diff.clr | 0, P.tier);   // v9.10 깬 가장 깊은 층 (새 층이 열릴 때 인정)
   P.unlocked = 0; if (P.tier === SAVE.diff.max && SAVE.diff.max < OPEN_TIER) { SAVE.diff.max = P.tier + 1; P.unlocked = SAVE.diff.max; }
   P.gunOpen = false; if (P.tier >= 5 && !SAVE.chars.gun) { SAVE.chars.gun = true; P.gunOpen = true; }   // v6.40: 악마 총잡이 해금
@@ -8596,7 +8603,7 @@ function newPlayer(char) {
   const pk = SAVE.perks;   // 상점에서 산 영구 강화 적용
   p.max = Math.round(p.max * (1 + 0.08 * pk.hp)); p.hp = p.max;
   p.spd *= 1 + 0.04 * pk.spd; p.dmg *= 1 + 0.04 * pk.dmg; p.pickup *= 1 + 0.25 * pk.magnet; p.magPull = 1 + 0.25 * pk.magnet; p.reviveLeft = Math.min(1, pk.revive || 0); p.regen += 0.1 * (pk.regen | 0); p.critD += 0.1 * (pk.critd | 0); p.expMul = 1 + 0.08 * pk.exp;
-  { const hb = heartBonus(); p.dmg *= 1 + hb.atk / 100; p.max = Math.round(p.max * (1 + hb.hp / 100)); p.hp = p.max; p.aspd += hb.aspd / 100; }   // v8.01 장착한 보스 심장
+  { const hb = runBonus(); p.dmg *= 1 + hb.atk / 100; p.max = Math.round(p.max * (1 + hb.hp / 100)); p.hp = p.max; p.aspd += hb.aspd / 100; }   // v8.01 장착한 보스 심장
   p.healBank = p.max * 0.12; p.banish = pk.banish || 0; p.spd0 = p.spd; p.exitLeft = 1;
   return p;
 }
@@ -8990,7 +8997,7 @@ const isSea = () => !!(P && P.fset === 'sea');   // v7.10 어인섬 (v8.64: 지�
 const isGard = () => !!(P && P.fset === 'gard');   // v8.30 악마 식물원 (v8.64: 지하 11~15층) — v8.53 잡몹 식물형 악마 8종(GSPECIES) + 네임드 3종(PL)
 const isMush = () => !!(P && (P.fset === 'mush' || P.fset === 'sea' || P.fset === 'gard'));   // (팔한지옥 'ice'는 isIceSet으로 따로 — 보스방은 그 판 마왕의 맵을 쓴다)
    // 버섯 · 어인섬: 바닥·소품·잡몹·보스맵이 따로 있는 층 (아래 isSea로 갈라 씀)
-const shardTotal = (extra = 0) => Math.round((calcShards() + extra) * (1 + heartBonus().shard / 100));   // v9.42: 판 끝에 받는 조각 전체(클리어 보너스·보스 러시·미믹 포함, 참가비 반환 제외) × (1 + 심장 조각%)
+const shardTotal = (extra = 0) => Math.round((calcShards() + extra) * (1 + runBonus().shard / 100));   // v10.10 심장 + 마석 (보스 러시는 0)   // v9.42: 판 끝에 받는 조각 전체(클리어 보너스·보스 러시·미믹 포함, 참가비 반환 제외) × (1 + 심장 조각%)
 function calcShards() { return Math.round((Math.floor(P.kills / 20) + Math.floor(gt / 30) + Math.floor(P.lvl * 1.5) + P.named * 2 + P.goalShards) * tierMul() * (1 + 0.05 * (SAVE.perks.shard | 0) + (P.rel.pouch ? 0.5 : 0))) + (P.mimicShards | 0); }   /* v9.42: 심장 [영혼 조각 획득 +%]는 여기서 빼고 shardTotal 에서 판이 끝날 때 받는 조각 전체에 곱한다 */   // v4.06: 한 번 더 상향 (판이 짧아진 만큼 + α)   // v4.02: 약 1.5배 상향
 /* ---------- 런 목표: 한 판 안에서 순서대로 나오는 작은 목표. 달성하면 영혼 조각을 추가로 받는다 ---------- */
 const GOAL_TYPES = [
@@ -9266,6 +9273,7 @@ const GD = n => 16 - 2 * n;   // 방어막: 레벨별 재충전 시간(초) Lv1 
 const AU = n => ({ R: 95 + 22 * n, dm: 0.45 + 0.13 * n });   // v4.13 대폭 상향 (반경 70→117 · 피해 ×2 이상)                                                 // 불길 오라
 // txt(n): n레벨이 되었을 때의 효과 한 줄 / alt: 캐릭터별 [이름, 효과]
 const UPGRADES = [
+  { id: 'brCool', name: '시간 왜곡', rushOnly: true, max: 3, txt: n => `[보스 러시 전용] 특수 스킬 쿨타임 -10% (합계 -${10 * n}%)`, apply: () => {} },   // v10.10 보스 러시 전용 증강
   { id: 'claw',   name: '날카로운 발톱', txt: () => '공격력 +14%',      apply: p => { p.dmg *= 1.14; },
     alt: { fish: ['물의 힘', '물오라 · 물방울 · 파도 피해 +14%'], gun: ['강화 화약', '탄환 피해 +14%'], octo: ['마력 증폭', '마력탄 · 구체 피해 +14%'], lava: ['용암 강화', '공격력 +14% (용암탄 · 흔적 모두)'], snail: ['맹독 강화', '공격력 +14% (독 침 · 독 자국 모두)'], archer: ['화살 강화', '화살 피해 +14%'], lizard: ['대검 단련', '공격력 +14%'], twins: ['악마의 분노', '공격력 +14%'], ghost: ['진한 저승 기운', '구슬 피해 +14%'], knight: ['유령의 칼날', '사브르 피해 +14%'] } },
   { id: 'speed',  name: '날렵한 발톱',   txt: () => '공속 +12%',        apply: p => { p.aspd += 0.12; },
@@ -9407,7 +9415,7 @@ const restCard = () => ({ id: '_rest', name: '잠깐의 휴식', desc: '체력 2
 const shardBag = () => chal ? 10 + Math.floor(P.lvl / 2) : 10;   // v8.11: 챌린지는 레벨에 비례 (2레벨마다 +1)
 const shardCard = () => { const n = shardBag(); return { id: '_shard', name: '영혼 조각 주머니', desc: `영혼 조각 +${n}` + (chal ? ' (레벨이 오를수록 늘어남)' : ''), eff: true, noLv: true, sub: '', tag: '', apply: () => { SAVE.shards += n; saveSave(); } }; };
 function cardDefs() {
-  return UPGRADES.concat(UNIQUE[P.char] || []).filter(u => (u.noChar !== P.char) && (!u.noRoute || u.noRoute !== P.route) && (!u.route || u.route === P.route) && (!u.fin || u.fin === P.fin) && (!u.form || P.form >= u.form) && (!u.needSkill || P.skill === u.needSkill) && !P.banned[u.id] && (P.up[u.id] || 0) < (u.max || MAXLV));
+  return UPGRADES.concat(UNIQUE[P.char] || []).filter(u => (!u.rushOnly || (rush && P.skill)) && (u.noChar !== P.char) && (!u.noRoute || u.noRoute !== P.route) && (!u.route || u.route === P.route) && (!u.fin || u.fin === P.fin) && (!u.form || P.form >= u.form) && (!u.needSkill || P.skill === u.needSkill) && !P.banned[u.id] && (P.up[u.id] || 0) < (u.max || MAXLV));
 }
 const AUG_CAP = 10;   // v5.00: 서로 다른 증강을 10개 고르면 그 뒤로는 가진 증강만 나온다 (빌드 압축)
 const augOwned = () => UPGRADES.concat(UNIQUE[P.char] || []).filter(u => (P.up[u.id] || 0) > 0).length;
@@ -9510,10 +9518,6 @@ function takeCard(u) {   // 카드 한 장을 적용한다 (고른 경우 · 보
   if (P.char === 'octo' && !u.cls && !u.noLv && u.def && P.orbsN < OCTO_ORB_MAX) { P.orbsN++; floatNum(P.x, P.y - 100, `마력 구체 ${P.orbsN}개`, '#e0b0ff'); }
 }
 function openUpgrade() {
-  if (rush && rush.init && rush.autoN > 0) {   // v8.83: 보스 러시 시작 레벨업 — 처음 5번은 카드가 무작위로 정해지고, 나머지는 직접 고른다
-    const it = rollCards(3, []).map(cardView);
-    if (it.length) { const u = it[(rand() * it.length) | 0]; takeCard(u); rush.autoN--; rush.got.push(u.name); state = 'play'; if (P.exp >= P.need) levelUp(); return; }
-  }
   const NC = 3 + ((SAVE.perks.choice | 0) > 0 ? 1 : 0);   // v5.24: 강화 상점 [넓어진 선택지] → 4장
   const items = rollCards(NC, []).map(cardView);
   while (items.length < NC) items.push(items.length ? shardCard() : restCard());
@@ -11928,9 +11932,11 @@ function update(dt) {
   if (isIceSet() && !arena && state === 'play' && isIceSlip(Math.floor(P.x / TILE), Math.floor(P.y / TILE))) P.slipT = ICE_SLIP.linger; else P.slipT = Math.max(0, (P.slipT || 0) - dt);   // v8.99 미끄러운 얼음: 밟는 동안 + 벗어난 뒤 0.45초
   const lsQ = lsIce(), slipQ = (P.slipT || 0) > 0 && !kgIce() && !lsQ, iceQ = kgIce() || lsQ || slipQ, iAcc = slipQ ? ICE_SLIP.acc : lsQ ? LS.iceAcc : KG.iceAcc, iFric = slipQ ? ICE_SLIP.fric : lsQ ? LS.iceFric : KG.iceFric;   // v9.20 백한의 무도회: 마찰 0
   if (!iceQ) { P.svx = 0; P.svy = 0; } else if (P.svx === undefined || isNaN(P.svx)) { P.svx = 0; P.svy = 0; }
+  const spdB = P.spd * (P.char === 'gun' ? gunSpdMul() : 1) * (P.boost > 0 ? 1.5 : 1), spdS = rush ? clamp(spdB, BR.spdMin, BR.spdMax) : spdB;   // v10.10 보스 러시: 최저 이속 보장 · 최대 이속 상한
+  P.espd = spdS * (bigQ ? 0.35 : 1) * (P.slowT > 0 ? 0.65 : 1) * (P.charmT > 0 ? VF.charmSp : 1) * (P.chillT > 0 ? LS.chillMul : 1) * DEBUFF.mul('spd');
   if (moving) {
     ix /= len; iy /= len;
-    const spd = P.spd * (P.char === 'gun' ? gunSpdMul() : 1) * (P.boost > 0 ? 1.5 : 1) * (bigQ ? 0.35 : 1) * (breathQ ? 0.5 : 1) * (P.slowT > 0 ? 0.65 : 1) * (P.rage > 0 ? 1.12 : 1) * (P.tideT > 0 ? 0.3 : 1) * (holyQ ? 0.65 : 1) * (P.charmT > 0 ? VF.charmSp : 1) * (P.chillT > 0 ? LS.chillMul : 1) * DEBUFF.mul('spd');   // 신성화살 차징 중 이동 -35%
+    const spd = spdS * (bigQ ? 0.35 : 1) * (breathQ ? 0.5 : 1) * (P.slowT > 0 ? 0.65 : 1) * (P.rage > 0 ? 1.12 : 1) * (P.tideT > 0 ? 0.3 : 1) * (holyQ ? 0.65 : 1) * (P.charmT > 0 ? VF.charmSp : 1) * (P.chillT > 0 ? LS.chillMul : 1) * DEBUFF.mul('spd');   // 신성화살 차징 중 이동 -35%
     if (iceQ) { const k = Math.min(1, iAcc * dt); P.svx += (ix * spd - P.svx) * k; P.svy += (iy * spd - P.svy) * k; }   // v8.80 해일 서핑: 미끄러운 바닥 (방향 전환이 느리다)
     else { P.x += ix * spd * dt; P.y += iy * spd * dt; }
     P.lastX = ix; P.lastY = iy; P.vx = ix * spd; P.vy = iy * spd;
@@ -11946,6 +11952,7 @@ function update(dt) {
   }
   P.moving = moving && !dashQ; if (!moving) { P.vx = 0; P.vy = 0; }
   pbWind(dt);   // v9.02 눈보라 바람
+  if (rush) rush.windPush(dt);   // v10.10 보스 러시 4라운드 똥바람
   if (iceQ) { if (!moving) { const k = Math.exp(-iFric * dt); P.svx *= k; P.svy *= k; } P.x += P.svx * dt; P.y += P.svy * dt; P.vx = P.svx; P.vy = P.svy; }   // 키를 떼도 관성으로 미끄러진다
   P.twSt = clamp((P.twSt || 0) + (P.moving ? -3 : 2.5) * dt, 0, 1);   // 원심력: 멈춰 있는 정도 (부드럽게)
   if (P.char === 'twins') updateTwins(dt);
@@ -12834,7 +12841,7 @@ function render() {
   if (arena && arena.k !== 'blood') drawArenaExit(wx, wy);
   drawBsig(wx, wy);
   drawSkFloor(wx, wy);
-  drawBossTele(wx, wy); drawAnFloor(wx, wy); drawShkFloor(wx, wy); drawToxFloor(wx, wy); drawAdmFloor(wx, wy); drawQnFloor(wx, wy); drawVfFloor(wx, wy); drawKgFloor(wx, wy); drawBearFloor(wx, wy); drawRudFloor(wx, wy); drawLilFloor(wx, wy); drawCvFloor(wx, wy); drawSnFloor(wx, wy); drawTgFloor(wx, wy); drawWhFloor(wx, wy); drawDokFloor(wx, wy);
+  drawBossTele(wx, wy); drawAnFloor(wx, wy); drawShkFloor(wx, wy); drawToxFloor(wx, wy); drawAdmFloor(wx, wy); drawQnFloor(wx, wy); drawVfFloor(wx, wy); drawKgFloor(wx, wy); if (rush) rush.drawFloor(wx, wy); drawBearFloor(wx, wy); drawRudFloor(wx, wy); drawLilFloor(wx, wy); drawCvFloor(wx, wy); drawSnFloor(wx, wy); drawTgFloor(wx, wy); drawWhFloor(wx, wy); drawDokFloor(wx, wy);
   drawFwFx(wx, wy);
 
   for (const it of items) drawItem(it, wx(it.x), wy(it.y));
@@ -12954,7 +12961,7 @@ function render() {
 
   drawZonesTop(wx, wy);
   drawUniqFx(wx, wy); drawOctoFx(wx, wy); drawLasers(wx, wy);
-  drawLights(wx, wy); drawBlades(wx, wy); drawChimFx(wx, wy); drawAfx(wx, wy); drawHolyCharge(wx, wy); drawEbul(wx, wy); drawSkTop(wx, wy); drawAnTop(wx, wy); drawShkTop(wx, wy); drawToxTop(wx, wy); drawAdmTop(wx, wy); drawQnTop(wx, wy); drawVfTop(wx, wy); drawKgTop(wx, wy); drawBearTop(wx, wy); drawRudTop(wx, wy); drawLilTop(wx, wy); drawCvTop(wx, wy); drawSnTop(wx, wy); drawTgTop(wx, wy); drawWhTop(wx, wy); drawDokTop(wx, wy); drawPlantTop(wx, wy); drawGunFx(wx, wy); drawChTop(wx, wy);
+  drawLights(wx, wy); drawBlades(wx, wy); drawChimFx(wx, wy); drawAfx(wx, wy); drawHolyCharge(wx, wy); drawEbul(wx, wy); drawSkTop(wx, wy); drawAnTop(wx, wy); drawShkTop(wx, wy); drawToxTop(wx, wy); drawAdmTop(wx, wy); drawQnTop(wx, wy); drawVfTop(wx, wy); drawKgTop(wx, wy); if (rush) rush.drawTop(wx, wy); drawBearTop(wx, wy); drawRudTop(wx, wy); drawLilTop(wx, wy); drawCvTop(wx, wy); drawSnTop(wx, wy); drawTgTop(wx, wy); drawWhTop(wx, wy); drawDokTop(wx, wy); drawPlantTop(wx, wy); drawGunFx(wx, wy); drawChTop(wx, wy);
   for (const q of mfx) miniFrame('D9', wx(q.x), wy(q.y), 1, 0.95, false, Math.max(0, 1 - q.t / q.life));   // 내려찍기 충격파
   drawBeam(wx, wy); drawBigQ(wx, wy);
   for (const g of globs) {   // 날아가는 독 침 / 용암탄
@@ -13152,7 +13159,7 @@ function drawHud() {
   // 시간 · 처치
   ctx.textAlign = 'right'; ctx.font = 'bold 16px ' + FONT;
   const m = Math.floor(gt / 60), s = Math.floor(gt % 60);
-  const t1 = `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}` + (chal ? '  ·  ∞ 챌린지' : rush ? `  ·  ⚔ 보스 러시 ${Math.min(BR_N, rush.i + 1)}/${BR_N} · 난이도 ${P.tier + 1}` : '  ·  ' + floorName(P.tier));
+  const t1 = `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}` + (chal ? '  ·  ∞ 챌린지' : rush ? `  ·  ⚔ 보스 러시 라운드 ${rush.round}/${BR_N} · 증강 ${rush.totalCardsPicked}` : '  ·  ' + floorName(P.tier));
   ctx.strokeText(t1, W - 12, 32); ctx.fillStyle = '#f3d9c6'; ctx.fillText(t1, W - 12, 32);
   {
     let sy2 = 76 + (Object.keys(P.rel).length ? 38 : 0); ctx.textAlign = 'left';
@@ -13212,10 +13219,11 @@ function drawHud() {
     if (boss.bk === 'skel') { ctx.fillStyle = 'rgba(255,255,255,0.45)'; for (const q of SK_PH) ctx.fillRect(bx + bw * q - 1, by - 2, 2, 16); }
     if (boss.bk === 'angel' && boss.ph === 1) { ctx.fillStyle = 'rgba(255,130,160,0.8)'; ctx.fillRect(bx + bw * AN.ph - 1, by - 2, 2, 16); }   // 흑화 지점
     ctx.fillStyle = 'rgba(255,255,255,0.6)'; ctx.fillRect(bx + bw / 2 - 1, by - 2, 2, 16);
-    if (boss.bk === 'kng') drawKgO2(bx, by, bw);   // v8.80 산소 게이지
+    if (boss.bk === 'kng' || rushO2On()) drawKgO2(bx, by, bw);   // v8.80 산소 게이지
     if (boss.bk === 'lil') drawLilFrost(bw);   // v9.20 동상 게이지 (결정화 영역)
     if (boss.bk === 'bear') drawBearFrost(bw);   // v9.02 동상 게이지
     if (boss.bk === 'tig') drawTgHud(bw);   // v9.63 완벽 회피 표시
+    if (rush) rush.drawHud();   // v10.10 똥바람
   }
   ctx.save();
   if (mini && mini.hp > 0 && !arena) {   // 미니 보스 체력바 · 화면 밖이면 방향 표시
@@ -14408,62 +14416,203 @@ function drawFrwDeath(m, x, y) {
 }
 
 /* ============================================================
- * v8.50 ⚔ 보스 러시 — 지하 20층(모든 층)을 클리어하면 열리는 마왕 연속전
- *  v8.82 개편: 시작 화면의 선택한 층과 무관한 독립 시행 · Lv.20에서 시작(루트·진화는 직접 고르고 증강 카드 5장은 무작위로 정해진다) · 마왕 10종이 무작위 순서로 연달아
- *  난이도(P.tier)는 처치한 마왕 수만큼 오른다(0→9) · 마왕을 쓰러뜨릴 때마다 체력 회복 + 5레벨(증강 5번 선택) · 마왕마다 그 마왕의 지옥 맵에서 싸운다
- *  출구는 항상 봉인(성 없이 곧장 보스방) · 심장 드랍 없음 · 보상: 마왕마다 50 + 완주 300 (난이도 배율) · 완주하면 업적 · 숨은 보스·챌린지 마왕은 나오지 않는다
+ * v10.10 ⚔ 보스 러시 개편 — BossRushManager (사용자 기획안)
+ *  해금: 지하 30층 마왕(지옥의 화염 호랑이) 처치 (`rushReady`) · 마왕은 도감에 처치 기록이 있는 마왕 중 4종 무작위 (`brPool`)
+ *  4라운드: 라운드마다 맵 기믹이 쌓인다 — 1 없음 · 2 산소존 · 3 산소존 + 회전하는 불의 십자가 · 4 산소존 + 십자가 + 변덕스러운 똥바람(10초마다 방향 전환)
+ *  시작: Lv.20까지 증강을 전부 직접 고른다 · 2·3·4라운드 전에 [증강 2개] 또는 [증강 5개]를 고른다 → 고른 증강 합계(6 / 9 / 12 / 15)가 보상 등급
+ *  보스 러시 안에서는 심장 옵션·마석이 적용되지 않는다(applyHeartOptions = false) · 이동 속도는 최저 BR.spdMin 보장 · 최대 BR.spdMax 상한
+ *  심장은 일반 판처럼 떨어진다(그 심장을 보유 중이 아닐 때 33%) — 보스방이 바로 바뀌니 바로 인벤토리로 들어간다
+ *  규칙 9: 십자가 피해 · 바람 · 산소 감소는 마왕의 큰 패턴 중(tierEx가 멈추는 때 `bossExPaused`)·흡혈 고리(통로 패턴) 중에는 멈춘다 · 바람은 내 실제 이속의 45% 이하 · 기절·속박·매혹·빙결 중엔 바람 없음
+ *            같은 기믹을 가진 마왕(어인왕 = 산소 · 화염 호랑이 = 십자가 · 백곰 = 눈보라 바람)은 그 라운드 기믹을 겹치지 않는다
  * ============================================================ */
-const BR_ORDER = ['monkey', 'eye', 'skel', 'angel', 'shk', 'tox', 'vft', 'adm', 'qn', 'kng'], BR_N = BR_ORDER.length;
-const BR_NAME = { monkey: '원숭이 마왕', eye: '심연의 마안군주', skel: '스켈레톤 마왕', angel: '타락천사', shk: '거대 버섯마귀', tox: '이독버섯 마왕', adm: '썩어버린 해군 제독', qn: '타락한 원예의 여왕', vft: '파리지옥 마왕', kng: '타락한 어인왕', bear: '팔한지옥의 백곰 마왕', rud: '마하칼 루드라', lil: '팔한지옥의 대공작 릴세르카', whl: '심해의 시체고래' };
-const BR = { lv: 20, per: 50, clear: 300, up: 5, rest: 3.2, auto: 5 };   // lv = 시작 레벨 · up = 마왕 처치마다 레벨업 횟수 · rest = 다음 마왕 입장 전 쉬는 시간(초) · auto = 시작할 때 무작위로 정해지는 증강 수
+const BR_ORDER = ['monkey', 'eye', 'skel', 'angel', 'shk', 'tox', 'vft', 'qn', 'adm', 'whl', 'kng', 'bear', 'rud', 'lil', 'cvt', 'snk', 'tig', 'dok'];   // 보스 러시에 나올 수 있는 마왕 (이 중 도감에 처치 기록이 있는 마왕만)
+const BR_N = 4;   // 라운드 수
+const BR_NAME = { monkey: '원숭이 마왕', eye: '심연의 마안군주', skel: '스켈레톤 마왕', angel: '타락천사', shk: '거대 버섯마귀', tox: '이독버섯 마왕', adm: '썩어버린 해군 제독', qn: '타락한 원예의 여왕', vft: '파리지옥 마왕', kng: '타락한 어인왕', bear: '팔한지옥의 백곰 마왕', rud: '마하칼 루드라', lil: '팔한지옥의 대공작 릴세르카', whl: '심해의 시체고래', cvt: '영벌의 화염죄수', snk: '불구렁이', tig: '지옥의 화염 호랑이', dok: '검 도깨비 마왕' };
+const BR = { lv: 20, per: 60, clear: 400, rest: 3.2, tier: [3, 5, 7, 9], spdMin: 230, spdMax: 290, cdK: 0.1 };   // lv = 시작 레벨 · per/clear = 영혼 조각 · tier = 라운드별 난이도(P.tier) · spdMin/spdMax = 이동 속도 보장/상한 · cdK = 전용 증강 [시간 왜곡] 1장당 스킬 쿨타임 감소
+const BR_MODS = [[], ['o2'], ['o2', 'cross'], ['o2', 'cross', 'wind']];   // 라운드별 맵 기믹 (누적)
+const BR_MOD_NAME = { o2: '🫧 산소존', cross: '🔥 회전하는 불의 십자가', wind: '🌪 변덕스러운 똥바람' };
+const BR_REWARD = [   // 고른 증강 합계 → 보상 (6 = 2·2·2 … 15 = 5·5·5)
+  { n: 6, name: '하드코어', tix: 4, stone: 'legend', syr: 1 },
+  { n: 9, name: '하드', tix: 3, stone: 'unique', syr: 0.5 },
+  { n: 12, name: '노멀', tix: 2, stone: 'epic', syr: 0.3 },
+  { n: 15, name: '이지', tix: 1, stone: 'rare', syr: 0.05 },
+];
+const brRewardOf = n => BR_REWARD.find(r => n <= r.n) || BR_REWARD[BR_REWARD.length - 1];
+const BR_WIND = { sp: 85, k: 0.45, T: 10, warn: 1.5 };   // 바람: 초당 85px(내 실제 이속의 45%를 넘지 않음) · 10초마다 방향 전환 · 1.5초 전 예고
+const BR_O2 = { drain: 6, gyN: 2 };   // 산소: 초당 -6 (100 → 약 17초) · 간헐천 2개 (산소 수치·간헐천은 어인왕 KG 값을 그대로 쓴다)
+const BR_X = { crDm: 24, crIcd: 1.0 };   // 불의 십자가 피해 · 다시 맞는 간격
+const BR_IMGS = { skel: ['skb'], angel: ['an', 'anfx', 'amap', 'an2'], shk: ['shk', 'mmap'], tox: ['tox', 'mmap'], vft: ['vft', 'gmap'], qn: ['qn', 'gmap'], adm: ['adm', 'smap'], kng: ['kng', 'smap'], whl: ['whl', 'whlfx', 'smap'], bear: ['bear', 'bearfx', 'imap'], rud: ['rud', 'rudfx', 'imap'], lil: ['lil', 'lfx', 'imap'], cvt: ['cvt', 'fmap'], snk: ['snk', 'fmap'], tig: ['tig', 'tigfx', 'fmap'], dok: ['dok', 'dokfx', 'dmap'] };   // 입장 전에 받아 둘 그림
 const FSET_ARENA = { ice: 'ice', fire: 'fire', dosan: 'dosan' };   // v9.71 7지옥은 보스맵이 생길 때까지 용암 보스맵(잠긴 층)   // v9.30 팔한지옥 보스방 = 빙결 투기장 고정 · 팔열지옥은 보스맵이 생길 때까지 마왕성
-const BR_SET = { lil: 'ice', rud: 'ice', bear: 'ice', monkey: 'hell', eye: 'hell', skel: 'hell', angel: 'hell', shk: 'mush', tox: 'mush', vft: 'gard', qn: 'gard', adm: 'sea', kng: 'sea' };   // 마왕이 나오는 지옥의 맵
-const rushFset = bk => { const q = BR_SET[bk]; return q === 'gard' && IMG.gfloor && IMG.gprops && MSPECIES.length ? 'gard' : q === 'sea' && IMG.sfloor && IMG.sprops && SSPECIES.length ? 'sea' : q !== 'hell' && IMG.mfloor && IMG.mprops && MSPECIES.length ? 'mush' : 'hell'; };
-const rushOpen = () => !!(SAVE.rush.open || (SAVE.fw.snap && (SAVE.fw.snap.tier | 0) >= MAX_TIER));
-const rushLine = () => rushOpen() ? `⚔ 보스 러시 — 마왕 ${BR_N}종 무작위 연속전(선택한 층과 무관) · Lv.${BR.lv} 시작 · 처음 증강 ${BR.auto}개 무작위 + 나머지 직접 선택 · 처치마다 체력 회복 + ${BR.up}레벨  ·  최고 ${SAVE.rush.best | 0}/${BR_N} · 완주 ${SAVE.rush.clears | 0}회<br>` : '';
+const BR_SET = { lil: 'ice', rud: 'ice', bear: 'ice', monkey: 'hell', eye: 'hell', skel: 'hell', angel: 'hell', shk: 'mush', tox: 'mush', vft: 'gard', qn: 'gard', adm: 'sea', kng: 'sea', whl: 'sea', cvt: 'fire', snk: 'fire', tig: 'fire', dok: 'dosan' };   // 마왕이 나오는 지옥의 맵
+const rushFset = bk => { const q = BR_SET[bk]; return (q === 'ice' || q === 'fire' || q === 'dosan') ? q : q === 'gard' && IMG.gfloor && IMG.gprops && MSPECIES.length ? 'gard' : q === 'sea' && IMG.sfloor && IMG.sprops && SSPECIES.length ? 'sea' : q !== 'hell' && IMG.mfloor && IMG.mprops && MSPECIES.length ? 'mush' : 'hell'; };
+const rushOpen = () => !!(SAVE.rush.open || (SAVE.fw.snap && (SAVE.fw.snap.tier | 0) >= MAX_TIER));   // 예전 기준(지하 20층 클리어) — 마계 물고기 해금에만 쓴다
+const rushReady = () => (SAVE.diff.clr | 0) >= 29 || (SAVE.dex.kills.boss19 | 0) > 0;   // v10.10 보스 러시 해금 = 지하 30층 마왕 처치
+const brPool = () => BR_ORDER.filter(k => (SAVE.dex.kills[dexBoss({ bk: k })] | 0) > 0);   // 도감에 처치 기록이 있는 마왕
+const rushLine = () => rushReady() ? `⚔ 보스 러시 — 처치해 본 마왕 ${brPool().length}종 중 4라운드 · Lv.${BR.lv} 시작(증강 직접 선택) · 라운드마다 증강 2개/5개 선택(적게 고를수록 보상↑) · 심장 드랍 O · 심장 옵션·마석 미적용  ·  완주 ${SAVE.rush.clears | 0}회 · 🎫 ${SAVE.rush.tix | 0} · 💉 ${SAVE.rush.syr | 0}<br>` : '';
 function rushLevels(n) {   // n번 레벨업할 경험치를 한꺼번에 채우고 카드 선택을 이어서 띄운다 (진화·루트 선택도 평소처럼 끼어든다)
   let sum = 0; for (let i = 0; i < n; i++) sum += needFor(P.lvl + i);
   P.exp += sum; if (state === 'play' && P.exp >= P.need) levelUp();
 }
+const brCenter = () => !arena ? [P.x, P.y] : arena.mush ? [BM().cx, BM().cy] : arena.k === 'angel' ? [AMAP.cx, AMAP.cy] : [657 * AS, 645 * AS];   // 보스방 가운데
+function brArmLen(cx, cy, a) {   // 가운데에서 a 방향으로 벽까지 (아래 출구 통로로는 뻗지 않는다)
+  const ux = Math.cos(a), uy = Math.sin(a), ex = arenaExit(), yMax = ex ? ex.y - 60 : 1e9; let L = 120;
+  while (L < 1800) { const x = cx + ux * (L + 20), y = cy + uy * (L + 20); if (!inPoly(x, y) || y > yMax) break; L += 20; }
+  return L;
+}
+class BossRushManager {
+  constructor(ord) {
+    this.i = 0; this.ph = 'prep'; this.wait = 0.6; this.kills = 0; this.shards = 0; this.ord = ord; this.init = true; this.ach = null;
+    this.totalCardsPicked = 0; this.picks = []; this.modifiers = []; this.applyHeartOptions = false;   // 보스 러시 안에서는 심장 옵션을 쓰지 않는다
+    this.hearts = []; this.reward = null; this.gey = []; this.gyT = 0; this.o2Warn = 0; this.cr = null; this.crHitT = 0; this.wind = null; this.ldT = 0;
+  }
+  get round() { return Math.min(BR_N, this.i + 1); }
+  skipMod(m) { const k = P.bossK; return (m === 'o2' && k === 'kng') || (m === 'cross' && k === 'tig') || (m === 'wind' && k === 'bear'); }   // 같은 기믹을 가진 마왕
+  has(m) { return this.ph === 'fight' && this.modifiers.includes(m) && !this.skipMod(m); }
+  modTxt() { const L = this.modifiers.filter(m => !this.skipMod(m)).map(m => BR_MOD_NAME[m]); return L.length ? L.join(' + ') : '없음'; }
+  paused() { const e = boss; return !e || e.hp <= 0 || e.st === 'intro' || bossExPaused(e) || !!(e.tele && e.tele.some(t => t.gaps && !t.done)); }   // 규칙 9: 큰 패턴·통로 패턴 중엔 기믹을 쉰다
+  tick(dt) {   // 준비(카드 선택 끝) → 입장 · 쉬는 시간 → 다음 마왕 / 싸우는 중이면 맵 기믹
+    if (this.ph === 'fight') { this.updateMods(dt); return; }
+    if (state !== 'play' || trans || P.exp >= P.need) return;
+    if (this.init) { this.init = false; P.hp = P.max; this.wait = 1.0; return; }
+    if ((this.wait -= dt) > 0) return;
+    const need = ['arena'].concat(BR_IMGS[this.ord[this.i]] || [], BR_MODS[this.i].includes('cross') ? ['tigfx'] : []);
+    if (!imgReady(need)) { this.wait = 0.25; if ((this.ldT += 0.25) > 1 && !banner) banner = { txt: '보스방 불러오는 중…', t: 1, c: '#ffe28a' }; return; }
+    this.enter();
+  }
+  enter() {
+    const k = this.ord[this.i]; P.bossK = k; this.ph = 'fight'; P.tier = BR.tier[this.i]; P.fset = rushFset(k); this.ldT = 0;
+    this.modifiers = BR_MODS[this.i].slice(); this.gey = []; this.gyT = 0; this.cr = null; this.wind = null; this.crHitT = 0; P.o2 = KG.o2Max;
+    if (BR_SET[k] === 'sea') warmSea(); try { if (P.fset === 'mush' && IMG.mmap) mmapS(); } catch (_) {}
+    skp = []; skSp = []; anOrbs = []; anFx = []; skDeath = null; anDeath = null; shkSp = []; shkFx = []; shkDeath = null; toxFl = []; toxFx = []; toxFog = null; DEBUFF.clearAll(); admFx = []; admBalls = []; admAnc = null; admPull = null; admDeath = null;
+    enterArena();
+  }
+  updateMods(dt) {   // 맵 기믹 (싸우는 중에만)
+    if (state !== 'play' || trans || !arena || !boss) return;
+    const run = !this.paused();
+    if (this.has('o2')) {   // ① 산소존: 간헐천 기둥 밖에서는 산소가 준다 → 0이면 초당 최대 체력 10%
+      for (const g of this.gey) g.update(dt); this.gey = this.gey.filter(g => !g.dead);
+      if ((this.gyT -= dt) <= 0 && this.gey.length < BR_O2.gyN) { this.gyT = KG.gyGap; const s = kgSpot(P.x, P.y, KG.gyMin, KG.gyMax) || kgSpot(P.x, P.y, 100, KG.gyMin); if (s) { this.gey.push(new AirGeyser(s[0], s[1])); addRing(s[0], s[1], 6, 70, 0.5, '150,230,255', 6); } }
+      const inG = this.gey.some(g => g.inT > 0);
+      if (run && !inG) P.o2 = Math.max(0, (P.o2 === undefined ? KG.o2Max : P.o2) - BR_O2.drain * dt);
+      if (P.o2 <= 0) { dotPlayer(P.max * KG.o2Dmg * dt); if ((this.o2Warn -= dt) <= 0) { this.o2Warn = 1; floatNum(P.x, P.y - 110, '산소 부족!', '#7ad8ff'); } }
+    }
+    if (this.has('cross')) {   // ② 회전하는 불의 십자가 (호랑이 기믹 · 보스방 가운데 · 시계 방향)
+      if (!this.cr) { const [cx, cy] = brCenter(); this.cr = { a: 0, p2: false, van: -0.8, len: [0, 0, 0, 0], cx, cy }; }
+      const C = this.cr; if (C.van < 0) C.van = Math.min(0, C.van + dt);
+      C.a += TG.crOm * dt; C.len = [0, 1, 2, 3].map(q => brArmLen(C.cx, C.cy, C.a + q * Math.PI / 2)); C.off = !run;
+      this.crHitT -= dt;
+      if (run && C.van >= 0 && this.crHitT <= 0 && this.crossAt(P.x, P.y, PR() + 12)) { this.crHitT = BR_X.crIcd; bossHit(BR_X.crDm); floatNum(P.x, P.y - 104, '불의 십자가!', '#ffb050'); burst(P.x, P.y - 30, 12, ['#ffe08a', '#ff7a1a', '#ff3a14'], 240, 0.5); }
+    }
+    if (this.has('wind')) {   // ③ 변덕스러운 똥바람: 10초마다 방향이 바뀐다 (1.5초 전 예고)
+      if (!this.wind) this.wind = { a: rand() * 6.283, t: BR_WIND.T, na: null };
+      const Wd = this.wind; Wd.t -= dt;
+      if (Wd.t <= BR_WIND.warn && Wd.na === null) { let na; do na = rand() * 6.283; while (Math.abs(Math.atan2(Math.sin(na - Wd.a), Math.cos(na - Wd.a))) < 1.0); Wd.na = na; floatNum(P.x, P.y - 120, '바람 방향이 바뀐다!', '#d8f0c8'); }
+      if (Wd.t <= 0) { Wd.a = Wd.na; Wd.na = null; Wd.t = BR_WIND.T; sfx('skill'); }
+      Wd.off = !run;
+    }
+  }
+  crossArms() { const C = this.cr; if (!C) return []; return [0, 1, 2, 3].map(q => { const a = C.a + q * Math.PI / 2, l = C.len[q] || 300; return [C.cx, C.cy, C.cx + Math.cos(a) * l, C.cy + Math.sin(a) * l]; }); }
+  crossAt(x, y, pad) { return this.crossArms().some(s => segDist(x, y, s[0], s[1], s[2], s[3]) < TG.crW + pad); }
+  windPush(dt) {   // 이동 처리 뒤에 부른다: 바람에 밀린다 (벽은 넘지 않는다)
+    const Wd = this.wind; if (!this.has('wind') || !Wd || Wd.off || state !== 'play' || trans) return;
+    if (P.stunT > 0 || P.bindT > 0 || P.charmT > 0 || P.frzT > 0 || (typeof tgHold === 'function' && tgHold()) || (typeof PBW !== 'undefined' && PBW.bz)) return;   // 못 움직이는 동안은 밀지 않는다 (규칙 9)
+    const w = Math.min(BR_WIND.sp, BR_WIND.k * (P.espd || BR.spdMin)), dx = Math.cos(Wd.a) * w * dt, dy = Math.sin(Wd.a) * w * dt;
+    if (inPoly(P.x + dx, P.y)) P.x += dx; if (inPoly(P.x, P.y + dy)) P.y += dy;
+  }
+  choose() {   // 2·3·4라운드 전: 증강 2개 / 5개
+    const so = this.totalCardsPicked, left = BR_N - this.i, lo = so + 2 * left, hi = so + 5 * left, r2 = brRewardOf(so + 2 + 2 * (left - 1)), r5 = brRewardOf(so + 5 + 5 * (left - 1));
+    const tbl = BR_REWARD.map(r => `${r.n}개 ${r.name}: 🎫${r.tix} · ${HG[r.stone].name} 마석 · 💉${Math.round(r.syr * 100)}%`).join('<br>');
+    const mk = n => ({ n, name: `증강 ${n}개 고르기`, eff: true, desc: n === 2 ? `이번 라운드 증강 2개 — 적게 고를수록 보상이 좋아요` : `이번 라운드 증강 5개 — 강해지지만 보상은 낮아져요`, sub: `지금까지 ${so}개 → ${so + n}개 · 남은 선택을 같게 하면 ${(n === 2 ? r2 : r5).name}`, tag: n === 2 ? ' · 보상 ↑' : ' · 안전', flip: '누르면 보상표 보기 ▶', back: `고른 증강 합계(완주 시) → 보상<br>${tbl}<br><br>가능한 합계: ${lo} ~ ${hi}` });
+    openChoice(`⚔ 라운드 ${this.i + 1}/${BR_N} 준비 — 증강을 몇 개 고를까요?`, [mk(2), mk(5)], u => this.pick(u.n));
+    document.getElementById('levelHint').textContent = `다음 맵 기믹: ${BR_MODS[this.i].map(m => BR_MOD_NAME[m]).join(' + ') || '없음'}  ·  1 = 2개 · 2 = 5개`;
+  }
+  pick(n) { this.totalCardsPicked += n; this.picks.push(n); state = 'play'; rushLevels(n); }
+  win(e) {
+    const last = this.i >= BR_N - 1; this.kills = this.i + 1; this.shards += Math.round(BR.per * tierMul());
+    SAVE.rush.best = Math.max(SAVE.rush.best | 0, this.kills);
+    P.hp = P.max; P.healBank = P.max * 0.12; P.o2 = KG.o2Max; this.gey = []; this.cr = null; this.wind = null;
+    const hTxt = this.hearts.length && this.hearts[this.hearts.length - 1].round === this.kills ? `\n💗 ${hTitle(this.hearts[this.hearts.length - 1].h)} 획득!` : '';
+    if (last) {
+      this.shards += Math.round(BR.clear * tierMul()); SAVE.rush.clears = (SAVE.rush.clears | 0) + 1;
+      this.settle(); P.earned = shardTotal(this.shards); SAVE.shards += P.earned; saveSave();
+      const a = achRush(); this.ach = a; const R = this.reward;
+      banner = { txt: `⚔ 보스 러시 완주!  보상 등급 [${R.name}] (고른 증강 ${R.n}개)\n🎫 스킨 뽑기권 ×${R.tix} · 💎 ${HG[R.stone].name} 마석 · ${R.syr ? '💉 주사기 ×1' : '주사기 없음'}` + hTxt + (a ? `\n🏆 업적 달성: ${a.name}` : ''), t: 7, c: '#ffe28a' }; state = 'win'; winT = 0; return;
+    }
+    saveSave(); this.i++; this.ph = 'rest'; this.wait = BR.rest;
+    banner = { txt: `${BR_NAME[this.ord[this.i - 1]]} 처치!  (${this.kills}/${BR_N})  체력 회복` + hTxt + `\n다음: 라운드 ${this.i + 1} — ${BR_NAME[this.ord[this.i]]} · 맵 기믹 ${BR_MODS[this.i].map(m => BR_MOD_NAME[m]).join(' + ')}`, t: 5, c: '#ffe28a' };
+    this.choose();
+  }
+  settle() {   // 완주 보상: 고른 증강 합계로 등급 → 스킨 뽑기권 · 마석 · 주사기(확률)
+    const R = brRewardOf(this.totalCardsPicked), syr = Math.random() < R.syr;
+    SAVE.rush.tix = (SAVE.rush.tix | 0) + R.tix; if (syr) SAVE.rush.syr = (SAVE.rush.syr | 0) + 1;
+    const st = stoneGain(R.stone);
+    this.reward = { name: R.name, n: this.totalCardsPicked, tix: R.tix, stone: R.stone, stoneId: st.id, syr };
+  }
+  drawFloor(wx, wy) {
+    if (this.ph !== 'fight') return;
+    for (const g of this.gey) g.drawFloor(wx, wy);
+    if (this.cr && this.has('cross')) drawTgCross(wx, wy, this.cr, [this.cr.cx, this.cr.cy], TG.crOm, this.cr.off ? 0.28 : 1);
+  }
+  drawTop(wx, wy) { if (this.ph === 'fight') for (const g of this.gey) g.drawTop(wx, wy); }
+  drawHud() {   // 바람 줄기 + 방향 화살표 · 라운드 기믹 표시
+    if (this.ph !== 'fight' || !arena) return;
+    const Wd = this.wind; if (!Wd || !this.has('wind')) return;
+    const ux = Math.cos(Wd.a), uy = Math.sin(Wd.a), al = Wd.off ? 0.15 : 0.35;
+    ctx.save(); ctx.strokeStyle = `rgba(220,240,200,${al})`; ctx.lineWidth = 2;
+    for (let i = 0; i < 26; i++) { const s = (i * 97.3) % 1, ph = ((wallT * 0.9 + i * 0.137) % 1), x = ((i * 211.7 + ph * W * 1.4 * ux) % (W + 200) + W + 200) % (W + 200) - 100, y = ((i * 137.9 + ph * H * 1.4 * uy) % (H + 200) + H + 200) % (H + 200) - 100;
+      ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(x - ux * (40 + 30 * s), y - uy * (40 + 30 * s)); ctx.stroke(); }
+    const cx = W - 74, cy = H / 2 - 40, warn = Wd.na !== null;
+    const arr = (a, c) => { ctx.save(); ctx.translate(cx, cy); ctx.rotate(a); ctx.fillStyle = c; ctx.beginPath(); ctx.moveTo(24, 0); ctx.lineTo(-10, -12); ctx.lineTo(-4, 0); ctx.lineTo(-10, 12); ctx.closePath(); ctx.fill(); ctx.restore(); };
+    arr(Wd.a, Wd.off ? 'rgba(200,220,190,0.4)' : '#d8f0c8'); if (warn && Math.sin(wallT * 14) > 0) arr(Wd.na, '#ffe28a');
+    ctx.font = 'bold 13px ' + FONT; ctx.textAlign = 'center'; ctx.strokeStyle = '#0a1404'; ctx.lineWidth = 3; const tx = `🌪 똥바람 ${warn ? '방향 전환!' : Math.ceil(Wd.t) + '초'}${Wd.off ? ' (잠잠)' : ''}`; ctx.strokeText(tx, cx, cy + 32); ctx.fillStyle = warn ? '#ffe28a' : '#d8f0c8'; ctx.fillText(tx, cx, cy + 32);
+    ctx.restore();
+  }
+}
+const rushO2On = () => !!(rush && rush.has('o2'));
 function startRush(char) {
   if (char) curChar = char;
   if (!SAVE.chars[curChar]) curChar = 'wolf';
-  audioInit(); reset(curChar); markDex(curChar + ':0');
-  const ord = BR_ORDER.slice().sort(() => rand() - 0.5);   // v8.82: 마왕 순서는 무작위 · 난이도는 선택한 층과 무관하게 처치 수로 오른다
-  P.tier = 0; P.bossK = ord[0]; if (ord.some(k => BR_SET[k] === 'sea')) setTimeout(warmSea, 0);
+  audioInit(); rushBoot = true; try { reset(curChar); } finally { rushBoot = false; } markDex(curChar + ':0');
+  let pool = brPool(); if (!pool.length) pool = ['monkey'];
+  const ord = pool.slice().sort(() => rand() - 0.5).slice(0, BR_N); while (ord.length < BR_N) ord.push(pool[(rand() * pool.length) | 0]);   // 처치해 본 마왕이 4종보다 적으면 겹쳐서 나온다
+  P.tier = BR.tier[0]; P.bossK = ord[0]; if (ord.some(k => BR_SET[k] === 'sea')) setTimeout(warmSea, 0);
   try { buildGardSpecies(); } catch (_) {}
   P.fset = rushFset(ord[0]);
   P.fee = 0; P.miniDone = true; P.poisonSpawned = true; P.exitLeft = 0; P.goal = null; P.spd0 = P.spd; P.hp = P.max;
-  rush = { i: 0, ph: 'prep', wait: 0.6, kills: 0, shards: 0, ord, init: true, autoN: BR.auto, got: [] };
+  rush = new BossRushManager(ord);
+  for (const k of ord) imgReady(['arena'].concat(BR_IMGS[k] || []));   // 미리 받아 둔다
   setTimeout(() => { try { if (IMG.mmap) mmapS(); arenaS(); } catch (_) {} }, 400);
   show('startBox', false); show('overBox', false); show('levelBox', false); show('pauseBox', false);
-  banner = { txt: `⚔ 보스 러시!  Lv.${BR.lv}까지 올립니다 — 처음 증강 ${BR.auto}개는 무작위, 나머지는 직접 선택 (루트·진화도 직접)\n마왕 ${BR_N}종이 무작위 순서로 나옵니다 · 하나씩 쓰러뜨릴 때마다 난이도가 오릅니다`, t: 6, c: '#ffb05a' };
+  banner = { txt: `⚔ 보스 러시!  Lv.${BR.lv}까지 증강을 직접 고릅니다 (루트·진화도 직접)\n4라운드 — 처치해 본 마왕 중 무작위 · 라운드마다 맵 기믹이 쌓이고, 2·3·4라운드 전에 증강 2개/5개를 고릅니다 (적게 고를수록 보상↑)\n보스 러시에서는 심장 옵션·마석이 적용되지 않고, 이동 속도는 ${BR.spdMin}~${BR.spdMax}로 맞춰집니다`, t: 7, c: '#ffb05a' };
   state = 'play'; rushLevels(BR.lv - 1);
 }
-function rushEnter() {
-  P.bossK = rush.ord[rush.i]; rush.ph = 'fight'; P.tier = Math.min(9, rush.i); P.fset = rushFset(P.bossK);   // 난이도 = 지금까지 쓰러뜨린 마왕 수
-  if (BR_SET[P.bossK] === 'sea') warmSea(); try { if (P.fset === 'mush' && IMG.mmap) mmapS(); } catch (_) {}
-  skp = []; skSp = []; anOrbs = []; anFx = []; skDeath = null; anDeath = null; shkSp = []; shkFx = []; shkDeath = null; toxFl = []; toxFx = []; toxFog = null; DEBUFF.clearAll(); admFx = []; admBalls = []; admAnc = null; admPull = null; admDeath = null;
-  enterArena();
+function rushEnter() { rush.enter(); }
+function rushTick(dt) { rush.tick(dt); }
+function rushWin(e) { rush.win(e); }
+/* 마석 (보스 러시 완주 보상) — 1개 장착 · 공격력 · 공격 속도 · 최대 체력 · 영혼 조각 획득 모두 +N% · 보스 러시에서는 적용 안 됨 */
+const STONE = { rare: 1, epic: 2, unique: 3, legend: 6 };
+function stoneGain(g) {
+  const S = SAVE.stone, s = { id: ++S.n, g }; S.inv.push(s);
+  const cur = S.inv.find(q => q.id === S.eq); if (!cur || STONE[g] > STONE[cur.g]) S.eq = s.id;   // 더 좋은 마석이면 바로 장착
+  saveSave(); return s;
 }
-function rushTick(dt) {   // 준비(카드 선택 끝) → 입장 · 쉬는 시간 → 다음 마왕
-  if (rush.ph === 'fight' || state !== 'play' || trans || P.exp >= P.need) return;
-  if (rush.init) { rush.init = false; P.hp = P.max; banner = { txt: `⚔ 시작 증강 ${rush.got.length}개(무작위): ${rush.got.join(' · ')}`, t: 6, c: '#ffe28a' }; rush.wait = 1.2; return; }
-  if ((rush.wait -= dt) <= 0) rushEnter();
+const stoneBonus = () => { const S = SAVE.stone, s = S && S.inv.find(q => q.id === S.eq), v = s ? STONE[s.g] : 0; return { atk: v, hp: v, aspd: v, shard: v }; };
+function runBonus() {   // 판 시작 보너스: 심장 + 마석 (보스 러시에서는 없음)
+  const o = { atk: 0, hp: 0, aspd: 0, shard: 0 }; if (rushBoot || rush) return o;
+  const h = heartBonus(), s = stoneBonus(); for (const k in o) o[k] = (h[k] || 0) + (s[k] || 0); return o;
 }
-function rushWin(e) {
-  const last = rush.i >= BR_N - 1; rush.kills = rush.i + 1; rush.shards += Math.round(BR.per * tierMul());
-  SAVE.rush.best = Math.max(SAVE.rush.best | 0, rush.kills);
-  P.hp = P.max; P.healBank = P.max * 0.12;
-  if (last) {
-    rush.shards += Math.round(BR.clear * tierMul()); SAVE.rush.clears = (SAVE.rush.clears | 0) + 1;
-    P.earned = shardTotal(rush.shards); SAVE.shards += P.earned; saveSave();
-    const a = achRush(); rush.ach = a;
-    banner = { txt: `⚔ 보스 러시 완주!  마왕 ${BR_N}종을 모두 쓰러뜨렸다` + (a ? `\n🏆 업적 달성: ${a.name}` : ''), t: 6, c: '#ffe28a' }; state = 'win'; winT = 0; return;
+/* 주사기: 옵션 3줄 심장에만 — 게이지 3~10% 무작위, 100%면 4번째 옵션 칸이 영구로 열린다 */
+function useSyringe(id) {
+  const heart = SAVE.heart.inv.find(q => q.id === id); if (!heart) return { err: '심장이 없습니다' };
+  if ((SAVE.rush.syr | 0) <= 0) return { err: '주사기가 없어요 (보스 러시 완주 보상)' };
+  const options = hLines(heart);
+  if (options.length === 3) {
+    const add = 3 + Math.floor(Math.random() * 8);   // 3 ~ 10%
+    SAVE.rush.syr--; heart.sg = Math.min(100, (heart.sg | 0) + add);
+    let open = false; if (heart.sg >= 100) { const r = hRoll(heart.g); heart.st4 = r.st; heart.v4 = r.v; open = true; }
+    saveSave(); return { add, sg: heart.sg, open };
   }
-  saveSave(); rush.i++; rush.ph = 'rest'; rush.wait = BR.rest;
-  banner = { txt: `${BR_NAME[rush.ord[rush.i - 1]]} 처치!  (${rush.kills}/${BR_N})  체력 회복 · ${BR.up}레벨 (증강 ${BR.up}번 선택)\n다음: ${BR_NAME[rush.ord[rush.i]]} · 난이도 ${Math.min(9, rush.i) + 1}/10`, t: 5, c: '#ffe28a' };
-  rushLevels(BR.up);
+  return { err: options.length > 3 ? '이미 4번째 옵션이 열린 심장이에요' : '옵션 3줄 심장에만 쓸 수 있어요' };
 }
 
 /* ---------- 마왕: 심연의 촉수마왕 (챌린지 맵에서 그대로 싸운다 · 공중에 떠 있다) ---------- */
@@ -14968,9 +15117,11 @@ function showOver(win) {
   const m = Math.floor(gt / 60), s = Math.floor(gt % 60);
   $('overStats').innerHTML = `생존 시간 ${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')} · 레벨 ${P.lvl} · 처치 ${P.kills}`;
   $('overShards').textContent = `영혼 조각 +${P.earned}  (보유 ${SAVE.shards})` + (P.goalDone ? `  ·  런 목표 ${P.goalDone}개 (+${P.goalShards})` : '') + (P.mimicShards ? `  ·  미믹 +${P.mimicShards}` : '') + (P.impShards ? `  ·  황금 임프 +${P.impShards.toLocaleString()}` : '') + (win && P.fee ? `  ·  참가비 ${P.fee} 반환 포함` : '');
-  if (rush) $('overStats').innerHTML += `<br><span style="color:#ffb05a">⚔ 보스 러시 — 처치한 마왕 ${rush.kills}/${BR_N}${rush.kills ? ' (' + rush.ord.slice(0, rush.kills).map(k => BR_NAME[k]).join(' · ') + ')' : ''}  ·  난이도 ${P.tier + 1}</span><br><span style="font-size:13px">러시 보상 +${rush.shards}${win ? '  (완주 보너스 포함)' : ''}  ·  최고 기록 ${SAVE.rush.best | 0}/${BR_N} · 완주 ${SAVE.rush.clears | 0}회</span>`;
+  if (rush) $('overStats').innerHTML += `<br><span style="color:#ffb05a">⚔ 보스 러시 — 라운드 ${rush.kills}/${BR_N} 클리어${rush.kills ? ' (' + rush.ord.slice(0, rush.kills).map(k => BR_NAME[k]).join(' · ') + ')' : ''}  ·  고른 증강 ${rush.totalCardsPicked}개${rush.picks.length ? ' (' + rush.picks.join(' + ') + ')' : ''}</span><br><span style="font-size:13px">러시 보상 +${rush.shards}${win ? '  (완주 보너스 포함)' : ''}  ·  완주 ${SAVE.rush.clears | 0}회</span>`
+    + (rush.reward ? `<br><span style="color:var(--gold)">🏅 보상 등급 [${rush.reward.name}] — 🎫 스킨 뽑기권 ×${rush.reward.tix} · 💎 ${HG[rush.reward.stone].name} 마석 (전 스탯 +${STONE[rush.reward.stone]}%) · ${rush.reward.syr ? '💉 주사기 ×1' : '주사기 없음'}</span>` : '')
+    + (rush.hearts.length ? `<br><span style="color:#ff8aa8">💗 얻은 심장: ${rush.hearts.map(q => hTitle(q.h) + '(' + HG[q.h.g].name + ')').join(' · ')}</span>` : '');
   if (rush && rush.ach) $('overStats').innerHTML += `<br><span style="color:var(--gold)">🏆 업적 달성: ${rush.ach.name}  (시작 화면 🏆 업적에서 보상 받기)</span>`;
-  if (win && P.rushOpen) $('overStats').innerHTML += `<br><span style="color:#ffb05a">🔓 ⚔ 보스 러시 모드 해금!  (시작 화면 [⚔ 보스 러시])</span>`;
+  if (win && P.rushOpen) $('overStats').innerHTML += `<br><span style="color:#ffb05a">🔓 ⚔ 보스 러시 모드 해금! (지하 30층 클리어 · 시작 화면 [⚔ 보스 러시])</span>`;
   if (win && P.unlocked) $('overStats').innerHTML += `<br><span style="color:var(--gold)">🔓 ${floorName(P.unlocked)} 해금!</span>`;
   if (win && P.dropGot) $('overStats').innerHTML += `<br><span style="color:var(--gold)">✨ ${P.dropGot}</span>`;
   if (win && P.fwOpen) $('overStats').innerHTML += `<br><span style="color:#ff8a9a">☠ 새 난이도 [타락한 혈랑] 추가! (시작 화면 난이도 ▶ 끝)</span>`;
@@ -15791,7 +15942,7 @@ function drawControlsTip() {   // 지하 1~3층 일반 판 첫 5초
 const SET_IMGS = { dosan: ['dfloor', 'dprops', 'dmob'], fire: ['ffloor', 'fprops', 'fmob'], ice: ['ifloor', 'iprops', 'imob'], gard: ['gfloor', 'gprops', 'gmob'] };   // v9.71 지옥별 바닥·소품·잡몹 (LAZY)
 function startGame(char) {
   if (chMode && chOpen()) { startChallenge(char); return; }   // v6.20: 챌린지 모드
-  if (rushMode && rushOpen()) { startRush(char); return; }   // v8.50: 보스 러시
+  if (rushMode && rushReady()) { startRush(char); return; }   // v8.50: 보스 러시
   if (SAVE.diff.fw && SAVE.fw.open && SAVE.fw.snap) { startFw(); return; }   // 숨은 난이도: 곧장 타락한 혈랑왕
   if (char) curChar = char;
   if (!SAVE.chars[curChar]) curChar = 'wolf';
@@ -15853,7 +16004,7 @@ function buildCards() {
   updateDiff(); chMenu(); achSync();
 }
 function chMenu() {   // v6.20: 시작 화면의 챌린지 버튼 · 룬 · 보물
-  { const ro = rushOpen(); $('rushBtn').textContent = ro ? '⚔ 보스 러시' : '⚔ 보스 러시 🔒'; $('rushBtn').style.opacity = ro ? 1 : 0.6; }
+  { const ro = rushReady(); $('rushBtn').textContent = ro ? '⚔ 보스 러시' : '⚔ 보스 러시 🔒'; $('rushBtn').style.opacity = ro ? 1 : 0.6; }
   const o = chOpen(); $('chBtn').textContent = o ? '∞ 챌린지 모드' : '∞ 챌린지 🔒'; $('chBtn').style.opacity = o ? 1 : 0.6;
   $('chInfo').innerHTML = rushLine() + (o ? `∞ 챌린지 — 룬: ${runeLine()}  ·  룬 조각 ${SAVE.ch.frag | 0}/${RUNE_COST}` + (SAVE.ch.best ? `  ·  최고 ${Math.floor(SAVE.ch.best / 60)}분 ${SAVE.ch.best % 60}초` : '') + `<br>보물: ${treasureLine()}` : '');
 }
@@ -16208,12 +16359,12 @@ function skinSil(s, w, h) {   // 미획득: 흑백 실루엣 (게임 속 모습�
 }
 function renderGacha() {
   const S = SAVE.skin, Q = gachaPools(), done = !Q.unique.length && !Q.epic.length && !Q.rare.length;
-  $('gShards').textContent = `◆ 영혼 조각 ${SAVE.shards}`;
+  $('gShards').textContent = `◆ 영혼 조각 ${SAVE.shards}` + ((SAVE.rush.tix | 0) > 0 ? `  ·  🎫 뽑기권 ${SAVE.rush.tix}장` : '');
   $('gTabPull').classList.toggle('on', gTab === 'pull'); $('gTabDex').classList.toggle('on', gTab === 'dex');
   $('gPull').style.display = gTab === 'pull' ? '' : 'none'; $('gDex').style.display = gTab === 'dex' ? '' : 'none';
   $('gPityBar').style.width = (100 * Math.min(1, S.pity / GACHA.pity)) + '%';
   $('gPityTxt').textContent = done ? '모든 스킨을 모았어요!' : `완성 스킨 확정까지 ${GACHA.pity - S.pity}회  (천장: 유니크 10% · 에픽 20% · 레어 70%)`;
-  $('gOne').disabled = done || SAVE.shards < GACHA.cost1; $('gTen').disabled = done || SAVE.shards < GACHA.cost10;
+  $('gOne').disabled = done || ((SAVE.rush.tix | 0) <= 0 && SAVE.shards < GACHA.cost1); $('gOne').innerHTML = (SAVE.rush.tix | 0) > 0 ? `1회 뽑기<small>🎫 뽑기권 1장 (남은 ${SAVE.rush.tix})</small>` : '1회 뽑기<small>◆ 1000</small>'; $('gTen').disabled = done || SAVE.shards < GACHA.cost10;
   const dex = $('gDexGrid'); dex.innerHTML = '';
   for (const s of SKINS) {
     const own = !!S.own[s.id], fr = S.frag[s.id] || 0, seen = own || fr > 0, need = skinNeed(s), G = SKIN_GRADE[s.grade];
@@ -16231,9 +16382,11 @@ function renderGacha() {
 }
 function gachaPull(n) {
   if (gBusy) return;
-  const cost = n === 10 ? GACHA.cost10 : GACHA.cost1; if (SAVE.shards < cost) return;
+  const tix = n === 1 && (SAVE.rush.tix | 0) > 0;   // v10.10 스킨 뽑기권 (보스 러시 완주 보상) = 1회 무료
+  const cost = tix ? 0 : n === 10 ? GACHA.cost10 : GACHA.cost1; if (SAVE.shards < cost) return;
   const res = []; for (let i = 0; i < n; i++) { const r = gachaRoll(); if (!r) break; res.push(r); }
   if (!res.length) return;
+  if (tix) SAVE.rush.tix--;
   const back = n === 10 ? Math.round(cost * (10 - res.length) / 10) : 0;   // 도중에 다 모으면 남은 횟수만큼 돌려준다
   SAVE.shards -= cost - back; saveSave(); gachaShow(res);
 }
@@ -16275,7 +16428,7 @@ const HSTAT = { atk: '공격력', hp: '최대 체력', aspd: '공격 속도', sh
 const HSHARD = { rare: [3, 6], epic: [7, 11], unique: [11, 17], legend: [15, 25] };   // v8.92 영혼 조각 획득 옵션은 등급별 범위가 따로 (v9.30: 레전더리 30~40 → 15~25%)
 const hRange = (g, st) => st === 'shard' ? { min: HSHARD[g][0], max: HSHARD[g][1] } : HG[g];
 const hRoll = g => { const st = ['atk', 'hp', 'aspd', 'shard'][(Math.random() * 4) | 0], R = hRange(g, st); return { st, v: hRand(R.min, R.max) }; };
-const hLines = h => { const o = [[h.st, h.v]]; if (h.st2) o.push([h.st2, h.v2]); if (h.st3) o.push([h.st3, h.v3]); return o; };
+const hLines = h => { const o = [[h.st, h.v]]; if (h.st2) o.push([h.st2, h.v2]); if (h.st3) o.push([h.st3, h.v3]); if (h.st4) o.push([h.st4, h.v4]); return o; };   // v10.10 주사기로 연 4번째 옵션
 const HEART = { drop: 0.33, legend: 0.01, slots: 5 };
 const hLocks = h => h.ll ? h.ll.slice(0, hLines(h).length).filter(Boolean).length : 0;   // v10.05 잠근 줄 수
 const heartCost = h => HG[h.g].cost * Math.pow(2, hLocks(h));   // v10.05 줄 잠금 하나당 재설정 비용 ×2   // v8.09: 심장 등급(강화 단계)에 따라 레어 500 · 에픽 600 · 유니크 700 · 레전더리 800
@@ -16297,7 +16450,7 @@ function rerollHeart(id) {   // 재설정: 조각 500 → 등급업 판정 → �
   if (hLocks(h) >= hLines(h).length) h.ll = [];   // 모든 줄이 잠긴 옛 상태 방지
   const cost = heartCost(h); if (SAVE.shards < cost) return { err: '영혼 조각이 부족합니다' };
   SAVE.shards -= cost;
-  const before = { g: h.g, st: h.st, v: h.v, st2: h.st2, v2: h.v2, st3: h.st3, v3: h.v3 }, G = HG[h.g]; let up = false;
+  const before = { g: h.g, st: h.st, v: h.v, st2: h.st2, v2: h.v2, st3: h.st3, v3: h.v3, st4: h.st4, v4: h.v4 }, G = HG[h.g]; let up = false;
   const hadNext = !!G.next; if (G.next && Math.random() < G.up) { h.g = G.next; up = true; SAVE.dex.seen['heart:' + (h.b || 'angel') + ':' + h.g] = 1; }
   let ach = null;   /* v9.03 '진정한 불운의 아이콘': 등급업 가능한 심장을 연속 10번 재설정해도 등급업이 한 번도 없으면 달성 */
   if (hadNext) { SAVE.heart.dry = up ? 0 : (SAVE.heart.dry | 0) + 1; if (SAVE.heart.dry >= LUCK_N && !SAVE.ach.done.luck) { SAVE.ach.done.luck = 1; ach = ACH.find(q => q.id === 'luck'); achBadge(); } }
@@ -16305,7 +16458,8 @@ function rerollHeart(id) {   // 재설정: 조각 500 → 등급업 판정 → �
   let r; if (!LK[0]) { r = hRoll(h.g); h.st = r.st; h.v = r.v; }
   if (h.st2 && !LK[1]) { r = hRoll(h.g); h.st2 = r.st; h.v2 = r.v; }   // v8.66: 2줄이면 두 줄 모두
   if (h.st3 && !LK[2]) { r = hRoll(h.g); h.st3 = r.st; h.v3 = r.v; }   // v8.92: 3줄이면 세 줄 모두
-  saveSave(); return { before, after: { g: h.g, st: h.st, v: h.v, st2: h.st2, v2: h.v2, st3: h.st3, v3: h.v3 }, up, ach };
+  if (h.st4 && !LK[3]) { r = hRoll(h.g); h.st4 = r.st; h.v4 = r.v; }   // v10.10 4번째 옵션
+  saveSave(); return { before, after: { g: h.g, st: h.st, v: h.v, st2: h.st2, v2: h.v2, st3: h.st3, v3: h.v3, st4: h.st4, v4: h.v4 }, up, ach };
 }
 const HFUSE_HID = { p: 0.05 };   // v9.57 히든: 레전더리 3개 합성이 이 확률로 '지옥 심장'(옵션 3줄)이 된다 (화면엔 안 알림)
 const HFUSE_N = 3;   // v8.83: 레전더리 심장 3개
@@ -16405,7 +16559,7 @@ function renderHeart() {
   const L = S.inv.slice().sort((a, b) => HG_ORDER.indexOf(b.g) - HG_ORDER.indexOf(a.g) || b.v - a.v);
   if (!L.length) inv.innerHTML = '<p class="hnone">아직 심장이 없어요.<br>마왕을 쓰러뜨리면 33% 확률로 떨어져요 (오른쪽 위 ? 참고)</p>';
   for (const q of L) { const d = document.createElement('div'); d.className = `hcell ${q.g}` + (q.id === hSel ? ' sel' : ''); d.innerHTML = `<img src="${heartImg(q.g, 56, q.b)}"><small>${hShort(q)}</small>` + (S.eq.includes(q.id) ? '<b class="heq">E</b>' : '') + (hFu.includes(q.id) ? `<b class="hfu">합${hFu.indexOf(q.id) + 1}</b>` : '') + (q.lock ? '<b class="hlk">🔒</b>' : ''); d.onclick = () => { hSel = q.id; hLast = null; renderHeart(); }; inv.appendChild(d); }
-  hFu = hFu.filter(id => S.inv.some(q => q.id === id)); renderFuse();
+  hFu = hFu.filter(id => S.inv.some(q => q.id === id)); renderFuse(); renderStone();
   const core = $('hCore');
   if (!h) { core.innerHTML = '<div class="horb"><p class="hnone">왼쪽 목록에서 심장을 고르세요</p></div>'; return; }
   const G = HG[h.g], nx = G.next && HG[G.next], eq = S.eq.includes(h.id);
@@ -16414,6 +16568,7 @@ function renderHeart() {
     <div class="horb ${h.g}"><div class="hring"></div><img src="${heartImg(h.g, 150, h.b)}"></div>
     <div class="hopt">${hOpt(h)} <small>(${G.name} 범위 ${G.min}~${G.max}% · 영혼 조각 ${HSHARD[h.g][0]}~${HSHARD[h.g][1]}%)</small></div>
     ${hLines(h).length > 1 ? `<div class="hlines">${hLines(h).map(([st, v], i) => `<button class="sm hl ${h.ll && h.ll[i] ? 'on' : ''}" data-i="${i}">${h.ll && h.ll[i] ? '🔒' : '🔓'} ${HSTAT[st]} +${v}%</button>`).join('')}</div><p class="hsum" style="margin:0">줄을 눌러 잠그면 재설정해도 그대로 · 잠금 하나당 재설정 비용 ×2 (최대 ${hLines(h).length - 1}줄)</p>` : ''}
+    ${hLines(h).length >= 3 ? `<div class="hsyr"><div class="bar"><i style="width:${h.st4 ? 100 : (h.sg | 0)}%"></i></div><p class="hsum" style="margin:2px 0">${h.st4 ? '💉 주사기 게이지 100% — 4번째 옵션 칸이 열렸어요' : `💉 주사기 게이지 ${h.sg | 0}% (100%면 4번째 옵션 칸이 열림 · 1개당 3~10%)`}</p>${h.st4 ? '' : `<button class="sm" id="hSyr" ${(SAVE.rush.syr | 0) > 0 ? '' : 'disabled'}>💉 주사기 사용 (보유 ${SAVE.rush.syr | 0})</button>`}</div>` : ''}
     ${hLast ? `<div class="hcube"><div><small>이전</small><b style="color:${HG[hLast.before.g].col}">[${HG[hLast.before.g].name}] ${hOpt(hLast.before)}</b></div><i>➜</i><div><small>이후</small><b style="color:${HG[hLast.after.g].col}">[${HG[hLast.after.g].name}] ${hOpt(hLast.after)}</b></div></div>` : ''}
     <div class="hcost"><span>재설정 비용</span><b>◆ ${heartCost(h)}</b><span>보유</span><b class="${SAVE.shards < heartCost(h) ? 'lack' : ''}">◆ ${SAVE.shards}</b></div>
     <div class="row"><button id="hReroll" ${h.lock || SAVE.shards < heartCost(h) ? 'disabled' : ''}>${h.lock ? '🔒 잠김' : '재설정'}</button><button class="sm ${h.lock ? 'on' : ''}" id="hLock">${h.lock ? '🔒 잠금 해제' : '🔓 옵션 잠금'}</button><button class="sm" id="hEquip">${eq ? '장착 해제' : '장착'}</button><button class="sm" id="hDis" ${h.lock ? 'disabled' : ''}>분해 (+${G.dis})</button><button class="sm" id="hFuseIn" ${h.lock || h.g !== 'legend' ? 'disabled' : ''}>${hFu.includes(h.id) ? '합성 칸에서 빼기' : '합성 칸에 넣기'}</button></div>${h.lock ? '<p class="hsum">🔒 잠금 중 — 이 옵션은 재설정·분해되지 않아요</p>' : ''}`;
@@ -16422,6 +16577,10 @@ function renderHeart() {
     if (!h.ll[i] && hLocks(h) + 1 >= n) { $('hSum').textContent = '모든 줄을 잠글 수는 없어요 — 한 줄은 풀어 두세요'; return; }
     h.ll[i] = !h.ll[i]; saveSave(); try { sfx('item'); } catch (_) {} renderHeart();
   });
+  if ($('hSyr')) $('hSyr').onclick = () => {   // v10.10 주사기
+    const r = useSyringe(h.id); if (r.err) { $('hSum').textContent = r.err; return; }
+    hLast = null; renderHeart(); if (r.open) playUpgradeEffect(h.g, '💉 4번째 옵션 해금!'); else { try { sfx('item'); } catch (_) {} $('hSum').textContent = `💉 게이지 +${r.add}% → ${r.sg}%`; }
+  };
   $('hLock').onclick = () => { h.lock = !h.lock; saveSave(); try { sfx('item'); } catch (_) {} renderHeart(); };   // v8.51: 마음에 드는 옵션을 잠가 두면 실수로 재설정·분해하지 않는다
   $('hReroll').onclick = () => {
     const r = rerollHeart(h.id); if (r.err) return;
@@ -16435,6 +16594,14 @@ function renderHeart() {
   $('hDis').onclick = () => { if (!confirmDis(h)) return; disHeart(h.id); hSel = null; openHeart(); };
 }
 const fuseOk = h => { if (h.b === 'fuse3') return false; const f0 = SAVE.heart.inv.find(q => q.id === hFu[0]); if (h.b === 'fuse') return !f0 || f0.b === 'fuse'; return h.g === 'legend' && (!f0 || f0.b !== 'fuse'); };   // v8.92 재료는 '레전더리 보스 심장 3개' 또는 '끔찍한 심장 3개' (섞기 불가)
+function renderStone() {   // v10.10 마석 (1개 장착) · 스킨 뽑기권 · 주사기 보유
+  const box = $('hStone'); if (!box) return; const T = SAVE.stone, cur = T.inv.find(q => q.id === T.eq);
+  const L = T.inv.slice().sort((a, b) => STONE[b.g] - STONE[a.g] || a.id - b.id);
+  box.innerHTML = `<div class="hfh">💎 마석 — 1개 장착 · 공격력 · 공격 속도 · 최대 체력 · 영혼 조각 획득 모두 +N% (레어 1 · 에픽 2 · 유니크 3 · 레전더리 6%) · 보스 러시에서는 적용 안 됨 · 다음 판부터</div>`
+    + `<div class="hfrow">${L.length ? L.map(q => `<span class="hstn${q.id === T.eq ? ' on' : ''}" data-id="${q.id}" style="color:${HG[q.g].col}"><i>◆</i>${HG[q.g].name} +${STONE[q.g]}%${q.id === T.eq ? ' (장착)' : ''}</span>`).join('') : '<span class="hnone">아직 마석이 없어요 — ⚔ 보스 러시를 완주하면 받아요</span>'}</div>`
+    + `<div class="hfrow" style="color:#ffd0dc">장착 효과: ${cur ? `전 스탯 +${STONE[cur.g]}%` : '없음'} · 🎫 스킨 뽑기권 ${SAVE.rush.tix | 0}장 (스킨 가챠 1회 무료) · 💉 주사기 ${SAVE.rush.syr | 0}개 (옵션 3줄 심장에 사용)</div>`;
+  box.querySelectorAll('.hstn').forEach(d => d.onclick = () => { const id = +d.dataset.id; T.eq = T.eq === id ? null : id; saveSave(); try { sfx('item'); } catch (_) {} renderStone(); });
+}
 function renderFuse() {   // v8.66 합성 칸: 4개를 넣으면 첫 번째 칸 심장이 옵션 2줄이 된다
   const S = SAVE.heart, box = $('hFuse'); if (!box) return;
   const L = hFu.map(id => S.inv.find(q => q.id === id)).filter(Boolean), b = L[0];
@@ -16499,7 +16666,7 @@ const ACH = [
   { id: 'h2', icon: '🍄', name: '버섯 동굴의 지배자', desc: '지하 10층 마왕 처치 — 2지옥 버섯 동굴 정복', tier: 9, reward: 4000 },
   { id: 'h3', icon: '🌿', name: '악마 식물원의 지배자', desc: '지하 15층 마왕(타락한 원예의 여왕) 처치 — 3지옥 악마 식물원 정복', tier: 14, reward: 7000 },
   { id: 'h4', icon: '🌊', name: '어인섬의 지배자', desc: '지하 20층 마왕(타락한 어인왕) 처치 — 4지옥 어인섬 정복', tier: 19, reward: 12000 },
-  { id: 'br', icon: '⚔', name: '마왕 학살자', desc: '⚔ 보스 러시 완주 — 마왕 10종을 연달아 쓰러뜨리기', tier: -1, rush: true, reward: 15000 },
+  { id: 'br', icon: '⚔', name: '마왕 학살자', desc: '⚔ 보스 러시 완주 — 4라운드를 모두 쓰러뜨리기', tier: -1, rush: true, reward: 15000 },
 ];
 const HB_KILL = { angel: 'boss6', shk: 'boss7', skel: 'boss4', eye: 'boss2', monkey: 'boss', tox: 'boss8', adm: 'boss9', qn: 'boss10', vft: 'boss11', kng: 'boss12', bear: 'boss14', rud: 'boss15', lil: 'boss16', cvt: 'boss17', snk: 'boss18', tig: 'boss19', dok: 'boss21' };   // 심장이 있는 마왕 15종의 도감 처치 키
 for (const bk of BH_ORDER) ACH.push({ id: 'hb_' + bk, icon: '💗', name: BH[bk] + ' 토벌', desc: `${BH[bk]} 10번 처치 — 보상으로 ${BH[bk]}의 심장 (레어)`, kill: HB_KILL[bk], need: 10, heart: bk });   // v8.91 마왕마다 하나씩: 처음 쓰러뜨리면 그 보스의 심장
@@ -16551,6 +16718,7 @@ function openAch() {
 }
 /* v8.71 간략 패치노트 (최근 버전만, 새 버전마다 맨 위에 한 줄 추가) */
 const PATCH = [
+  ['v10.10','⚔ 보스 러시 대개편 — 지하 30층 클리어 후 해금 · 처치해 본 마왕 중 4라운드 · 시작 증강 직접 선택 · 2·3·4라운드 전 증강 2개/5개 선택(합계 6·9·12·15개 = 하드코어·하드·노멀·이지 보상) · 전용 증강 [시간 왜곡](스킬 쿨타임 -10%) · 심장 드랍 O / 심장 옵션 미적용 · 이동 속도 230~290 고정 범위 · 라운드 기믹(2 산소존 · 3 +불의 십자가 · 4 +변덕스러운 똥바람) · 새 보상: 스킨 뽑기권 · 마석(전 스탯 +1/2/3/6%, 보스 러시 제외) · 주사기(옵션 3줄 심장 게이지 → 4번째 옵션)'],
   ['v10.05','[시체고래] 죽음의 파도 속도 3배 · [보스전] 안내 글씨 2배·표시 시간 2배 · [심장] 옵션 2줄 이상 심장은 줄마다 잠글 수 있음(잠근 줄은 재설정해도 그대로, 잠금 하나당 재설정 비용 ×2) · [검 도깨비] 검총의 결계 전체 속도 1.6배(착지·검의 비·회전 베기 속도·줄 사이 정지, 예고 1.3초는 그대로) · [악마처형자] 구르기 2번→3번 · [악마 총잡이] 조합 카드 ★서리 도탄 추가(도탄 서리 중첩 → 불씨탄 폭발 · 모든 총알 최대 체력 0.3% 추가 피해)'],
   ['v10.04','[검 도깨비] 결계 안 회전 베기 돌진 속도 3배(예고 1.3초 · 줄 사이 정지 0.4초) · 검 도깨비 마왕 심장 추가(도트는 임시 그림)'],
   ['v10.03','[호랑이] 2페이즈에도 카메라가 호랑이에게 딸려가지 않음 · 2페이즈 리듬 돌진은 항상 박자마다 나를 겨눠 직선으로 돌진 · [황금 임프] 처치로 받은 영혼 조각 10,000이 결과창에도 표시됨'],
@@ -16777,7 +16945,7 @@ $('gOne').addEventListener('click', () => gachaPull(1));
 $('gTen').addEventListener('click', () => gachaPull(10));
 $('gBanA').src = SRC.skA_wolfE; $('gBanB').src = SRC.skA_gunH; gachaBtnTxt();
 $('startBtn').addEventListener('click', () => { chMode = false; rushMode = false; startGame(selChar); });
-$('rushBtn').addEventListener('click', () => { if (!rushOpen()) { $('hint').textContent = '🔒 보스 러시: 지하 20층 마왕까지 쓰러뜨려 모든 층을 클리어하면 열립니다'; return; } chMode = false; rushMode = true; startGame(selChar); });
+$('rushBtn').addEventListener('click', () => { if (!rushReady()) { $('hint').textContent = '🔒 보스 러시: 지하 30층 마왕(지옥의 화염 호랑이)을 쓰러뜨리면 열립니다'; return; } chMode = false; rushMode = true; startGame(selChar); });
 $('chBtn').addEventListener('click', () => { if (!chOpen()) { $('hint').textContent = '🔒 ∞ 챌린지 모드: 지하 6층 마왕을 쓰러뜨리면 열립니다'; return; } chMode = true; startGame(selChar); });
 $('retryBtn').addEventListener('click', () => startGame(curChar));
 $('menuBtn').addEventListener('click', () => { show('overBox', false); show('startBox', true); state = 'menu'; buildCards(); reset(selChar); });
@@ -16891,7 +17059,7 @@ window.__G = { snMouth, snHall, tgArmsAt, tgC, tgCrossOm, tgDashDone, DOK, DOKW,
   get rollQ() { return rollQ; }, ADM, admAnchorStart, admFrenzy, admBroad, admSweep, admSlash, admCannonCall, admNC, pickBossK, get admBalls() { return admBalls; }, get admAnc() { return admAnc; }, get admPull() { return admPull; }, gunRollStart, startWhip, get gunDq() { return gunDq; }, chPct, get gunFx() { return gunFx; }, GUN, GUN_AMMO, GUNA, gunLoad, gunRange,
   get anOrbs() { return anOrbs; }, get anFx() { return anFx; }, AMAP, ANB, ANX, AN, anStart, anTrans, pickBossK, floorName, arenaExit, get shkSp() { return shkSp; }, get toxFl() { return toxFl; }, get toxFog() { return toxFog; }, TOX, TOXF, DEBUFF, toxPick, toxReflux, toxCollapse, toxThrow, toxGas, get shkFx() { return shkFx; }, SHK, SHKF, shkStart, shkSummon,
   sizes() { const o = { enemies, orbs, items, shards, fx, nums, arcs, embers, zones, rings, globs, sprFx, blades, lights, ebul, afx, gunFx, cfx, bfx, healFx, allies, slots, cutSaws, airs, octoFx, smokes, skp, mfx }; const r = {}; for (const k in o) if (o[k] && o[k].length != null) r[k] = o[k].length; return r; },
-  spawnZom, zAtk, die, startRush, rushOpen, get rush() { return rush; }, BR_ORDER, BR_NAME,  get banner() { return banner; }, get perfLv() { return perfLv; }, get NUM_C() { return NUM_C; }, get chal() { return chal; }, chTime, chDmgT, startChallenge, chEvent, chEnterBoss, chFrag, chGoldSpawn, chShelter, inCh, CHM, spawnCut, spawnAb, abStart, RUNES, TREASURES, get cutSaws() { return cutSaws; }, setChMode(v) { chMode = v; }, get W() { return W; }, get H() { return H; }, get species() { return SPECIES; }, get sspecies() { return SSPECIES; }, spawnHorse, hAtk, spawnStat, sAtk, spawnMini, spawnMiniPick, setAngelSkin(v) { angelSkin = !!v; }, drawAnSprite, get ctx() { return ctx; }, get mini() { return mini; }, hurtEnemy, SMAP, isSea, BM, get mspecies() { return MSPECIES; }, spawnUniq, SHR, SHA, MMAP, isMush, floorSet,
+  spawnZom, zAtk, die, startRush, rushOpen, rushReady, brPool, BossRushManager, BR, BR_N, BR_MODS, BR_REWARD, brRewardOf, STONE, stoneGain, stoneBonus, runBonus, useSyringe, bossExPaused, brCenter, skillCd, renderHeart, openHeart, renderGacha, gachaPull, get rushBoot() { return rushBoot; }, get rush() { return rush; }, BR_ORDER, BR_NAME,  get banner() { return banner; }, get perfLv() { return perfLv; }, get NUM_C() { return NUM_C; }, get chal() { return chal; }, chTime, chDmgT, startChallenge, chEvent, chEnterBoss, chFrag, chGoldSpawn, chShelter, inCh, CHM, spawnCut, spawnAb, abStart, RUNES, TREASURES, get cutSaws() { return cutSaws; }, setChMode(v) { chMode = v; }, get W() { return W; }, get H() { return H; }, get species() { return SPECIES; }, get sspecies() { return SSPECIES; }, spawnHorse, hAtk, spawnStat, sAtk, spawnMini, spawnMiniPick, setAngelSkin(v) { angelSkin = !!v; }, drawAnSprite, get ctx() { return ctx; }, get mini() { return mini; }, hurtEnemy, SMAP, isSea, BM, get mspecies() { return MSPECIES; }, spawnUniq, SHR, SHA, MMAP, isMush, floorSet,
 };
 
 function loadImg1(src) {   // v9.67 파일을 받아 blob으로 곧장 ImageBitmap을 만든다 (해독이 메인 스레드 밖에서 돌아 시작할 때 멈춤이 줄어듦). 못 쓰면 예전 방식
