@@ -116,6 +116,7 @@ ASSETS = {
     '__FRW__': 'frw/frw.webp',
     '__LAD__': 'lad/lad.webp',
     '__FMAP__': 'fmap/fmap.webp',
+    '__DMAP__': 'dmap/dmap.webp',
     '__IMAP__': 'imap/imap.webp',
     '__BEAR__': 'bear/bear.webp',
     '__BEARFX__': 'bear/bearfx.webp',
