@@ -383,6 +383,7 @@
   <div id="gPull" style="display:flex;flex-direction:column;align-items:center;gap:12px">
     <div class="gban"><img class="gb" id="gBanB" alt=""><img class="ga" id="gBanA" alt=""><div class="gt"><b>심연의 의상실</b><small>유니크 · 에픽 · 레어 스킨이 완성품 또는 조각으로 나와요.<br>같은 스킨 조각을 모으면 완성 스킨으로 조합!<br>(레어 10개 · 에픽 15개 · 유니크 20개)</small></div></div>
     <div class="gpity"><i id="gPityBar"></i></div><p id="gPityTxt"></p>
+    <p id="gTix" style="margin:0;color:var(--gold);font-weight:bold">🎫 보유 스킨 뽑기권: 0장 · 1회 뽑기에 우선 사용</p>
     <div class="row gbtns"><button id="gOne">1회 뽑기<small>◆ 1000</small></button><button id="gTen">10회 뽑기<small>◆ 9000 (10% 할인)</small></button></div>
     <p class="gprob">확률 (1회): 유니크 완성 스킨 1/117 (0.9%) · 에픽 완성 스킨 2/117 (1.7%) · 레어 완성 스킨 4/117 (3.4%) · 스킨 조각 110/117 (94.0%: 레어 조각 1~2개 · 에픽·유니크 조각 1개, 어느 스킨인지는 무작위)<br>이미 가진 스킨과 그 조각은 나오지 않아요 · 완성 스킨 없이 25번째 뽑기는 완성 스킨 확정 (유니크 10% · 에픽 20% · 레어 70%)</p>
   </div>
@@ -982,7 +983,7 @@ function mkCanvas(w, h) { const c = document.createElement('canvas'); c.width = 
  * ============================================================ */
 const SAVE_KEY = 'hellSurvivorSave1';
 let bnHide = false; try { bnHide = localStorage.getItem('hsBnHide') === '1'; } catch (_) {}   // v10.12 보스전 안내 글씨 끄기 (H키, 이 설정만 따로 저장)
-const GAME_VER = 'v10.12';
+const GAME_VER = 'v10.13';
 const SAVE_DEF = () => ({
   shards: 0,
   perks: { hp: 0, spd: 0, dmg: 0, exp: 0, magnet: 0, banish: 0, revive: 0, regen: 0, shard: 0, critd: 0, choice: 0 },
@@ -16360,7 +16361,8 @@ function skinSil(s, w, h) {   // 미획득: 흑백 실루엣 (게임 속 모습�
 }
 function renderGacha() {
   const S = SAVE.skin, Q = gachaPools(), done = !Q.unique.length && !Q.epic.length && !Q.rare.length;
-  $('gShards').textContent = `◆ 영혼 조각 ${SAVE.shards}` + ((SAVE.rush.tix | 0) > 0 ? `  ·  🎫 뽑기권 ${SAVE.rush.tix}장` : '');
+  $('gShards').textContent = `◆ 영혼 조각 ${SAVE.shards}`;
+  $('gTix').textContent = `🎫 보유 스킨 뽑기권: ${SAVE.rush.tix | 0}장 · 1회 뽑기에 우선 사용`;
   $('gTabPull').classList.toggle('on', gTab === 'pull'); $('gTabDex').classList.toggle('on', gTab === 'dex');
   $('gPull').style.display = gTab === 'pull' ? '' : 'none'; $('gDex').style.display = gTab === 'dex' ? '' : 'none';
   $('gPityBar').style.width = (100 * Math.min(1, S.pity / GACHA.pity)) + '%';
@@ -16595,12 +16597,12 @@ function renderHeart() {
   $('hDis').onclick = () => { if (!confirmDis(h)) return; disHeart(h.id); hSel = null; openHeart(); };
 }
 const fuseOk = h => { if (h.b === 'fuse3') return false; const f0 = SAVE.heart.inv.find(q => q.id === hFu[0]); if (h.b === 'fuse') return !f0 || f0.b === 'fuse'; return h.g === 'legend' && (!f0 || f0.b !== 'fuse'); };   // v8.92 재료는 '레전더리 보스 심장 3개' 또는 '끔찍한 심장 3개' (섞기 불가)
-function renderStone() {   // v10.10 마석 (1개 장착) · 스킨 뽑기권 · 주사기 보유
+function renderStone() {   // v10.13 마석 (1개 장착) · 주사기 보유 (뽑기권은 스킨 가챠에서 확인)
   const box = $('hStone'); if (!box) return; const T = SAVE.stone, cur = T.inv.find(q => q.id === T.eq);
   const L = T.inv.slice().sort((a, b) => STONE[b.g] - STONE[a.g] || a.id - b.id);
   box.innerHTML = `<div class="hfh">💎 마석 — 1개 장착 · 공격력 · 공격 속도 · 최대 체력 · 영혼 조각 획득 모두 +N% (레어 1 · 에픽 2 · 유니크 3 · 레전더리 6%) · 보스 러시에서는 적용 안 됨 · 다음 판부터</div>`
     + `<div class="hfrow">${L.length ? L.map(q => `<span class="hstn${q.id === T.eq ? ' on' : ''}" data-id="${q.id}" style="color:${HG[q.g].col}"><i>◆</i>${HG[q.g].name} +${STONE[q.g]}%${q.id === T.eq ? ' (장착)' : ''}</span>`).join('') : '<span class="hnone">아직 마석이 없어요 — ⚔ 보스 러시를 완주하면 받아요</span>'}</div>`
-    + `<div class="hfrow" style="color:#ffd0dc">장착 효과: ${cur ? `전 스탯 +${STONE[cur.g]}%` : '없음'} · 🎫 스킨 뽑기권 ${SAVE.rush.tix | 0}장 (스킨 가챠 1회 무료) · 💉 주사기 ${SAVE.rush.syr | 0}개 (옵션 3줄 심장에 사용)</div>`;
+    + `<div class="hfrow" style="color:#ffd0dc">장착 효과: ${cur ? `전 스탯 +${STONE[cur.g]}%` : '없음'} · 💉 주사기 ${SAVE.rush.syr | 0}개 (옵션 3줄 심장에 사용)</div>`;
   box.querySelectorAll('.hstn').forEach(d => d.onclick = () => { const id = +d.dataset.id; T.eq = T.eq === id ? null : id; saveSave(); try { sfx('item'); } catch (_) {} renderStone(); });
 }
 function renderFuse() {   // v8.66 합성 칸: 4개를 넣으면 첫 번째 칸 심장이 옵션 2줄이 된다
@@ -16719,6 +16721,7 @@ function openAch() {
 }
 /* v8.71 간략 패치노트 (최근 버전만, 새 버전마다 맨 위에 한 줄 추가) */
 const PATCH = [
+  ['v10.13','[스킨 가챠] 보유 스킨 뽑기권 수량을 0장부터 표시 · [보스 심장] 뽑기권 표시를 제거하고 마석·주사기만 유지'],
   ['v10.12','[보스전] 위쪽 안내 글씨 크기를 원래대로(표시 시간 2배는 유지) · H키로 보스전 안내 글씨 끄기/켜기'],
   ['v10.11','🫧 보스 러시 2라운드 산소 게이지 수정 — 마왕이 큰 패턴을 쓰는 동안에도 산소가 계속 줄어듭니다(산소가 0일 때의 피해만 큰 패턴 중 쉼)'],
   ['v10.10','⚔ 보스 러시 대개편 — 지하 30층 클리어 후 해금 · 처치해 본 마왕 중 4라운드 · 시작 증강 직접 선택 · 2·3·4라운드 전 증강 2개/5개 선택(합계 6·9·12·15개 = 하드코어·하드·노멀·이지 보상) · 전용 증강 [시간 왜곡](스킬 쿨타임 -10%) · 심장 드랍 O / 심장 옵션 미적용 · 이동 속도 230~290 고정 범위 · 라운드 기믹(2 산소존 · 3 +불의 십자가 · 4 +변덕스러운 똥바람) · 새 보상: 스킨 뽑기권 · 마석(전 스탯 +1/2/3/6%, 보스 러시 제외) · 주사기(옵션 3줄 심장 게이지 → 4번째 옵션)'],
