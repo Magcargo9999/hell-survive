@@ -1,0 +1,368 @@
+# 인수인계서 — 지옥의 생존자 (hell survive) v10.12 기준
+
+작성: 2026-10-29 · 마지막 배포 **v10.12** (커밋 3bf1e67, `origin/main` 푸시 완료) → 다음 빌드는 **v10.13**
+저장소: https://github.com/Magcargo9999/hell-survive · 배포본(GitHub Pages): https://magcargo9999.github.io/hell-survive/
+사용자: 편규빈 (GitHub `Magcargo9999`, 이메일 gyubinpyeon@gmail.com — 커밋 작성자 용도로만 쓸 것)
+
+> **이 문서의 구성**
+> - **Part A (이 부분)** — 새 환경(GPT·Claude 등)에서 바로 이어 작업하기 위한 규칙 전문·절차·최근 이력·함정·대기 중인 일.
+> - **Part B (맨 아래)** — 저장소의 `CLAUDE.md` 전문(게임 구조 레퍼런스: 캐릭터·보스·시스템별 변수명·함수명·테스트 이름). 필요한 항목을 `Ctrl+F`로 찾아 읽는다.
+> - 코드 원본·도트 아틀라스·테스트 스크립트는 전부 저장소에 있다. **이 문서만으로는 게임을 만들 수 없고, 저장소(`src/game_template.html` 약 17,100줄 + `src/assets/`)가 필수다.**
+
+---
+
+## 0. 한눈에
+
+| 항목 | 내용 |
+|---|---|
+| 게임 | HTML5 canvas 서바이버류 "지옥의 생존자"(hell survive). 한 파일 템플릿 + 도트 아틀라스. 성장해서 마왕을 쓰러뜨리고 새 마왕이 되는 이야기(제목 후보 "먹이에서 마왕으로") |
+| 실제로 고치는 파일 | `src/game_template.html` (이미지 자리는 `'__XXX__'` 토큰) |
+| 빌드 | `python3 src/build.py` → `build/hell_survive.html`(단일 파일, 그림 포함, 약 100MB+, **git 무시**) / `python3 src/build.py --split` → `index.html`(약 1.7MB, 그림은 `src/assets/`를 따로 불러옴, **이것만 GitHub에 올림**) |
+| 현재 층 | 지하 1~32층 열림(`OPEN_TIER`=31 → 층 이름은 0부터라 지하 32층까지), `TOP_TIER`=34(만들어 둔 층), 7지옥 도산(31~35층)은 33층부터 잠김 |
+| 현재 마왕 | 1~7지옥 마왕 + 숨은 보스 + 챌린지 전용 (Part B 참고), 보스 러시 풀 18종(`BR_ORDER`) |
+| 현재 캐릭터 | wolf, snail, archer, chimera, lizard, twins(사슬 악마), ghost(구슬 유령/유령 기사 루트), octo(문어 마법사, 히든), gun(악마 총잡이), fish(마계 물고기) |
+| 테스트 기준 | `tools/smoke.py` 결과가 **17줄 모두 끝이 `[]`** 이어야 정상 (예전 문서의 "15"는 낡은 값) |
+
+---
+
+## 1. 사용자와 소통하는 법
+
+- **답변은 항상 한국어, 짧고 간결하게.** 긴 설명·재탕 금지. 끝낼 때는 ① 무엇을 했는지 ② 보낸 파일 이름/커밋/`index.html` 크기 ③ 테스트 결과 ④ (있다면) 내가 임의로 정한 값 ⑤ 고친 화면 문구(규칙 10) 순서로 짧게.
+- 사용자는 긴 기획 프롬프트(번호 매긴 요구 목록)를 주는 편이다. **요구를 하나도 빠뜨리지 말고 번호별로 대응**하고, 사용자가 안 정한 수치는 내가 정하되 **반드시 보고**한다("제가 정한 부분").
+- 애매하고 되돌리기 어려운 결정(예: 뽑기권이 무엇인지, 마석 적용 범위)만 질문 1~2개로 확인하고, 나머지는 합리적으로 정해서 진행한다.
+- 사용자 지시 반복: "**더 필요한 도트가 있으면 적용한 뒤에 다시 말해줘**" — 도트를 적용한 뒤 남은 필요 도트를 마지막에 보고한다.
+- 사용자는 **도트(픽셀아트)를 직접 그려/생성해서** 시트로 준다. 제작 분담: 기획 구체화 = Gemini, 도트 그래픽 = GPT 이미지 모델, 코드 = Claude(및 GPT). 이 게임으로 선문대 SW중심대학사업단 AI·SW창업동아리 신청서를 준비 중이고 스팀 출시도 검토 중이다.
+- 사용자가 도트를 아직 안 준 항목은 **임시 그림(코드로 그린 것)으로 먼저 넣고** "도트는 나중에 줄게"를 존중한다(예: 검 도깨비 심장 17번째 줄이 아직 임시).
+- 사용자는 "오래 걸리면 하지 마"라고 한 적이 있다 → 장시간 시뮬레이션은 **사용자가 원할 때만**(규칙 8).
+- 현재 물어 둔 질문(답 대기): *"십자가·똥바람도 큰 패턴 중에 쉬지 말고 항상 작동하게 바꿀까요?"* (보스 러시, 아래 §7).
+
+---
+
+## 2. 꼭 지킬 규칙 — 전문 (사용자 지시, `CLAUDE.md`에서 그대로 옮김)
+
+> 번호는 원본 그대로다(13번이 15번 뒤에 있는 것도 원본 그대로, 번호는 바꾸지 말 것).
+
+1. **파일 이름:** 매 빌드 `hell survive v.N.NN.html`, 버전은 매번 올린다. 마지막 배포 = **v10.12** → 다음은 v10.13. (v10.01부터 10대, 사용자 지시) (v6.01부터 6대 · v7.01부터 7대: 지하 10층·버섯 맵 개편 · **v8.01부터 8대: 보스 심장 시스템 기준, 사용자 지시**)
+   - 끝자리: 작은 수정 · 가운데 자리: 캐릭터·보스 추가 같은 큰 변화.
+2. **도트는 절대 수정·재색칠 금지.** 자르기·배경 제거·마스크·배율 조정만 허용.
+3. 기능은 **단순하게**. 서로 복사한 듯한 중복 스킬/카드 금지.
+4. **규격표 ①~⑩**(`docs/hell survive 규격표 v4.15.pdf`)을 따른다. 규칙을 깨야 하면 먼저 허락받는다.
+   - 소폭 ±6~10% · 중폭 ±11~20% · 대폭 ±21~35% · 재설계급 35%+ (스탯별 보정 배율은 규격표 ②).
+   - 소개 문구는 역할 하나 + 약점 하나 (규칙 ⑤).
+5. **1진화에는 스킬을 넣지 않는다** (사용자가 직접 요청한 경우만 예외: 연보라 총령 차지샷, 문어 마법사 코끼리 돌진).
+6. **매 버전 GitHub 커밋 + 푸시** (아래 배포 절차). 커밋 메시지에 변경점 한 줄.
+7. **티어 결과를 줄 때는 항상 보스별 상성 + 티어표 사이트에 들어갈 값(s2/s1 JSON) 전부 포함**해서 PDF로 준다 (`docs/`의 기존 "티어표 추가" PDF 형식 참고).
+8. 오래 걸리는 시뮬레이션은 사용자가 원할 때만. "오래 걸리면 하지 마" 라고 한 적 있음.
+9. **화면·보스방 전체를 덮어 어디에도 안전한 곳이 없는 패턴(무조건 못 피하는 패턴)은 넣지 않는다.** 이속 강화를 안 찍어서 못 피하는 건 괜찮지만, 이속을 끝까지 찍어도 피할 안전 구역·통로·시간이 없는 패턴은 안 된다. 새 패턴·난이도 배율을 넣을 때 최고 단계(5단계)에서도 안전 구역이 남는지 확인한다. (예: 흡혈 고리의 안전 통로 `inTeleGap`)
+10. **설명 문구는 항상 구현을 따라간다.** 스킬·카드·조합·진화 소개·난이도 안내·보스 안내 배너·도감·상점 등 화면에 적힌 수치·효과 문구가 구현과 다르게 바뀌면(밸런스·기믹 수정 포함) 같은 작업 안에서 문구도 전부 고친다. 기능을 고칠 때마다 이름·수치로 템플릿을 grep해 남은 옛 문구가 없는지 확인하고, 무엇을 고쳤는지 사용자에게 보고한다.
+11. **딜 미터기 이름은 화면의 이름과 항상 같게.** 스킬은 `skillName()`(변형 이름 포함), 카드·조합은 `upName()`/`altOf()`를 쓴다. 새 스킬·카드·피해 출처(`DSRC` 키)를 만들면 `dmName`이 영문 id·옛 이름을 내지 않는지 확인한다 (`tools/tests/dmeter22.py`).
+12. **검색 노출 금지(사용자 결정):** 구글 검색용 태그·`robots.txt`·`sitemap.xml`·Search Console 등록은 하지 않는다. 사용자가 다시 원할 때만.
+14. **미니 보스는 자가복제 금지(사용자 지시):** 새 미니 보스는 다른 미니 보스(원숭이 전사·마안 감시자·해골 전사·절단안의 짐승·혈혼마·네르칸·부패한 성상·해저좀비·가시관 무당벌레·서리혈랑)의 패턴·구조를 복사하지 않고 고유한 패턴 3가지 안팎으로 만든다. **예외로 나오는 미니 보스(말 2종 15%씩 · 어인섬 절단안의 짐승)와 히든 마물은 건드리지 않는다** — 판 전용 미니는 `spawnMini()`에서 `P.bossK`로 갈라 넣는다.
+15. **도감 등록(사용자 지시):** 새 캐릭터·진화 형태·보스·미니 보스·마물을 추가하면 같은 작업에서 도감(`openDex`)에도 항목을 넣고, 처치 카운트 키(`dexKill` 호출부, 미니는 `e.bk`별)가 원숭이 전사 등으로 섞이지 않는지 확인한다. 열린 창(설정·도감·상점·가챠·심장)이 있을 때는 Enter/Space로 게임이 시작되지 않게 키 핸들러에도 넣는다. **도감은 3탭(v8.24, `openDex` · `dexShow`): 캐릭터 도감(플레이어블 계열) · 몬스터 도감(마물·미니·보스·유니크·성유물, `sec('마물 …')` 이후) · 심장 도감(보스 × 4등급, `SAVE.dex.seen['heart:보스:등급']`). 새 캐릭터는 캐릭터 구역(`curT='char'`, 마물 구역 앞)에, 새 몬스터·보스는 몬스터 구역에, 새 보스 심장은 `BH`/`BH_ORDER`에 넣으면 심장 탭에 자동으로 생긴다.** 테스트 `tools/tests/dex823.py`·`dex824.py`
+13. **100MB 경고(v8.14 분리 배포로 해결됨):** 이제 `index.html`은 약 0.8MB이고 그림은 `src/assets/`에 따로 있다. 배포 때마다 `ls -l index.html`로 크기를 보고하고, 저장소(.git)가 이미 1GB를 넘은 상태라는 점도 기억한다. 단일 공유 파일(`build/hell_survive.html`)은 그림이 들어 있어 계속 커지지만 GitHub에는 올리지 않는다(.gitignore).
+
+### 2-1. 규칙 보충 설명 (원본 문구를 풀어 쓴 것 · 실제로 적용한 방식)
+
+- **규칙 1(파일 이름)**: 사용자에게 보내는 파일은 `hell survive v.10.13.html` 형태. 파일은 `build/hell_survive.html`을 그 이름으로 복사한 것. 저장소 루트에 옛 버전 파일이 쌓여 있지만 `.gitignore`(`hell survive v.*.html`)로 git에는 안 올라간다. 가운데 자리(10 → 11)는 캐릭터·보스 추가급일 때, 끝자리는 작은 수정·밸런스일 때 올린다(10대는 v10.01부터 — 사용자 지시). 새 빌드마다 **반드시** 올린다. 버전을 올릴 때 같이 고칠 곳은 §4.
+- **규칙 2(도트 금지)**: 허용 = 자르기·배경 제거·마스크·배율 조정(정수 nearest 확대, 일부 부드러운 알파 이펙트). **색 바꾸기·덧그리기·보정 금지.** 사용자가 준 지도·그림은 받은 그대로 쓴다. 코드로 그리는 장면(그림자·후광·빛 번짐)은 도트 위에 얹는 효과라 허용.
+- **규칙 4(규격표)**: `docs/hell survive 규격표 v4.15.pdf` ①~⑩ 요약은 §3. 버프/너프 단계: 미세 ±3~5% · 소폭 ±6~10% · 중폭 ±11~20% · 대폭 ±21~35% · 재설계급 35%+. 규칙을 깨야 하면 **먼저 허락**.
+- **규칙 6(커밋)**: 커밋 작성자 `git -c user.name="Magcargo9999" -c user.email="gyubinpyeon@gmail.com" commit`, 메시지는 `vN.NN: 변경점 한 줄` + (Claude 환경이면) 트레일러 `Co-Authored-By: Claude … <noreply@anthropic.com>` / `Claude-Session: <세션 URL>`. GPT 등 다른 환경에서는 트레일러를 생략하거나 그 환경이 지시하는 형식을 따른다. 푸시는 `git push origin main`.
+- **규칙 9(안전 구역)**: 새 패턴을 만들면 **느린 이속(150)·최고 난이도(5단계)** 에서도 안전 구역/통로/시간이 남는지 코드 또는 테스트로 확인한다. 보스마다 `xxExPause` 같은 "큰 패턴 중엔 난이도 추가 패턴(tierEx)을 쉬는" 함수가 있다(`bossExPaused(e)`). 예고 시간을 줄이면 안 되는 경우(예: 검 도깨비 회전 베기 예고 1.3초)는 그대로 둔다.
+- **규칙 10(문구 = 구현)**: 수치를 바꿀 때마다 `grep -n "옛 수치\|이름" src/game_template.html`로 소개 문구·도움말·PATCH 노트·도감·업적·배너를 전부 확인하고, 최종 보고에 "고친 문구" 목록을 쓴다.
+- **규칙 14(미니 보스)**: 새 미니 보스는 기존 미니 보스 패턴을 복사하지 않는다. 판 전용 미니는 `spawnMini()`에서 `P.bossK`로 갈라 넣는다.
+- **규칙 15(도감)**: 새 캐릭터·진화·보스·미니·마물 → `openDex` 항목 + `dexKill` 키 + 열린 창일 때 Enter/Space 시작 방지(`keydown` 핸들러) + 테스트 `dex823.py`·`dex824.py`.
+- **규칙 3(단순함)·메모리 선호**: 새 캐릭터를 만들 때 서로 복사한 듯한 스킬/카드를 만들지 않는다. 기능은 가볍게.
+
+---
+
+## 3. 규격표 ①~⑩ (사용자 확정, 원본 `docs/hell survive 규격표 v4.15.pdf`)
+
+① 버프·너프 단계: 미세 ±3~5% · 소폭 ±6~10% · 중폭 ±11~20% · 대폭 ±21~35% · 재설계급 35%+
+② 스탯 보정 배율: 공격력·체력 ×1.0 · 공속·쿨 ×0.8 · 이속 ×0.5 · 피해감소·회피 ×0.6 · 범위·사거리 ×0.7 · 넉백·보조효과 ×1.5
+③ 한 번에 스탯 1~2개만 · 최종 전투력 기준으로 판정 · 대폭 이상은 봇 시뮬로 확인 · 버프는 한 단계 작게
+④ 보스 경고: 견제기 0.6~0.8초/피해 15~22 · 일반기 0.8~1.0초/22~30 · 큰 기술 1.0초+(고정 후 0.8초+)/35~50 · 즉사 없음 · 보스별 경고색 고정
+⑤ 캐릭터 예산: 0진화 체력 100~125 · 이속 163~215 · 공격력 15~23 · 1진화 공격력 ×1.0~1.3, 체력 +25~40 · 최종 ×1.1~1.3, 체력 +35~60 · **소개 문구는 역할 하나 + 약점 하나**
+⑥ 카드: 공격력·체력 +15~18% · 공속 +12% · 이속 +7% · 피해감소 -5~7% · 최대 레벨 일반 5 · 전용 3 · 조합 1(재료 둘 다 Lv.3) · 중복 효과 금지
+⑦ 보스 체력: 미니 1,100(2마리면 0.6배) · 마왕 18,000 · 숨은 보스 21,000 · 단계(난이도)당 +30% · 목표 시간 미니 30~60초 · 마왕 2~3분 · 숨은 보스 3~4분
+⑧ UI 색: 초록 = 내 체력 · 빨강 = 적/경고 · 금색 = 조합/보상 · 파랑 반짝임 = 최종 진화 전용 카드 · 보라+금 = 특수 스킬 · 노랑 = NEW
+⑨ 화면 키(스프라이트 높이): 플레이어 0진화 60~75 · 1진화 70~90 · 최종 85~110 · 몹 30~50 · 미니 보스 120~130 · 마왕 240~300px
+⑩ 버전: 끝자리 = 작은 수정 · 가운데 자리 = 큰 변화 · **배포 전 문법·진화 경로 테스트(smoke)·대폭 변경 시 시뮬·새 UI 스크린샷 확인**
+
+추가 사용자 결정(메모): 캐릭터마다 **진화 루트는 총 3갈래**(늑대의 지옥불 루트는 너무 많아서 삭제함). 1진화에는 스킬을 넣지 않는다(직접 요청한 예외만).
+
+---
+
+## 4. 새 환경에서 시작하는 순서
+
+```bash
+git clone https://github.com/Magcargo9999/hell-survive && cd hell-survive    # 이미 있으면 git pull
+# .git 이 1GB를 넘는다 → 얕게 받고 싶으면: git clone --depth 1 …
+pip install playwright --break-system-packages && python3 -m playwright install chromium   # 테스트용(없으면)
+python3 tools/check.py          # 1) 문법(node --check)
+python3 src/build.py            # 2) 빌드 → build/hell_survive.html   (+ python3 tools/mkmap.py 로 docs/MAP.md 갱신)
+```
+- 먼저 `CLAUDE.md`(= 아래 Part B)를 읽고, 코드 위치는 `docs/MAP.md`에서 찾아 `grep -n`으로 필요한 부분만 읽는다. 변경 이력은 `docs/CHANGELOG.md`(전체를 읽지 말고 grep).
+- **수정은 python 문자열 치환(`old` 가 정확히 1번 나오는지 `assert s.count(old)==1`)으로 한다.** 주석을 줄 중간에 넣으면 뒤 코드가 주석 처리된다(`tools/check.py`로 잡힘). 같은 이름의 `function`을 두 번 만들면 뒤의 것이 앞의 것을 덮는다 → `grep -o "^function [A-Za-z0-9_]*" src/game_template.html | sort | uniq -d` 가 비어 있어야 한다.
+- 테스트: `PYTHONPATH=tools GAME_URL=http://localhost:8765/build/hell_survive.html python3 tools/tests/<이름>.py`. 로컬 서버: `python3 -m http.server 8765`(저장소 루트에서). `file://`로는 단일 파일 빌드만 열린다.
+- 테스트 훅: 게임은 `window.__G`로 내부 변수·함수를 내놓는다(`__G.startGame`, `tick`, `startRush`, `hurtEnemy`, `P`, `boss`, `rush` …). **새 기능을 테스트하려면 템플릿 맨 아래 `__G` 객체에 이름을 추가**해야 한다. 헬퍼 `tools/h301.py`: `newpage(browser, w, h)`가 페이지를 열고 `__lv`(레벨 올리기)·`__s`(카드 선택 자동)·`pg.errs`(콘솔 오류 수집)를 주입한다.
+
+### 4-1. 버전 하나를 배포할 때 하는 일 (체크리스트 — 매번 전부)
+
+1. 템플릿 `const GAME_VER = 'v10.NN'` 올리기.
+2. 템플릿 `PATCH` 목록 맨 앞에 `['v10.NN','한 줄 설명']` 추가(게임 안 패치 노트).
+3. `docs/CHANGELOG.md` 맨 위쪽(`## v10.NN` 형식, 최신이 위)에 항목 추가.
+4. `CLAUDE.md` 규칙 1의 "마지막 배포 = vX → 다음은 vY" 숫자 + 해당 시스템 블록 갱신. 새 기능이면 `tools/mkmap.py` 의 `ANCHORS`에 한 줄.
+5. `python3 tools/check.py` → `python3 src/build.py` → (UI·이펙트가 바뀌면) playwright 스크린샷을 찍어 **직접 눈으로 확인**.
+6. 관련 테스트 + `smoke` 실행: `timeout 900 python3 tools/smoke.py > build/smokeNNN.txt` 를 **백그라운드**로 돌리고, 17줄이 쌓일 때까지 기다린 뒤 `grep -c "\[\]$" build/smokeNNN.txt` = 17 확인(약 5~8분).
+7. `python3 tools/mkmap.py` (MAP.md 갱신) → `cp build/hell_survive.html "hell survive v.10.NN.html"` (사용자에게 줄 파일) → `python3 src/build.py --split` (index.html 분리 배포본 생성) → `ls -l index.html` 크기 확인.
+8. `git add -A && git -c user.name="Magcargo9999" -c user.email="gyubinpyeon@gmail.com" commit -m "v10.NN: 변경점 한 줄" && git push origin main`.
+9. 사용자에게 `hell survive v.10.NN.html` 전달 + 짧은 한국어 보고(§1 순서).
+
+### 4-2. 도트(아틀라스) 새로 받았을 때
+
+`tools/atlas/<이름>_build.py` 작성(시트 → 칸 자르기·배경 제거·축소/정수 확대만) → `src/assets/<폴더>/*.webp(+json)` → `src/build.py`의 토큰 표 → 템플릿 `SRC`·`LAZY_IMG`·프레임 JSON 상수. **미리보기 PNG를 보라색 배경 위에 렌더해서 구멍·잘림 확인** 후 적용. 어두운 옷이 투명해지지 않게 배경 판정 문턱을 낮게(16~20) 시작. 시트의 원본은 저장소에 없다 — 사용자가 다시 첨부해야 한다. LAZY 그림은 쓰기 전에 `imgReady([키])`로 확인(`enterArena`·`startFw`·`spawnFw`·`spawnUniq`처럼).
+
+---
+
+## 5. 테스트·도구 노하우 (실제로 겪은 것)
+
+- **smoke는 오래 걸린다(5~8분).** 백그라운드로 돌리고 `until [ "$(wc -l < 파일)" -ge 17 ]; do sleep 5; done` 식 루프(총 120초 안짝으로 끊어서)로 기다린다. (이 환경의 도구는 `sleep 90` 같은 긴 대기를 막는다.) **smoke와 다른 playwright 테스트를 동시에 돌리지 말 것** — 같은 로컬 서버를 쓰면 응답이 멈춰 페이지 로딩이 걸린다(실제로 한 번 서버가 먹통이 됨 → 서버 재시작).
+- 서버가 죽었으면 `(setsid nohup python3 -m http.server 8765 >/dev/null 2>&1 &)` 로 다시 띄운다(`pkill -f` 와 같은 명령줄에 쓰면 자기 자신까지 종료되니 따로).
+- 아레나(보스방)에 들어가는 테스트는 LAZY 그림이 올 때까지 **`async` 루프로 기다려야** 한다(`for(...){ G.tick(1/30); if(조건) break; if(i%20===0) await new Promise(r=>setTimeout(r,30)) }`). 동기 `G.tick`만 돌리면 보스가 영영 안 나온다.
+- 한 프레임 진행은 `G.tick(1/30)`. 무적: `P.inv=99`, 체력 채우기: `P.hp=P.max`, 보스 무적: `boss.invul=true`, 즉사: `G.hurtEnemy(e,1e13,0,0,0)`.
+- 보스 전투를 스크린샷으로 볼 때는 보스가 화면 밖일 수 있어 약 330틱 먼저 돌려 배너를 지운 뒤 찍는다.
+- 오류 찾기: `tools/tests/fuzz.py`(전 캐릭터 무작위 오래 돌려 콘솔 오류 수집).
+- 성능: `tools/perf.py`. 밸런스 시뮬: `tools/sim600.py`(봇), `tools/bal_run30.sh`, 티어 측정 `tools/tier_run.sh`(약 30분, 사용자가 원할 때만).
+- 설치돼 있어야 하는 것: Python3, Node(`node --check`), playwright + Chromium, (PDF 만들 때) reportlab 계열 — `tools/tier_pdf949.py` 참고.
+- 사용자에게 파일을 보내는 방법은 환경마다 다르다. Claude 환경은 `SendUserFile`. 다른 환경이면 `hell survive v.N.NN.html`을 작업 폴더에 두고 경로를 알려 준다.
+
+---
+
+## 6. 키 입력·화면 조작 (현재)
+
+- 이동 WASD/방향키(조이스틱 지원) · 공격 자동 · 스킬 `SPACE`/`Q` · 성유물(텔레포트 등) `E` · 일시정지 `P`/`Esc` · 결과 화면 재시작 `R`/`Enter` · 카드 선택 `1~4`(Shift+숫자 = 밴) · 시작 화면 숫자 `1~9`로 캐릭터 선택 · **`H` = 보스전 안내 글씨 끄기/켜기(v10.12)**.
+- 마우스 우클릭·가운데 버튼은 막혀 있다(v9.42).
+- 시작 화면 버튼: 설정 · 도감 · 상점 · 스킨 가챠 · 보스 심장 · 업적 · ∞ 챌린지 · ⚔ 보스 러시 · 기타(etcBox) · 지옥 탭(1~7지옥) + 층 버튼.
+
+---
+
+## 7. 최근 작업 이력 (v10.01 ~ v10.12) — 이어받는 사람이 꼭 알아야 할 것
+
+| 버전 | 커밋 | 내용 |
+|---|---|---|
+| v10.01 | a464575 | 호랑이 십자가 상시 회전·늘 벽까지(불 뿜기 삭제)·2페이즈 역회전, 돌진 5번 전부 피하면 기절→가드, 화염 호랑이 심장 추가(16번째) |
+| v10.02 | 90ada87 | 불구렁이 땅파기 균열 그물(내 길 뒤에도 3줄/2페이즈 5줄)·참호 시간 증가·용광로 흡입 대폭 강화(옆걸음 탈출 확인 `snk1002.py`) |
+| v10.03 | 5ba49a5 | 호랑이 카메라 안 딸려감·리듬 돌진 항상 직선 4연속(나를 겨눔) · 황금 임프 처치 조각 10,000을 결과창에 표시(`P.impShards`) |
+| v10.04 | fd14699 | 검 도깨비 회전 베기 돌진 속도 ×3(예고 1.3초) · 검 도깨비 심장 추가(17번째, **도트 줄 없음 → 임시 코드 그림**) |
+| v10.05 | f121560 | 시체고래 파도 ×3 · 보스전 안내 글씨/시간 ×2 · **심장 줄 잠금**(2줄 이상 심장, 잠금 1개당 재설정 비용 ×2) · 검 도깨비 결계 전체 ×1.6 · 악마처형자 구르기 3번 · 서리 도탄 조합(`gCryo`) |
+| v10.10 | bdd96c6 | **⚔ 보스 러시 대개편**(§7-1) |
+| v10.11 | 304cbac | 보스 러시 2라운드 산소가 안 줄던 버그 수정 |
+| v10.12 | 3bf1e67 | 보스전 안내 글씨 크기 1배로 복원(시간 2배 유지) + **H키로 끄기/켜기** |
+
+### 7-1. v10.10 보스 러시 대개편 — 사용자 요구 11개와 구현
+
+사용자 요구(번호) → 구현: ① 클리어 경험 있는 마왕만 풀 + 심장 드랍(`brPool` = 도감 처치 기록, 심장은 바로 인벤토리) ② 4라운드(`BR_N`) ③ 전용 증강 [시간 왜곡] `brCool`(스킬 쿨 -10%/장, 최대 3, `rushOnly`) ④ 심장 옵션 미적용(`applyHeartOptions=false`, `rushBoot`/`runBonus`) ⑤ 이속 하한/상한(`BR.spdMin` 230~`spdMax` 290, `P.espd`) ⑥ 시작 Lv.20까지 증강 전부 직접 선택, 2·3·4라운드 전 증강 2개/5개 선택 ⑦ 지하 30층 클리어 후 해금(`rushReady`), 마석(레어1/에픽2/유니크3/레전더리 6%, 공격력·공속·최대 체력·영혼 조각, **보스 러시 빼고 전부 적용**) ⑧ 스킬 뽑기권(= **스킨 가챠 1회 무료권**, `SAVE.rush.tix`) + 주사기(옵션 3줄 심장 게이지 3~10%, 100%면 4번째 옵션 `st4/v4`) ⑨ 보상표: 고른 증강 합계 6=하드코어(뽑기권 4+레전더리 마석+주사기 100%) · 9=하드(3+유니크+50%) · 12=노멀(2+에픽+30%) · 15=이지(1+레어+5%) ⑩ 라운드 맵 기믹: 1 없음 · 2 산소존 · 3 +호랑이 십자가(회전) · 4 +10초마다 방향 바뀌는 똥바람 ⑪ ES6 `class BossRushManager`(전역 `rush`): `round`/`totalCardsPicked`/`modifiers`(배열)/주사기 로직.
+
+**사용자 지정이 없어 내가 정한 값(조정 요청 가능):** 이속 230~290 · 라운드 난이도 `BR.tier`=[3,5,7,9] · 증강 선택 시점은 2·3·4라운드 **전** 3번(4번이면 합계 6/9/12/15가 불가능해서) · 완주 시 마왕당 조각 60/완주 400 · 똥바람 초당 85px·내 이속의 45% 상한 · 중간 사망 시 영혼 조각만 지급 · 규칙 9: 큰 패턴 중(`bossExPaused`)·흡혈 고리 통로 예고 중엔 십자가 피해·바람이 쉼, 같은 기믹이 이미 있는 마왕(어인왕 산소·호랑이 십자가·백곰 바람)은 그 기믹을 겹치지 않음(`skipMod`).
+**주의:** 해금이 30층으로 바뀌어 20층만 깬 예전 세이브는 보스 러시가 다시 잠긴다. 마계 물고기 해금(`rushOpen`)은 기존 20층 기준을 유지.
+**미해결 질문(사용자 답 대기):** v10.11에서 산소는 항상 줄도록 고쳤지만, 십자가·똥바람은 큰 패턴이 긴 마왕(화염 호랑이·불구렁이·백곰·시체고래·루드라·화염죄수·검 도깨비)에서 `rush.paused()`로 자주 쉰다. "항상 작동하게 바꿀까요?"를 물어 둠.
+
+### 7-2. 버그 원인 기록 (같은 실수 반복 방지)
+
+- v10.11 산소: 감소(`P.o2 -= drain*dt`)가 "큰 패턴 중 기믹 쉼" 플래그(`run = !this.paused()`)에 묶여 호랑이 100%·불구렁이 95% 등에서 거의 안 줄었다. 규칙 9는 **피해만** 쉬게 하면 지켜지므로 감소는 항상, 0일 때 피해만 `run`일 때. 테스트가 "라운드 하나라도 줄면 통과"여서 못 잡았으므로 `o2diag.py`(마왕 18종 전부)로 강화. **교훈: 맵 기믹 테스트는 마왕 전종으로 돌릴 것.**
+- v9.59 LAZY 그림 불러오기 실패 후 영영 포기하던 버그(`lazyLoad`가 4초마다 재시도), v8.85 어인왕 산소가 다음 판에 남던 버그(`reset()`에서 `kgClear()`), v8.98 새 루트(`P.route`)가 `theme()`/HUD를 터뜨리던 버그 등은 Part B에 적혀 있다.
+
+---
+
+## 8. 앞으로 할 수 있는 일 (대기·선택)
+
+1. **보스 러시 십자가·똥바람 상시 작동 여부** — 사용자 답 대기(§7-1).
+2. **검 도깨비 마왕 심장 도트** — 17번째 줄(`ROW=16`)을 사용자가 주면 `tools/atlas/heart7_build.py` 계열로 `heart.webp`에 추가(현재 `heartIcon`이 임시 코드 그림 사용).
+3. 지하 33층~ 7지옥 도산 확장: 열 때는 `OPEN_TIER`만 올리고, `loadSave`에 이전 기록 인정 한 줄 추가(`diff.clr`로 이미 인정되는 구조), 마왕·보스맵이 아직 없는 층은 `pickBossK`가 임시로 화염 호랑이를 씀. **도산 보스맵 `dmap`은 광장만 있음.**
+4. **난이도 확장 목표: 1~6지옥 → 13지옥** (7~13지옥은 한국·일본·서구·영미 지옥 신화 컨셉으로 구상 중). 지금 구현은 7지옥 도산과 업경의 심판정(31~35층, 33층부터 잠김).
+5. 티어표 재측정: 밸런싱이 끝난 최종 버전에서 새 기준으로 다시 측정할 계획. 총점에 "제한 시간 내 처치율"을 넣고 싶어 함(사람은 오래 싸우면 회피율이 떨어져 마왕을 약 3분 안에 잡는 게 중요). 게임 버전이 올라가면 **재측정이 필요한 캐릭터만 알려 주고 시뮬 요청서(프롬프트)를 뽑아 달라고** 함. 티어 결과는 규칙 7(보스별 상성 + s2/s1 JSON, PDF).
+6. 티어 사이트 "지옥 티어 도감"(https://claude.ai/artifact/EUtrTxSKKgA4vNnhJbBXAD)은 Claude가 유지보수하기로 함. 갱신할 때는 게임 배포본에서 인게임 도트를 확인해 그대로 넣는다. 이후 증강 티어표도 추가할 계획.
+7. 사용자가 새로 요청하는 캐릭터·보스·밸런스·UI 작업.
+
+---
+
+## 9. 세이브·배포 주의
+
+- 세이브 키 `hellSurvivorSave1`(localStorage)은 **절대 바꾸지 말 것**(진행 소실). 이 키 외에 `hsBnHide`(보스전 안내 글씨 숨김)만 별도로 쓴다. 기기·브라우저마다 따로 저장되므로 환경을 옮길 때는 설정 화면 [파일로 저장]/[코드 복사] → [파일/코드 불러오기]로 옮긴다(`HS1z:` gzip base64 / `HS1:`). 불러올 때 현재 세이브는 `hellSurvivorSave1_bak`에 백업된다.
+- `index.html`은 약 1.7MB(그림 제외). **배포 때마다 `ls -l index.html` 크기를 보고**한다. 저장소 `.git`은 이미 1GB를 넘었다(규칙 13). 단일 공유 파일은 GitHub에 올리지 않는다.
+- 저장소 루트 `sw.js`(서비스 워커)는 그림 캐시용 — **지우거나 옮기지 말 것**.
+- 검색 노출 관련 태그·robots·sitemap은 만들지 않는다(규칙 12).
+- 쿠폰: 지금은 `pyeon()` 하나(영혼 조각 +10000, 1회). 문어현자 스킨·`ai소프트웨어학과` 쿠폰은 v9.73에 삭제됨.
+
+---
+
+## 10. 이 문서를 받은 AI가 지켜야 할 최소 약속
+
+1. 먼저 Part B(`CLAUDE.md`)를 **끝까지** 읽고 시작한다.
+2. 규칙 §2 전부 준수(특히 2·9·10·15와 매 버전 커밋/푸시/파일 이름).
+3. 수정 → `check.py` → 빌드 → 관련 테스트 → smoke 17/17 → 분리 빌드 → 커밋/푸시 → 사용자에게 파일 + 짧은 한국어 보고.
+4. 내가 임의로 정한 수치와 고친 문구는 숨기지 말고 보고.
+5. 애매한 파괴적 결정만 질문, 나머지는 합리적으로 진행.
+
+---
+---
+
+# Part B — `CLAUDE.md` 전문 (게임 구조 레퍼런스)
+
+# 지옥의 생존자 (hell survive) — 작업 인수인계
+
+한 파일짜리 HTML5 서바이버류 게임. 사용자(편규빈, GitHub Magcargo9999)가 도트 시트를 주고 기능·밸런스를 요청하면 Claude가 구현한다.
+**이 문서를 먼저 다 읽고 작업할 것.** 답변은 한국어로 짧고 간결하게.
+
+## 꼭 지킬 규칙 (사용자 지시)
+1. **파일 이름:** 매 빌드 `hell survive v.N.NN.html`, 버전은 매번 올린다. 마지막 배포 = **v10.12** → 다음은 v10.13. (v10.01부터 10대, 사용자 지시) (v6.01부터 6대 · v7.01부터 7대: 지하 10층·버섯 맵 개편 · **v8.01부터 8대: 보스 심장 시스템 기준, 사용자 지시**)
+   - 끝자리: 작은 수정 · 가운데 자리: 캐릭터·보스 추가 같은 큰 변화.
+2. **도트는 절대 수정·재색칠 금지.** 자르기·배경 제거·마스크·배율 조정만 허용.
+3. 기능은 **단순하게**. 서로 복사한 듯한 중복 스킬/카드 금지.
+4. **규격표 ①~⑩**(`docs/hell survive 규격표 v4.15.pdf`)을 따른다. 규칙을 깨야 하면 먼저 허락받는다.
+   - 소폭 ±6~10% · 중폭 ±11~20% · 대폭 ±21~35% · 재설계급 35%+ (스탯별 보정 배율은 규격표 ②).
+   - 소개 문구는 역할 하나 + 약점 하나 (규칙 ⑤).
+5. **1진화에는 스킬을 넣지 않는다** (사용자가 직접 요청한 경우만 예외: 연보라 총령 차지샷, 문어 마법사 코끼리 돌진).
+6. **매 버전 GitHub 커밋 + 푸시** (아래 배포 절차). 커밋 메시지에 변경점 한 줄.
+7. **티어 결과를 줄 때는 항상 보스별 상성 + 티어표 사이트에 들어갈 값(s2/s1 JSON) 전부 포함**해서 PDF로 준다 (`docs/`의 기존 "티어표 추가" PDF 형식 참고).
+8. 오래 걸리는 시뮬레이션은 사용자가 원할 때만. "오래 걸리면 하지 마" 라고 한 적 있음.
+9. **화면·보스방 전체를 덮어 어디에도 안전한 곳이 없는 패턴(무조건 못 피하는 패턴)은 넣지 않는다.** 이속 강화를 안 찍어서 못 피하는 건 괜찮지만, 이속을 끝까지 찍어도 피할 안전 구역·통로·시간이 없는 패턴은 안 된다. 새 패턴·난이도 배율을 넣을 때 최고 단계(5단계)에서도 안전 구역이 남는지 확인한다. (예: 흡혈 고리의 안전 통로 `inTeleGap`)
+10. **설명 문구는 항상 구현을 따라간다.** 스킬·카드·조합·진화 소개·난이도 안내·보스 안내 배너·도감·상점 등 화면에 적힌 수치·효과 문구가 구현과 다르게 바뀌면(밸런스·기믹 수정 포함) 같은 작업 안에서 문구도 전부 고친다. 기능을 고칠 때마다 이름·수치로 템플릿을 grep해 남은 옛 문구가 없는지 확인하고, 무엇을 고쳤는지 사용자에게 보고한다.
+11. **딜 미터기 이름은 화면의 이름과 항상 같게.** 스킬은 `skillName()`(변형 이름 포함), 카드·조합은 `upName()`/`altOf()`를 쓴다. 새 스킬·카드·피해 출처(`DSRC` 키)를 만들면 `dmName`이 영문 id·옛 이름을 내지 않는지 확인한다 (`tools/tests/dmeter22.py`).
+12. **검색 노출 금지(사용자 결정):** 구글 검색용 태그·`robots.txt`·`sitemap.xml`·Search Console 등록은 하지 않는다. 사용자가 다시 원할 때만.
+14. **미니 보스는 자가복제 금지(사용자 지시):** 새 미니 보스는 다른 미니 보스(원숭이 전사·마안 감시자·해골 전사·절단안의 짐승·혈혼마·네르칸·부패한 성상·해저좀비·가시관 무당벌레·서리혈랑)의 패턴·구조를 복사하지 않고 고유한 패턴 3가지 안팎으로 만든다. **예외로 나오는 미니 보스(말 2종 15%씩 · 어인섬 절단안의 짐승)와 히든 마물은 건드리지 않는다** — 판 전용 미니는 `spawnMini()`에서 `P.bossK`로 갈라 넣는다.
+15. **도감 등록(사용자 지시):** 새 캐릭터·진화 형태·보스·미니 보스·마물을 추가하면 같은 작업에서 도감(`openDex`)에도 항목을 넣고, 처치 카운트 키(`dexKill` 호출부, 미니는 `e.bk`별)가 원숭이 전사 등으로 섞이지 않는지 확인한다. 열린 창(설정·도감·상점·가챠·심장)이 있을 때는 Enter/Space로 게임이 시작되지 않게 키 핸들러에도 넣는다. **도감은 3탭(v8.24, `openDex` · `dexShow`): 캐릭터 도감(플레이어블 계열) · 몬스터 도감(마물·미니·보스·유니크·성유물, `sec('마물 …')` 이후) · 심장 도감(보스 × 4등급, `SAVE.dex.seen['heart:보스:등급']`). 새 캐릭터는 캐릭터 구역(`curT='char'`, 마물 구역 앞)에, 새 몬스터·보스는 몬스터 구역에, 새 보스 심장은 `BH`/`BH_ORDER`에 넣으면 심장 탭에 자동으로 생긴다.** 테스트 `tools/tests/dex823.py`·`dex824.py`
+13. **100MB 경고(v8.14 분리 배포로 해결됨):** 이제 `index.html`은 약 0.8MB이고 그림은 `src/assets/`에 따로 있다. 배포 때마다 `ls -l index.html`로 크기를 보고하고, 저장소(.git)가 이미 1GB를 넘은 상태라는 점도 기억한다. 단일 공유 파일(`build/hell_survive.html`)은 그림이 들어 있어 계속 커지지만 GitHub에는 올리지 않는다(.gitignore).
+
+## 폴더 구조
+```
+index.html              배포본 (GitHub Pages가 서비스하는 실제 게임. v8.14부터 `build.py --split` 결과 약 0.8MB — 그림은 src/assets/ 를 따로 불러온다. 사용자에게 보내는 단일 파일은 `build/hell_survive.html`)
+src/game_template.html  ★ 실제로 고치는 원본 (이미지 자리는 '__XXX__' 토큰)
+src/build.py            템플릿 + src/assets 이미지 → build/hell_survive.html
+src/assets/             모든 도트 아틀라스(webp/png). 경로는 build.py 표 참고
+tools/check.py          문법 확인 (node --check)
+tools/smoke.py          진화 경로 15개 자동 테스트 (정상이면 15줄 모두 끝이 [] )
+tools/tests/*.py        유령 · 문어 · 수호 리저드 · 챌린지(chal.py) · 타락천사(angel.py) · 악마 총잡이(gun.py) · 오류 찾기(fuzz.py: 전 캐릭터 무작위로 오래 돌려 콘솔 오류 수집)
+tools/h301.py           playwright 공용 헬퍼 (__lv, __run, __s 등 테스트용 전역 함수 주입)
+tools/sim600.py         봇 시뮬레이터 (B=보스전, L=필드) · tools/bal_run30.sh <빌드> <폴더> <단계> <N> [보스...] → tools/bal_cmp30.py <폴더> <단계> (보스별 승률·깎은 체력)
+tools/perf.py           프레임 측정 (실제 루프 + CPU 프로파일, 장면 field·boss·angel·dream·chal)
+tools/tier_run.sh       새 캐릭터 티어 측정 / tools/tier_an.py 결과 분석
+tools/atlas/*_build.py  각 캐릭터 시트 → 아틀라스 만들 때 썼던 스크립트 (참고용, 원본 시트는 사용자가 다시 첨부)
+                        shroom_build.py = 히든 마물 대형 버섯 괴물(sh, 시트 알파 그대로)
+                        mush_build.py = 지하 6~10층 버섯 세트(바닥·소품·버섯형 악마·보스맵, 소품 좌표 mprops.json)
+                        skin_build.py = 스킨(칸 경계를 가장 빈 세로줄로 옮기는 `valley` 옵션: 몸·꼬리·이펙트가 칸에서 잘리지 않게 · 악마 사냥꾼 레어 gunH · 청염 악마 사냥꾼 에픽 gunE · 지옥늑대 wolfE) 아틀라스·일러스트 (배경 판정 thr를 낮게 — 어두운 옷이 투명해지지 않게, 새 스킨도 16~20 + close 1로 시작해 보라색 배경 위 미리보기로 구멍 확인) · shk_build.py = 거대 버섯마귀
+                        ch_build.py = 챌린지 맵 · 절단안의 짐승(cm) · 심연의 촉수마왕(ab) · an_build.py = 타락천사(an·anfx·amap) · gun_build.py = 악마 총잡이(gun)
+data/tier_v501.json     기준 티어표 (s0/s1/s2), data/tier_additions.json 이후 추가분
+docs/                   규격표 · 티어표 · 기획서 PDF
+build/                  (git 무시) 빌드 결과·스크린샷
+```
+
+## 작업 절차
+```bash
+pip install playwright --break-system-packages  # 없으면 (Chromium은 보통 미리 설치됨)
+python3 tools/check.py                 # 1) 문법
+python3 src/build.py                   # 2) 빌드 → build/hell_survive.html  (+ python3 tools/mkmap.py 로 docs/MAP.md 갱신)
+timeout 900 python3 tools/smoke.py | grep -c "\[\]$"   # 3) 15 이어야 정상 (약 5분)
+PYTHONPATH=tools python3 tools/tests/octo.py        # 필요할 때 캐릭터별 테스트
+# 4) 새 UI·이펙트는 playwright로 스크린샷 찍어 직접 눈으로 확인
+cp build/hell_survive.html "hell survive v.6.09.html"   # 사용자에게 보낼 파일 (SendUserFile)
+python3 src/build.py --split           # index.html = 분리 배포본(그림은 src/assets 를 따로 불러옴, 약 0.8MB)
+git add -A && git commit -m "v6.10: 변경점 한 줄" && git push origin main
+```
+- 커밋 작성자: `-c user.name="Magcargo9999" -c user.email="gyubinpyeon@gmail.com"`
+- 템플릿 수정은 python 문자열 치환(정확히 1회 일치 assert)으로 하는 게 안전했다. 주석을 줄 중간에 넣으면 뒤 코드가 주석 처리되니 주의 (실제로 한 번 깨졌음 → check.py로 잡힘).
+- 테스트 훅: 게임은 `window.__G` 로 내부 노출 (startGame, tick, addExp, spawnEnemy, enterArena, raiseCastle, cast, pick, hurt, DMETER, fwStart …). 새 기능 테스트에 필요하면 `__G`에 추가.
+
+## 게임 구조 요약 (src/game_template.html, 약 6,500줄)
+- **캐릭터** `CHARS`: wolf, snail, archer, chimera, lizard, twins(사슬 악마, 벨리아·셀리아 처치 해금 · v9.02: 공속(`aspdE()`)이 사슬 회전 속도에 그대로 곱해짐, 기본 회전 2.2 — `updateTwins`), ghost(연보라 구슬 유령), octo(문어 마법사, 히든: 난이도 2+ 유니크 몹 처치 해금), gun(악마 총잡이, 지하 6층 마왕 처치 해금 · 예전에 깬 기록 `chOpen()`도 인정). 각 `role`/`weak` 필드 = 카드 앞면 문구.
+- **진화:** Lv.10 루트 선택 → Lv.20 최종 (용암 달팽이는 Lv.25 3단계). `applyEvo(to)` 에 캐릭터별 스탯. 폼 데이터: `ROUTE_FORMS`, `SNAIL_FORMS/VENOM_FORMS/LAVA_FORMS/BOMB_FORMS`, `ARCHER_*`, `CHIM_FORMS`, `LIZ_FORMS`, `TWIN_FORMS`, `GHOST_FORMS`, `OCTO_FORMS`. 프레임별 사각형 `anim.X.fr=[[x,y,w,h,ax,ay]…]`.
+  - 달팽이 루트: venom(맹독) / lava(용암) / **bomb(폭탄, v5.13 추가)**: 기본 공격 폭탄 1→4번째 점점 커짐, 폭발 자리 불웅덩이, 최종 스킬 megabomb.
+  - 리자드 루트: sword(→ rage/water) / guard(수호의 길 → 수호의 리저드, 스킬 shell 반격의 갑주).
+  - 늑대 혈랑 최종: blood / holy / fallen(타락한 혈랑, 숨은 보스 처치 시 열림, 스킬 bsigil 혈왕의 진).
+- **마계 물고기 (v9.44 → v9.49 출시, v9.51부터 해금 = 지하 20층 마왕 처치 · `bossDefeated`의 `P.fishOpen` · 예전 20층 클리어 기록 `rushOpen()`이면 `buildCards`에서 바로 열림 · 이미 산 사람은 그대로, 상점에서는 더 안 팔림 `price:0, cond`)** (`fish`, 템플릿 `FISHA`·`FISHA1`·`FISHA2`·`FISH_FORMS`·`FISH_AURA`·`FISH`·`FWAVE`·`fishR`·`updateFish`·`fishOrb`·`drawFishAura`, 아틀라스 0진화 `tools/atlas/fish_build.py` → `fish.webp` · 1·2진화 `tools/atlas/fish12_build.py <미꾸라지 시트> <마해룡 시트> <폴더>` → `fish1.webp`·`fish2.webp`(LAZY, 마해룡 시트는 몸이 띠를 채워 세로 칸막이 판정을 끔 · 수압 원 가운데 용은 원형 마스크)): 0진화 마계 물고기 = 평타 없음, 몸 둘레 물오라(공격 간격마다 오라 안 모든 적에게 공격력×`FISH.dm` 0.8). 오라 반경 `FISH_AURA` [120, 160, 230] × 넓은 오라 카드(`P.rng`). Lv.10 마계 미꾸라지(스킬 없음 규칙 5): 물방울 평타 `fishOrb`(공격 간격×1.25마다 공격력 70%, 사거리 430, 딜미터 '기본 공격', shard `fsh`) · Lv.20 공허의 마해룡: 절대 수압 3구역(안쪽 35% ×1.5 · 바깥 30% ×0.6 + 밀어내기 170) · 물방울 2발 · 스킬 `vwave` 포식자의 파도(쿨 12, `fwaveQ`/`startFishWave`/`stepFishWave`/`drawFishWave`: 걷던 방향 `P.lastX/Y`로 0.7초 · 초당 960 · 무적, 폭 92 안 적마다 한 번 공격력 650% + 양옆 넉백, 보스방·챌린지에선 `inPoly` 밖이면 멈춤). 티어 B 78.6(v9.49, `docs/… 공허의 마해룡.pdf`). 테스트 `tools/tests/fish949.py`(옛 `fish.py`는 잠금 시절)
+- **악마 총잡이** (템플릿 'v6.40 악마 총잡이' 블록, `GUN_FORMS` · 아틀라스 `GUNA`, 그리기는 `drawGun`): 0진화 악마 총잡이 → Lv.10 지옥의 무법자 → Lv.20 악마처형자(스킬 `roll` 구르기). 리볼버 6발(`P.mag`/`P.magI`) — 평타 한 번 = 한 발(`gunShot`), 6발을 다 쓰면 재장전 `gunReload()`(1초, 빠른 장전 카드 −15%씩). 재장전할 때 6발이 하나씩 무작위(`GUN_AMMO`): 일반탄 55% 100% · 도탄 25% 100%(적에게 최대 3번 · 화면 끝 2번 튕김 `gunEdge`) · 불씨탄 15% 200% + 관통 + 화상 3초(`burnSrc`) · 공포탄 5% 10%. 고유 카드 `UNIQUE.gun`: 빠른 장전(gReload) · 특수탄 강화(gSpec, 불씨·도탄 +15%) · 불씨 각인(gEmber, 불씨 +5%p / 일반 −5%p) · 현상금 사냥(gBounty, 처치마다 1.5초 이속 +2% 중첩, 최대 3/5/7) · **도탄 각성(gRico, v9.84: 확장 탄창·불씨 탄띠 삭제 대신 — 도탄 확률 +6%p/장 · 도탄이 적에게 맞을 때마다 그 탄 피해 +10% 누적, 최대 3장)** · 불씨 각인 +6%p(v9.02). 구르기(`rollQ`, `ROLL.n`): 4초 안에 SPACE로 3번(v9.02: 3→2 · v10.05: 2→3) · 조합 ★서리 도탄 `gCryo`(v10.05, `GCRYO`·`gunCryo`) 짧게(약 210px, 무적), 구를 때마다(v8.97) 남은 탄을 가까운 적들에게 전부 쏘고 재장전(`gunDump`, 재장전 중이어도 즉시 장전) · 효과음 `sfx('roll')`, 시간이 지나면 남은 횟수 증발. 0·1진화는 스킬 없음. 머리 위 탄창 표시(`drawGunMag`). 딜미터기 키 `g:N/R/F/B`.
+- **유령 기사 루트 (v8.98, 구슬 유령 Lv.10 갈림길 `openGhostRoute`: `P.route` 'orb' = 연보라 총령(기본) / 'knight' = 유령 기사):** 폼 `KNIGHT_FORMS`(`ghostForm(route,f)` — FD·formAt이 씀, 그림이 없으면 총령 그림), 아틀라스 `IMG.dk`/`DKF`(LAZY, `tools/atlas/dk_build.py <유령 기사 시트> <듀라한 시트>` — 위·아래 절반 칸 경계 따로·흑색 갑옷은 좁은 틈 막고 배경 판정·남색 빛 번짐은 밝기만큼 반투명, 시트는 왼쪽을 봄 flip -1, 공격 줄 fl -1, `k2_*_nh` = 머리 뗀 몸). 유령 기사(1진화, **스킬 없음** 규칙 5): 사브르 `knightSlash` — 앞쪽 반원(사거리×`KN.reach` 1.3) 한 번 휘두를 때 2번(`KN.hits` [3,6], 타당 `KN.hm` 80%), 공격력 ×1.15×(근접/원거리 너프 비), 공속 cd ×0.86, 이속 +5%, 회피 +8%(`P.dodge`, 최대 `KN.dodgeMax` 25%). 듀라한(최종): 체력 +45 · 공격 ×1.0 · 이속 +2% · 회피 +5% · 스킬 `lhead` 잃어버린 머리 소환(쿨 20) — ES6 `class SeveredHeadSummon`(전역 `lhead`, `castLostHead`/`stepLostHead`): 10초(쿨 28) · 체력 = 내 최대 체력 30% · 보스 → 미니 → 가장 가까운 적(`pick`) 추적 · 0.6초마다 영혼 불꽃(반경 92, 공격력 110%, 딜미터 `sk:lhead`) · 화면 안(`leashed`: 가로 W/2-50 · 세로 H/2-60, 최대 560)·맵 안(보스방·챌린지 `inPoly`) · 적에게 닿으면 체력 감소 → 0이거나 시간 끝나면 목으로 돌아와 흡수(`back`), 나와 있는 동안 몸은 `_nh` 프레임. 전용 카드 `kStep` 유령 보법 · `kRip` 되받아 베기(v8.99: 회피하면 2.5초간 사브르 피해 +25%씩) · `kHead` 분노한 머리(form 2), 공용 카드 이름 `alt.knight`, `gmore`는 `noRoute:'knight'`, 총령 스킨(ghostG·ghostU)은 `noRoute:'knight'`(`skinOn`). 도감 `ghost:1k`·`ghost:2k`. 테스트 `tools/tests/dk898.py`(ghost.py는 `__rt=0`로 총령) **v9.02:** 머리 불꽃 피해 롤백(`KN.lh.dm` 1.8 · 0.5초) · 머리 체력 삭제 — 적에게 맞아도 안 사라지고 시간(10초 + kHead)으로만 귀환. **v9.01:** 듀라한 너프 · 공용 `gmore`(구슬 늘리기)는 기사에서 [검풍](`alt.knight`, 사브르 피해 +5%·넉백 +15%, 횟수 그대로) · **`theme()`/HUD가 `ROUTES[P.route]`를 읽어 'knight'에서 예외 → HUD 통째로 사라지던 버그: 새 루트(route)를 만들면 `theme()`·`lvTxt`가 터지지 않는지 꼭 확인**
+- **v9.72 보스 수정:** 불구렁이 똬리 동안 몸통 마디 무피해(머리만) · 팔열지옥 26~29층 보스방에도 열기(`heatArena`, 휴식존 4곳 `HEAT_ARENA_Z` — 30층 호랑이방은 없음, 새 보스방 패턴을 넣을 때 휴식존 위치를 피할 필요는 없지만 열기 때문에 오래 걸리는 테스트는 `P.heat=0`으로 보정) · 호랑이 카메라는 기울기만(`TGW.camW`) · 수플렉스 안전지대 더 작고 빠르게 · 불의 십자가는 불 뿜는 동안에도 회전 · 도감 진화 루트 그림에서 스킬 보기(`DEX_SKILL` — **새 스킬·최종 진화를 만들면 `DEX_SKILL`에도 한 줄**) · 총령 1진화 렉 = `hqLow`(고해상도 시트는 `hq` k=1 목록이나 `hqLow`로 — 새 시트가 1500px 이상이면 확대 캔버스가 520만 px를 넘는지 확인). 테스트 `tools/tests/v972.py`
+- **7지옥 보스맵 (v9.86):** 받은 그림 `IMG.dmap`(836×784 ×5 nearest, `src/assets/dmap/dmap.webp`, `tools/atlas/dmap_build.py`), 광장 `IMAP_DOSAN`(X 1000~3200 · Y 890~2565 · 아래 계단 출구, 중심 (2100,1727)) — `FSET_ARENA.dosan='dosan'` → `useIMap('dosan')`. **`OPEN_TIER`=31: 지하 31·32층 열림(33층부터 잠김, 열 때는 OPEN_TIER만 올림 — 이전 기록은 `diff.clr`로 이미 인정됨).**
+- **검 도깨비 마왕 (v9.85, `bk:'dok'`, 템플릿 'v9.85 검 도깨비 마왕' 블록, 조절값 `DOK`, 보스 밖 `DOKW`, 아틀라스 `IMG.dok`/`DOKF`(`tools/atlas/dok_build.py`)·`IMG.dokfx`/`DOKX`, ※ `dk`/`DKF`는 유령 기사라 접두사 DOK, 지하 31층 100% · 32층 70% — `pickBossK` t=30·31, 층은 잠김 `OPEN_TIER` 29, 보스방은 `FSET_ARENA.dosan`=용암 IMAP 임시):** `DokkaebiAI`(chase ⇄ [dash → guard → dash → zone], 2페이즈 [dash → drop → guard → dash → zone → drop]) · 가드 `dokGuardHit`(hurtEnemy 맨 앞, 피해×0.1, 원 `gdR` 안 3번 → counter) · 결계 `DOKW.zone`(`dokPushIn`이 벽 안에 가둠, 회전 베기 길 `dokSpinPath`) · 규칙 9 `dokExPause`. 도감 boss21 · 업적 `k_dok`. 테스트 `tools/tests/dok985.py`
+- **심해의 시체고래 (v9.80, `bk:'whl'`, 템플릿 'v9.80 심해의 시체고래' 블록, 조절값 `WH`, 보스 밖 `WHW`, 아틀라스 `IMG.whl`/`WHF`(`tools/atlas/whl_build.py <몸 시트>`) · `IMG.whlfx`/`WHX`(`whlfx_build.py <이펙트 시트>`), 둘 다 LAZY — `enterArena`가 `imgReady`로 기다림, 지하 18층 100% · 19층 70% · 20층 이후 `ICE_L` 균등, 어인섬 보스맵 `SMAP`):** `WhaleAI`(intro·chase ⇄ [breath → bones → vortex → dive → breath → wave → slam], 가까우면 bite) · 해류 부채꼴 3줄 · 뼈 소환 원 · 몸통박치기(내 자리 r160, 1.4초) · 소용돌이(끌림 105 < 이속) · 잠수 습격(느린 추적 원) · **죽음의 파도 `wave`: 방을 10줄(`whLane`)로 나눠 한 줄만 비움, 안전 줄은 내 줄에서 1~2칸 옆(2.7초 안에 도달)** · 체력 35% `tide` 원혼 폭주(파도 3번 교대). 규칙 9 `whExPause`. 도감 boss20 · 업적 `k_whl`. 심장·보스 러시 없음. 테스트 `tools/tests/whl980.py`
+- **지옥의 화염 호랑이 (v9.63, `bk:'tig'`, 지하 30층 전용 6지옥 최종 마왕 — `pickBossK(29)`, 팔열지옥 용암 보스맵 IMAP, 템플릿 'v9.63 지옥의 화염 호랑이' 블록, 조절값 `TG`, 보스 밖 `TGW`, 몸 아틀라스 `IMG.tig`/`TGF` — `tools/atlas/tig_build.py <보스 시트>`(마젠타 배경 · 칸 경계는 겹친 불꽃을 가장 적게 지나는 굽은 seam · 1/3 축소 → ×3 nearest, 줄 idle6·walk8·atk4·dash6, 오른쪽을 봄) · 이펙트 아틀라스 `IMG.tigfx`/`TGX` — `tools/atlas/tigfx_build.py <이펙트 시트>`(붉은 그라데이션 배경을 칸마다 정규화 합성곱으로 세워 색 차이만큼 투명도, 설명 글씨 제외, 1/2 축소, `tfx()`로 그림 — 가드·기절·잡기·점프·내리꽂기·빛의 쇄도는 이 시트의 호랑이 그림을 몸 대신 씀 `TG_FXK`)):** ES6 `TigerAI`(intro·chase ⇄ [dash → guard → suplex → dash → guard], 가까우면 claw) · 맵 기믹 불의 십자가 `TGW.cr`(팔 4개 560, 5초 회전 `crOm` 0.4 → 2초 불 뿜기: 0.6초 예고 뒤 멈춘 팔이 광장 벽까지 `tgArmLen`(출구 통로 제외), 판정 `tgCrossAt`/`tgArms`, 팔 그림 = 'jet' 도트를 팔 길이만큼 늘임) · 완벽 회피 `tgPatEnd`(패턴 하나를 안 맞고 넘기면 `TGW.streak`+1, `tgHit`이 실제로 맞으면 `hitF` → 3연속이면 `stun()` 4초 + 십자가 11초 꺼짐) · A 가드 2초(`tgGuardHit`이 hurtEnemy 맨 앞에서 피해 0 · 0.08초마다 `gHits`+1 → 반격 폭발 반경 `tgCxR` 130×1.06^n 최대 400 · 다음 돌진 속도 ×1.04^n 최대 1.8 `boost`) · B 연속 돌진 3번(`dsWarn`/`dsRun`/`fin`, 예고 = 리듬 경고선 도트 `tgArrow`) · C 멸옥 수플렉스(`sxStart` → 안전지대 `tgSafeSpot` 220~330 · 십자가 팔에서 떨어진 곳 · 수플렉스 동안 십자가 `hold` → `sxDash` → 안전지대·무적(`tgDodgeQ`)이 아니면 확정 잡기 `sxHold`: 내 그림 숨김 `tgHold()`, 잡몹 즉사 `tgQuake`, 현재 체력 80% 직접 차감) · 40% `roar2` 포식자의 추적(십자가 소멸 · 카메라 `tgCam()`이 호랑이를 따라감 + `tgPushP`가 화면 밖의 나를 끌어옴 · `prowl` 이속 = `P.spd`×1.5 · 리듬 돌진 `tgRwPlan` line/zig/tri/x/curve). 규칙 9: `tgExPause` = 늘 true(tierEx 안 씀). 화면 위 '완벽 회피 ●○○' `drawTgHud`. 도감 boss19 · 업적 `k_tig`·`h6`(tier 29). 심장 있음(v10.01). **v10.01: 십자가는 멈추지 않고 늘 벽까지 뻗음(불 뿜기 삭제) · 2페이즈엔 반대로 초당 0.7rad · 기절 = 연속 돌진 5번을 다 피했을 때만(`tgDashDone`), 곧바로 가드, 한 번이라도 맞으면 없음.** 테스트 `tools/tests/tig1001.py` (옛 tig963의 십자가 불 뿜기·완벽 회피 3연속은 폐기)
+- **불구렁이 (v9.46, `bk:'snk'`, 템플릿 'v9.46 불구렁이' 블록, 조절값 `SN`, 보스 밖 `SNW`, 아틀라스 `IMG.snk`/`SNF` — `tools/atlas/snk_build.py <시트>`(인게임 줄 대기6·이동8·잠복6·돌출6·공격6·피격4·사망6 + '체표(용암)' 칸을 둥글게 자른 마디 무늬 `scale`), 이동·공격·피격 줄은 오른쪽을 봄(`SN_RIGHT`), ×3 nearest, 지하 28층 100% · 29층 70% · 30층 균등, 보스방 마왕성 ARENA, 층은 아직 잠김):** 다관절 몸 `SNW.nodes`(10개 · 2페이즈 20개, `snChain` 사슬 따라오기) + 대리 히트박스 `SnakeNode`(enemies의 kind 'snb' — `hurtEnemy` 맨 앞 `snNodeHit`가 마왕에게 50%/똬리 60%, 한 프레임에 한 번) · ES6 `SerpentAI`(intro·chase ⇄ [burrow → devour → encircle → burrow → devour], 가까우면 bite) · A 파열하는 대지(dig → tunnel `snPath` → 균열 `SNW.cracks` 0.75초 뒤 용암 참호 = 벽 `snCrackPush`(updateCastle, 큰 방 `snHall`) → lurk 돌출 예고, 반경은 `snEscapeR`(지금 구역에서 이속 150으로 갈 수 있는 가장 먼 곳)로 맞춤 → emerge 폭발 + 영혼 구슬) · B 탐욕의 용광로(gape → suck 부채꼴 흡입 105/125 · `snSuckOrb`가 구슬 루프에서 내 자석 밖 구슬을 삼킴 → spit 6+삼킨 수(최대 26, 14 넘으면 두 번)) · C 불길의 환영 포위(`SNW.ring` 400→210 · 밖으로 못 나감 · shards·airs가 벽을 넘으면 되돌아옴(3%씩 최대 15%) · 머리 노출 `enHead` — 230 안에서 5번(`snHitHook`, 0.15초 간격) → stun) · 30% roar → 종말의 똬리 `SNW.coil`(보스방 타원, 20초 · 65%까지 좁아짐 · 용암 기둥 · 풀리면 30초 뒤 다시). 규칙 9 `snExPause`. 도감 boss18 · 업적 `k_snk`. 테스트 `tools/tests/snk946.py`
+- **영벌의 화염죄수 (v9.40, `bk:'cvt'`, 템플릿 'v9.40 영벌의 화염죄수' 블록, 조절값 `CV`, 보스 밖 `CVW`, 아틀라스 `IMG.cvt`/`CVF` — `tools/atlas/cvt_build.py <시트>`(컨셉 시트 한 장: 인게임 줄 대기6·이동8·공격6·피격4·사망5 + 패턴 그림의 절규 5칸 `cast`·변신 3장 `ph2`·돌진 `dash`·불타는 해골 5 `skull`·불길 장판 `fire`·쇠사슬 고리 `hook`, 판 테두리선 `line_mask`·모서리 장식 `no_orn` 제거, 폭발 그림은 주먹이 겹쳐 미사용), 이동·공격 줄은 왼쪽(`CV_LEFT`)·돌진은 오른쪽을 봄, ×3 nearest, 경고색 주황 `CV_RGB`, 지하 26층 100% · 27층 70% · 28층부터 균등, 보스방 마왕성 ARENA(`FSET_ARENA.fire`), 층은 아직 잠김):** ES6 `ConvictAI`(intro·chase ⇄ [chain → furnace → atone → chain → furnace], 가까우면 swing 부채꼴) · 패시브 불길 궤적 `HellfirePatch`/`cvPatch`(최대 22) → 화상 중첩 `P.cvBurn`(초당 최대 체력 1%×중첩) · 형벌의 쇠사슬 `CVW.chain`(warn→fly→back) → 구속 `CVW.tether` 도넛(`tMin` 150 · `tMax` 420) · 용광로의 저주 `cvFurnace`(구슬 `o.burnT` — 구슬 루프 맨 앞에서 자석 무시 · 닿으면 `cvOrbBurn`) · 속죄의 고통 `cvAtone`(hurtEnemy 맨 앞, `petFight`는 `petHitNow`로 감싸 동료 공격 제외) → `cvScream` 해골 고리 · 30% `unchain` → aim(`CVW.aim`, `cvDashLen`)/dash/rest/chase2. 규칙 9 `cvExPause`. 도감 boss17 · 업적 `k_cvt`. 테스트 `tools/tests/cvt940.py`
+- **팔한지옥의 대공작 릴세르카 (v9.20, `bk:'lil'`, 템플릿 'v9.20 팔한지옥의 대공작 릴세르카' 블록, 조절값 `LS`, 보스 밖 `LSW`, 지하 25층 전용 5지옥 최종 마왕, 빙결 투기장 IMAP, **v9.22부터 도트: 아틀라스 `IMG.lil`/`LILF`(`tools/atlas/lil_build.py` ← 인게임 줄 시트(남색 배경) + 캐릭터 시트의 거울, 그룹 idle·move·atk·cast·hit·death·mirror, 높이 100으로 줄여 ×3 nearest, `lilSpr`, 이동 줄은 왼쪽을 봄 → `drawLilBody`가 뒤집음, hit 줄과 거울 피격 칸은 아직 안 씀) · 코드 그림 `lilArt`는 그림이 없을 때만**):** ES6 `LilserkaAI`(intro·glide ⇄ [mirror → chand → waltz → pirouette → mirror → chand], 가까우면 fan · `busy()` = 화이트아웃·기절·동결 중엔 새 패턴 안 씀) · 패시브 결정화 영역 `lsZone`(200 안 초당 동상 +30 → 100이면 `P.chillT` 3초: `aspdE()`·이동 속도 ×`LS.chillMul` 0.2, 1.5초 벗어나면 0, 게이지 UI `drawLilFrost`) · 대공작의 왈츠(`waltzStart`가 800 밖으로 순간이동, `LSW.spot` S = S0 − (B − B0), 초당 120 < 최저 이속 150, 밖이면 12% + 1초 기절 + 스포트라이트 멈춤 `hold`) · 냉기의 거울 `FrostMirror`(kind 'lmir' — enemies에 들어가 공격받음, shards·airs 충돌 루프의 `lmirHit`이 피해 + 3갈래 반사 `lsBolt` 'refl', 깨지면 `lmirBreak` 화이트아웃 `LSW.white`) · 피루엣 · 샹들리에 `LSW.chand` · 25% 백한의 무도회(`ballStart` → 정중앙, `lsIce()`가 이동의 `iceQ`에 들어가 마찰 0, `lsInWedge` 회전 안전지대, 밖은 초당 8%, 방향 전환 12초). 규칙 9 `lsExPause`. 업적 `h5`(tier 24 — `achSync`가 MAX_TIER보다 깊은 층은 `SAVE.diff.clr`로 인정) · `lil_waltz`(manual). 도감 boss16 · lmir. **v9.23 이펙트 도트: 아틀라스 `IMG.lfx`/`LFX`(`tools/atlas/lilfx_build.py`, `lfx()` 헬퍼 — 샹들리에·바늘·반사탄·스포트라이트·시선·결정화 영역·무도회 바닥·화이트아웃 금(grayscale difference), 미사용 nstar·rstar·bliz) · 테스트 `tools/tests/lilfx923.py`** 테스트 `tools/tests/lil920.py`
+- **마하칼 루드라 (v9.10, `bk:'rud'`, 템플릿 'v9.10 마하칼 루드라' 블록, 조절값 `RD`, 보스 밖 `RDW`, 아틀라스 `IMG.rud`/`RDF` — `tools/atlas/rud_build.py`(시트 인게임 줄 + 최종 형태 3장 ×0.66 + 연꽃 5·꽃잎 3, 칸은 `valley`, 연꽃은 패널 배경이 밝아 문턱 135), 시트는 오른쪽을 봄(대기는 정면), 그리기 ×3 nearest, 지하 23층 100% · 24층 70% · 25층부터 `ICE_L`+rud 균등, 빙결 투기장 IMAP):** ES6 `RudraAI`(intro·chase ⇄ [karma → mantra → lotus → penance → mantra → lotus], 가까우면 claw 부채꼴) · A `KarmaBead` 업보의 염주 3개(2페이즈 4) — `rdPull`이 근처(250) 내 투사체(`shards`·`airs`)를 끌어당겨 삼키고, `hurtEnemy` 맨 앞 `rdAbsorb`가 염주 둘레(170) 안 마왕의 피해를 삼킴(지속 피해는 업보로 안 셈) → 업보 24면 3초 예고 → 반경 420 최대 체력 35% (사용자 원안의 '맵 전체 즉사'는 규칙 9로 바꿈) · B 침묵의 진언 `RDW.wave`(초당 280 고리, 통로 3갈래 `rdInGap`) → `P.silT` 3초: 자동 공격 게이트·뼈 투사체·사슬(`twTips` 루프) 봉인, 스킬은 `castSkill`에서 `rdReflect`(최대 체력 12%) · C `FrostMantra` 꺾인 얼음 줄 · D `IceLotus` 연꽃 폭발 + 꽃잎 · 30% `nirvana` → 2페이즈 8자(`orbitPos` 제로노 곡선 A 860 · B 1100) 질주 + 청련 지뢰(`IceLotus` mine), 5초마다 그 자리에서 4초 멈춰 [참회·청련·업보](v9.31: 가운데를 지날 때만 멈추던 걸 고침 · 속도 190~320 · 내 곁 360 안에선 ×0.5) — 안전 지대: 8자 위·아래 가운데와 두 고리 안쪽. 규칙 9 `rdExPause`. **v9.21 이펙트 도트: 아틀라스 `IMG.rudfx`/`RDX`(`tools/atlas/rudfx_build.py`, 자홍 배경 제거 · 이름표 제거, 그룹 bead·beadH·boom·spike·pillar·ring·rune·fwalk·fcast·d4), `rdFx()`로 그림 — 염주(`KarmaBead.draw`) · 폭발(`RDW.fx`) · 가시/기둥(`FrostMantra`) · 룬(진언 고리) · 최종 형태 · 사망 6칸. `ring` 4칸은 미사용.** 업적 `k_bear`·`k_rud`(처치 kill 키)·`rud_clean`(업보 폭발 없이 처치, `manual:true` → `achSync`가 건드리지 않음). 도감 boss15. 테스트 `tools/tests/rud910.py`
+- **황금 악마 임프 (v9.03, `kind:'imp'`, 템플릿 'v9.03 황금 악마 임프' 블록, 조절값 `IMP`, ES6 `GoldImp`, 아틀라스 `IMG.imp`/`IMPF` — `tools/atlas/imp_build.py`, 시트는 오른쪽을 봄, 도트는 붉은색 그대로 + 코드로 그린 황금 후광):** `P.tier>=IMP.from`(20 = 지하 21층)부터 필드(성·보스방·미니·챌린지·러시 제외)에서 `trySpawnImp` — 첫 95~135초, 이후 150~210초(`impAt`). 돌진(448px/s, 27초 안에 못 닿으면 소멸) → 닿으면 한 대(`hurtPlayer`, uniq 피해식) → 0.4초 멈춤 → 도망(플레이어 이속×0.56, 최저 88) → 내게서 `IMP.fleeDist` 1000 떨어지면 그 자리에 멈춤(`st:'stay'`, 880 안으로 다가가면 다시 도망, 화면 밖 방향 화살표) → 한 대 맞은 뒤 54초(`flee`)가 지나면 소멸 (v9.56: 속도 -20% · 시간 ×3 · v9.30/31: 체력 `hpK` 0.25 · 한 대 `hitDm` 0.7). 처치 `impDefeated`: `SAVE.shards += 10000` 즉시(조각 보너스 미적용) + `dropChest`. 규칙 14와 무관(미니 보스 아님). 도감 `imp`, 테스트 `tools/tests/imp903.py`. **업적 '진정한 불운의 아이콘'(`luck`, `LUCK_N` 10, `SAVE.heart.dry`)**: 등급업이 가능한 심장(레전더리 제외)을 연속 재설정해 등급업이 한 번도 없으면 달성 · 보상 5000. 성유물 key·phoenix·fang은 `IMG.relkey/relphoenix/relfang`(`relicIcon`) — 예전 16×16 `IMG.relic`은 mirror·curse·pouch·coin이 계속 씀.
+- **팔한지옥의 백곰 마왕 (v9.02, `bk:'bear'`, 템플릿 'v9.02 팔한지옥의 백곰 마왕' 블록, 조절값 `PB`, 보스 밖 `PBW`, 지하 21층 100% · 22층 70% · 23층부터 `ICE_L` 11종 균등):** 전용 보스맵 빙결 투기장 `IMAP`(`BR_SET.bear='ice'` → `arena.ice`, `BM()`가 IMAP, **v9.52부터 받은 그림 `IMG.imap`(1448×1086, `src/assets/imap/imap.webp`, LAZY)을 ×3 nearest로 `drawImap`이 그림** — 광장 팔각형 `X0 1020·X1 3324·Y0 816·Y1 2205·c 450`, 중심 (2172, 1464), 아래 계단 통로 x 2065~2280 · 출발 (2172, 2700) · 출구 y 2820, 월드 4344×3258 · 예전 ifloor 타일 `imapS`는 삭제 · 팔각 광장 반평면 `pbPlanes`). 테스트 `tools/tests/imap952.py` · ES6 상태 머신 `PolarBearAI`(intro·chase ⇄ [wall → spear → fissure → blizzard], 가까우면 paw) · `IceWall` AABB(1페이즈 내 둘레 육각 감옥 6개 — 상자끼리 겹쳐 틈 없음, 6.5초 / 2페이즈 범퍼 4개 · `pbWallPush`가 updateCastle에서 내 몸(반지름 `PR_W` 18)을 밀어냄 · `pbWallBlock`이 `shards`·`airs` 소멸 · 빙창 `IceSpear`도 막힘) · 눈보라 `PBW.bz`(바람 `pbWind` 105px/s, 동상 `FrostMgr` 초당 +16 → 100이면 `P.frzT`·`P.stunT` 1.5초 빙결(이동·공격·스킬 불가) + 3초 면역, 바람 그늘 `pbShade`) · 균열 `Fissure`(보스에서 맵 끝까지 선분, 0.5초 예고, `segDist` 점-선분 거리, 줄 사이 최소 0.36rad) · 30% `roar` → 핀볼 `pinStep`(벽·장벽 법선으로 속도 반사, 6번/4.2초 → 어지러움 1.6초, 예고선 `pinPath`). 규칙 9: `pbExPause`가 장벽·눈보라·균열·빙결·2페이즈 중 tierEx를 멈추고, 빙결 중엔 새 공격을 시작하지 않음. **v9.51 도트: 아틀라스 `IMG.bear`/`BEARF`(LAZY, `tools/atlas/bear_build.py <시트>` — 줄 idle6·move8·atk6·atk2 6·spec6(깃발·안개 배경은 붉은색·밝기로 떼고 가장 큰 덩어리만)·hit4·death6·phase4·charge6, FK 0.75 → ×4 nearest `PB_K2`, 시트는 왼쪽을 봄 → `face>0`이면 뒤집음, `bearSpr`/`bearPick`: idle·walk·cast=atk2·roar=spec·slam=spec5·ball=charge·2페이즈 `armor`=phase3·변신 `trans`·사망 `death`) 코드 그림 `bearArt`는 그림이 없을 때만. 이펙트 시트(장벽 모듈·눈보라 등)는 아직 안 씀. 테스트 `bear951.py`** 도감 boss14. 테스트 `tools/tests/bear902.py`
+  - **v9.62 백곰 개편:** 이펙트는 전부 받은 도트 `IMG.bearfx`/`BEARFX`(`tools/atlas/bearfx_build.py`, `bearSp(이름,칸,x,y,배율,알파,옵션)`·`pbFx`·`drawPbFx`) — 코드로 그린 몸(`bearArt`)·이펙트 삭제. 동상 `bzFrost` 8/초, 게이지는 눈보라와 무관하게 **장벽 `warmR` 170 안에서만** 내려감(`FrostMgr.update`). 핀볼 `pbBounce` 3 · 기절(`pbDizzy`) 삭제 · 2페이즈 범퍼 5개 간격 `bumpGap` 220(가운데 영역). 테스트 `bear902.py`
+- **7지옥 도산과 업경의 심판정 (v9.71, 지하 31~35층, `floorSet` t≥30 = `'dosan'`, `HELL_SET.dosan` '업경의 심판정') — 필드만, 잠김(`OPEN_TIER` 29 · `TOP_TIER` 34, 열 때는 `OPEN_TIER`를 34로 + `loadSave` 이전 기록 한 줄):** 바닥 `DF`(아틀라스 `IMG.dfloor` 24칸: 0~9 판석(작은 타일 2×2 묶음) · 10~21 뒤집은 변형 · 22·23 칼날 지대 바닥)·`dosanTile` · 소품 `DPROP_RECTS` 23종(`IMG.dprops`, 0·1 = 칼날 지대 그림, 2~13 작은 소품, 14~22 큰 구조물 `DPROPS_BIG`) — `tools/atlas/dosan_build.py <맵 시트>` · **칼날 지대** = `isLava` 자리(핏물 바닥 + 칼날 그림은 `tall`로 앞뒤 정렬): 용암과 같은 피해 + 출혈 `BLADE`(`updateBlade`, 0.5초마다 1중첩 최대 5, 중첩당 초당 최대 체력 0.4%, 벗어나도 3초, 보호막 중엔 안 쌓임) · 잡몹 8종 `DSPECIES`/`DOSAN_MOB`(`IMG.dmob` 4프레임 이동 — `tools/atlas/dmob_build.py <몬스터 시트>`, 판마다 '이동 모션' 줄만, 도감 idx 600~607, 파경까마귀 이속 ×1.5) · 마왕·보스맵은 아직 없음(`pickBossK` t≥29 = 화염 호랑이, `FSET_ARENA.dosan`='fire' 임시) · 업경(행동 분석) 기믹은 보스용으로 남겨 둠. **시작 대기 `SET_IMGS`(v9.71):** 그 지옥 바닥·소품·잡몹 그림(LAZY)이 아직이면 `startGame`이 250ms씩 최대 20초 기다림('지옥 맵 불러오는 중…' `#setLd`) — 예전엔 버섯 맵으로 시작됐다. 테스트 `tools/tests/dosan971.py`
+- **6지옥 팔열지옥 (v9.24, 지하 26~30층, `floorSet` t≥25 = `'fire'`, `HELL_SET.fire`) — 필드만, v9.47부터 29층까지 열림(30층만 준비 중):** `TOP_TIER`=29(만들어 둔 층) · `OPEN_TIER`=29(v9.63, 지하 30층까지 전부 열림 — 6지옥 완성). 열 때는 `OPEN_TIER`를 올리고 `loadSave`에 이전 기록 인정 한 줄을 넣는다. 바닥 `FF`(아틀라스 `IMG.ffloor` 23칸: 0~8 시트 1번 줄 · 9~20 뒤집은 변형 · 21·22 위험 지대 용암 웅덩이·발화 바닥, 3번 의식진은 휴식존 표식 전용)·`fireTile` · 소품 `FPROP_RECTS` 20종(`IMG.fprops`, 3번 줄 장식 11 · 4번 줄 구조물 9 = `FPROPS_BIG`) — `tools/atlas/fire_build.py`(시트를 `build/fire/tiles.png`에, 칸마다 자르고 칸 가장자리와 이어진 검정만 투명). **열기** `HEAT`(fill 1.8/초 ≈ 55초에 가득(v9.68), 휴식존 반경 r 100 · 가득이면 0.5초마다 최대 체력 2.5%×0.5, 보호막·무적 무시 · 챌린지엔 없음 · 보스방은 26~29층만 휴식존 4곳과 함께 있음(v9.72), 30층 호랑이방은 없음)·`updateHeat`(update의 둔화 웅덩이 앞) · **휴식존** `restAt(gx,gy)`(820px 칸마다 하나, 해시 위치) · `restNear`/`restNearest` · 반경 118 안에서 초당 −24 · 휴식존 둘레엔 용암(`isLava`)·소품이 안 생김 · 그림 `drawRestZones`(의식진 ×3 nearest + 시원한 빛, `drawGround` 끝) · HUD `drawHeatHud`(아래 가운데 게이지 · 70%↑ 붉은 테두리 · 50%↑ 가장 가까운 휴식존 `edgeArrow` ❄). 잡몹 10종 `FSPECIES`(v9.31, `IMG.fmob` ← `tools/atlas/fmob_build.py`(시트 `build/fire/mobs.png` 자르기·검정 배경 제거·축소만), 도감 idx 500~, 순위 r이 높을수록 체력·등장 시간↑) · 마왕: v9.40 영벌의 화염죄수(26층 100% · 27층 70% · 28층부터 `ICE_L`+rud+cvt 균등), 보스방은 마왕성 `FSET_ARENA`. 테스트 `tools/tests/fire924.py`
+- **5지옥 팔한지옥 (v8.99, 지하 21~25층, `floorSet` t≥20 = `'ice'`, 시작 화면 5번째 지옥 탭 `HELL_SET.ice`):** 상수 `TOP_TIER`=24(만들어 둔 층) · **`OPEN_TIER`=24(v9.20, 지금 열린 최고 층 = 지하 25층 = `TOP_TIER` — 5지옥 완성, 6지옥을 만들면 `TOP_TIER`·`HELL_SET`도 늘린다)** — 층을 더 열려면 `OPEN_TIER`만 올린다. **v9.10: `bossDefeated`가 깬 가장 깊은 층을 `SAVE.diff.clr`에 기록하고, `loadSave`가 `clr`·`fw.snap.tier`로 잠겨서 못 열린 다음 층을 열어 준다.** `MAX_TIER`=19는 예전 '20층' 기준(보스 러시 해금·업적)이라 그대로 둔다. **이미 깬 층 인정:** `loadSave`가 `SAVE.rush.open`(20층 클리어) 또는 마지막 마왕 기록(`fw.snap.tier≥19`)이 있으면 `diff.max`를 20(=지하 21층 개방)으로 올리고 `OPEN_TIER`로 자른다 — 새 층을 열 때마다 이런 이전 한 줄을 같이 넣는다. 마왕: v9.02 백곰 마왕(21층 100% · 22층 70%), 나머지는 `ICE_L` 균등, **보스방은 그 마왕의 원래 맵**(`enterArena`의 `bset = BR_SET[P.bossK]`). 바닥 `IF`(아틀라스 `IMG.ifloor` 25칸: 0~7 시트 1번 줄 · 8~22 뒤집은 변형 · 23·24 위험 지대) · 소품 `IPROP_RECTS` 20종(`IMG.iprops`, 매단 고드름·얼음 다리 제외) · `iceTile` · 위험 지대 = `isLava` 자리를 '붉은 균열'(5번 줄 타일, 피해 규칙은 용암과 같음). **미끄러운 얼음** `isIceSlip`(흑빙 타일, 맵의 약 9%, 시작 둘레 안전): 밟는 동안 + 벗어난 뒤 0.45초(`ICE_SLIP`, `P.slipT`) 방향 전환이 느리고 키를 떼도 미끄러진다(어인왕 `kgIce`의 `P.svx/svy` 관성 재사용, 피해 없음) · 일렁이는 윤기 `ch.slip`. 잡몹 9종 `ISPECIES`/`ICE_MOB`(`IMG.imob` 108×114 2프레임 — `tools/atlas/imob_build.py` ← 필드 몬스터 시트 + 팽귄·고드름·슬라임 시트, 도감 idx 400~408). 타일·소품 `tools/atlas/ice_build.py`. 테스트 `tools/tests/ice899.py`
+- **해골 궁수 최종 (v8.16):** Lv.20 `startEvolve(2)`(skel 루트, 능력치 그대로) → `SKEL_FIN`(`SKELF_FR` 프레임 사각형, 아틀라스 `IMG.skelF` — `tools/atlas/skelf_build.py`) → 스킬 칠흑의 대궁(`darkarrow`, 해골 궁수의 스킬은 이것 하나뿐). 화살 그림 `IMG.skelFa`(`s.black`, 'lighter'). 둘 다 `LAZY_IMG`라 그림이 없으면 옛 skel 형태로 그림. 테스트 `tools/tests/skelfin816.py`
+- **열충격 (v8.52, `SYNERGIES` id `shock`, 점화+빙결 Lv.3):** 점화·빙결이 동시에 걸린 적이 터짐(`thermalCheck`, 반경 110 · 공격력 220% · 적마다 3초 · 점화 소모) + 반대 상태 확률 ×2. 테스트 `tools/tests/shock852.py`
+- **달팽이 장판 빙결·점화 (v8.83):** 독 자국(`trail`)·용암/폭탄 웅덩이(`lavapool`) 틱이 `zoneElem(e)`로 `procElem`을 굴린다(적마다 1.2초 `ZONE_ELEM_CD`). 용암 대분출은 흔적을 터뜨리지 않는다(독 달팽이 `blast`는 그대로). 테스트 `tools/tests/zone883.py`
+- **지옥엘프 궁수 사거리 카드 (v8.86):** 공용 `range` 카드의 archer 이름이 '저격 시선'(사거리 +12% · 먼 거리(260+) 피해 +30%, 피해는 3장까지 — `range` apply에서 `p.char==='archer'` 분기). 예전 고유 카드 `snipe`는 삭제, 조합 `mark`(저격수의 표식)는 `range`+`crit` 재료. 기본 사거리 `rng` 100→94. 테스트 `tools/tests/snipe886.py`
+- **v9.57 밸런스:** 사슬 악마 기본 공격력 17.5→14.9(-15%, `newPlayer`) · 지옥엘프 궁수 체력 포션(`heal` 아이템) 회복 25→30%(획득 글자 '체력 +30%'도 궁수만 다름).
+- **스킬:** `SKILLS`, `SKILL_CD`(쿨타임 초), `uniqueSkill(s)()`, `castSkill()`.
+- **카드:** `UPGRADES`(공용, `alt: {캐릭터/루트: [이름, 문구]}`로 캐릭터별 이름), `UNIQUE`(캐릭터 전용), `SYNERGIES`(★조합, 재료 2장 Lv.3, `only:` 전용). `cardView`, `openChoice`(카드 앞면=효과, 누르면 뒷면=조합 / 진화 갈림길이면 이후 최종 진화), `openUpgrade`(기본 3장, 상점 '넓어진 선택지'면 4장).
+- **강화 상점** `PERKS` (캐릭터 상점과 분리): hp/spd/dmg/exp/magnet 각 10, banish 5, regen 3(초당 +0.1), shard 5(+5%), critd 5(+10%p), choice 1(5000), revive 1.
+- **재생:** 기본 재생 없음(상점 구매). 캐릭터별 P.regen만 (1.2초 이상 정지 시 25%).
+- **보스:** 원숭이 / 마안군주(eye) / 스켈레톤(skel) — 마왕성 보스방 `ARENA` (배율 `AS=1.25`), 타락천사(angel) — 전용 보스맵 `AMAP`(받은 그림 1672×941을 정수 2배, 다각형 `AMAP.poly`, 아래 통로가 출구 `arenaExit()`), 숨은 보스 타락한 혈랑왕(fw) — 제단 `BMAP`(s 1.65). 흡혈 고리 패턴에 안전 통로(`inTeleGap`).
+  - **보스 예측 (v9.27, `BLD`·`leadXY`·`leadAng`·`leadDir`, 지하 1~15층 마왕 8종만):** 빙글빙글 돌기 방지. A) 예고 원 `follow`·조준 `aim`·추적 표식 `track`이 잠기기 전 내 이동 방향 앞(0.35초)을 겨눔 · C) 추적 이동이 이동 방향 앞(0.9초, 최대 300px, 가까우면 160 미만은 그대로)을 향함. 속도 60 미만이면 내 자리. 타락 혈랑왕·16층 이상 마왕은 아직 안 건드림.
+  - **보스 등장 확률** `pickBossK(t)` / `BOSS_TBL`: 층마다 그 층에서 처음 나오는 보스 70% + 앞 층까지의 보스가 나머지 30% 균등 (**v8.67: 마왕이 처음 나오는 층은 100%** — `pickBossK`의 `F1` 표 · 지하 1층 원숭이 100 · 2층 마안 100 · 3층 스켈레톤 100 · 4층 타락천사 100 · 5층 4종 균등 · 6층 거대 버섯마귀 100 · 7층 5종 균등 · 8층 이독버섯 100 · 9층 70 · 10층 6종 균등 · 11층 파리지옥 마왕 100 · 12층 70 · 13·14층 7종 균등 (v8.70, 이독버섯 대신) · **15층은 타락한 원예의 여왕만(v8.63)** · 16층 해군 제독 100 · 17층 70 · 18·19층 8종 균등 (파리지옥 포함) · **20층은 타락한 어인왕만(v8.80)** (v8.65, 바다 보스는 어인섬에서), 표의 `null` = 앞 층 균등). 다음 층부터 나오는 보스는 그 전 층에 안 나온다.
+  - **원숭이 마왕 지하 1층(v8.60):** `tierExInit`이 1층(`P.tier===0`)에서도 난이도 추가 패턴 '십자 균열'(`cross`) 하나를 쓴다(약 10~12초마다, 예고 1초). 2층부터는 기존대로 단계 수만큼 무작위.
+  - **타락천사** (템플릿 'v6.30 타락천사' 블록, 조절값 `AN = {hp, dm, ph}`, 미니보스는 원숭이 전사): 1페이즈 근접 — 베기 3연속 · 리듬 함정(박자마다 4개씩 터지고 마지막 붉은 원은 엇박으로 0.46초 늦게, 방금 터진 자리에 다시 깔림) · 성스러운 방패(정면 ±69° 피해 0 `anFront` → `hurtEnemy`에서 막음, 등 뒤만 들어감, 끝나면 깨지고 휘청) · 추적 빛기둥. 체력 70% `anTrans` 흑화(2.6초 무적 + 충격파) → 2페이즈 원거리 — 흑백 구체(`anOrbs`: 검은 = 닿으면 피해, 흰 = 0.7초씩 엇갈려 시간 안에 닿지 않으면 피해) · 빛의 창 · 순간이동(가까이 1.5초 붙으면). 바닥 원은 비스듬히 본 타원(`AN_RY` 0.62, 예고 `t.ry`). 도트는 2배 nearest, 이펙트는 시트 조각을 'lighter'로.
+  - **거대 버섯마귀** (`bk:'shk'`, 템플릿 'v7.20 거대 버섯마귀' 블록, 조절값 `SHK`, 아틀라스 `SHKF`/`IMG.shk` — `tools/atlas/shk_build.py`, 정수 2배 nearest, 이동 줄은 왼쪽·공격 줄은 오른쪽을 봄 `SHK_FACE`): 느린 추적 + 패턴 `shkStart` — 포자 산탄(spray) · **거대 포자 폭격**(bomb: 그림자 → 1.5초 낙하 → 타원 폭발 + 독 장판 `zones` type 'spool', 5+TP()+분노2 최대 11개, 첫 개는 내 자리) · 버섯 고리(ring, 따라오다 멈추는 도넛) · 버섯 가시(spike, 부채꼴 줄 3/5) · 짓밟기(stomp, 가까울 때) · 몸통 접촉. **체력 75·50·25% `shkSummon`**: 2.2초 무적 + 작은 버섯 8/15/26(×(1+0.05TP)) 소환(`shkAdd`, `q.shkAdd`) → 남아 있는 동안 포자 갑옷 `e.guard`(hurtEnemy에서 피해 -50%, 최대 14초) → 다 잡으면 1.5초 휘청(stun). 50%부터 분노. 규칙 9: 최대 폭격 순간에도 주변 바닥 60% 이상 안전(`tools/tests/shk717.py`). 미니보스는 원숭이 전사(어인섬은 절단안의 짐승)
+  - **이독버섯 마왕** (v9.02 발악 강화: 핵심 포자 돌진 `TOX.dashSp` 1500 · 추적 245 · 길이 600) (`bk:'tox'`, 템플릿 'v8.20 이독버섯 마왕' 블록, `TOX`, `tools/atlas/tox_build.py`, 지하 8·9층 70% · 10층부터 6종 균등): 패시브 맹독 웅덩이 `tpool`(최대 16) · 살점 투척 `toxThrow`(+ 돌연변이 버섯 `toxm` 3~5) ⇄ 혈관 폭발 `toxGas`(독 안개: `DEBUFF` 이속·재생 -50% 7초 + 화면 밖 버섯 떼) · 체력 70·50% 독 역류 `toxReflux` · 25% `toxCollapse`(영구 독 늪 `tswamp` + 핵심 포자 돌진). 심장 드랍 있음(v8.23, 지하 8·9층 마왕 심장). 테스트 `tools/tests/tox820.py`
+  - **썩어버린 해군 제독** (`bk:'adm'`, 템플릿 'v8.40 썩어버린 해군 제독' 블록, 조절값 `ADM`, 지하 16·17층 70% · 18층부터 7종 균등 `ADM_L`(v8.65)): **도트 시트 적용(v8.41, `tools/atlas/adm_build.py` → `src/assets/adm/adm.webp`+`adm.json`, 템플릿 `ADMF`·`admSpr`·`ADM_K` 1.7, 시트에 군도가 없어 근접은 닻 후려치기; 공격 줄의 사슬·닻·궤적은 가리고 게임이 직접 그림, 피격 프레임 미사용, 사망 애니 있음)**. 아틀라스가 없으면 옛 코드 그림(`drawAdmBody`)으로 대체. 아주 느린 추적 · 닻 후려치기(가까우면 먼저, 부채꼴 0.5초 예고·쿨 2.4초) · 닻 투척(파란 줄 → 맞으면 기절 0.5초 + `applyPull`로 제독 앞까지 끌려감 → 곧바로 베기, 닻은 부메랑처럼 회수 `admAnc`) · 유령 함포 소환(kind `adc` 고정 포탑, 쏘는 순간 내 자리로 포탄 `admBalls` → 원형 폭발, 5발/13초 뒤 자폭, 부술 수 있음, 최대 8문) · 측면 일제 포격(한 줄 7발) · 닻사슬 휘두르기(도넛, 품 안 150px 안전). 체력 60% 어인 수병 소집(1회) · 30% 발악(포효 무적 + 함포 6문 원형 무작위 포격 · 닻 쿨 절반·크기 ×1.4·사거리 ×1.3). 규칙 9: 함포 5문 이상·끌려가는 중·포효 중에는 `tierEx` 멈춤, 발악 중 내 주변 250px 바닥 50% 이상 안전(`tools/tests/adm840.py`). 심장 드랍 있음(v8.58, 지하 11~20층 마왕 심장 `adm`, `tools/atlas/heart_adm_build.py` · 테스트 `heartadm858.py`), 도감 boss9 · adc
+  - **타락한 원예의 여왕** (`bk:'qn'`, 템플릿 'v8.63 타락한 원예의 여왕' 블록, 조절값 `QN`, 아틀라스 `QNF`/`IMG.qn` — `tools/atlas/qn_build.py`(제목 상자 분홍 테두리선 `_unline` 제거), **지하 15층 전용**(`pickBossK(14)`), 식물원 보스맵(v8.64 이전엔 어인섬), 보스 러시 8번째): ES6 클래스 — `QueenAI`(상태 머신 switch: intro → chase ⇄ 순환 `cyc` [cannon → root → acid] 각자 쿨 · 가까우면 `lash` 덩굴 채찍 · 30% `bloom`) + 보스 밖 배열 `QNW = {spores, roots, pools, fx, death, pollen}` · `QnSpore`(독성 포자: 쏘는 순간 내 자리로 곧게, 둔화 0.7초) · `RootBind`(붉은 표식 0.6초 → 솟음: 피해 + 속박 `P.bindT` 1.5초 = 이동만 불가, 이후 3초 면역 `P.bindImm`, 묶이면 남은 뿌리 시듦 + `bindLock`으로 캐논 쉼) · `AcidPool`(틱 피해) · `SporeSack`(kind 'qsack', enemies에 들어가 공격 가능, 5초 뒤 폭발 r165 · 부수면 안 터짐) · `QnMush`(kind 'qmush', 2페이즈: 소 → 5초 중 → 10초 포자 폭탄 버섯(다가와 0.8초 뒤 폭발), 죽이면 안 터짐, 최대 14). 2페이즈: 꽃가루 시야(`drawQnScreen`, 비네트 뒤 — 위험 표시·포자는 그 위) · 쿨 ×0.8 · 뿌리 3개 · 6.5초마다 뿌리 하나. 2페이즈·묶인 중·뿌리 예고 중엔 `tierEx` 멈춤. 규칙 9: 웅덩이·주머니 최대일 때도 내 주변 260px 바닥 50% 이상 안전. 심장 있음(v8.66, 8번째 줄 `qn`, `tools/atlas/heart_qn_build.py` — 1×4 가로 시트, 아래 글자 줄 잘라냄). 도감 boss10 · qmush · qsack. 테스트 `tools/tests/qn863.py`
+  - **파리지옥 마왕** (`bk:'vft'`, 템플릿 'v8.70 파리지옥 마왕' 블록, 조절값 `VF`, 아틀라스 `VFF`/`IMG.vft` — `tools/atlas/vft_build.py`(칸 테두리선 `unline`, 덫은 바위 배경이라 채도 마스크), **지하 11층 100% · 12층 70%** (`VFT_L`, 이독버섯 대신), 식물원 보스맵, 보스 러시 7번째): ES6 클래스 `VenusAI`(switch: intro → chase ⇄ 순환 [spray → lure → trap → skull], 가까우면 `bite` 물어뜯기 · 30% `thirst`) + 보스 밖 `VFW = {spores, hearts, traps, fx, wave, fog, death}`. **패시브 흡혈 `vfLeech`**: 나에게 입힌 피해(출혈 포함)÷내 최대 체력 × 보스 최대 체력 × `VF.leech`(0.035) 회복 · 피 냄새(내가 출혈 중이면 이속 ×1.25). A `VfSpore` 부채꼴 2다발(엇갈려 틈) → 출혈 `P.bleedT`/`P.bleedDps` 3초 · B `VfHeart` 하트 5개(천천히 유도) → 매혹 `P.charmT` 1.2초(`vfCharmDir`가 이동 입력을 보스 쪽으로 바꿈, 이속 ×0.45, 스킬은 가능, 3초 면역 `P.charmImm`) · C `VfTrap` 이동 경로 예측 표식 3~4개(경고 0.6초) → 최대 체력 30%(`vfPct`) + 기절 0.6 · D `VfSkull`(kind 'vskull', '해골 병사' 마물 도트 재사용, 체력 낮음·이속 210, 붙으면 0.45초 뒤 자폭, 죽이면 안 터짐, 최대 10). 30% 끝없는 갈증: 붉은 안개(`drawVfScreen`) · 쿨타임·회복 ÷1.5 · 이속 ×1.5(경고 시간은 그대로) · 유혹이 W 파동으로(반경 640 · 안전 통로 3갈래 각 ±0.35rad · 1초 경고, 닿으면 매혹 1.9초 + 발밑 덫 3연속 각 24%). 파동·매혹·연계 덫·전환 중엔 `tierEx` 멈춤(규칙 9). 심장 없음(도트 없음). 도감 boss11 · vskull. 테스트 `tools/tests/vft870.py`
+  - **타락한 어인왕** (`bk:'kng'`, 템플릿 'v8.80 타락한 어인왕' 블록, 조절값 `KG`, 아틀라스 `KGF`/`IMG.kng` — `tools/atlas/kng_build.py`(칸 경계를 몸통 사이 x로 직접 지정), **지하 20층 전용**(`pickBossK(19)`), 어인섬 보스맵, 보스 러시 10번째): ES6 클래스 `MermanKingAI`(intro → chase ⇄ 순환 [tether → blades → pillars → ring → charge], 가까우면 slam) + `KGW`. 패시브 ① 산소 게이지 `P.o2`(0이면 초당 최대 체력 10%) · `AirGeyser`(늘 2~3개, 내 둘레 650px 안) ② `WaterMirror` 3~4개 공전: 내 `shards`·`airs`가 닿으면 `MirrorBolt`로 되돌아옴(5번 튕기면 5초 사라짐). A 삼지창 사슬(반경 300 밖 = 지금 체력 절반, 안에 간헐천 보장) · B 해일의 창날 · C 심해의 부름 · D 파도 고리(바깥부터 0.8초마다 한 겹, 보스 둘레 190 안전) · E 소용돌이 돌진. 30% 해일 서핑: 미끄러운 바닥(`kgIce`, `P.svx/svy` 관성) + 맵 끝~끝 돌진 3번(예고 1.1초). 심장 없음(도트 없음). 도감 boss12. v8.85: `reset()`이 `kgClear()`를 부르고 `drawKgFloor/Top`은 `kgOn()`일 때만 그린다(어인왕전 중 죽고 새 판을 하면 산소 간헐천이 남던 버그). 테스트 `tools/tests/kng880.py`·`kgstale885.py`
+- **업적 (v8.80, `ACH`·`openAch`·`achClear`, 시작 화면 오른쪽 위 `#achBtn`):** 지옥(5층 묶음)마다 마지막 층(5·10·15·20) 마왕 처치 → 달성, [보상 받기]로 영혼 조각(2000/4000/7000/12000, 표 `ACH.reward`에서 바꿈). 예전 기록은 `achSync`가 인정. 세이브 `SAVE.ach = {done, got}`. **v8.91 마왕 토벌 업적:** 심장이 있는 마왕 8종마다 하나(`hb_<보스>`, `HB_KILL` = 도감 처치 키) — 처음 쓰러뜨리면 달성(챌린지·보스 러시 처치도 인정, `bossDefeated`가 `achSync`), [보상 받기]로 그 보스의 심장(레어) `heartGain`. 심장 도트가 없는 마왕(파리지옥·어인왕·촉수마왕·온실주·혈랑왕)은 해당 없음. 테스트 `ach891.py` · **v8.94 `hb_fw` 타락한 혈랑왕 300번 처치(`kill:'boss3'`, `need:300`) → 보상 [타락한 혈랑의 심장] `heartGain('rare','fw')` = `b:'fw'` 레어 · 옵션 3줄(st3), 도트 `IMG.hfw` — `tools/atlas/hfw_build.py`, 드랍 없음(업적 전용), 심장 도감 맨 아래 항목, 테스트 `ach894.py`**
+  - 현무 리저드 스킨(`lizG`) 아틀라스는 `tools/atlas/skin_build.py - - - <현무 시트>`로만 다시 만든다(`-`는 건너뜀). v8.51: 방어(skill) 6칸 경계를 몸 중심 사이로 옮겨 등껍질 이펙트 잘림 해결 · `hline`(칸 폭 거의 전부 가로줄 지움)·가장자리 부스러기·세로 테두리 제거.
+  - **해저좀비** (`bk:'zom'`, 템플릿 'v8.50 해저좀비' 블록, 조절값 `ZOM`, 아틀라스 `ZOMF`/`IMG.zom` — `tools/atlas/zom_build.py`, 시트는 오른쪽을 봄, 해군 제독 판 미니 보스: `spawnMiniPick`/`spawnMini`가 `P.bossK==='adm'`이면 어인섬이어도 절단안의 짐승 대신 이것): 물결 후려치기 `zsweep`(앞 부채꼴, 가까울 때) · 해일 `zwave`(앞쪽으로 물기둥 5개(분노 7개 두 갈래)가 0.15초씩 늦게 줄지어 터짐) · 익사자의 영혼 `zwisp`(유령 구슬 3개(분노 5) `eyeBul k:'zw'`, 속도 95로 느리게 따라오다 5.2초 뒤 사라짐). 체력 40% 분노(이속 ×1.2). 도감 `zom`. 테스트 `tools/tests/zom850.py`
+  - **가시관 무당벌레** (v9.54, `bk:'lad'`, 템플릿 'v9.54 가시관 무당벌레' 블록, 조절값 `LAD`, 아틀라스 `LADF`/`IMG.lad` — `tools/atlas/lad_build.py <시트>`(시트에 체크무늬 배경이 박혀 있어 무채색 밝은 픽셀을 배경으로 지움), 시트는 오른쪽을 봄, 원예의 여왕 판(지하 15층) 미니 보스 — `spawnMiniPick`/`spawnMini`의 `P.bossK==='qn'`): 가시 분출 `lspike`(제 몸 둘레 원 165, 가까울 때) · 점박이 구슬 `lshell`(3개/분노 5, 굴러가다 멈춘 뒤 1.15초 깜빡이고 폭발 r85, 굴러가다 닿아도 폭발, 목록 `e.lb`) · 날갯짓 돌풍 `lgust`(앞쪽 띠 520×130, 맞으면 밀려남 300 `ladPush` + `P.slowT` 0.9초, 170 안에선 안 씀). 체력 40% 분노. 도감 `lad`. 테스트 `tools/tests/lad954.py`
+  - **서리혈랑** (v9.55, `bk:'frw'`, 템플릿 'v9.55 서리혈랑' 블록, 조절값 `FRW`, 아틀라스 `FRWF`/`IMG.frw` — `tools/atlas/frw_build.py <시트>`(어두운 배경 밝기 문턱 · 이름표 칸 지움 · 구멍 메우기 없음), 시트는 오른쪽을 봄, 릴세르카 판(지하 25층) 미니 보스 = 대공작의 애완 늑대, 체력 ×0.9 · 한 방이 아픔): 서리 절단 `fslash`(부채꼴 3연격 `frwSlash`, 벨 때마다 55 전진, 피해 26/26/34) · 혈빙 가시 `fspike`(내 자리 + 십자 줄 `frwCross` 760×96, 분노 시 솟는 순간 내 자리에 한 번 더) · 빙혈 폭풍 `fstorm`(1.8초 끌어당김 55/s → 고리 90~330 폭발, 분노 +30). 체력 45% 영혼의 겨울(1.2초 무적 포효 → 분노). ※ `fwFrame`은 타락한 혈랑왕 함수라 이름은 `frw*`. 도감 `frw`. 테스트 `tools/tests/frw955.py`
+  - 마안군주 기둥은 장식만(충돌 없음).
+  - **판별 미니 보스** (`spawnMiniPick` → 말 2종 각 15% · 어인섬 `spawnCut` · 아니면 `spawnMini`가 `P.bossK`로 분기): 마안 판 = 마안 감시자 · 스켈레톤 판 = 해골 전사 둘 · **타락천사 판 = 부패한 성상 `bk:'stat'`**(템플릿 'v8.06 부패한 성상' 블록, 조절값 `ST`, 아틀라스 `STF`/`IMG.statue` — `tools/atlas/statue_build.py`, 시트는 오른쪽을 봄): 석상 베기 `sslash`(앞 직사각, 가까울 때) · 석상 파편 폭발 `sshard`(따라오다 멈추는 원 → 폭발 + 파편 6개(분노 8) 사방으로) · 부패한 성역 `ssanct`(룬 원 3번(분노 4) 이어서 — 원은 그 순간 내 자리에 생김). 체력 40% 분노. 나머지 판(원숭이·거대 버섯마귀)은 원숭이 전사. 테스트 `tools/tests/statue806.py`
+  - 히든 마물·유니크(`UNIQ`, `trySpawnUniq`): 스폰 틱마다 후보(안 나온 것) 중 하나를 `UNIQ_P`로 한 번 굴림 — 같은 종류는 한 판에 한 번, 동시에 1마리(난이도 3+ 2마리), 미니·보스·성 안에서는 안 나옴
+- **유니크 몹** `UNIQ`: 한 판에 종류별 1회, 난이도 3+ 은 동시에 2마리까지.
+- **체력비례 피해 (v8.62, `pctMelee`·`pctZone`·`pctZoneHit`, 사용자 지시 C안):** 사슬의 폭군 · 삼두 늑대 · 지옥 군주 늑대 · 혈랑 진화형(blood) · 키메라 업화의 사자 · 물의 도마뱀 전사 · 버서커 리자드(전부 `P.form===2`)가 보스·미니·유니크를 일반 타격(quiet 아님)으로 때리면 `hurtEnemy`에서 최대 체력의 0.10%(`PCT_RATE`)를 더함(대상마다 0.25초 쿨 `e.pctT`, 추가분 ≤ 그 타격 피해×4). 맹독·용암 달팽이는 독 자국(`trail`)·용암 웅덩이(`lavapool`, 용암 루트만 — 폭탄 제외) 틱마다 같은 비율(상한 `P.dmg`×4, 장판 감쇠 없음 — `hurtEnemy(...,'pct')`). 일시정지 화면에 안내 문구. 테스트 `tools/tests/pct862.py`
+- **지옥 고르기 (v8.61, `renderHells`·`pickFloor`):** 시작 화면 ◀▶ 아래에 5층 묶음 탭(1지옥 마왕성 1~5층 · 2지옥 버섯 동굴 6~10 · 3지옥 악마 식물원 11~15 · 4지옥 어인섬 16~20, `HELL_N`·`HELL_SET`, 개수는 `MAX_TIER`로 자동) + 그 지옥의 층 버튼. 지옥을 누르면 갈 수 있는(해금·참가비) 가장 깊은 층. 층을 늘리면 탭이 저절로 생긴다(새 세트는 `HELL_SET`에 이름 추가). 테스트 `tools/tests/hell861.py`
+- **난이도:** 이름은 **지하 1층~20층** (`floorName(t)`, 내부 값 `P.tier` 0~19 = `MAX_TIER` · 세이브 `SAVE.diff`는 그대로 · 6~10층 버섯 · 11~15층 악마 식물원 · 16~20층 어인섬(v8.64에 식물원과 순서 교체) · **악마 식물원(v8.30, 지금 11~15층, `isGard`, 바닥 `gfloor`·소품 `gprops`/`GPROP_RECTS`·보스맵 `GMAP`(932×970 ×3 nearest) — `tools/atlas/gard_build.py`, 잡몹은 v8.53부터 식물형 악마 8종 `GSPECIES`(`IMG.gmob`, idx 300~) + 네임드 3종 `PL`(가시덩굴 vine 직선 채찍 · 식인 꽃 fly 뛰어들어 물기 · 거대 달팽이(하급) snl 독 자국 `gpool` + 독 덩어리 `plBalls`, kind 'mob' + `e.pk`, `trySpawnPlants` 이공벌레와 같은 9%·종류마다 1+2분마다 1마리, 도감 키 `pl:종류`, 아틀라스 `IMG.gnm`/`GNMF` — `tools/atlas/plant_build.py`, 테스트 `tools/tests/plant853.py`), 보스는 7종 균등)** 세트 `floorSet`). 몹 체력 층당 +15%, 몹 공격 +10%, 보스·미니·유니크 체력 +30%. 정예 구슬은 4층부터.
+- **저주받은 성유물 (v8.57, `RELICS`)**: eye·key·phoenix·fang·mirror + **탐욕의 주머니 `pouch`**(경험치 +35% · 영혼 조각 +50% `calcShards` · 받는 피해 +15%) · **광기의 가면 `mask`**(체력 50% 이하 공속 +45% `aspdE()`, 그동안 재생 정지 `relicMaskOn()`) · **도박꾼의 동전 `coin`**(치명타 +20%p · 비치명타 -8%). 아이콘 `RELIC_IDX`의 pouch·coin은 임시(mask는 v8.93부터 `IMG.relmask` — `tools/atlas/relmask_build.py`)(기존 그림 재사용) — 새 도트 받으면 `final/relic.webp` 칸 추가. 테스트 `tools/tests/relic857.py`
+- **어인섬 둔화 웅덩이 (v8.56, v8.64부터 지하 16~20층, `isSlow`):** 마그마 풀과 별개로 시트(sfloor)에 안 쓰던 얕은 바다·심해 타일(7·8)을 그대로 써서 흩어 놓음(맵의 약 4%, 마그마와 안 겹침). 밟으면 `P.slowT`=0.8초(`SLOW_LINGER`) 유지 → 이속 -35%가 벗어난 뒤에도 잠깐 남음, 피해 없음. 보스방·챌린지에는 없음. 테스트 `tools/tests/slow856.py`
+- **HUD:** 체력바 아래 획득 카드 칩, 캐릭터 머리 위 체력바, 설정의 딜 미터기(`DSRC` 태그 → `DMETER`), 성유물·슬롯 화면밖 화살표.
+- **분리 배포 (v8.14):** `build.py --split` → 그림 토큰이 `src/assets/<경로>?v=<해시>` 로 바뀐다(내용이 바뀌면 캐시도 새로). `loadImg`가 3번까지 다시 시도하고, 시작 전 필수 그림은 `#ldBox` 진행률 표시 후 시작, 실패하면 새로고침 안내. 테스트는 `GAME_URL=http://localhost:포트/index.html` 로 로컬 서버(`python3 -m http.server`)를 띄워 돌린다. file:// 로 열 수 있는 건 단일 파일 빌드뿐.
+- **로딩 캐시 (v9.68):** 저장소 루트 `sw.js`(서비스 워커)가 `src/assets/…?v=해시` 그림을 cache-first로 저장 — 분리 배포(https)에서만 등록, `sw.js`를 지우거나 옮기지 말 것. LAZY 그림은 필수 그림(`LD_KEYS`)을 다 받은 뒤 2장씩 받는다(`lazyPump`).
+- **v9.69:** `arena`·`bmap`·`uniq`·`fwb`·`fwfx`는 LAZY — 쓰기 전에 `imgReady([키])`로 확인(`enterArena`·`startFw`·`spawnFw`·`spawnUniq`). 이 그림들을 새로 쓰는 곳을 만들면 같은 확인을 넣을 것.
+- **그림·성능 (v6.30):** `loadImg`가 ImageBitmap으로 바꿔 둔다(처음 그릴 때 해독 끊김 방지). `hq()` 확대 캔버스는 `HQ_MAX` 4096px 이하. 필드 바닥은 512px 덩어리 캐시(`groundChunk`, 용암 칸·키 큰 소품만 매 프레임), 비네트는 캐시(`drawVignette`), 화면 밖 잡몹·구슬은 안 그린다. 이미지 목록은 `SRC` 이름 = `IMG` 이름 (나중에 불러와도 되는 것은 `LAZY_IMG`). **v9.59: `lazyLoad(k)` — LAZY 그림은 불러오기에 실패해도 4초마다 빠진 것만 다시 시도한다(예전엔 `.catch(()=>{})`로 영영 포기 → 마왕 몸 없이 그림자만 보였다).**
+- **세이브:** localStorage `hellSurvivorSave1` (기기·브라우저별). 키를 바꾸면 사용자 진행이 날아가니 절대 바꾸지 말 것.
+  - **세이브 옮기기 (v8.55, 설정 화면 `bindSaveIO`):** [파일로 저장](.json) · [코드 복사](`HS1z:`+gzip base64, 못 쓰면 `HS1:`) · [파일/코드 불러오기] — `svParse`가 형식(`game:'hellSurvive'`)을 검사하고, `svApply`가 확인창 → 지금 세이브를 `hellSurvivorSave1_bak`에 백업 → 덮어쓰기(`saveLock`) → 새로고침. 서버·계정 없음. 테스트 `tools/tests/saveio855.py`
+- **∞ 챌린지 모드 (v6.20, 템플릿 'v6.20 ∞ 챌린지 모드' 블록):** 난이도 5단계 마왕 처치 시 해금(`SAVE.ch.open`, 예전 5단계 클리어 스펙 `fw.snap.tier>=5`도 인정). 시작 화면 [∞ 챌린지 모드] 버튼 → `chMode` → `startChallenge`. 전역 `chal`(판 상태), `CHM`(맵 그림 3.5배 · 다각형 `inCh` · 밖은 `chPull`).
+  - `P.tier=2`(마왕 패턴 기믹 약화). 잡몹 체력 `chTime()`(10분까지 원래 속도, 이후 **분당 ×1.07 기하급수**) · 생성량/상한 천천히 · 공격력 `chDmgT`(**5분부터 1분마다 +12%**, v6.41).
+  - 5레벨마다 강적 1마리(`chEvent`): Lv%15=5 `CH_EV_A`(미니·히든·유니크) / =10 `CH_EV_B`(미니·히든) / =0 `CH_BOSS`(원숭이·마안·스켈레톤·혈랑왕·촉수마왕). 사이클 `chal.cyc`마다 강해짐. **마왕 5종 모두 챌린지 맵(필드)에서 싸운다**(v6.41: `chEnterBoss` → `chFieldPlace`로 플레이어 앞 560px에 세움, `inPoly`가 챌린지에서는 `inCh`, 필드 잡몹은 그대로 남고 계속 나옴(촉수마왕전만 신규 생성 중단), 스켈레톤 첨탑 `skpPts()`·혈랑왕 질주 목표는 마왕 첫 자리 `chal.fbC` 기준). 처치 후 쉼터(`chShelter` 10초 + 안식/어둠의 계약).
+  - 룬 조각 `chFrag`(**3개=룬 1개**, v6.41 · 강적/황금 도망자 1개·마왕 2개 기본, `chRew` 최대 ×2.1, 8종 스탯 각 5단계, 챌린지에서만 적용, `SAVE.ch.rune/frag`). 보물 `TREASURES`(사망 시 버틴 시간 10/15/20분, 모든 모드에서 효과, `SAVE.ch.tr`): 쥐 이빨 목걸이 · 도깨비 주머니(`dropChest`) · 깨진 거울.
+  - 황금 도망자(`chGoldSpawn`, v6.41: 체력 ×8.1(+35%) · 이속 플레이어의 0.6배) · 엘리트 접두사 20분~(`chPrefix` 빠름/분열/보호막 `e.shd`) · 심연 추격자 25분~(`chal.chaser`, 이속 100, 불사).
+  - 신규 미니보스 절단안의 짐승(`mini.bk='cut'`, 원본 대기·이동은 왼쪽/공격 줄은 오른쪽을 봄) · 신규 마왕 심연의 촉수마왕(`boss.bk='ab'`, 하수인 kind `abm`, 추종하는 눈 = ebul k `abeye`). 둘 다 챌린지 전용.
+- **챌린지 v8.87 (템플릿 'v8.87 시련의 제단'·'v8.87 마왕: 영원의 온실주' 블록):** ① 난이도 +15% — `CH_HARD`(1.15)를 `chTime`(잡몹·강적 체력)·`chDmgT`(잡몹 공격력)·`chBossHp`(마왕 체력)에 곱함, 룬 조각 보상 `chRew`는 `chTime0`(원래 값) 기준이라 그대로. ② **시련의 제단** `TRIAL`(2분 30초부터 맵 안쪽에 출현·100초 안에 가야 함 → 위에 1.2초 서면 40초 시련: 마물 체력 ×1.2 · 공격 ×1.3 · 생성 간격 ×0.6 → 버티면 룬 조각 +2 + 카드 1장(`takeCard`), 시련 중엔 강적·마왕 호출이 미뤄짐, 끝나면 120초 뒤 새 제단) · `chAltarTick`/`chTrialStart`/`chTrialWin`/`drawChAltar`/`drawChAltarHud`(화면 밖 화살표·남은 시간). ③ **영원의 온실주** (`bk:'grn'`, 아틀라스 `IMG.grn`/`GRNF` — `tools/atlas/grn_build.py` ← 지옥의 식물원 컨셉 시트, `src/assets/grn/grn.webp`+`grn.json`(※ `gh`는 유령 아틀라스라 이름 겹침 주의), `CH_BOSS` 6번째 · 챌린지에서만): 천천히 거리 340을 두고 따라오며 5패턴 — 최면의 화분(`grnPollen`, 몸 둘레 380 · 맞으면 `P.hypT` 2.2초 이동 키 반대 + 3.2초 면역) · 가시 덩굴 채찍(부채꼴 2번·만개 3번, 반각 0.5 · 길이 370) · 유리 씨앗 비(씨앗 6/8, 서로 150 이상 떨어뜨림, 냉기 장판 `GRW.frost` 반경 85 · 4초 · 이속 -35%) · 뿌리의 종복(`kind:'grb'`, 최대 7, 붙으면 0.8초 뒤 자폭·먼저 죽이면 안 터짐, 그림은 `grnBudArt` 코드 그림) · 의식의 꽃 원(`GRW.ring`, 반경 230 · 6초 · 안에서 느려지고 지속 피해). 체력 50% 만개. 규칙 9: 모든 패턴은 보스에서 떨어지거나 원 밖으로 나가면 피함, 씨앗이 최대일 때도 내 주변 260px 바닥 50% 이상 안전(테스트 `safe9`). 정리 `grnClear`(clearField·reset·처치). 도감 boss13 · grb. 테스트 `tools/tests/grn887.py`
+- **v10.11~v10.12:** 보스 러시 산소(`BR_O2`)는 큰 패턴 중에도 계속 줄고 규칙 9는 '산소 0일 때의 피해만 쉼'으로 지킨다(`updateMods`, 테스트 `o2diag.py` — 마왕 18종 전부 확인) · 보스전 안내 글씨(`banner`)는 크기 1배·표시 시간 2배(`banner.t -= dt/2`), **H키**로 끄기/켜기(`bnHide`, localStorage `hsBnHide` — 세이브와 별개, 보스방에서만 적용, 테스트 `bn1012.py`). 화염 호랑이·불구렁이 등 큰 패턴이 긴 마왕에서는 십자가·똥바람도 `rush.paused()`로 자주 쉰다(사용자에게 항상 작동하게 바꿀지 질문해 둠, 답 대기).
+- **⚔ 보스 러시 (v10.10 대개편, 템플릿 'v10.10 ⚔ 보스 러시 개편' 블록, ES6 `class BossRushManager` = 전역 `rush`):** 해금 `rushReady()` = 지하 30층 마왕 처치(`diff.clr`≥29 · `dex.kills.boss19`) — 예전 `rushOpen()`(20층)은 마계 물고기 해금에만. 마왕 풀 `brPool()` = `BR_ORDER`(18종) 중 도감 처치 기록 있는 것 → 4종 무작위(`BR_N`=4 라운드), 맵 `BR_SET`/`rushFset`(ice·fire·dosan 포함), 입장 전 그림 `BR_IMGS` 대기. 난이도 `BR.tier`[3,5,7,9]. 시작 Lv.20까지 증강 전부 직접 선택 · 2·3·4라운드 전 `choose()` [증강 2개/5개] → `totalCardsPicked` 합계 6/9/12/15 = `BR_REWARD` 하드코어/하드/노멀/이지(스킨 뽑기권 `SAVE.rush.tix` 4/3/2/1 · 마석 레전더리/유니크/에픽/레어 · 주사기 `SAVE.rush.syr` 100/50/30/5%) `settle()`. 전용 증강 `brCool` 시간 왜곡(`rushOnly`, 스킬 쿨 -10%/장). 심장은 드랍되고(바로 인벤토리 `rush.hearts`) 장착 옵션·마석은 미적용(`rushBoot`·`runBonus`). 이속 `BR.spdMin` 230~`spdMax` 290(기본 이속만 고정, 디버프는 곱함, `P.espd`). 맵 기믹 `BR_MODS`: 2R 산소존(`AirGeyser`·`drawKgO2`) · 3R +불의 십자가(`drawTgCross(wx,wy,C,cen,om,al)` 재사용, `brCenter`/`brArmLen`) · 4R +똥바람(`windPush`, `BR_WIND`) — 규칙 9: `rush.paused()` = `bossExPaused(e)`(tierEx 멈춤 조건 함수) 또는 흡혈 고리 통로 중엔 쉼, `skipMod`(어인왕 o2 · 호랑이 cross · 백곰 wind). **마석** `SAVE.stone {inv, eq, n}` · `STONE` · `stoneGain`(더 좋으면 자동 장착) · 심장 창 `renderStone`(`#hStone`). **주사기** `useSyringe(id)`: 옵션 3줄 심장만 · 게이지 `h.sg` += 3~10 · 100이면 `st4/v4`(`hLines`가 4줄) · UI `#hSyr`. **스킨 뽑기권**: `gachaPull(1)`이 먼저 씀. 업적 `br` = 완주. 테스트 `tools/tests/rush1010.py`
+- **스킨 가챠 · 스킨 도감 (v7.30, 템플릿 'v7.30 스킨 가챠' 블록):** 시작 화면 `#gachaBtn` → `openGacha` (`#gachaBox` 탭 뽑기/스킨 도감, 결과 연출 `#gRes`). 데이터 `SKINS`(id·name·grade epic/rare·char·forms·where·ws·face) + 아틀라스 `SKINF[id]`(키 = 게임 동작 이름) + 그림 `IMG['sk_'+id]` · 일러스트 `SRC['skA_'+id]`(`tools/atlas/skin_build.py`, 자르기·배경 제거만). 세이브 `SAVE.skin = {own, frag, on, pity, pulls}`. 뽑기 `gachaRoll`: 가중치 58 = 에픽 완성 1 · 레어 완성 2 · 조각 55(대상 스킨 무작위, 레어 1~2개 · 에픽 1개), **가진 스킨·그 조각·다 모은 조각은 제외**(나올 수 없는 결과는 빼고 재정규화), 천장 `GACHA.pity` 25(완성 스킨 없이 25번째 → 에픽 20% · 레어 80%). 비용 1회 1000 · 10회 9000(영혼 조각). 조합 `skinCraft`(레어 10 · 에픽 15 · **유니크 20**, v8.59). **유니크 등급(v8.59)**: 가중치 `GACHA.W` 유니크 1 · 에픽 2 · 레어 4 · 조각 110 (총 117), 천장은 `pityW` 유니크 10% · 에픽 20% · 레어 70%. 현재 유니크는 곰 후드 총령 `ghostU`(연보라 총령 최종 `forms:[2]`, `skin_build.py - - - - - <시트>`, 테스트 `ghostu860.py`) 하나뿐. 토끼 후드 늑대 `wolfB`는 에픽(v8.60 하향, v8.83부터 늑대 0진화(시작 형태)에서만, `tools/atlas/wolfb_build.py`, `wolfb859.py`). 장착 `skinToggle` — 캐릭터마다 독립 ON/OFF(`SAVE.skin.on = {캐릭터: id}`, 같은 캐릭터 스킨끼리만 서로 꺼짐 · 옛 문자열 세이브는 `skinMap()`이 변환), 그 캐릭터 첫 스킨은 자동 ON. 게임 적용: 총잡이는 `gunSk()`(착용한 스킨 id) → `gA(k)`/`gI(k)`로 아틀라스 교체(최종 진화만, 레어 gunH · 에픽 gunE), 늑대는 `drawSkinChar`. **스킨은 `SKINS`의 `forms`(진화 단계) + 선택 `route`(루트)로 지정한 형태에만 적용된다** — 사슬의 폭군 돌쇠 `twS`(에픽, 사슬 악마 최종, 키 idle·walk·lash·combo·hit·death — `tools/atlas/twskin_build.py`) · 지옥군주늑대 `wolfE` = 심연(기본) 루트 최종 진화(`route:'abyss', forms:[2]`)만, 혈랑·쌍두·1진화·시작 형태에는 안 나옴. 새 스킨은 반드시 대상 형태를 `forms`/`route`로 정해 `skinOn()`이 걸러내게 한다. 새 스킨 추가 = 시트 → skin_build.py에 한 줄 → `SKINS`에 한 줄 + 해당 캐릭터 그리기에 훅. 테스트 `tools/tests/gacha730.py`
+- **보스 심장 (v8.01, 템플릿 'v8.01 보스 심장' 블록):** 시작 화면 `#heartBtn` → `openHeart` (`#heartBox`: 5칸 장착 슬롯 · 인벤토리 · 가운데 재련 패널(심장 오브·등급 화살표·전→후 옵션·비용)). 세이브 `SAVE.heart = {inv:[{id,g,st,v}], eq:[id…≤5], n}`. 등급 `HG` rare 회색 1~3% · epic 보라 4~6% · unique 노랑 7~9% · legend 초록 15~20%, 옵션 `HSTAT` atk/hp/aspd(각 1/3). 드랍 `rollHeartDrop(bk)` — **v9.60부터 마왕 15종(v10.01 호랑이 `tig` 16종째, 16번째 줄 `tools/atlas/heart_tig_build.py`)**(`BH`/`BH_ORDER`/`bhKey`: angel·shk·skel·eye·monkey·tox·adm·qn + vft·kng·bear·rud·lil·cvt·snk, 도트 `IMG.heart` 9~15번째 줄 = `tools/atlas/heart7_build.py <시트 7장>`, 첫 장(파리지옥)은 칸마다 액자선이 있어 안쪽만 쓰고 모서리 장식을 지움, 새 마왕 심장은 BH·BH_ORDER·HB_KILL에 한 줄씩 + 아틀라스 한 줄 · 테스트 `heart960.py`)마다 심장 도트가 따로 있고 **그 심장을 보유 중이 아닐 때만**(v9.50: `inv` 기준, `got`는 안 봄 — 분해하면 다시 드랍, 처치 시 20%) → 레어, 그중 1% 레전더리 · 챌린지·숨은 보스 드랍 없음. 심장 항목 `{id,g,b,st,v}`, 그림 `IMG.heart`(4열=등급 × 7줄=보스(6번째 이독버섯 `heart_tox_build.py`, 7번째 해군 제독 `heart_adm_build.py`), `heartIcon(g,s,b)`)(대형 연출) · 아이템 type 'bheart'(날아와서 먹힘, `heartGain` → 빈 슬롯이면 자동 장착). **합성(v8.66 → v8.89, `fuseHearts`·`renderFuse`·`#hFuse`, 합성 칸 `hFu`, `HFUSE_N`=3):** 레전더리 심장 3개(종류 무관·잠금 불가)가 모두 사라지고 '끔찍한 심장'(v9.01 이름, `b:'fuse'`, 레어, 옵션 2줄, 보스 무관, 여러 개 가능, 아이콘 `IMG.hfuse` — `tools/atlas/hfuse_build.py`, 모든 등급 같은 그림) 1개가 생김. 예전 방식(보스 심장 + 옵션 2줄)은 `heartMigrate`가 로드 때 합성된 심장으로 변환. 재료로 그 보스 심장이 인벤토리에서 모두 없어지면 `got`를 지워 다시 드랍(v8.88). 2줄 심장은 재설정 때 두 줄 모두 다시 뽑음, `heartBonus`·`hOpt`·`hShort`가 두 줄을 셈. 테스트 `heartfuse888.py`. **v8.92: 옵션 '영혼 조각 획득'(`shard`, 등급별 범위 `HSHARD` 레어 5~10 · 에픽 11~18 · 유니크 19~28 · 레전더리 15~25%(v9.31, 기존 심장은 `heartMigrate`가 25로), `calcShards`에 `heartBonus().shard` 합산) · 옵션은 `hRoll`이 4종 균등 · 3줄 합성 심장(`b:'fuse3'`, 이름 '지옥 심장' v9.01, 끔찍한 심장 3개 → 레어 · 옵션 3줄 `st3/v3`, 도트 `IMG.hfuse3` — `tools/atlas/hfuse3_build.py`, 두 합성은 섞을 수 없음 `fuseOk`) · **v9.58 히든: 레전더리 3개 합성이 `HFUSE_HID.p` 5% 확률로 지옥 심장(3줄)이 됨, 화면 안내 없음** · 줄은 `hLines(h)`로 읽는다. 테스트 `heart892.py`** **줄 잠금(v10.05): 옵션 2줄 이상은 `h.ll[i]`로 줄마다 잠금 — 잠근 줄 유지, 잠금 하나당 `heartCost` ×2.** **옵션 잠금(v8.51): `h.lock` — 잠그면 재설정·분해가 막히고 🔒 표시(`#hLock`), 테스트 `heartlock851.py`.** 재설정 `rerollHeart(id)` 영혼 조각 등급별 500/600/700/800(`heartCost`): 등급업 30/20/5% 후 옵션·수치 재배정. `equipHeart` 최대 5 · `unequipHeart` · 분해 `disHeart`(50/150/400/1500 조각). 효과는 `newPlayer`에서 `heartBonus()`(공격력 ×, 기본 최대 체력 ×, 공속 +). 연출 `playUpgradeEffect(grade, text)`: `#hfx` 위 섬광·파티클·광선·충격파·글자 확대(등급 색, 레전더리 가장 큼). 테스트 `tools/tests/heart801.py`
+- **팔열지옥 보스맵 (v9.53):** 26~30층 보스방 = 받은 용암 그림 `IMG.fmap`(1448×1086 ×5 nearest, `src/assets/fmap/fmap.webp`, LAZY). 광장 판정 `IMAP_FIRE`(X 2460~4780 · Y 1675~3200 · 아래 계단 출구) — `enterArena`가 `useIMap(true)`로 `IMAP`의 값을 용암으로, 얼음 맵이면 `useIMap(false)`로 되돌린다(마왕 코드는 `IMAP.*`를 그대로 씀). 테스트 `tools/tests/fmap953.py`.
+- **보스방 맵은 층이 정한다 (v9.30, `FSET_ARENA`):** 팔한지옥(21~25층)은 어떤 마왕이든 빙결 투기장 `IMAP`. 새 지옥(팔열 등)에 보스맵이 생기면 `FSET_ARENA`에 한 줄 넣을 것 — 마왕별 맵(`BR_SET`)은 보스 러시 전용.
+- **함수 이름 중복 주의 (v9.29):** 템플릿은 한 스크립트라 같은 이름의 `function`이 둘이면 나중 것이 앞 것을 덮는다(천안 난무 `startRushDash` ↔ 보스 러시 `startRush`). 새 함수를 만들면 `grep -o "^function [A-Za-z0-9_]*" src/game_template.html | sort | uniq -d`가 비어 있는지 확인.
+- **쿠폰:** (v9.73 `ai소프트웨어학과`·문어현자 스킨 삭제) `pyeon()` → 영혼 조각 +10000 (한 번만, `SAVE.cp.pyeon`).
+
+## 티어 측정 방법
+- (v6.30) sim600은 이제 단계 인자가 실제로 적용된다 — 예전엔 해금(`SAVE.diff.max`)·영혼 조각이 없어 startGame이 항상 0단계로 낮췄다(v6.22까지의 '5단계' 측정도 실제로는 0단계였을 수 있음). 옵션 ANJ(타락천사 조절값 JSON) · NOEX(난이도 추가 패턴 끔) · TANK(죽지 않게 체력만 크게, 받은 피해를 그대로 잰다) · BIGHP.
+- `tools/sim600.py` 의 `VAR` 표에 변형 키(예 `'snail:bomb':('snail','bomb','')`)가 있어야 한다.
+- `tools/tier_run.sh "<키>" <이름>` (약 30분) → `python3 tools/tier_an.py build/tier/<이름>_boss.txt build/tier/<이름>_field.txt "최종 이름" "1진화 이름"`
+- 점수 = 보스 평균 깎은 체력 75% + Lv.24 필드 처치 25%, 기존 1등 = 100. S≥92 · A≥80 · B≥64 · C≥56 · D.
+- 보고서: 보스별(원숭이/마안/스켈레톤/혈랑왕) 깎은 체력·승리·평균 대비 상성 + s2/s1 JSON → PDF.
+
+## 참고 자료
+- **변경 이력은 `docs/CHANGELOG.md`** (전체를 읽지 말고 grep). 매 버전 거기에 항목을 추가한다.
+- **코드 위치 지도 `docs/MAP.md`** — 작업 전에 이것부터 보고 `grep -n`으로 필요한 부분만 읽는다. 새 기능을 만들면 `tools/mkmap.py`의 ANCHORS에 한 줄 추가하고, 빌드 때마다 `python3 tools/mkmap.py`를 돌린다.
+- 패턴 기획서: `docs/hell survive 보스 패턴 추가 기획서.pdf` (하데스·엘든링·세키로·건전·메이플 110개 표본, 신규 패턴 15개 안, 구현 전 — E4 안식처는 규칙 9 경계 사례라 허락 필요). 생성 스크립트 `tools/pattern_plan.py·pattern_data.py·pattern_html.py`
+- 밸런스 시뮬: `python3 tools/bal_make.py` → `tools/sim_bal.py` → `tools/bal_an.py` → `tools/bal_report.py`
