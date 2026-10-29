@@ -981,7 +981,7 @@ function mkCanvas(w, h) { const c = document.createElement('canvas'); c.width = 
  * 0-1. 저장(영혼 조각 · 영구 강화 · 설정) / 캐릭터 목록 / 소리
  * ============================================================ */
 const SAVE_KEY = 'hellSurvivorSave1';
-const GAME_VER = 'v10.10';
+const GAME_VER = 'v10.11';
 const SAVE_DEF = () => ({
   shards: 0,
   perks: { hp: 0, spd: 0, dmg: 0, exp: 0, magnet: 0, banish: 0, revive: 0, regen: 0, shard: 0, critd: 0, choice: 0 },
@@ -14493,8 +14493,8 @@ class BossRushManager {
       for (const g of this.gey) g.update(dt); this.gey = this.gey.filter(g => !g.dead);
       if ((this.gyT -= dt) <= 0 && this.gey.length < BR_O2.gyN) { this.gyT = KG.gyGap; const s = kgSpot(P.x, P.y, KG.gyMin, KG.gyMax) || kgSpot(P.x, P.y, 100, KG.gyMin); if (s) { this.gey.push(new AirGeyser(s[0], s[1])); addRing(s[0], s[1], 6, 70, 0.5, '150,230,255', 6); } }
       const inG = this.gey.some(g => g.inT > 0);
-      if (run && !inG) P.o2 = Math.max(0, (P.o2 === undefined ? KG.o2Max : P.o2) - BR_O2.drain * dt);
-      if (P.o2 <= 0) { dotPlayer(P.max * KG.o2Dmg * dt); if ((this.o2Warn -= dt) <= 0) { this.o2Warn = 1; floatNum(P.x, P.y - 110, '산소 부족!', '#7ad8ff'); } }
+      if (boss.hp > 0 && boss.st !== 'intro' && !inG) P.o2 = Math.max(0, (P.o2 === undefined ? KG.o2Max : P.o2) - BR_O2.drain * dt);   // v10.11: 산소는 큰 패턴 중에도 계속 준다 (예전엔 쉼 조건에 묶여 호랑이·불구렁이에선 거의 안 줄었다) — 규칙 9는 0일 때의 피해만 쉬는 것으로 지킨다
+      if (P.o2 <= 0 && run) { dotPlayer(P.max * KG.o2Dmg * dt); if ((this.o2Warn -= dt) <= 0) { this.o2Warn = 1; floatNum(P.x, P.y - 110, '산소 부족!', '#7ad8ff'); } }
     }
     if (this.has('cross')) {   // ② 회전하는 불의 십자가 (호랑이 기믹 · 보스방 가운데 · 시계 방향)
       if (!this.cr) { const [cx, cy] = brCenter(); this.cr = { a: 0, p2: false, van: -0.8, len: [0, 0, 0, 0], cx, cy }; }
@@ -16718,6 +16718,7 @@ function openAch() {
 }
 /* v8.71 간략 패치노트 (최근 버전만, 새 버전마다 맨 위에 한 줄 추가) */
 const PATCH = [
+  ['v10.11','🫧 보스 러시 2라운드 산소 게이지 수정 — 마왕이 큰 패턴을 쓰는 동안에도 산소가 계속 줄어듭니다(산소가 0일 때의 피해만 큰 패턴 중 쉼)'],
   ['v10.10','⚔ 보스 러시 대개편 — 지하 30층 클리어 후 해금 · 처치해 본 마왕 중 4라운드 · 시작 증강 직접 선택 · 2·3·4라운드 전 증강 2개/5개 선택(합계 6·9·12·15개 = 하드코어·하드·노멀·이지 보상) · 전용 증강 [시간 왜곡](스킬 쿨타임 -10%) · 심장 드랍 O / 심장 옵션 미적용 · 이동 속도 230~290 고정 범위 · 라운드 기믹(2 산소존 · 3 +불의 십자가 · 4 +변덕스러운 똥바람) · 새 보상: 스킨 뽑기권 · 마석(전 스탯 +1/2/3/6%, 보스 러시 제외) · 주사기(옵션 3줄 심장 게이지 → 4번째 옵션)'],
   ['v10.05','[시체고래] 죽음의 파도 속도 3배 · [보스전] 안내 글씨 2배·표시 시간 2배 · [심장] 옵션 2줄 이상 심장은 줄마다 잠글 수 있음(잠근 줄은 재설정해도 그대로, 잠금 하나당 재설정 비용 ×2) · [검 도깨비] 검총의 결계 전체 속도 1.6배(착지·검의 비·회전 베기 속도·줄 사이 정지, 예고 1.3초는 그대로) · [악마처형자] 구르기 2번→3번 · [악마 총잡이] 조합 카드 ★서리 도탄 추가(도탄 서리 중첩 → 불씨탄 폭발 · 모든 총알 최대 체력 0.3% 추가 피해)'],
   ['v10.04','[검 도깨비] 결계 안 회전 베기 돌진 속도 3배(예고 1.3초 · 줄 사이 정지 0.4초) · 검 도깨비 마왕 심장 추가(도트는 임시 그림)'],
