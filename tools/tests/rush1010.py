@@ -42,7 +42,7 @@ async def main():
         R['spd'] = await pg.evaluate("""()=>{const G=__G;const P=G.P,o=[];P.spd=1000;G.tick(1/30);o.push(Math.round(P.espd));P.spd=100;G.tick(1/30);o.push(Math.round(P.espd));G.startGame('wolf');G.P.spd=1000;G.tick(1/30);o.push(Math.round(G.P.espd));return o}""")
         # 전용 증강: 보스 러시 + 스킬이 있을 때만
         R['card'] = await pg.evaluate("""()=>{const G=__G;G.startGame('wolf');G.P.skill='cerb';const a=G.cardDefs().some(u=>u.id==='brCool');G.startRush('wolf');G.P.skill='cerb';const b2=G.cardDefs().some(u=>u.id==='brCool');const c0=G.skillCd();G.P.up.brCool=2;const c1=G.skillCd();return [a,b2,+(c1/c0).toFixed(2)]}""")
-        # 마석 (일반 판 적용 · 보스 러시 미적용)
+        # 마석 (일반 판·보스 러시 모두 적용, 심장은 보스 러시 제외)
         R['stone'] = await pg.evaluate("""()=>{const G=__G;G.SAVE.heart.inv=[];G.SAVE.heart.eq=[];G.SAVE.stone={inv:[],eq:null,n:0};G.startGame('wolf');const d0=G.P.dmg,a0=G.P.aspd,h0=G.P.max;
           G.stoneGain('rare');G.stoneGain('legend');G.stoneGain('epic');const eq=G.SAVE.stone.inv.find(q=>q.id===G.SAVE.stone.eq).g;G.startGame('wolf');const o=[eq,+(G.P.dmg/d0).toFixed(3),+(G.P.aspd-a0).toFixed(2),G.P.max/h0,G.runBonus().shard];G.startRush('wolf');o.push(G.runBonus().atk);return o}""")
         # 주사기
@@ -57,7 +57,7 @@ async def main():
         print(json.dumps(R, ensure_ascii=False))
         ok = (R['lock'][:2] == [False, True] and R['heartOff'][0] > 1.4 and R['heartOff'][1] is False and R['final']['state'] in ('win', 'over')
               and R['final']['total'] == 9 and R['final']['reward']['name'] == '하드' and R['final']['tix'] >= 3 and R['spd'][0] <= 290 and R['spd'][1] >= 250 and R['spd'][2] > 500
-              and R['card'] == [False, True, 0.8] and R['stone'][0] == 'legend' and R['stone'][1] == 1.06 and R['stone'][-1] == 0 and R['syr']['e1'] and R['syr']['st4'] and 3 <= R['syr']['min'] and R['syr']['max'] <= 10
+              and R['card'] == [False, True, 0.8] and R['stone'][0] == 'legend' and R['stone'][1] == 1.06 and R['stone'][-1] == 6 and R['syr']['e1'] and R['syr']['st4'] and 3 <= R['syr']['min'] and R['syr']['max'] <= 10
               and R['tix'][1] == 0 and R['tix'][2] == 0 and rounds[0]['kill']['hearts'] == 1 and all(r['mod']['o2'][0] - r['mod']['o2'][1] >= 20 for r in rounds[1:] if r['ent']['bk'] != 'kng') and rounds[2]['mod']['cross'] and rounds[3]['mod']['wind'])
         print('OK' if ok else 'FAIL'); print('errs', pg.errs[:6]); await b.close()
 asyncio.run(main())
