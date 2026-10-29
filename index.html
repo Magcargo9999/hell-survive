@@ -983,7 +983,7 @@ function mkCanvas(w, h) { const c = document.createElement('canvas'); c.width = 
  * ============================================================ */
 const SAVE_KEY = 'hellSurvivorSave1';
 let bnHide = false; try { bnHide = localStorage.getItem('hsBnHide') === '1'; } catch (_) {}   // v10.12 보스전 안내 글씨 끄기 (H키, 이 설정만 따로 저장)
-const GAME_VER = 'v10.14';
+const GAME_VER = 'v10.15';
 const SAVE_DEF = () => ({
   shards: 0,
   perks: { hp: 0, spd: 0, dmg: 0, exp: 0, magnet: 0, banish: 0, revive: 0, regen: 0, shard: 0, critd: 0, choice: 0 },
@@ -9634,11 +9634,14 @@ const ROUTE_COND = {
   archer:  { skel:    { txt: '저주받은 독약을 마신다 (Lv.5~8 사이 맵에 떨어짐 · 판마다 없을 수도 있음 · 마시면 체력 25% 감소)', ok: () => !!P.poisoned, prog: () => P.poisoned ? '마셨다' : P.poisonSpawned ? '지금 맵 어딘가에 떨어져 있다!' : '아직 나타나지 않음' } },
 };
 const condFor = (g, k) => ROUTE_COND[g] && ROUTE_COND[g][k];
+const routeHint = txt => rush ? '⚔ 보스 러시 — 진화 조건 없이 모든 루트를 자유롭게 선택할 수 있어요' : txt;   // v10.15
 function condItem(g, k) {
   const c = condFor(g, k); if (!c) return { tag: ' · 기본 진화' };
+  if (rush) return { tag: ' · 보스 러시 자유 진화' };   // v10.15: 해금 조건은 일반 모드에서만 검사
   const ok = c.ok(); return { locked: !ok, cond: { ok, txt: `${c.txt}<br>(${c.prog()})` } };
 }
 function pendingConds() {   // 아직 정해지지 않은 진화의 조건 목록 (일시정지 화면·안내용)
+  if (rush) return [];   // v10.15: 보스 러시는 진화 조건이 없음
   const L = [];
   if (P.char === 'wolf') { if (!P.route) L.push(['혈랑 (Lv.10)', 'wolf', 'crimson'], ['쌍두 (Lv.10)', 'wolf', 'twin']); else if (P.route === 'crimson' && !P.fin) L.push(['성혈랑 (Lv.20)', 'wolfFin', 'holy']); }
   else if (P.char === 'snail') { if (!P.route) L.push(['용암 (Lv.10)', 'snail', 'lava']); }
@@ -9649,6 +9652,7 @@ function pendingConds() {   // 아직 정해지지 않은 진화의 조건 목�
   return L.map(([name, g, k]) => ({ name, id: g + ':' + k, c: condFor(g, k) }));
 }
 function milestone() {   // 진화·스킬·마왕전을 미리 알려 준다
+  if (rush) return;   // v10.15: 러시 시작 레벨업에서 일반 모드의 진화 해금 안내를 띄우지 않음
   const L = P.lvl, cs = pendingConds();
   if (P.char === 'octo' && L === 9) { banner = { txt: '다음 레벨(Lv.10)에 진화!  특수 스킬 [코끼리 돌진]을 쓸 수 있게 됩니다', t: 6 }; return; }
   if (P.char === 'octo' && L === 19) { banner = { txt: '다음 레벨(Lv.20)에 최종 진화!  스킬이 [문어의 심연]으로 바뀝니다', t: 6 }; return; }
@@ -9698,19 +9702,19 @@ function openLizRoute() {   // Lv.10: 대검의 길(리자드 검사) / 수호�
              ['guard', '수호의 길 · 리저드 플레이어', '체력 +45 · 받는 피해 -12% · 공격력 +12% · 아주 느린 자연 회복 · 가시 비늘 기본 장착 (맞으면 반격)', 'Lv.20 : 수호의 리저드 (스킬 반격의 갑주)', 'g1']];
   const items = L.map(([k, nm, ds, sb, pk]) => Object.assign({ key: k, name: nm, desc: ds, sub: sb, preview: c => drawLizPrev(c, pk) }, k === 'sword' ? { tag: ' · 기본 진화' } : condItem('lizard', 'guard')));
   openChoice(`진화의 갈림길  Lv.${P.lvl}`, items, u => { P.route = u.key; ensureTint(1); startEvolve(1); }, 'route');
-  document.getElementById('levelHint').textContent = '🔒 수호 = Lv.10 전에 피해를 많이 받아야 열림 (맞으면서 가시로 되갚는 방어형) · 대검 = 기본 진화 (한 방이 강한 공격형)';
+  document.getElementById('levelHint').textContent = routeHint('🔒 수호 = Lv.10 전에 피해를 많이 받아야 열림 (맞으면서 가시로 되갚는 방어형) · 대검 = 기본 진화 (한 방이 강한 공격형)');
 }
 function openLizFinal() {
   const L = [['rage', '버서커 리자드', '체력 +55 · 공격력 +25% · 범위 +15% · 체력이 낮을수록 피해 최대 약 2.25배 (광폭)', '전용 스킬 : 광란 (5초간 공속 ×3 · 이속 +12%)'],
              ['water', '물의 도마뱀 전사', '체력 +60 · 공격력 +12% · 받는 피해 -10% · 초당 재생 +1.0', '전용 스킬 : 물의 주술 (누르면 체력 22% 즉시 회복 · 무적 · 밀쳐냄)']];
   const items = L.map(([k, nm, ds, sb]) => Object.assign({ key: k, name: nm, desc: ds, sub: sb, preview: c => drawLizPrev(c, k) }, k === 'rage' ? condItem('lizardFin', 'rage') : { tag: ' · 기본 진화' }));
   openChoice(`최종 진화  Lv.${P.lvl}`, items, u => { P.fin = u.key; ensureTint(2); startEvolve(2); }, 'route');
-  document.getElementById('levelHint').textContent = '🔒 버서커 = 체력이 10 이하로 떨어진 적이 있어야 열림 (위험할수록 강한 공격형) · 물의 전사 = 기본 진화 (스스로 치유하는 지속형)';
+  document.getElementById('levelHint').textContent = routeHint('🔒 버서커 = 체력이 10 이하로 떨어진 적이 있어야 열림 (위험할수록 강한 공격형) · 물의 전사 = 기본 진화 (스스로 치유하는 지속형)');
 }
 function openArcherRoute() {
   const items = Object.keys(ARCHER_ROUTES).map(k => Object.assign({ key: k, name: ARCHER_ROUTES[k].title, desc: ARCHER_ROUTES[k].desc, sub: ARCHER_ROUTES[k].later, preview: c => drawArcherPreview(c, k) }, condItem('archer', k)));
   openChoice(`진화의 갈림길  Lv.${P.lvl}`, items, u => { P.route = u.key; ensureTint(1); startEvolve(1); }, 'route');
-  document.getElementById('levelHint').textContent = '🔒 조건을 달성한 루트만 고를 수 있어요. [기본 진화]는 조건 없이 선택 가능';
+  document.getElementById('levelHint').textContent = routeHint('🔒 조건을 달성한 루트만 고를 수 있어요. [기본 진화]는 조건 없이 선택 가능');
 }
 function drawArcherFinPrev(c, k) {
   const d = ARCHER_FIN[k], g = c.getContext('2d'), img = IMG[d.src], H = hq(img), K = H.width / img.width, f = Math.min(126 / d.pv[1], 100 / d.ch);
@@ -9722,7 +9726,7 @@ function openArcherFinal() {
              ['holy', '성화된 지옥엘프 궁수', '체력 +63 · 공격력 +15% · 사거리 +10% · 먼 거리 피해 +25% · 받는 피해 -10%', '전용 스킬 : 신성화살 (오래 모을수록 강한 차징 · 풀차지 명중 시 쿨타임 -50%)', 'holy']];
   const items = L.map(([k, nm, ds, sb, ck]) => Object.assign({ key: k, name: nm, desc: ds, sub: sb, preview: c => drawArcherFinPrev(c, k) }, ck ? condItem('archerFin', ck) : { tag: ' · 기본 진화' }));
   openChoice(`최종 진화  Lv.${P.lvl}`, items, u => { P.fin = u.key; ensureTint(2); startEvolve(2); }, 'route');
-  document.getElementById('levelHint').textContent = '🔒 조건을 달성한 루트만 고를 수 있어요. [기본 진화]는 조건 없이 선택 가능';
+  document.getElementById('levelHint').textContent = routeHint('🔒 조건을 달성한 루트만 고를 수 있어요. [기본 진화]는 조건 없이 선택 가능');
 }
 function drawChimPrev(c, k) {
   const D = chimForm(k, 1), g = c.getContext('2d'), f = Math.min(126 / D.pv[2], 100 / D.pv[3]);
@@ -9732,18 +9736,18 @@ function drawChimPrev(c, k) {
 function openChimRoute() {
   const items = Object.keys(CHIM_ROUTES).map(k => Object.assign({ key: k, name: CHIM_ROUTES[k].title, desc: CHIM_ROUTES[k].desc, sub: CHIM_ROUTES[k].later, preview: c => drawChimPrev(c, k) }, k === 'dream' ? condItem('chimera', 'dream') : { tag: k === 'wind' ? ' · 기본 진화' : '' }));
   openChoice(`진화의 갈림길  Lv.${P.lvl}`, items, u => { P.route = u.key; startEvolve(1); }, 'route');
-  document.getElementById('levelHint').textContent = '🔒 몽환은 0단계에서 이공벌레를 잡아야 열려요. 바람 = 원거리 관통 · 화염 = 넓은 근접 + 화상 · 몽환 = 촉수 + 강한 후반';
+  document.getElementById('levelHint').textContent = routeHint('🔒 몽환은 0단계에서 이공벌레를 잡아야 열려요. 바람 = 원거리 관통 · 화염 = 넓은 근접 + 화상 · 몽환 = 촉수 + 강한 후반');
 }
 function openFinal() {
   const L = [['blood', 'crimsonB', '혈랑 (진화형)', '체력 +20 · 처치 시 체력 +0.2 · 흡혈', '전용 스킬 : 피의 갈취 (범위 흡혈)', null],
              ['holy', 'crimsonH', '성혈랑', '베기 2연타 (타당 50%) · 범위 +10% · 체력 +30 · 재생', '전용 스킬 : 신성한 피의 비', 'holy']];
-  if (SAVE.fw.open) L.push(['fallen', 'crimsonF', '타락한 혈랑', '공격력 +40% · 공속 +10% · 평타 범위 +25% · 체력 +45 · 처치 시 체력 +0.2', '전용 스킬 : 혈왕의 진 (진 안에서 공속↑ · 처치 회복)', 'fallen']);
+  if (SAVE.fw.open || rush) L.push(['fallen', 'crimsonF', '타락한 혈랑', '공격력 +40% · 공속 +10% · 평타 범위 +25% · 체력 +45 · 처치 시 체력 +0.2', '전용 스킬 : 혈왕의 진 (진 안에서 공속↑ · 처치 회복)', 'fallen']);
   const items = L.map(([k, rt, nm, ds, sb, ck]) => Object.assign({ key: k, name: nm, desc: ds, sub: sb, preview: c => {
     const d = ROUTE_FORMS[rt][2], g = c.getContext('2d'), img = IMG[d.src], H = hq(img), K = H.width / img.width, f = Math.min(126 / d.pv[1], 100 / d.ch);
     g.imageSmoothingEnabled = true; g.imageSmoothingQuality = 'high';
-    g.drawImage(H, d.pv[0] * K, 0, d.pv[1] * K, d.ch * K, (c.width - d.pv[1] * f) / 2, c.height - 2 - d.ch * f, d.pv[1] * f, d.ch * f); } }, ck === 'fallen' ? (SAVE.fw.cleared ? { tag: ' · 숨은 진화' } : { locked: true, cond: { ok: false, txt: '숨은 보스 [타락한 혈랑왕]을 쓰러뜨린다<br>(시작 화면 난이도 ▶ 끝의 ☠ 타락한 혈랑)' } }) : ck ? condItem('wolfFin', ck) : { tag: ' · 기본 진화' }));
+    g.drawImage(H, d.pv[0] * K, 0, d.pv[1] * K, d.ch * K, (c.width - d.pv[1] * f) / 2, c.height - 2 - d.ch * f, d.pv[1] * f, d.ch * f); } }, ck === 'fallen' ? (rush ? { tag: ' · 보스 러시 자유 진화' } : SAVE.fw.cleared ? { tag: ' · 숨은 진화' } : { locked: true, cond: { ok: false, txt: '숨은 보스 [타락한 혈랑왕]을 쓰러뜨린다<br>(시작 화면 난이도 ▶ 끝의 ☠ 타락한 혈랑)' } }) : ck ? condItem('wolfFin', ck) : { tag: ' · 기본 진화' }));
   openChoice(`최종 진화  Lv.${P.lvl}`, items, u => { P.fin = u.key; ensureTint(2); startEvolve(2); }, 'route');
-  document.getElementById('levelHint').textContent = '🔒 조건을 달성한 루트만 고를 수 있어요. [기본 진화]는 조건 없이 선택 가능';
+  document.getElementById('levelHint').textContent = routeHint('🔒 조건을 달성한 루트만 고를 수 있어요. [기본 진화]는 조건 없이 선택 가능');
 }
 function openSnailRoute() {
   const items = Object.keys(SNAIL_ROUTES).map(k => Object.assign({
@@ -9752,7 +9756,7 @@ function openSnailRoute() {
   }, SNAIL_ROUTES[k].avail ? condItem('snail', k) : {}));
   items.forEach(u => { if (u.key === 'venom') u.tag = ' · 기본 진화'; });
   openChoice(`진화의 갈림길  Lv.${P.lvl}`, items, u => { P.route = u.key; startEvolve(1); }, 'route');
-  document.getElementById('levelHint').textContent = '🔒 조건을 달성한 루트만 고를 수 있어요. [기본 진화]는 조건 없이 선택 가능';
+  document.getElementById('levelHint').textContent = routeHint('🔒 조건을 달성한 루트만 고를 수 있어요. [기본 진화]는 조건 없이 선택 가능');
 }
 function openRoute() {
   const items = Object.keys(ROUTES).map(k => Object.assign({ key: k, name: ROUTES[k].title, desc: ROUTES[k].desc, sub: ROUTES[k].later, preview: c => drawPreview(c, k) }, condItem('wolf', k)));
@@ -9761,7 +9765,7 @@ function openRoute() {
     P.route = u.key; ensureTint(1); ensureTint(2);
     startEvolve(1);
   }, 'route');
-  document.getElementById('levelHint').textContent = '🔒 조건을 달성한 루트만 고를 수 있어요. [기본 진화]는 조건 없이 선택 가능';
+  document.getElementById('levelHint').textContent = routeHint('🔒 조건을 달성한 루트만 고를 수 있어요. [기본 진화]는 조건 없이 선택 가능');
 }
 
 function applyEvo(to) {
@@ -14585,7 +14589,7 @@ function startRush(char) {
   for (const k of ord) imgReady(['arena'].concat(BR_IMGS[k] || []));   // 미리 받아 둔다
   setTimeout(() => { try { if (IMG.mmap) mmapS(); arenaS(); } catch (_) {} }, 400);
   show('startBox', false); show('overBox', false); show('levelBox', false); show('pauseBox', false);
-  banner = { txt: `⚔ 보스 러시!  Lv.${BR.lv}까지 증강을 직접 고릅니다 (루트·진화도 직접)\n4라운드 — 처치해 본 마왕 중 무작위 · 라운드마다 맵 기믹이 쌓이고, 2·3·4라운드 전에 증강 2개/5개를 고릅니다 (적게 고를수록 보상↑)\n보스 러시에서는 심장 옵션·마석이 적용되지 않고, 이동 속도는 ${BR.spdMin}~${BR.spdMax}로 맞춰집니다 (질주 카드 제외)`, t: 7, c: '#ffb05a' };
+  banner = { txt: `⚔ 보스 러시!  Lv.${BR.lv}까지 증강을 직접 고릅니다 (루트·진화도 직접)\n4라운드 — 처치해 본 마왕 중 무작위 · 진화 조건 없이 모든 루트 선택 가능 · 라운드마다 맵 기믹이 쌓이고, 2·3·4라운드 전에 증강 2개/5개를 고릅니다 (적게 고를수록 보상↑)\n보스 러시에서는 심장 옵션·마석이 적용되지 않고, 이동 속도는 ${BR.spdMin}~${BR.spdMax}로 맞춰집니다 (질주 카드 제외)`, t: 7, c: '#ffb05a' };
   state = 'play'; rushLevels(BR.lv - 1);
 }
 function rushEnter() { rush.enter(); }
@@ -16721,6 +16725,7 @@ function openAch() {
 }
 /* v8.71 간략 패치노트 (최근 버전만, 새 버전마다 맨 위에 한 줄 추가) */
 const PATCH = [
+  ['v10.15','[보스 러시] 모든 진화 루트 해금 조건을 무시하고 선택 가능 · 숨겨진 타락한 혈랑도 선택지에 표시 · 일반 모드의 조건은 유지'],
   ['v10.14','[보스 러시] 이동속도 증강 [질주] 선택지 제외(일반 모드는 유지) · 최저 이동속도 230→250(+8.7%), 상한 290 유지 · 해당 조합 힌트 숨김'],
   ['v10.13','[스킨 가챠] 보유 스킨 뽑기권 수량을 0장부터 표시 · [보스 심장] 뽑기권 표시를 제거하고 마석·주사기만 유지'],
   ['v10.12','[보스전] 위쪽 안내 글씨 크기를 원래대로(표시 시간 2배는 유지) · H키로 보스전 안내 글씨 끄기/켜기'],
