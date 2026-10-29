@@ -983,7 +983,7 @@ function mkCanvas(w, h) { const c = document.createElement('canvas'); c.width = 
  * ============================================================ */
 const SAVE_KEY = 'hellSurvivorSave1';
 let bnHide = false; try { bnHide = localStorage.getItem('hsBnHide') === '1'; } catch (_) {}   // v10.12 보스전 안내 글씨 끄기 (H키, 이 설정만 따로 저장)
-const GAME_VER = 'v10.13';
+const GAME_VER = 'v10.14';
 const SAVE_DEF = () => ({
   shards: 0,
   perks: { hp: 0, spd: 0, dmg: 0, exp: 0, magnet: 0, banish: 0, revive: 0, regen: 0, shard: 0, critd: 0, choice: 0 },
@@ -9408,7 +9408,7 @@ function synCard(sy) {
 }
 function cardView(u) {
   const a = altOf(u), cur = P.up[u.id] || 0, n = cur + 1, mx = u.max || MAXLV, hint = '';
-  const sl = (u.max || MAXLV) >= SYN_LV ? synAll(u.id) : [];
+  const sl = (u.max || MAXLV) >= SYN_LV ? synAll(u.id).filter(sy => !rush || !sy.need.includes('move')) : [];   // v10.14 보스 러시에서 얻을 수 없는 이속 재료 조합은 안내하지 않음
   const syn = sl.length ? sl.map(sy => { const b = altOf(sy); return `★ ${b ? b[0] : sy.name}<br>　= ${upName(sy.need.find(x => x !== u.id))} (둘 다 Lv.${SYN_LV})`; }).join('<br>') : '';
   return { id: u.id, def: u, name: a ? a[0] : u.name, desc: a ? a[1] : u.txt(n), eff: true, apply: u.apply, tag: '', isNew: !cur, syn, cls: (u.form >= 2 || u.fin || u.needSkill) ? 'finc' : '',
     sub: (cur ? `Lv.${cur} → ${n}` : `Lv.1`) + (n === mx ? ' (최대)' : '') + hint };
@@ -9417,7 +9417,7 @@ const restCard = () => ({ id: '_rest', name: '잠깐의 휴식', desc: '체력 2
 const shardBag = () => chal ? 10 + Math.floor(P.lvl / 2) : 10;   // v8.11: 챌린지는 레벨에 비례 (2레벨마다 +1)
 const shardCard = () => { const n = shardBag(); return { id: '_shard', name: '영혼 조각 주머니', desc: `영혼 조각 +${n}` + (chal ? ' (레벨이 오를수록 늘어남)' : ''), eff: true, noLv: true, sub: '', tag: '', apply: () => { SAVE.shards += n; saveSave(); } }; };
 function cardDefs() {
-  return UPGRADES.concat(UNIQUE[P.char] || []).filter(u => (!u.rushOnly || (rush && P.skill)) && (u.noChar !== P.char) && (!u.noRoute || u.noRoute !== P.route) && (!u.route || u.route === P.route) && (!u.fin || u.fin === P.fin) && (!u.form || P.form >= u.form) && (!u.needSkill || P.skill === u.needSkill) && !P.banned[u.id] && (P.up[u.id] || 0) < (u.max || MAXLV));
+  return UPGRADES.concat(UNIQUE[P.char] || []).filter(u => (!u.rushOnly || (rush && P.skill)) && (u.noChar !== P.char) && (!rush || u.id !== 'move') && (!u.noRoute || u.noRoute !== P.route) && (!u.route || u.route === P.route) && (!u.fin || u.fin === P.fin) && (!u.form || P.form >= u.form) && (!u.needSkill || P.skill === u.needSkill) && !P.banned[u.id] && (P.up[u.id] || 0) < (u.max || MAXLV));
 }
 const AUG_CAP = 10;   // v5.00: 서로 다른 증강을 10개 고르면 그 뒤로는 가진 증강만 나온다 (빌드 압축)
 const augOwned = () => UPGRADES.concat(UNIQUE[P.char] || []).filter(u => (P.up[u.id] || 0) > 0).length;
@@ -14430,7 +14430,7 @@ function drawFrwDeath(m, x, y) {
 const BR_ORDER = ['monkey', 'eye', 'skel', 'angel', 'shk', 'tox', 'vft', 'qn', 'adm', 'whl', 'kng', 'bear', 'rud', 'lil', 'cvt', 'snk', 'tig', 'dok'];   // 보스 러시에 나올 수 있는 마왕 (이 중 도감에 처치 기록이 있는 마왕만)
 const BR_N = 4;   // 라운드 수
 const BR_NAME = { monkey: '원숭이 마왕', eye: '심연의 마안군주', skel: '스켈레톤 마왕', angel: '타락천사', shk: '거대 버섯마귀', tox: '이독버섯 마왕', adm: '썩어버린 해군 제독', qn: '타락한 원예의 여왕', vft: '파리지옥 마왕', kng: '타락한 어인왕', bear: '팔한지옥의 백곰 마왕', rud: '마하칼 루드라', lil: '팔한지옥의 대공작 릴세르카', whl: '심해의 시체고래', cvt: '영벌의 화염죄수', snk: '불구렁이', tig: '지옥의 화염 호랑이', dok: '검 도깨비 마왕' };
-const BR = { lv: 20, per: 60, clear: 400, rest: 3.2, tier: [3, 5, 7, 9], spdMin: 230, spdMax: 290, cdK: 0.1 };   // lv = 시작 레벨 · per/clear = 영혼 조각 · tier = 라운드별 난이도(P.tier) · spdMin/spdMax = 이동 속도 보장/상한 · cdK = 전용 증강 [시간 왜곡] 1장당 스킬 쿨타임 감소
+const BR = { lv: 20, per: 60, clear: 400, rest: 3.2, tier: [3, 5, 7, 9], spdMin: 250, spdMax: 290, cdK: 0.1 };   // v10.14 최저 이속 230→250(+8.7%) · lv = 시작 레벨 · per/clear = 영혼 조각 · tier = 라운드별 난이도(P.tier) · spdMin/spdMax = 이동 속도 보장/상한 · cdK = 전용 증강 [시간 왜곡] 1장당 스킬 쿨타임 감소
 const BR_MODS = [[], ['o2'], ['o2', 'cross'], ['o2', 'cross', 'wind']];   // 라운드별 맵 기믹 (누적)
 const BR_MOD_NAME = { o2: '🫧 산소존', cross: '🔥 회전하는 불의 십자가', wind: '🌪 변덕스러운 똥바람' };
 const BR_REWARD = [   // 고른 증강 합계 → 보상 (6 = 2·2·2 … 15 = 5·5·5)
@@ -14585,7 +14585,7 @@ function startRush(char) {
   for (const k of ord) imgReady(['arena'].concat(BR_IMGS[k] || []));   // 미리 받아 둔다
   setTimeout(() => { try { if (IMG.mmap) mmapS(); arenaS(); } catch (_) {} }, 400);
   show('startBox', false); show('overBox', false); show('levelBox', false); show('pauseBox', false);
-  banner = { txt: `⚔ 보스 러시!  Lv.${BR.lv}까지 증강을 직접 고릅니다 (루트·진화도 직접)\n4라운드 — 처치해 본 마왕 중 무작위 · 라운드마다 맵 기믹이 쌓이고, 2·3·4라운드 전에 증강 2개/5개를 고릅니다 (적게 고를수록 보상↑)\n보스 러시에서는 심장 옵션·마석이 적용되지 않고, 이동 속도는 ${BR.spdMin}~${BR.spdMax}로 맞춰집니다`, t: 7, c: '#ffb05a' };
+  banner = { txt: `⚔ 보스 러시!  Lv.${BR.lv}까지 증강을 직접 고릅니다 (루트·진화도 직접)\n4라운드 — 처치해 본 마왕 중 무작위 · 라운드마다 맵 기믹이 쌓이고, 2·3·4라운드 전에 증강 2개/5개를 고릅니다 (적게 고를수록 보상↑)\n보스 러시에서는 심장 옵션·마석이 적용되지 않고, 이동 속도는 ${BR.spdMin}~${BR.spdMax}로 맞춰집니다 (질주 카드 제외)`, t: 7, c: '#ffb05a' };
   state = 'play'; rushLevels(BR.lv - 1);
 }
 function rushEnter() { rush.enter(); }
@@ -16721,6 +16721,7 @@ function openAch() {
 }
 /* v8.71 간략 패치노트 (최근 버전만, 새 버전마다 맨 위에 한 줄 추가) */
 const PATCH = [
+  ['v10.14','[보스 러시] 이동속도 증강 [질주] 선택지 제외(일반 모드는 유지) · 최저 이동속도 230→250(+8.7%), 상한 290 유지 · 해당 조합 힌트 숨김'],
   ['v10.13','[스킨 가챠] 보유 스킨 뽑기권 수량을 0장부터 표시 · [보스 심장] 뽑기권 표시를 제거하고 마석·주사기만 유지'],
   ['v10.12','[보스전] 위쪽 안내 글씨 크기를 원래대로(표시 시간 2배는 유지) · H키로 보스전 안내 글씨 끄기/켜기'],
   ['v10.11','🫧 보스 러시 2라운드 산소 게이지 수정 — 마왕이 큰 패턴을 쓰는 동안에도 산소가 계속 줄어듭니다(산소가 0일 때의 피해만 큰 패턴 중 쉼)'],

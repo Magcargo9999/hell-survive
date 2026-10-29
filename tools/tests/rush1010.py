@@ -56,7 +56,7 @@ async def main():
         await pg.screenshot(path=B + 'rush1010_heart.png')
         print(json.dumps(R, ensure_ascii=False))
         ok = (R['lock'][:2] == [False, True] and R['heartOff'][0] > 1.4 and R['heartOff'][1] is False and R['final']['state'] in ('win', 'over')
-              and R['final']['total'] == 9 and R['final']['reward']['name'] == '하드' and R['final']['tix'] >= 3 and R['spd'][0] <= 290 and R['spd'][1] >= 230 and R['spd'][2] > 500
+              and R['final']['total'] == 9 and R['final']['reward']['name'] == '하드' and R['final']['tix'] >= 3 and R['spd'][0] <= 290 and R['spd'][1] >= 250 and R['spd'][2] > 500
               and R['card'] == [False, True, 0.8] and R['stone'][0] == 'legend' and R['stone'][1] == 1.06 and R['stone'][-1] == 0 and R['syr']['e1'] and R['syr']['st4'] and 3 <= R['syr']['min'] and R['syr']['max'] <= 10
               and R['tix'][1] == 0 and R['tix'][2] == 0 and rounds[0]['kill']['hearts'] == 1 and all(r['mod']['o2'][0] - r['mod']['o2'][1] >= 20 for r in rounds[1:] if r['ent']['bk'] != 'kng') and rounds[2]['mod']['cross'] and rounds[3]['mod']['wind'])
         print('OK' if ok else 'FAIL'); print('errs', pg.errs[:6]); await b.close()
