@@ -101,6 +101,7 @@ ASSETS = {
     '__SKGUNH__': 'skin/gunH.webp',
     '__SKGUNE__': 'skin/gunE.webp',
     '__HEART__': 'heart/heart.webp',
+    '__HDOK__': 'heart/dok_heart.webp',
     '__HFUSE__': 'heart/hfuse.webp',
     '__HFUSE3__': 'heart/hfuse3.webp',
     '__RELMASK__': 'final/relmask.webp',
