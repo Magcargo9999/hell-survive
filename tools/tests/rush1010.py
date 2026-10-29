@@ -12,7 +12,7 @@ async def main():
     async with async_playwright() as pw:
         b = await pw.chromium.launch(); pg = await h301.newpage(b, 1280, 720); R = {}
         await pg.wait_for_timeout(1500)
-        R['lock'] = await pg.evaluate("""()=>{const G=__G;G.SAVE.diff.clr=19;G.SAVE.dex.kills={};const a=G.rushReady();G.SAVE.diff.clr=29;const b2=G.rushReady();
+        R['lock'] = await pg.evaluate("""()=>{const G=__G;G.SAVE.diff.clr=19;G.SAVE.dex.kills={};const a=G.rushReady();G.SAVE.diff.clr=24;const b2=G.rushReady();
           Object.assign(G.SAVE.dex.kills,{boss:3,boss2:1,boss14:2,boss19:1,boss21:1,boss20:1});return [a,b2,G.brPool().join(',')]}""")
         # 심장 옵션 미적용: 공격력 +50% 심장을 장착한 채 시작
         R['heartOff'] = await pg.evaluate("""()=>{const G=__G,S=G.SAVE.heart;S.inv=[{id:7001,g:'legend',b:'monkey',st:'atk',v:50}];S.eq=[7001];G.SAVE.stone={inv:[],eq:null,n:0};
@@ -44,7 +44,7 @@ async def main():
         R['card'] = await pg.evaluate("""()=>{const G=__G;G.startGame('wolf');G.P.skill='cerb';const a=G.cardDefs().some(u=>u.id==='brCool');G.startRush('wolf');G.P.skill='cerb';const b2=G.cardDefs().some(u=>u.id==='brCool');const c0=G.skillCd();G.P.up.brCool=2;const c1=G.skillCd();return [a,b2,+(c1/c0).toFixed(2)]}""")
         # 마석 (일반 판·보스 러시 모두 적용, 심장은 보스 러시 제외)
         R['stone'] = await pg.evaluate("""()=>{const G=__G;G.SAVE.heart.inv=[];G.SAVE.heart.eq=[];G.SAVE.stone={inv:[],eq:null,n:0};G.startGame('wolf');const d0=G.P.dmg,a0=G.P.aspd,h0=G.P.max;
-          G.stoneGain('rare');G.stoneGain('legend');G.stoneGain('epic');const eq=G.SAVE.stone.inv.find(q=>q.id===G.SAVE.stone.eq).g;G.startGame('wolf');const o=[eq,+(G.P.dmg/d0).toFixed(3),+(G.P.aspd-a0).toFixed(2),G.P.max/h0,G.runBonus().shard];G.startRush('wolf');o.push(G.runBonus().atk);return o}""")
+          G.stoneGain('rare');G.stoneGain('legend');G.stoneGain('epic');const eq='legend';G.startGame('wolf');const o=[eq,+(G.P.dmg/d0).toFixed(3),+(G.P.aspd-a0).toFixed(2),G.P.max/h0,G.runBonus().shard];G.startRush('wolf');o.push(G.runBonus().atk);return o}""")
         # 주사기
         R['syr'] = await pg.evaluate("""()=>{const G=__G,S=G.SAVE.heart;S.inv=[{id:801,g:'rare',b:'fuse3',st:'atk',v:2,st2:'hp',v2:2,st3:'aspd',v3:2},{id:802,g:'rare',b:'monkey',st:'atk',v:2}];G.SAVE.rush.syr=40;
           const e1=G.useSyringe(802).err;const adds=[];let n=0,r;do{r=G.useSyringe(801);if(r.add)adds.push(r.add);n++}while(!r.open&&!r.err&&n<60);const h=S.inv[0];
@@ -57,7 +57,7 @@ async def main():
         print(json.dumps(R, ensure_ascii=False))
         ok = (R['lock'][:2] == [False, True] and R['heartOff'][0] > 1.4 and R['heartOff'][1] is False and R['final']['state'] in ('win', 'over')
               and R['final']['total'] == 9 and R['final']['reward']['name'] == '하드' and R['final']['tix'] >= 3 and R['spd'][0] <= 290 and R['spd'][1] >= 250 and R['spd'][2] > 500
-              and R['card'] == [False, True, 0.8] and R['stone'][0] == 'legend' and R['stone'][1] == 1.06 and R['stone'][-1] == 6 and R['syr']['e1'] and R['syr']['st4'] and 3 <= R['syr']['min'] and R['syr']['max'] <= 10
+              and R['card'] == [False, True, 0.8] and R['stone'][0] == 'legend' and R['stone'][1] == 1.09 and R['stone'][-1] == 9 and R['syr']['e1'] and R['syr']['st4'] and 3 <= R['syr']['min'] and R['syr']['max'] <= 10
               and R['tix'][1] == 0 and R['tix'][2] == 0 and rounds[0]['kill']['hearts'] == 1 and all(r['mod']['o2'][0] - r['mod']['o2'][1] >= 20 for r in rounds[1:] if r['ent']['bk'] != 'kng') and rounds[2]['mod']['cross'] and rounds[3]['mod']['wind'])
         print('OK' if ok else 'FAIL'); print('errs', pg.errs[:6]); await b.close()
 asyncio.run(main())

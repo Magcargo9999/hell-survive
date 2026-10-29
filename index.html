@@ -627,7 +627,7 @@ const FISHA = {"i0":[[0,0,126,89,64.0,84],[128,0,108,87,48.0,85],[238,0,105,99,5
 const FISHA1 = {"i1":[[0,0,133,95,64.0,90],[135,0,140,90,60.0,88],[277,0,121,91,50.0,89],[400,0,124,93,53.0,91],[526,0,128,94,58.0,92],[656,0,126,95,54.0,93]],"w1":[[784,0,192,120,80.0,114],[978,0,107,92,47.0,90],[1087,0,138,109,56.0,105],[1227,0,110,108,58.0,102],[0,122,123,92,58.0,89],[125,122,120,92,72.0,90],[247,122,92,109,27.0,103]],"a1":[[341,122,159,137,76.0,130],[502,122,140,129,63.5,127],[644,122,144,138,65.0,133],[790,122,145,138,70.0,133],[937,122,160,138,82.0,133],[1099,122,152,135,68.0,133]],"h1":[[1253,122,101,96,48.0,95],[0,262,94,93,41.0,92],[96,262,89,104,39.0,103],[187,262,90,98,47.0,96]],"d1":[[279,262,98,101,50.0,94],[379,262,94,95,46.0,92],[475,262,94,109,46.0,107],[571,262,94,96,47.0,94],[667,262,91,107,48.0,105],[760,262,83,82,43.0,75]]};   // v9.49 1진화 마계 미꾸라지 (tools/atlas/fish12_build.py)
 const FISHA2 = {"i2":[[0,0,88,77,46.0,71],[90,0,87,77,49.0,71],[179,0,99,77,63.0,71],[280,0,102,75,52.0,71],[384,0,85,74,37.0,68],[471,0,92,80,46.0,74]],"w2":[[565,0,97,77,30.0,71],[664,0,92,73,25.0,67],[758,0,94,79,15.0,73],[854,0,91,79,21.0,73],[947,0,95,78,16.0,72],[1044,0,101,77,17.0,71],[1147,0,113,78,19.0,72],[1262,0,109,67,18.5,71]],"a2":[[0,82,82,71,40.0,73],[84,82,81,81,45.0,74],[167,82,81,78,44.0,75],[250,82,92,81,45.0,75],[344,82,85,82,31.0,75],[431,82,86,80,38.0,75]],"h2":[[519,82,89,76,42.0,72],[610,82,89,79,41.0,70],[701,82,82,80,29.0,71],[785,82,78,71,21.0,67]],"d2":[[865,82,87,83,44.0,80],[954,82,83,82,33.0,79],[1039,82,80,84,23.0,81],[1121,82,88,84,31.0,81],[1211,82,90,84,42.5,81],[1303,82,82,84,38.0,81]],"press":[[0,168,349,320,178.0,157]],"wave":[[351,168,460,137,230.0,68]]};   // v9.49 최종 공허의 마해룡 (press = 절대 수압 원 · wave = 포식자의 파도)
 const FISH_AURA = [120, 160, 230];   // 형태별 오라 반경 (물고기 · 미꾸라지 · 마해룡 절대 수압) — 넓은 오라 카드(P.rng)가 곱해진다
-const FISH = { pct: 0.006, pctCap: 12, dm: 0.8, orb: 0.7, orbCd: 1.25, orbSp: 560, orbR: 430, zin: 0.35, zout: 0.7, din: 1.5, dout: 0.6, push: 170 };   // 오라 한 번(공격 간격마다) = 공격력 × dm · v9.49 물방울(1진화부터, 공격 간격 × orbCd마다 공격력 × orb) · 절대 수압 구역(안쪽 35% ×din · 바깥 30% ×dout + 밀어내기)
+const FISH = { pct: 0.0078, pctCap: 15.6, dm: 0.8, orb: 0.7, orbCd: 1.25, orbSp: 560, orbR: 430, zin: 0.35, zout: 0.7, din: 1.5, dout: 0.6, push: 170 };   // 오라 한 번(공격 간격마다) = 공격력 × dm · v9.49 물방울(1진화부터, 공격 간격 × orbCd마다 공격력 × orb) · 절대 수압 구역(안쪽 35% ×din · 바깥 30% ×dout + 밀어내기)
 const FWAVE = { dur: 0.7, sp: 960, w: 92, dm: 6.5 };   // v9.49 포식자의 파도: 0.7초 동안 걷던 방향으로 약 670px 날아가며 지나간 적(폭 92)에게 공격력 × dm (적마다 한 번)
 const FISH_FORMS = [
   { src: 'fish', name: '마계 물고기', ws: 0.9, flip: 1, hitF: 0, sh: 24, hy: 60, pv: FISHA.i0[0].slice(0, 4), rgb: '90,190,255', c1: '#5ac8ff', c2: '#bfeaff',
@@ -652,7 +652,7 @@ const GHOST_FORMS = [
 const DKF = {"k1_idle":[[0,0,76,106,40,106],[78,0,74,106,34,106],[154,0,72,104,32,104],[228,0,71,104,33,104],[301,0,86,102,26,102],[389,0,122,102,34,102]],"k1_walk":[[513,0,93,99,55,99],[608,0,79,89,57,89],[689,0,82,92,48,92],[773,0,80,94,48,94],[855,0,81,92,55,92],[938,0,83,100,57,100],[1023,0,93,100,50,100],[1118,0,88,99,52,99]],"k1_atk":[[1208,0,91,103,58,103],[1301,0,114,98,82,98],[1417,0,117,99,49,99],[0,108,120,112,55,112],[122,108,117,97,57,97],[241,108,114,98,52,98],[357,108,140,95,50,95],[499,108,116,99,73,99]],"k1_hit":[[617,108,79,99,47,99],[698,108,79,100,41,100],[779,108,75,96,49,96],[856,108,69,97,39,97]],"k1_death":[[927,108,81,116,42,116],[1010,108,75,109,39,109],[1087,108,78,107,50,107],[1167,108,86,113,53,113],[1255,108,76,112,51,112],[1333,108,108,109,31,109]],"k2_idle":[[1443,108,118,91,66,91],[0,226,121,91,71,91],[123,226,114,90,65,90],[239,226,114,91,63,91],[355,226,97,91,51,91],[454,226,122,91,66,91]],"k2_walk":[[578,226,112,86,65,86],[692,226,106,87,56,87],[800,226,101,88,52,88],[903,226,99,87,52,87],[1004,226,101,88,52,88],[1107,226,98,89,54,89],[1207,226,97,88,54,88],[1306,226,103,91,63,91]],"k2_atk":[[1411,226,114,86,55,86],[0,319,138,85,81,85],[140,319,116,86,70,86],[258,319,150,86,63,86],[410,319,120,86,50,86],[532,319,124,86,36,86],[658,319,123,86,67,86],[783,319,93,83,41,83]],"k2_hit":[[878,319,101,86,55,86],[981,319,107,86,42,86],[1090,319,126,86,60,86],[1218,319,106,86,46,86]],"k2_sum":[[1326,319,92,88,56,88],[1420,319,103,88,54,88],[0,409,99,88,36,88],[101,409,108,88,50,88],[211,409,104,88,59,88],[317,409,102,88,76,88],[421,409,116,88,58,88],[539,409,111,88,38,88]],"k2_death":[[652,409,86,82,60,82],[740,409,84,86,60,86],[826,409,79,85,46,85],[907,409,72,81,25,81],[981,409,114,84,86,84],[1097,409,84,88,30,88]],"hd_idle":[[1183,409,51,63,25,31],[1236,409,55,63,27,31],[1293,409,54,63,27,31],[1349,409,54,63,27,31]],"hd_move":[[1405,409,57,52,28,26],[1464,409,59,51,29,25],[1525,409,52,53,26,26],[0,499,41,49,20,24],[43,499,73,64,36,32],[118,499,47,47,23,23]],"hd_atk":[[167,499,46,61,23,30],[215,499,48,58,24,29],[265,499,34,58,17,29],[301,499,34,59,17,29],[337,499,40,64,20,32],[379,499,52,63,26,31]],"k2_idle_nh":[[433,499,118,91,64,91],[553,499,121,91,67,91],[676,499,114,90,60,90],[792,499,114,91,59,91],[908,499,97,91,42,91],[1007,499,122,91,66,91]],"k2_walk_nh":[[1131,499,112,86,60,86],[1245,499,106,87,55,87],[1353,499,101,88,50,88],[1456,499,99,87,48,87],[0,592,101,88,49,88],[103,592,98,89,49,89],[203,592,97,88,47,88],[302,592,103,91,53,91]]};
 const dkA = (k, o) => Object.assign({ n: DKF[k].length, fr: DKF[k] }, o);
 const KN = { reach: 1.3, hm: 0.8, hits: [3, 6], dodgeMax: 0.25,   // 사브르: 앞쪽 반원 반지름 = 사거리 × 1.3 · 한 번 휘두를 때 두 번 벤다 (타당 공격력의 80%)
-  lh: { dur: 10, spd: 330, leash: 560, r: 92, dm: 1.8, tick: 0.5, cast: 0.44 } };   // 잃어버린 머리 (v9.02: 피해 v8.98 값으로 롤백 · 머리 체력 없음 = 시간으로만 돌아옴): 지속 · 이속 · 나에게서 벗어날 수 있는 거리 · 폭발 반경 · 피해 배율 · 폭발 간격 · 시전 동작
+  lh: { dur: 13, spd: 330, leash: 560, r: 92, dm: 2.1, tick: 0.5, cast: 0.44 } };   // 잃어버린 머리 (v9.02: 피해 v8.98 값으로 롤백 · 머리 체력 없음 = 시간으로만 돌아옴): 지속 · 이속 · 나에게서 벗어날 수 있는 거리 · 폭발 반경 · 피해 배율 · 폭발 간격 · 시전 동작
 const KNIGHT_FORMS = [null,
   { src: 'dk', name: '유령 기사', kn: 1, ws: 0.8, flip: -1, hitF: 3, sh: 20, hy: 62, pv: DKF.k1_idle[0].slice(0, 4), rgb: '190,120,255', c1: '#b878ff', c2: '#ecd6ff',
     anim: { idle: dkA('k1_idle', { fps: 8 }), walk: dkA('k1_walk', { fps: 12 }), attack: dkA('k1_atk', { fps: 22, fl: -1 }), hit: dkA('k1_hit', { fps: 12 }), death: dkA('k1_death', { fps: 7 }) } },
@@ -927,7 +927,7 @@ const SKILLS = {
   cerb:   { name: '삼두 연쇄 물기', desc: '[삼두 전용] 세 머리가 가까운 적을 차례로 물어뜯습니다. 한 번마다 범위 피해와 강한 넉백, 둔화.', sub: '3연속 · 서로 다른 적 · 범위 피해' },
   drain:  { name: '피의 갈취', desc: '[혈랑 전용] 사방의 적에게서 피를 짜내 큰 피해를 주고, 맞힌 적 수만큼 체력을 회복합니다.', sub: '반경 400 · 적 1마리당 체력 +2% (최대 15%)' },
   bloodrain: { name: '신성한 피의 비', desc: '[성혈랑 전용] 3초 동안 성스러운 핏빛 기둥이 적들 위로 연달아 내리꽂히며, 명중할 때마다 체력을 조금 회복합니다. 맞은 적은 2초간 느려집니다.', sub: '기둥 15개 · 범위 피해 · 명중 시 회복 · 둔화' },
-  howl:   { name: '지옥의 울부짖음', desc: '[늑대 전용] 사방의 적을 크게 밀쳐내고 피해를 주며 느리게 만듭니다.', sub: '반경 420 · 강한 넉백 · 둔화' },
+  howl:   { name: '지옥의 울부짖음', desc: '[늑대 전용] 사방의 적을 크게 밀쳐내고 피해를 주며 느리게 만듭니다. 지옥 군주 늑대는 보스 · 미니 보스 · 유니크에게 최대 체력의 0.5%를 추가로 입힙니다 (추가분은 스킬 피해의 최대 ×4).', sub: '반경 420 · 강한 넉백 · 둔화' },
   megabomb: { name: '강화된 폭탄 투척', desc: '[폭탄 달팽이 전용] 적이 가장 많이 모인 곳에 거대한 폭탄을 던집니다. 떨어진 자리에서 크게 터지고, 작은 폭탄 6개가 사방으로 흩어져 연달아 터집니다.', sub: '거대 폭발 (공격력의 700%) + 작은 폭탄 6발 (각 120%)' },
   lavaburst: { name: '용암 대분출', desc: '[용암 달팽이 전용] 하늘에서 거대 용암탄 1발과 작은 용암탄 4발이 쏟아집니다. 남겨둔 용암 흔적은 그대로 남습니다.', sub: '거대 용암탄(범위 215) · 용암 웅덩이' },
   breath: { name: '화염 브레스', desc: '[화염 사자 전용] 짧게 힘을 모은 뒤 앞쪽 부채꼴로 2.4초간 화염을 뿜습니다. 시전 중에는 느리게 움직일 수 있고, 불길에 닿은 적은 화상을 입습니다.', sub: '부채꼴 · 지속 피해 · 화상' },
@@ -941,13 +941,13 @@ const SKILLS = {
   holyshot: { name: '신성화살', desc: '[성화된 지옥엘프 전용] 스페이스를 누른 채 빛을 모으고 떼면 발사합니다 (가장 가까운 적을 자동 조준). 오래 모을수록 화살이 커지고 훨씬 강해지며, 모으는 동안에도 움직일 수 있지만 이동 속도가 느려집니다. 풀차지로 명중하면 남은 쿨타임이 절반 줄어듭니다.', sub: '최대 1.8초 차징 · 무한 관통 · 최대 16배 · 풀차지 명중 시 쿨타임 -50%' },
   rage:   { name: '광란', desc: '[버서커 리자드 전용] 이성을 잃고 5초 동안 공격 속도가 3배로 치솟습니다 (이속 +12%). 체력이 낮을수록 광폭 피해가 크게 붙어, 위기일수록 더 위험해집니다.', sub: '5초 · 공속 ×3 · 이속 +12% · 붉은 광기' },
   tide:   { name: '물의 주술', desc: '[물의 도마뱀 전사 전용] 누르면 물의 주술로 체력을 즉시 회복합니다. 시전하는 짧은 순간 무적이고, 주변 적을 물결로 밀어내며 둔화시킵니다.', sub: '체력 22% 즉시 회복 · 0.9초 무적 · 주변 밀쳐냄 + 둔화' },
-  whip:   { name: '사슬 휘두르기', desc: '[사슬 악마 전용] 사슬을 앞으로 길게 내던져 일직선의 적을 꿰뚫은 뒤, 몸 주위로 크게 휘둘러 4번 베고 마지막에 사슬 폭발을 일으킵니다. 맞은 적에게는 공격력 비례 피해(내던지기 ×2.5 · 회전 한 번 ×1.5 · 폭발 ×4, 사슬의 폭군은 ×1.15)와 적 최대 체력 비례 피해(일반 몹 1% · 보스·미니보스·유니크 0.2%)를 주고, 닿는 범위 안에서 밀쳐냅니다. 최종 진화(사슬의 폭군)에서는 범위와 폭발이 커지고, 쓰고 나서 10초 동안 사슬 길이 2배 · 회전 속도 2배 · 체력 재생이 크게 늘어납니다. 쓰는 동안 무적이에요.', sub: '일직선 관통 → 회전 4연타 → 사슬 폭발 · 공격력 비례 피해(×2.5 · ×1.5 · ×4) + 최대 체력 비례 피해 · 넉백 · 시전 중 무적' },
+  whip:   { name: '사슬 휘두르기', desc: '[사슬 악마 전용] 사슬을 앞으로 길게 내던져 일직선의 적을 꿰뚫은 뒤, 몸 주위로 크게 휘둘러 4번 베고 마지막에 사슬 폭발을 일으킵니다. 맞은 적에게는 공격력 비례 피해(내던지기 ×2.5 · 회전 한 번 ×1.5 · 폭발 ×4, 사슬의 폭군은 ×1.15)와 적 최대 체력 비례 피해(일반 몹 0.9% · 보스·미니보스·유니크 0.18%)를 주고, 닿는 범위 안에서 밀쳐냅니다. 최종 진화(사슬의 폭군)에서는 범위와 폭발이 커지고, 쓰고 나서 10초 동안 사슬 길이 2배 · 회전 속도 2배 · 체력 재생이 크게 늘어납니다. 쓰는 동안 무적이에요.', sub: '일직선 관통 → 회전 4연타 → 사슬 폭발 · 공격력 비례 피해(×2.5 · ×1.5 · ×4) + 최대 체력 비례 피해 · 넉백 · 시전 중 무적' },
   bsigil: { name: '혈왕의 진', desc: '[타락한 혈랑 전용] 발밑에 7초 동안 핏빛 진을 펼칩니다. 진 안의 적은 0.5초마다 피해를 입고 진 가운데로 끌려가며, 내가 진 안에 서 있으면 공속이 크게 오르고 진 안에서 적을 쓰러뜨릴 때마다 체력이 회복됩니다.', sub: '7초 · 반경 230 · 진 안 공속 +100% · 끌어당김 · 처치 회복' },
   shell: { name: '반격의 갑주', desc: '[수호의 리저드 전용] 몸을 웅크려 갑주를 두릅니다. 3초 동안 모든 공격을 튕겨내고(받는 피해 70% 감소), 받은 피해의 2.5배를 공격한 쪽(보스 우선, 없으면 가까운 적)에게 되돌려줍니다. 보스·미니보스·유니크에게는 최대 체력의 30%를 더해 2배로 되돌려줍니다. 가시 비늘 반격도 그대로 함께 터집니다.', sub: '3초 · 받는 피해 -70% · 반사 피해 ×2.5 · 가시 비늘과 중첩' },
   ele: { name: '코끼리 돌진', desc: '[문어 마법사 전용] 앞에 낡은 냉장고를 소환합니다. 문을 부수고 튀어나온 코끼리가 바라보는 방향(움직이는 중이면 그 방향, 위아래·대각선 포함)으로 곧게 돌진해 길 위의 적을 모두 짓밟고 크게 밀어냅니다.', sub: '직선 돌진 · 공격력의 520% · 강한 넉백' },
   otent: { name: '문어의 심연', desc: '[심연의 문어 대마법사 전용] 3초 동안 적들의 발밑에서 거대한 문어 다리가 연달아 솟아올라 마구 후려칩니다. 다리 하나가 두 번씩 때립니다.', sub: '문어 다리 14개 · 범위 피해 (공격력의 160% × 2)' },
   gcharge: { name: '차지 샷', desc: '[연보라 총령 전용] 총구에 빛을 모아 거대한 연보라 구슬을 쏩니다. 일직선의 모든 적을 꿰뚫고 크게 밀어냅니다.', sub: '관통 · 공격력의 550% · 강한 넉백' },
-  lhead: { name: '잃어버린 머리 소환', desc: '[듀라한 전용] 잃어버린 머리를 10초 동안 불러냅니다. 머리는 몸과 따로 날아다니며 보스(없으면 미니 보스 · 가장 가까운 적)를 쫓아가 0.5초마다 보라색 영혼 불꽃을 터뜨립니다. 화면 밖(내게서 최대 560)이나 맵 밖으로 나가지 않고, 적에게 맞아도 사라지지 않으며 시간이 다 되면 목으로 돌아옵니다.', sub: '10초 · 쿨 28초 · 보스 우선 추적 · 불꽃 반경 92 · 공격력의 180%' },
+  lhead: { name: '잃어버린 머리 소환', desc: '[듀라한 전용] 잃어버린 머리를 13초 동안 불러냅니다. 머리는 몸과 따로 날아다니며 보스(없으면 미니 보스 · 가장 가까운 적)를 쫓아가 0.5초마다 보라색 영혼 불꽃을 터뜨립니다. 화면 밖(내게서 최대 560)이나 맵 밖으로 나가지 않고, 적에게 맞아도 사라지지 않으며 시간이 다 되면 목으로 돌아옵니다. 쿨타임은 머리가 목으로 돌아온 뒤부터 흐릅니다.', sub: '13초 · 쿨 28초(머리가 돌아온 뒤부터) · 보스 우선 추적 · 불꽃 반경 92 · 공격력의 210%' },
   gsummon: { name: '수호령 소환', desc: '[수호령의 총령 전용] 수호령 4마리를 불러 12초 동안 몸 주위를 돌게 합니다. 수호령은 적의 공격을 한 번 대신 맞아 주고 (최대 체력의 8%까지 막음), 그 자리에서 터지며 주변 적에게 피해를 줍니다.', sub: '수호령 4마리 · 12초 · 피격 1회 대신 받기 · 폭발 (공격력의 280%)' },
   laser:  { name: '지옥 광선',   desc: '앞쪽으로 긴 광선을 쏘아 훑어버립니다.',          sub: '지속 1.5초 · 관통 · 틱 피해' },
   zone:   { name: '업화의 장판', desc: '발밑에 거대한 불길 지대를 깔아 적을 태우고 느리게 만듭니다.', sub: '7초 유지 · 지속 피해 + 둔화' },
@@ -983,7 +983,7 @@ function mkCanvas(w, h) { const c = document.createElement('canvas'); c.width = 
  * ============================================================ */
 const SAVE_KEY = 'hellSurvivorSave1';
 let bnHide = false; try { bnHide = localStorage.getItem('hsBnHide') === '1'; } catch (_) {}   // v10.12 보스전 안내 글씨 끄기 (H키, 이 설정만 따로 저장)
-const GAME_VER = 'v10.17';
+const GAME_VER = 'v10.18';
 const SAVE_DEF = () => ({
   shards: 0,
   perks: { hp: 0, spd: 0, dmg: 0, exp: 0, magnet: 0, banish: 0, revive: 0, regen: 0, shard: 0, critd: 0, choice: 0 },
@@ -8114,7 +8114,7 @@ function bossDefeated() {
   banner = { txt: '마왕을 쓰러뜨렸다!', t: 6 };
   const refund = P.fee || 0; P.earned = shardTotal(Math.round(150 * tierMul())) + refund; SAVE.shards += P.earned;   // 클리어 보너스 +150 (단계 배율) + 참가비 반환
   P.rushOpen = false; if (P.tier >= MAX_TIER && !SAVE.rush.open) SAVE.rush.open = true;   // 지하 20층 클리어 기록 (마계 물고기 해금에 쓴다)
-  if (P.tier >= 29 && !SAVE.rush.o30) { SAVE.rush.o30 = true; P.rushOpen = true; }   // v10.10: 보스 러시 해금 = 지하 30층 마왕 처치
+  if (P.tier >= 24 && !SAVE.rush.o30) { SAVE.rush.o30 = true; P.rushOpen = true; }   // v10.10: 보스 러시 해금 = 지하 30층 마왕 처치
   SAVE.diff.clr = Math.max(SAVE.diff.clr | 0, P.tier);   // v9.10 깬 가장 깊은 층 (새 층이 열릴 때 인정)
   P.unlocked = 0; if (P.tier === SAVE.diff.max && SAVE.diff.max < OPEN_TIER) { SAVE.diff.max = P.tier + 1; P.unlocked = SAVE.diff.max; }
   P.gunOpen = false; if (P.tier >= 5 && !SAVE.chars.gun) { SAVE.chars.gun = true; P.gunOpen = true; }   // v6.40: 악마 총잡이 해금
@@ -8877,11 +8877,13 @@ const withSrc = (k, f) => { const o = DSRC; DSRC = k; try { return f(); } finall
 const dexBoss = e => ({ eye: 'boss2', fw: 'boss3', skel: 'boss4', ab: 'boss5', angel: 'boss6', shk: 'boss7', tox: 'boss8', adm: 'boss9', qn: 'boss10', vft: 'boss11', kng: 'boss12', grn: 'boss13', bear: 'boss14', rud: 'boss15', lil: 'boss16', cvt: 'boss17', snk: 'boss18', tig: 'boss19', whl: 'boss20', dok: 'boss21' })[e.bk] || 'boss';   // 도감 키 (원숭이 마왕 = boss)
 /* v8.62 체력비례 피해: 약한 근접 최종 진화(사슬의 폭군 · 삼두 늑대 · 지옥 군주 늑대 · 혈랑 진화형 · 업화의 사자 · 물의 도마뱀 전사 · 버서커 리자드)는
    보스·미니 보스·유니크를 때릴 때 최대 체력의 0.10%를 더 입힌다 (대상마다 0.25초에 한 번, 추가분은 그 타격 피해의 ×4까지). 달팽이(맹독·용암)는 독·용암 장판 틱에도 같은 식으로 (상한은 내 공격력 ×4, 장판 감쇠 없음) */
-const PCT_RATE = 0.001, PCT_CAP = 4, PCT_CD = 0.25;
-const pctMelee = () => P.form === 2 && (P.char === 'twins' || (P.char === 'wolf' && (P.route === 'twin' || P.route === 'abyss' || (P.route === 'crimson' && P.fin !== 'holy' && P.fin !== 'fallen'))) || (P.char === 'chimera' && P.route === 'flame') || (P.char === 'lizard' && (P.fin === 'water' || P.fin === 'rage')));
+const PCT_RATE = 0.001, PCT_CAP = 4, PCT_CD = 0.25, HOWL_PCT = 0.005;
+const pctMelee = () => (P.form === 2 && (P.char === 'twins' || (P.char === 'wolf' && (P.route === 'twin' || P.route === 'abyss' || (P.route === 'crimson' && P.fin !== 'holy' && P.fin !== 'fallen'))) || (P.char === 'chimera' && (P.route === 'flame' || P.route === 'dream')))) || (P.char === 'lizard' && P.form >= 1);   // v10.18: 리자드는 1진화부터 · 몽환 키메라 최종 추가
+/* v10.18 체력비례 계수 보정: 사슬 악마 ×0.90(소폭 너프) · 리자드 트리·몽환 키메라 ×1.15(중폭) · 달팽이 장판 ×1.08(소폭 버프) — 추가분 비율과 상한(×4)에 같이 곱한다 */
+const pctMul = () => P.char === 'twins' ? 0.9 : (P.char === 'lizard' || (P.char === 'chimera' && P.route === 'dream')) ? 1.15 : P.char === 'snail' ? 1.08 : 1;
 const pctZone = isLava => P.char === 'snail' && (isLava ? P.route === 'lava' : P.route === 'venom' || P.route === 'lava');
 const pctTarget = e => e.kind === 'boss' || e.kind === 'mini' || e.kind === 'uniq';
-function pctZoneHit(e) { if (!pctTarget(e) || e.hp <= 0) return; hurtEnemy(e, Math.min(e.max * PCT_RATE, P.dmg * PCT_CAP), 0, 0, 0, 'pct'); }   // 장판은 기본 피해가 작아서 상한을 내 공격력 ×4로
+function pctZoneHit(e) { if (!pctTarget(e) || e.hp <= 0) return; hurtEnemy(e, Math.min(e.max * PCT_RATE * pctMul(), P.dmg * PCT_CAP * pctMul()), 0, 0, 0, 'pct'); }   // 장판은 기본 피해가 작아서 상한을 내 공격력 ×4로
 function hurtEnemy(e, dmg, kx, ky, kn, quiet) {
   if (e.hp <= 0 || e.invul) return;
   const pctQ = quiet === 'pct'; if (pctQ) quiet = true;   // 장판 체력비례분: 장판 감쇠(보스 ×0.12 등)를 받지 않는다
@@ -8901,7 +8903,7 @@ function hurtEnemy(e, dmg, kx, ky, kn, quiet) {
   if (e.gazeT > gt) dmg *= 1.2;   // 광기의 시선: 촉수에 맞은 적
   if (e.frzT > gt) dmg *= P.syn.glacier ? 1.25 : 1.1;   /* v7.05 빙결 */
   if (!quiet && P.crit + critAdd > 0 && rand() < P.crit + critAdd) { dmg *= P.critD; crit = true; } else if (!quiet && P.rel.coin) dmg *= 0.92;
-  if (!quiet && pctTarget(e) && !(e.pctT > gt) && pctMelee()) { e.pctT = gt + PCT_CD; dmg += Math.min(e.max * PCT_RATE, dmg * PCT_CAP); }   // v8.62 체력비례 피해   // 치명타 카드 (+ 저격수의 표식) · 도박꾼의 동전: 치명타가 아니면 -8%
+  if (!quiet && pctTarget(e) && !(e.pctT > gt) && pctMelee()) { e.pctT = gt + PCT_CD; dmg += Math.min(e.max * PCT_RATE * pctMul(), dmg * PCT_CAP * pctMul()); }   // v8.62 체력비례 피해   // 치명타 카드 (+ 저격수의 표식) · 도박꾼의 동전: 치명타가 아니면 -8%
   if (e.shd > 0) { const ab = Math.min(e.shd, dmg); e.shd -= ab; dmg -= ab; if (e.shd <= 0) addRing(e.x, e.y - e.r, 6, 44, 0.3, '120,200,255', 4); if (dmg <= 0) { e.flash = 0.06; return; } }   // 보호막 접두사
   { const dd = Math.min(dmg, Math.max(0, e.hp)), k = DSRC || '?';   // v6.49: 출처 없는 피해도 '기타'로 집계 + 보스 전용 미터기
     DMETER[k] = (DMETER[k] || 0) + dd; if (e.kind === 'boss') DBOSS[k] = (DBOSS[k] || 0) + dd;
@@ -9141,7 +9143,7 @@ function startWhip() {
 /* v7.08 사슬 휘두르기(궁극기): 기본 피해 없음 — 최대 체력 비례 피해(잡몹 1% · 보스급 0.2%, 맞을 때마다)만 주고, 사슬이 뻗은 범위(reach)의 75% 거리까지 밀쳐낸다 */
 function whipHit(e, ux, uy, dist, reach, bm) {
   const big = e.kind === 'boss' || e.kind === 'mini' || e.kind === 'uniq', kr = e.kres || (e.elite || e.kind === 'bug' ? 0.6 : 1), want = Math.max(reach * 0.3, reach * 0.75 - dist);   // v7.12: 범위 끝에 맞아도 최소 30%는 밀친다
-  hurtEnemy(e, e.max * (big ? 0.002 : 0.01) * (1 + 0.2 * (whipQ ? whipQ.n : 0)) + P.dmg * (bm || 0) * (P.form >= 2 ? 1.15 : 1) * (1 + 0.2 * (whipQ ? whipQ.n : 0)), ux, uy, want * 8 / kr);   // v8.31: 공격력 비례 피해 추가
+  hurtEnemy(e, e.max * (big ? 0.0018 : 0.009) * (1 + 0.2 * (whipQ ? whipQ.n : 0)) + P.dmg * (bm || 0) * (P.form >= 2 ? 1.15 : 1) * (1 + 0.2 * (whipQ ? whipQ.n : 0)), ux, uy, want * 8 / kr);   // v8.31: 공격력 비례 피해 추가
 }
 function updateWhip(dt) {
   const q = whipQ, big = P.form >= 2, k = q.mom * (1 + 0.2 * q.n), rk = 1 + 0.1 * q.n, th = theme(), hy = FD().hy * FD().ws;
@@ -9789,7 +9791,7 @@ function applyEvo(to) {
   }
   if (P.char === 'ghost' && P.route === 'knight') {   // v8.98 유령 기사 (근접 사브르 · 빠름 · 회피) → 듀라한 (잃어버린 머리 소환)
     if (to === 1) { P.max += 45; P.dmg *= 1.15 * MELEE_NERF / RANGED_NERF; P.cd *= 0.5 / 0.58; P.spd *= 1.05; P.dodge = Math.min(KN.dodgeMax, (P.dodge || 0) + 0.08); }
-    else { P.max += 45; P.dmg *= 1.0; P.cd *= 1.0; P.spd *= 1.02; P.dodge = Math.min(KN.dodgeMax, (P.dodge || 0) + 0.05); }
+    else { P.max = (P.max + 45) * 1.25; P.dmg *= 1.25; P.cd /= 1.2; P.spd *= 1.125; P.dodge = Math.min(KN.dodgeMax, (P.dodge || 0) + 0.12); }   // v10.18 듀라한 전체 스탯 대폭 버프 (체력·공격 +25% · 공속 +20% · 이속 +12.5% · 회피 +12%p, 규격표 ② 보정)
     P.hp = P.max; markDex(to === 1 ? 'ghost:1k' : 'ghost:2k');
     return;
   }
@@ -9976,7 +9978,7 @@ function castSkill() {
     for (const e of enemies) {
       if (e.hp <= 0) continue;
       const dx = e.x - P.x, dy = e.y - P.y, d = Math.hypot(dx, dy) || 1;
-      if (d < 420 + e.r) { hurtEnemy(e, P.dmg * 3.5, dx / d, dy / d, 900); e.slowT = 2.5; }
+      if (d < 420 + e.r) { hurtEnemy(e, P.dmg * 3.5, dx / d, dy / d, 900); e.slowT = 2.5; if (P.route === 'abyss' && pctTarget(e) && e.hp > 0) hurtEnemy(e, Math.min(e.max * HOWL_PCT, P.dmg * 3.5 * PCT_CAP), 0, 0, 0, 'pct'); }   // v10.18 지옥 군주 늑대: 울부짖음이 최대 체력의 0.5%를 더 입힘
     }
     shake = 14;
   } else if (P.skill === 'cerb') {
@@ -11787,7 +11789,7 @@ function updateSkills(dt) {
   if (P.shellT > 0) P.shellT -= dt;
   if (P.char === 'ghost') { stepPals(dt); stepLostHead(dt); }
   stepOcto(dt);
-  if (P.skill) { P.skT = Math.max(0, P.skT - dt); if (P.skT <= 0 && !P.skillReady1) { P.skillReady1 = true; P.skillTipT = Math.max(P.skillTipT, 7); sfx('item'); } }
+  if (P.skill) { if (!(P.skill === 'lhead' && lhead)) P.skT = Math.max(0, P.skT - dt);   /* v10.18 잃어버린 머리가 나와 있는 동안은 쿨타임이 멈춘다 */ if (P.skT <= 0 && !P.skillReady1) { P.skillReady1 = true; P.skillTipT = Math.max(P.skillTipT, 7); sfx('item'); } }
   stepBigArrow(dt); stepDarkArrow(dt); updateAfx(dt);
   for (const b of bombT) { b.t -= dt; if (b.t <= 0) { b.done = true; boomAt(b.x, b.y, b.R, b.dm, false); } }
   bombT = bombT.filter(b => !b.done);
@@ -11970,7 +11972,7 @@ function update(dt) {
   if (iceQ) { if (Math.abs(P.x - ox0) < 1e-6) P.svx = 0; if (Math.abs(P.y - oy0) < 1e-6) P.svy = 0; }   // 벽에 막히면 그 방향 속도는 멈춘다
   P.inv = Math.max(0, P.inv - dt); P.hitT = Math.max(0, P.hitT - dt);
   if (P.regen && !relicMaskOn()) P.hp = Math.min(P.max, P.hp + P.regen * dt * (P.still > 1.2 ? 0.25 : 1) * DEBUFF.mul('regen'));   // v8.20 디버프(독 안개 -50%)
-  if (P.hp > 0 && P.hp < P.max && !relicMaskOn()) P.hp = Math.min(P.max, P.hp + ((P.chain4 > 0 || (whipQ && P.form >= 2) ? P.max * 0.03 : 0)) * dt);   // v5.24: 기본 0.2 재생 제거 (강화 상점에서 구매)   // v5.11: 모든 캐릭터 미미한 자연 회복 0.2/s · 사슬의 폭군 해방 중 초당 3%
+  if (P.hp > 0 && P.hp < P.max && !relicMaskOn()) P.hp = Math.min(P.max, P.hp + ((P.chain4 > 0 || (whipQ && P.form >= 2) ? P.max * 0.027 : 0)) * dt);   // v5.24: 기본 0.2 재생 제거 (강화 상점에서 구매)   // v5.11: 모든 캐릭터 미미한 자연 회복 0.2/s · 사슬의 폭군 해방 중 초당 3%
   P.healBank = Math.min(P.max * 0.12, P.healBank + P.max * 0.05 * dt * (P.still > 1.2 ? 0.2 : 1));
   P.shield = Math.max(0, P.shield - dt); P.boost = Math.max(0, P.boost - dt); P.vampCd -= dt; if (P.frenzy > 0) P.frenzy -= dt;
   P.thornCd -= dt; if (P.guardT > 0) P.guardT -= dt; if (P.regenCd > 0) P.regenCd -= dt; lowMark(); if (P.tideT > 0) P.tideT -= dt;
@@ -14452,7 +14454,7 @@ const FSET_ARENA = { ice: 'ice', fire: 'fire', dosan: 'dosan' };   // v9.71 7지
 const BR_SET = { lil: 'ice', rud: 'ice', bear: 'ice', monkey: 'hell', eye: 'hell', skel: 'hell', angel: 'hell', shk: 'mush', tox: 'mush', vft: 'gard', qn: 'gard', adm: 'sea', kng: 'sea', whl: 'sea', cvt: 'fire', snk: 'fire', tig: 'fire', dok: 'dosan' };   // 마왕이 나오는 지옥의 맵
 const rushFset = bk => { const q = BR_SET[bk]; return (q === 'ice' || q === 'fire' || q === 'dosan') ? q : q === 'gard' && IMG.gfloor && IMG.gprops && MSPECIES.length ? 'gard' : q === 'sea' && IMG.sfloor && IMG.sprops && SSPECIES.length ? 'sea' : q !== 'hell' && IMG.mfloor && IMG.mprops && MSPECIES.length ? 'mush' : 'hell'; };
 const rushOpen = () => !!(SAVE.rush.open || (SAVE.fw.snap && (SAVE.fw.snap.tier | 0) >= MAX_TIER));   // 예전 기준(지하 20층 클리어) — 마계 물고기 해금에만 쓴다
-const rushReady = () => (SAVE.diff.clr | 0) >= 29 || (SAVE.dex.kills.boss19 | 0) > 0;   // v10.10 보스 러시 해금 = 지하 30층 마왕 처치
+const rushReady = () => (SAVE.diff.clr | 0) >= 24 || (SAVE.dex.kills.boss16 | 0) > 0 || (SAVE.dex.kills.boss19 | 0) > 0;   // v10.18 보스 러시 해금 = 지하 25층 마왕(릴세르카) 처치 (v10.10: 30층)
 const brPool = () => BR_ORDER.filter(k => (SAVE.dex.kills[dexBoss({ bk: k })] | 0) > 0);   // 도감에 처치 기록이 있는 마왕
 const rushLine = () => rushReady() ? `⚔ 보스 러시 — 처치해 본 마왕 ${brPool().length}종 중 4라운드 · Lv.${BR.lv} 시작(증강 직접 선택) · 라운드마다 증강 2개/5개 선택(적게 고를수록 보상↑) · 심장 드랍 O · 심장 옵션 미적용 · 장착 마석 적용  ·  완주 ${SAVE.rush.clears | 0}회 · 🎫 ${SAVE.rush.tix | 0} · 💉 ${SAVE.rush.syr | 0}<br>` : '';
 function rushLevels(n) {   // n번 레벨업할 경험치를 한꺼번에 채우고 카드 선택을 이어서 띄운다 (진화·루트 선택도 평소처럼 끼어든다)
@@ -15127,7 +15129,7 @@ function showOver(win) {
     + (rush.reward ? `<br><span style="color:var(--gold)">🏅 보상 등급 [${rush.reward.name}] — 🎫 스킨 뽑기권 ×${rush.reward.tix} · 💎 ${HG[rush.reward.stone].name} 마석 (전 스탯 +${STONE[rush.reward.stone]}%) · ${rush.reward.syr ? '💉 주사기 ×1' : '주사기 없음'}</span>` : '')
     + (rush.hearts.length ? `<br><span style="color:#ff8aa8">💗 얻은 심장: ${rush.hearts.map(q => hTitle(q.h) + '(' + HG[q.h.g].name + ')').join(' · ')}</span>` : '');
   if (rush && rush.ach) $('overStats').innerHTML += `<br><span style="color:var(--gold)">🏆 업적 달성: ${rush.ach.name}  (시작 화면 🏆 업적에서 보상 받기)</span>`;
-  if (win && P.rushOpen) $('overStats').innerHTML += `<br><span style="color:#ffb05a">🔓 ⚔ 보스 러시 모드 해금! (지하 30층 클리어 · 시작 화면 [⚔ 보스 러시])</span>`;
+  if (win && P.rushOpen) $('overStats').innerHTML += `<br><span style="color:#ffb05a">🔓 ⚔ 보스 러시 모드 해금! (지하 25층 클리어 · 시작 화면 [⚔ 보스 러시])</span>`;
   if (win && P.unlocked) $('overStats').innerHTML += `<br><span style="color:var(--gold)">🔓 ${floorName(P.unlocked)} 해금!</span>`;
   if (win && P.dropGot) $('overStats').innerHTML += `<br><span style="color:var(--gold)">✨ ${P.dropGot}</span>`;
   if (win && P.fwOpen) $('overStats').innerHTML += `<br><span style="color:#ff8a9a">☠ 새 난이도 [타락한 혈랑] 추가! (시작 화면 난이도 ▶ 끝)</span>`;
@@ -16724,6 +16726,7 @@ function openAch() {
 }
 /* v8.71 간략 패치노트 (최근 버전만, 새 버전마다 맨 위에 한 줄 추가) */
 const PATCH = [
+  ['v10.18','[보스 러시] 해금 지하 30층 → 25층 마왕 처치 · [사슬 악마] 체력비례 피해 소폭 너프(0.9배, 사슬 휘두르기 일반 0.9%/보스급 0.18%) · 궁 체력 재생 3%→2.7% · [듀라한] 전체 스탯 대폭 버프 · 잃어버린 머리 피해 +17%(210%)·지속 10→13초·쿨타임은 머리가 돌아온 뒤부터 · [지옥 군주 늑대] 울부짖음 체력비례 0.5% · [마해룡] 오라 체력비례 0.6→0.78% · [리자드] 1진화부터 체력비례(×1.15) · [달팽이] 장판 체력비례 ×1.08 · [몽환 키메라] 최종 체력비례 ×1.15'],
   ['v10.17','[마석] 가진 마석은 전부 합쳐서 적용(장착 제한 없음) · 일반 모드·보스 러시 모두 적용, 보스 심장은 계속 보스 러시 제외'],
   ['v10.16','[마석] 장착한 마석의 공격력·공속·최대 체력·영혼 조각 보너스를 보스 러시에서도 적용 · 보스 심장은 계속 제외 · 획득한 새 마석은 다음 판부터'],
   ['v10.15','[보스 러시] 모든 진화 루트 해금 조건을 무시하고 선택 가능 · 숨겨진 타락한 혈랑도 선택지에 표시 · 일반 모드의 조건은 유지'],
@@ -16917,8 +16920,8 @@ function pauseStats() {
   let h = rows.map(r => `<div class="setrow"><span>${r[0]}</span><b>${r[1]}</b></div>`).join('');
   const cards = Object.keys(P.up).filter(id => P.up[id] > 0 && !SYNERGIES.some(x => x.id === id)).map(id => `${upName(id)} Lv.${P.up[id]}`).join(' · ');
   h += `<div class="pnote"><b>보유 카드</b><br>${cards || '아직 없음'}</div>`;
-  if (P.char === 'fish') h += `<div class="pnote"><b>체력비례 피해</b><br>물오라가 보스 · 미니 보스 · 유니크에게 오라 한 번마다 최대 체력의 0.6%를 추가로 입힙니다 (추가분은 내 공격력의 최대 ×9.6 · 절대 수압 구역 배율 적용)</div>`;
-  if (pctMelee() || pctZone(false)) h += `<div class="pnote"><b>체력비례 피해</b><br>${pctMelee() ? '보스 · 미니 보스 · 유니크를 때릴 때 최대 체력의 0.10%를 추가로 입힙니다 (대상마다 0.25초에 한 번 · 추가분은 타격 피해의 최대 ×4)' : '독 · 용암 장판이 보스 · 미니 보스 · 유니크에게 틱마다 최대 체력의 0.10%를 추가로 입힙니다 (추가분은 내 공격력의 최대 ×4)'}</div>`;
+  if (P.char === 'fish') h += `<div class="pnote"><b>체력비례 피해</b><br>물오라가 보스 · 미니 보스 · 유니크에게 오라 한 번마다 최대 체력의 0.78%를 추가로 입힙니다 (추가분은 내 공격력의 최대 ×12.5 · 절대 수압 구역 배율 적용)</div>`;
+  if (pctMelee() || pctZone(false)) { const pr = +(PCT_RATE * pctMul() * 100).toFixed(3), pc = +(PCT_CAP * pctMul()).toFixed(2); h += `<div class="pnote"><b>체력비례 피해</b><br>${pctMelee() ? `보스 · 미니 보스 · 유니크를 때릴 때 최대 체력의 ${pr}%를 추가로 입힙니다 (대상마다 0.25초에 한 번 · 추가분은 타격 피해의 최대 ×${pc})` : `독 · 용암 장판이 보스 · 미니 보스 · 유니크에게 틱마다 최대 체력의 ${pr}%를 추가로 입힙니다 (추가분은 내 공격력의 최대 ×${pc})`}</div>`; }
   { const rl = Object.keys(RELICS).filter(k => P.rel[k]);
     if (rl.length) h += `<div class="pnote"><b>저주받은 성유물</b><br>` + rl.map(k => `<b>${RELICS[k].name}</b> : ${RELICS[k].desc}` + (k === 'key' ? ` (남은 ${P.teleN}회 · E 키)` : k === 'phoenix' && P.phxUsed ? ' (사용함)' : k === 'fang' ? ` (${P.fangN}/10)` : '')).join('<br>') + '</div>';
     const st = []; if (P.slowT > 0) st.push(`둔화 ${Math.ceil(P.slowT)}초`); if (P.silT > 0) st.push(`침묵 ${Math.ceil(P.silT)}초`); if (P.chillT > 0) st.push(`동결 감속 ${Math.ceil(P.chillT)}초`); if (P.curseCard > 0) st.push('다음 레벨업 카드 선택 불가'); if (P.dotT > 0) st.push('화상'); if (P.slotN) st.push(`잭팟 머신 ${P.slotN}회 사용`);
@@ -16958,7 +16961,7 @@ $('gOne').addEventListener('click', () => gachaPull(1));
 $('gTen').addEventListener('click', () => gachaPull(10));
 $('gBanA').src = SRC.skA_wolfE; $('gBanB').src = SRC.skA_gunH; gachaBtnTxt();
 $('startBtn').addEventListener('click', () => { chMode = false; rushMode = false; startGame(selChar); });
-$('rushBtn').addEventListener('click', () => { if (!rushReady()) { $('hint').textContent = '🔒 보스 러시: 지하 30층 마왕(지옥의 화염 호랑이)을 쓰러뜨리면 열립니다'; return; } chMode = false; rushMode = true; startGame(selChar); });
+$('rushBtn').addEventListener('click', () => { if (!rushReady()) { $('hint').textContent = '🔒 보스 러시: 지하 25층 마왕(팔한지옥의 대공작 릴세르카)을 쓰러뜨리면 열립니다'; return; } chMode = false; rushMode = true; startGame(selChar); });
 $('chBtn').addEventListener('click', () => { if (!chOpen()) { $('hint').textContent = '🔒 ∞ 챌린지 모드: 지하 6층 마왕을 쓰러뜨리면 열립니다'; return; } chMode = true; startGame(selChar); });
 $('retryBtn').addEventListener('click', () => startGame(curChar));
 $('menuBtn').addEventListener('click', () => { show('overBox', false); show('startBox', true); state = 'menu'; buildCards(); reset(selChar); });
@@ -17063,7 +17066,7 @@ stepDive = skWrap(stepDive, 'dive'); stepRush = skWrap(stepRush, 'rush'); rushSt
 updateAirs = (f => function (...a) { return withSrc('basic', () => f.apply(this, a)); })(updateAirs);   // v6.22: 에어슬래시는 평타 (v6.30: 바로 뒤 천안 난무·브레스 감싸기가 주석에 묻혀 딜미터기에서 빠지던 것 수정)
 { const _tb = thornBlast, _sb = smashBlow; thornBlast = function (...a) { return withSrc('scale', () => _tb.apply(this, a)); }; smashBlow = function (...a) { return withSrc('smash', () => _sb.apply(this, a)); }; }
 shellReflect = skWrap(shellReflect, 'shell'); updateBsig = skWrap(updateBsig, 'bsigil');
-window.__G = { snMouth, snHall, tgArmsAt, tgC, tgCrossOm, tgDashDone, DOK, DOKW, DokkaebiAI, dokClear, dokZoneBox, dokSpinPath, get dok() { return dok; }, gunRoll1, gunHit, updateFish, openSlot, slotResult, slotSpin, WH, WHW, WhaleAI, whClear, whRoom, whLane, whLaneOk, whDexArt, get wh() { return wh; }, hq, hqLow, drawWolf, heatOn, heatArena, arenaRests, arenaRestNearest, openRoutePic, get banner() { return banner; }, isDosanSet, get DSPECIES() { return DSPECIES; }, buildDosanSpecies, BLADE, DF, DPROP_RECTS, dosanTile, imgReady, igniteX, procElem, startFw, spawnFw, spawnUniq, get cam() { return cam; }, TG, TGW, get tg() { return tg; }, tgClear, tgArms, tgCrossAt, tgInSafe, tgCxR, tgPatEnd, tgSafeSpot, tgCam, tgHold, TigerAI, HFUSE_HID, spawnFrw, frwAtk, FRW, spawnLad, lAtk, LAD, LADF, buildCards, rollHeartDrop, heartGain, disHeart, CHARS, inPoly, castSkill, get arena() { return arena; }, FISH, FWAVE, FISHA2, get fwaveQ() { return fwaveQ; }, SN, SNW, get sn() { return snAI; }, snClear, snHall, snEscapeR, pendingConds, rollCards, fishR, shardTotal, calcShards, heartBonus, CV, CVW, HellfirePatch, get cv() { return cvAI; }, cvClear, cvFurnace, pickBossK, get rushQ() { return rushQ; }, get FSPECIES() { return FSPECIES; }, heartMigrate, hRange, IMP, BLD, leadXY, leadDir, HEAT, FF, restNear, restNearest, restAt, updateHeat, isFireSet, fireTile, floorSet, clearGround: () => GROUND.clear(), get TOP_TIER() { return TOP_TIER; }, get OPEN_TIER() { return OPEN_TIER; }, lilArt, drawLilBody, LS, LSW, get ls() { return ls; }, FrostMirror, lsInWedge, lsIce, lsExPause, lsZone, lilDefeated, RD, RDW, RDF, rdOn, get rd() { return rd; }, KarmaBead, FrostMantra, IceLotus, rdAbsorb, rdInGap, rdExPause, rdSilence, rudDefeated, IMP, GoldImp, impOf, trySpawnImp, impDefeated, set impAt(v) { impAt = v; }, LUCK_N, PB, PBW, IMAP, IceWall, Fissure, IceSpear, segDist, FrostMgr, pbOn, pbClear, pbExPause, get pb() { return pb; }, gunMagN, ROLL, get lhead() { return lhead; }, KN, castLostHead, TW, isIceSlip, isIceSet, get ISPECIES() { return ISPECIES; }, ICE_SLIP, ICE_L, OPEN_TIER, TOP_TIER, renderHells, floorSet, pickFloor, iceTile, IF, get lhead() { return lhead; }, KN, isKnight, castLostHead, knightSlash, openGhostRoute, KNIGHT_FORMS, ghostForm, hTitle, relicIcon, heartMake, hOpt, heartBonus, calcShards, GRN, GRW, GRNF, spawnGrn, grnStart, grnPick, TRIAL, chAltarTick, chAltarPlace, chTrialStart, chTrialWin, chTime, chTime0, chDmgT, CH_HARD, CH_BOSS, cardDefs, cardView, ACH, achSync, achClear, openAch, KG, KGW, get kg() { return kg; }, AirGeyser, WaterMirror, MirrorBolt, kgIce, get shards() { return shards; }, set shards(v) { shards = v; }, VF, VFW, get vf() { return vf; }, VfTrap, VfSkull, VfHeart, vfLeech, fuseHearts, rerollHeart, heartBonus, renderFuse, setFu(v) { hFu = v; }, QN, QNW, get qn() { return qn; }, RootBind, SporeSack, QnMush, pickBossK, pctMelee, pctZone, updateDiff, skinG, bhKey, BH_ORDER, heartIcon, relicMaskOn, calcShards, isSlow, isLava, saveSave, svParse, spawnPlant, PL, get GSPECIES() { return GSPECIES; }, get plBalls() { return plBalls; }, synCard, freezeE, availSyn, SYNERGIES, dmName, FD, shkAdd, toxAdd, skSpawnPair, phoenixRevive, mirrorBlock, palPop, updateCutSaws, get shkSp() { return shkSp; }, get toxFl() { return toxFl; }, get zonesRef() { return zones; },
+window.__G = { pctMul, pctMelee, PCT_RATE, FISH, KN, castLostHead, get lhead() { return lhead; }, snMouth, snHall, tgArmsAt, tgC, tgCrossOm, tgDashDone, DOK, DOKW, DokkaebiAI, dokClear, dokZoneBox, dokSpinPath, get dok() { return dok; }, gunRoll1, gunHit, updateFish, openSlot, slotResult, slotSpin, WH, WHW, WhaleAI, whClear, whRoom, whLane, whLaneOk, whDexArt, get wh() { return wh; }, hq, hqLow, drawWolf, heatOn, heatArena, arenaRests, arenaRestNearest, openRoutePic, get banner() { return banner; }, isDosanSet, get DSPECIES() { return DSPECIES; }, buildDosanSpecies, BLADE, DF, DPROP_RECTS, dosanTile, imgReady, igniteX, procElem, startFw, spawnFw, spawnUniq, get cam() { return cam; }, TG, TGW, get tg() { return tg; }, tgClear, tgArms, tgCrossAt, tgInSafe, tgCxR, tgPatEnd, tgSafeSpot, tgCam, tgHold, TigerAI, HFUSE_HID, spawnFrw, frwAtk, FRW, spawnLad, lAtk, LAD, LADF, buildCards, rollHeartDrop, heartGain, disHeart, CHARS, inPoly, castSkill, get arena() { return arena; }, FISH, FWAVE, FISHA2, get fwaveQ() { return fwaveQ; }, SN, SNW, get sn() { return snAI; }, snClear, snHall, snEscapeR, pendingConds, rollCards, fishR, shardTotal, calcShards, heartBonus, CV, CVW, HellfirePatch, get cv() { return cvAI; }, cvClear, cvFurnace, pickBossK, get rushQ() { return rushQ; }, get FSPECIES() { return FSPECIES; }, heartMigrate, hRange, IMP, BLD, leadXY, leadDir, HEAT, FF, restNear, restNearest, restAt, updateHeat, isFireSet, fireTile, floorSet, clearGround: () => GROUND.clear(), get TOP_TIER() { return TOP_TIER; }, get OPEN_TIER() { return OPEN_TIER; }, lilArt, drawLilBody, LS, LSW, get ls() { return ls; }, FrostMirror, lsInWedge, lsIce, lsExPause, lsZone, lilDefeated, RD, RDW, RDF, rdOn, get rd() { return rd; }, KarmaBead, FrostMantra, IceLotus, rdAbsorb, rdInGap, rdExPause, rdSilence, rudDefeated, IMP, GoldImp, impOf, trySpawnImp, impDefeated, set impAt(v) { impAt = v; }, LUCK_N, PB, PBW, IMAP, IceWall, Fissure, IceSpear, segDist, FrostMgr, pbOn, pbClear, pbExPause, get pb() { return pb; }, gunMagN, ROLL, get lhead() { return lhead; }, KN, castLostHead, TW, isIceSlip, isIceSet, get ISPECIES() { return ISPECIES; }, ICE_SLIP, ICE_L, OPEN_TIER, TOP_TIER, renderHells, floorSet, pickFloor, iceTile, IF, get lhead() { return lhead; }, KN, isKnight, castLostHead, knightSlash, openGhostRoute, KNIGHT_FORMS, ghostForm, hTitle, relicIcon, heartMake, hOpt, heartBonus, calcShards, GRN, GRW, GRNF, spawnGrn, grnStart, grnPick, TRIAL, chAltarTick, chAltarPlace, chTrialStart, chTrialWin, chTime, chTime0, chDmgT, CH_HARD, CH_BOSS, cardDefs, cardView, ACH, achSync, achClear, openAch, KG, KGW, get kg() { return kg; }, AirGeyser, WaterMirror, MirrorBolt, kgIce, get shards() { return shards; }, set shards(v) { shards = v; }, VF, VFW, get vf() { return vf; }, VfTrap, VfSkull, VfHeart, vfLeech, fuseHearts, rerollHeart, heartBonus, renderFuse, setFu(v) { hFu = v; }, QN, QNW, get qn() { return qn; }, RootBind, SporeSack, QnMush, pickBossK, pctMelee, pctZone, updateDiff, skinG, bhKey, BH_ORDER, heartIcon, relicMaskOn, calcShards, isSlow, isLava, saveSave, svParse, spawnPlant, PL, get GSPECIES() { return GSPECIES; }, get plBalls() { return plBalls; }, synCard, freezeE, availSyn, SYNERGIES, dmName, FD, shkAdd, toxAdd, skSpawnPair, phoenixRevive, mirrorBlock, palPop, updateCutSaws, get shkSp() { return shkSp; }, get toxFl() { return toxFl; }, get zonesRef() { return zones; },
   bossDefeated, get IMG() { return IMG; },
   get ready() { return !!IMG.floorD; }, get state() { return state; }, get P() { return P; }, get enemies() { return enemies; }, get orbs() { return orbs; },
   get zones() { return zones; }, get ebul() { return ebul; }, get EYE() { return EYE; }, get shards() { return shards; }, get bigQ() { return bigQ; }, get bombQ() { return bombQ; }, get holyQ() { return holyQ; }, get afx() { return afx; }, get dashQ() { return dashQ; }, get beam() { return beam; }, get evo() { return evo; }, get choices() { return choices; },
