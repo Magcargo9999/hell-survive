@@ -983,7 +983,7 @@ function mkCanvas(w, h) { const c = document.createElement('canvas'); c.width = 
  * ============================================================ */
 const SAVE_KEY = 'hellSurvivorSave1';
 let bnHide = false; try { bnHide = localStorage.getItem('hsBnHide') === '1'; } catch (_) {}   // v10.12 보스전 안내 글씨 끄기 (H키, 이 설정만 따로 저장)
-const GAME_VER = 'v10.16';
+const GAME_VER = 'v10.17';
 const SAVE_DEF = () => ({
   shards: 0,
   perks: { hp: 0, spd: 0, dmg: 0, exp: 0, magnet: 0, banish: 0, revive: 0, regen: 0, shard: 0, critd: 0, choice: 0 },
@@ -14595,14 +14595,14 @@ function startRush(char) {
 function rushEnter() { rush.enter(); }
 function rushTick(dt) { rush.tick(dt); }
 function rushWin(e) { rush.win(e); }
-/* 마석 (보스 러시 완주 보상) — 1개 장착 · 공격력 · 공격 속도 · 최대 체력 · 영혼 조각 획득 모두 +N% · 일반 모드·보스 러시 모두 적용 */
+/* 마석 (보스 러시 완주 보상) — v10.17 가진 마석 전부 합산 적용(장착 제한 없음) · 공격력 · 공격 속도 · 최대 체력 · 영혼 조각 획득 모두 +N% · 일반 모드·보스 러시 모두 적용 */
 const STONE = { rare: 1, epic: 2, unique: 3, legend: 6 };
 function stoneGain(g) {
   const S = SAVE.stone, s = { id: ++S.n, g }; S.inv.push(s);
-  const cur = S.inv.find(q => q.id === S.eq); if (!cur || STONE[g] > STONE[cur.g]) S.eq = s.id;   // 더 좋은 마석이면 바로 장착
   saveSave(); return s;
 }
-const stoneBonus = () => { const S = SAVE.stone, s = S && S.inv.find(q => q.id === S.eq), v = s ? STONE[s.g] : 0; return { atk: v, hp: v, aspd: v, shard: v }; };
+const stoneTotal = () => { const S = SAVE.stone; return S ? S.inv.reduce((a, q) => a + (STONE[q.g] || 0), 0) : 0; };   // v10.17 가진 마석 전부의 합
+const stoneBonus = () => { const v = stoneTotal(); return { atk: v, hp: v, aspd: v, shard: v }; };
 function runBonus() {   // v10.16 일반: 심장+마석, 보스 러시: 마석만 (rushBoot 중에도 적용)
   const s = stoneBonus(); if (rushBoot || rush) return s;
   const o = { atk: 0, hp: 0, aspd: 0, shard: 0 }, h = heartBonus(); for (const k in o) o[k] = (h[k] || 0) + (s[k] || 0); return o;
@@ -16601,13 +16601,12 @@ function renderHeart() {
   $('hDis').onclick = () => { if (!confirmDis(h)) return; disHeart(h.id); hSel = null; openHeart(); };
 }
 const fuseOk = h => { if (h.b === 'fuse3') return false; const f0 = SAVE.heart.inv.find(q => q.id === hFu[0]); if (h.b === 'fuse') return !f0 || f0.b === 'fuse'; return h.g === 'legend' && (!f0 || f0.b !== 'fuse'); };   // v8.92 재료는 '레전더리 보스 심장 3개' 또는 '끔찍한 심장 3개' (섞기 불가)
-function renderStone() {   // v10.13 마석 (1개 장착) · 주사기 보유 (뽑기권은 스킨 가챠에서 확인)
-  const box = $('hStone'); if (!box) return; const T = SAVE.stone, cur = T.inv.find(q => q.id === T.eq);
+function renderStone() {   // v10.17 마석 (전부 합산 적용) · 주사기 보유 (뽑기권은 스킨 가챠에서 확인)
+  const box = $('hStone'); if (!box) return; const T = SAVE.stone, tot = stoneTotal();
   const L = T.inv.slice().sort((a, b) => STONE[b.g] - STONE[a.g] || a.id - b.id);
-  box.innerHTML = `<div class="hfh">💎 마석 — 1개 장착 · 공격력 · 공격 속도 · 최대 체력 · 영혼 조각 획득 모두 +N% (레어 1 · 에픽 2 · 유니크 3 · 레전더리 6%) · 일반 모드·보스 러시 적용 · 다음 판부터</div>`
-    + `<div class="hfrow">${L.length ? L.map(q => `<span class="hstn${q.id === T.eq ? ' on' : ''}" data-id="${q.id}" style="color:${HG[q.g].col}"><i>◆</i>${HG[q.g].name} +${STONE[q.g]}%${q.id === T.eq ? ' (장착)' : ''}</span>`).join('') : '<span class="hnone">아직 마석이 없어요 — ⚔ 보스 러시를 완주하면 받아요</span>'}</div>`
-    + `<div class="hfrow" style="color:#ffd0dc">장착 효과: ${cur ? `전 스탯 +${STONE[cur.g]}%` : '없음'} · 💉 주사기 ${SAVE.rush.syr | 0}개 (옵션 3줄 심장에 사용)</div>`;
-  box.querySelectorAll('.hstn').forEach(d => d.onclick = () => { const id = +d.dataset.id; T.eq = T.eq === id ? null : id; saveSave(); try { sfx('item'); } catch (_) {} renderStone(); });
+  box.innerHTML = `<div class="hfh">💎 마석 — 가진 마석이 전부 합쳐서 적용돼요 (장착 제한 없음) · 공격력 · 공격 속도 · 최대 체력 · 영혼 조각 획득 모두 +N% (레어 1 · 에픽 2 · 유니크 3 · 레전더리 6%) · 일반 모드·보스 러시 적용 · 다음 판부터</div>`
+    + `<div class="hfrow">${L.length ? L.map(q => `<span class="hstn on" data-id="${q.id}" style="color:${HG[q.g].col}"><i>◆</i>${HG[q.g].name} +${STONE[q.g]}%</span>`).join('') : '<span class="hnone">아직 마석이 없어요 — ⚔ 보스 러시를 완주하면 받아요</span>'}</div>`
+    + `<div class="hfrow" style="color:#ffd0dc">마석 합계: ${tot ? `전 스탯 +${tot}%` : '없음'} · 💉 주사기 ${SAVE.rush.syr | 0}개 (옵션 3줄 심장에 사용)</div>`;
 }
 function renderFuse() {   // v8.66 합성 칸: 4개를 넣으면 첫 번째 칸 심장이 옵션 2줄이 된다
   const S = SAVE.heart, box = $('hFuse'); if (!box) return;
@@ -16725,6 +16724,7 @@ function openAch() {
 }
 /* v8.71 간략 패치노트 (최근 버전만, 새 버전마다 맨 위에 한 줄 추가) */
 const PATCH = [
+  ['v10.17','[마석] 가진 마석은 전부 합쳐서 적용(장착 제한 없음) · 일반 모드·보스 러시 모두 적용, 보스 심장은 계속 보스 러시 제외'],
   ['v10.16','[마석] 장착한 마석의 공격력·공속·최대 체력·영혼 조각 보너스를 보스 러시에서도 적용 · 보스 심장은 계속 제외 · 획득한 새 마석은 다음 판부터'],
   ['v10.15','[보스 러시] 모든 진화 루트 해금 조건을 무시하고 선택 가능 · 숨겨진 타락한 혈랑도 선택지에 표시 · 일반 모드의 조건은 유지'],
   ['v10.14','[보스 러시] 이동속도 증강 [질주] 선택지 제외(일반 모드는 유지) · 최저 이동속도 230→250(+8.7%), 상한 290 유지 · 해당 조합 힌트 숨김'],
