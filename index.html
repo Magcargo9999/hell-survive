@@ -981,7 +981,8 @@ function mkCanvas(w, h) { const c = document.createElement('canvas'); c.width = 
  * 0-1. 저장(영혼 조각 · 영구 강화 · 설정) / 캐릭터 목록 / 소리
  * ============================================================ */
 const SAVE_KEY = 'hellSurvivorSave1';
-const GAME_VER = 'v10.11';
+let bnHide = false; try { bnHide = localStorage.getItem('hsBnHide') === '1'; } catch (_) {}   // v10.12 보스전 안내 글씨 끄기 (H키, 이 설정만 따로 저장)
+const GAME_VER = 'v10.12';
 const SAVE_DEF = () => ({
   shards: 0,
   perks: { hp: 0, spd: 0, dmg: 0, exp: 0, magnet: 0, banish: 0, revive: 0, regen: 0, shard: 0, critd: 0, choice: 0 },
@@ -13243,9 +13244,9 @@ function drawHud() {
     ctx.fillStyle = 'rgba(10,4,16,0.75)'; ctx.fillRect(10, H - 54, w + 20, 40); ctx.textAlign = 'left'; ctx.font = 'bold 13px ' + FONT; ctx.fillStyle = q.down ? '#ff7a7a' : '#7dffb0'; ctx.fillText(q.down ? '동료 원숭이 · 쓰러짐' : '동료 원숭이', 18, H - 38);
     ctx.fillStyle = '#0c1a10'; ctx.fillRect(18, H - 30, w, 10); ctx.fillStyle = '#4de08a'; ctx.fillRect(18, H - 30, w * Math.max(0, q.hp / q.max), 10); ctx.restore();
   }
-  if (banner && state !== 'levelup' && state !== 'slot') {
+  if (banner && state !== 'levelup' && state !== 'slot' && !((boss || arena) && bnHide)) {   // v10.12 H키로 보스전 안내 글씨 끄기
     ctx.save(); ctx.globalAlpha = Math.min(1, banner.t); ctx.textAlign = 'center';
-    const by0 = arena ? 126 : 86; let bs = (boss || arena) ? 2 : 1, ls;   // v10.05 보스전 안내 글씨 2배 (화면을 넘으면 조금씩 줄임)
+    const by0 = arena ? 126 : 86; let bs = 1, ls;   // v10.12: 글씨 크기는 원래대로(v10.05의 2배 → 1배), 표시 시간 2배는 유지
     for (;;) { ctx.font = 'bold ' + (16 * bs) + 'px ' + FONT; ls = wrapTxt(banner.txt, W - 70); if (bs <= 1 || ls.length * 24 * bs + 10 < H - by0 - 20) break; bs = Math.max(1, bs - 0.125); }
     const tw = Math.max(...ls.map(l => ctx.measureText(l).width)) + 36, lh = 24 * bs;
     ctx.fillStyle = 'rgba(10,4,16,0.74)'; ctx.fillRect(W / 2 - tw / 2, by0, tw, ls.length * lh + 10);
@@ -16718,6 +16719,7 @@ function openAch() {
 }
 /* v8.71 간략 패치노트 (최근 버전만, 새 버전마다 맨 위에 한 줄 추가) */
 const PATCH = [
+  ['v10.12','[보스전] 위쪽 안내 글씨 크기를 원래대로(표시 시간 2배는 유지) · H키로 보스전 안내 글씨 끄기/켜기'],
   ['v10.11','🫧 보스 러시 2라운드 산소 게이지 수정 — 마왕이 큰 패턴을 쓰는 동안에도 산소가 계속 줄어듭니다(산소가 0일 때의 피해만 큰 패턴 중 쉼)'],
   ['v10.10','⚔ 보스 러시 대개편 — 지하 30층 클리어 후 해금 · 처치해 본 마왕 중 4라운드 · 시작 증강 직접 선택 · 2·3·4라운드 전 증강 2개/5개 선택(합계 6·9·12·15개 = 하드코어·하드·노멀·이지 보상) · 전용 증강 [시간 왜곡](스킬 쿨타임 -10%) · 심장 드랍 O / 심장 옵션 미적용 · 이동 속도 230~290 고정 범위 · 라운드 기믹(2 산소존 · 3 +불의 십자가 · 4 +변덕스러운 똥바람) · 새 보상: 스킨 뽑기권 · 마석(전 스탯 +1/2/3/6%, 보스 러시 제외) · 주사기(옵션 3줄 심장 게이지 → 4번째 옵션)'],
   ['v10.05','[시체고래] 죽음의 파도 속도 3배 · [보스전] 안내 글씨 2배·표시 시간 2배 · [심장] 옵션 2줄 이상 심장은 줄마다 잠글 수 있음(잠근 줄은 재설정해도 그대로, 잠금 하나당 재설정 비용 ×2) · [검 도깨비] 검총의 결계 전체 속도 1.6배(착지·검의 비·회전 베기 속도·줄 사이 정지, 예고 1.3초는 그대로) · [악마처형자] 구르기 2번→3번 · [악마 총잡이] 조합 카드 ★서리 도탄 추가(도탄 서리 중첩 → 불씨탄 폭발 · 모든 총알 최대 체력 0.3% 추가 피해)'],
@@ -16986,6 +16988,7 @@ window.addEventListener('keydown', e => {
   else if (state === 'menu' && e.code === 'Digit9' && SAVE.chars.gun) selectChar('gun');
   else if ((state === 'dead' || state === 'win') && overShown && (e.code === 'KeyR' || e.code === 'Enter')) startGame(curChar);
   else if (state === 'slot') { if (!e.repeat) slotKey(e.code); }
+  else if (state === 'play' && e.code === 'KeyH' && !e.repeat) { bnHide = !bnHide; try { localStorage.setItem('hsBnHide', bnHide ? '1' : '0'); } catch (_) {} floatNum(P.x, P.y - 100, bnHide ? '보스전 안내 글씨 끔 (H)' : '보스전 안내 글씨 켬 (H)', '#ffe28a'); }
   else if (state === 'play' && e.code === 'KeyE' && !e.repeat) useTeleport();
   else if (state === 'levelup' && ['Digit1', 'Digit2', 'Digit3', 'Digit4'].includes(e.code)) { const i = Number(e.code.slice(5)) - 1; if (e.shiftKey) { const u = choices[i]; if (u && u.ban) u.ban(); } else pickChoice(i); }   // v8.90 Shift+숫자 = 그 카드 삭제
   else if (state === 'play' && (e.code === 'Space' || e.code === 'KeyQ') && !e.repeat) castSkill();
