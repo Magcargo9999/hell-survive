@@ -983,7 +983,7 @@ function mkCanvas(w, h) { const c = document.createElement('canvas'); c.width = 
  * ============================================================ */
 const SAVE_KEY = 'hellSurvivorSave1';
 let bnHide = false; try { bnHide = localStorage.getItem('hsBnHide') === '1'; } catch (_) {}   // v10.12 보스전 안내 글씨 끄기 (H키, 이 설정만 따로 저장)
-const GAME_VER = 'v10.19';
+const GAME_VER = 'v10.20';
 const SAVE_DEF = () => ({
   shards: 0,
   perks: { hp: 0, spd: 0, dmg: 0, exp: 0, magnet: 0, banish: 0, revive: 0, regen: 0, shard: 0, critd: 0, choice: 0 },
@@ -14516,7 +14516,7 @@ class BossRushManager {
       const Wd = this.wind; Wd.t -= dt;
       if (Wd.t <= BR_WIND.warn && Wd.na === null) { let na; do na = rand() * 6.283; while (Math.abs(Math.atan2(Math.sin(na - Wd.a), Math.cos(na - Wd.a))) < 1.0); Wd.na = na; floatNum(P.x, P.y - 120, '바람 방향이 바뀐다!', '#d8f0c8'); }
       if (Wd.t <= 0) { Wd.a = Wd.na; Wd.na = null; Wd.t = BR_WIND.T; sfx('skill'); }
-      Wd.off = !run;
+      Wd.off = false;   // v10.20 똥바람은 큰 패턴 중에도 계속 분다 (속도 85 이하 = 이속의 45%라 늘 거슬러 갈 수 있음, 기절·속박·매혹·빙결 중엔 안 밀림)
     }
   }
   crossArms() { const C = this.cr; if (!C) return []; return [0, 1, 2, 3].map(q => { const a = C.a + q * Math.PI / 2, l = C.len[q] || 300; return [C.cx, C.cy, C.cx + Math.cos(a) * l, C.cy + Math.sin(a) * l]; }); }
@@ -16730,6 +16730,7 @@ function openAch() {
 }
 /* v8.71 간략 패치노트 (최근 버전만, 새 버전마다 맨 위에 한 줄 추가) */
 const PATCH = [
+  ['v10.20','[보스 러시] 4라운드 똥바람이 큰 패턴 중에도 쉬지 않고 계속 분다 (십자가는 그대로)'],
   ['v10.19','[검 도깨비] 보스 심장 도트 4등급 전용 이미지 적용 · [혈랑 진화형] 최종 공격력 +8% 및 받는 피해 -15%'],
   ['v10.18','[보스 러시] 해금 지하 30층 → 25층 마왕 처치 · [사슬 악마] 체력비례 피해 소폭 너프(0.9배, 사슬 휘두르기 일반 0.9%/보스급 0.18%) · 궁 체력 재생 3%→2.7% · [듀라한] 전체 스탯 대폭 버프 · 잃어버린 머리 피해 +17%(210%)·지속 10→13초·쿨타임은 머리가 돌아온 뒤부터 · [지옥 군주 늑대] 울부짖음 체력비례 0.5% · [마해룡] 오라 체력비례 0.6→0.78% · [리자드] 1진화부터 체력비례(×1.15) · [달팽이] 장판 체력비례 ×1.08 · [몽환 키메라] 최종 체력비례 ×1.15'],
   ['v10.17','[마석] 가진 마석은 전부 합쳐서 적용(장착 제한 없음) · 일반 모드·보스 러시 모두 적용, 보스 심장은 계속 보스 러시 제외'],
