@@ -983,7 +983,7 @@ function mkCanvas(w, h) { const c = document.createElement('canvas'); c.width = 
  * ============================================================ */
 const SAVE_KEY = 'hellSurvivorSave1';
 let bnHide = false; try { bnHide = localStorage.getItem('hsBnHide') === '1'; } catch (_) {}   // v10.12 보스전 안내 글씨 끄기 (H키, 이 설정만 따로 저장)
-const GAME_VER = 'v10.22';
+const GAME_VER = 'v10.23';
 const SAVE_DEF = () => ({
   shards: 0,
   perks: { hp: 0, spd: 0, dmg: 0, exp: 0, magnet: 0, banish: 0, revive: 0, regen: 0, shard: 0, critd: 0, choice: 0 },
@@ -8158,8 +8158,10 @@ function drawBossTele(wx, wy) {
       ctx.clip('evenodd');
     }
     if (t.k === 'circle') {
-      ctx.beginPath(); ctx.ellipse(x, y, t.r, ry, 0, 0, 6.283); ctx.fill(); ctx.stroke();
-      ctx.fillStyle = `rgba(${cp}, ${0.32 + 0.2 * pu})`; ctx.beginPath(); ctx.ellipse(x, y, t.r * p, ry * p, 0, 0, 6.283); ctx.fill();
+      const hl = t.hole || 0, hy = hl ? hl * ry / t.r : 0, eo = hl ? 'evenodd' : 'nonzero';   // v10.23 가운데 안전 구멍
+      ctx.beginPath(); ctx.ellipse(x, y, t.r, ry, 0, 0, 6.283); if (hl) ctx.ellipse(x, y, hl, hy, 0, 0, 6.283); ctx.fill(eo); ctx.stroke();
+      ctx.fillStyle = `rgba(${cp}, ${0.32 + 0.2 * pu})`; if (!hl || t.r * p > hl) { ctx.beginPath(); ctx.ellipse(x, y, hl ? Math.max(t.r * p, hl) : t.r * p, hl ? Math.max(ry * p, hy) : ry * p, 0, 0, 6.283); if (hl) ctx.ellipse(x, y, hl, hy, 0, 0, 6.283); ctx.fill(eo); }
+      if (hl) { ctx.save(); ctx.setLineDash([7, 6]); ctx.strokeStyle = 'rgba(150,235,255,0.95)'; ctx.lineWidth = 2.5; ctx.beginPath(); ctx.ellipse(x, y, hl, hy, 0, 0, 6.283); ctx.stroke(); ctx.restore(); }
       if ((t.nofire && t.follow && t.t >= t.follow) || (t.track && t.t >= t.track)) { ctx.strokeStyle = '#fff'; ctx.lineWidth = 2; ctx.beginPath(); ctx.ellipse(x, y, t.r - 6, ry - 6 * ry / t.r, 0, 0, 6.283); ctx.stroke(); }   // 고정됨
     } else if (t.k === 'donut') {
       ctx.beginPath(); ctx.arc(x, y, t.r2, 0, 6.283); ctx.arc(x, y, t.r, 0, 6.283, true); ctx.fill('evenodd'); ctx.stroke();
@@ -16241,7 +16243,7 @@ function byuDexArt(g, w, h, l) {   // 도감 그림
      흑철룡(3페이즈) d_idle6 · d_move8 · d_atk6(브레스) · d_dash6 · d_roar4 · d_death6 — 왼쪽을 봄, 줄마다 몸길이 STL.DL로 맞춤 · 몸을 머리/몸통/꼬리 세 조각으로 잘라 마디마다 그린다
    패시브 철식의 저주: 철 중첩 stk (18초마다 +1 · 철을 삼킬 때마다 +1 · 최대 8) → 중첩당 공격력 +7% · 공격 크기 +7% (이속·예고 시간은 그대로, 큰 범위는 예고도 크기만큼 길어진다 = 규칙 9)
                        삼킨 철 eat (최대 4까지 셈) → 패턴 쿨타임 -6%씩 (빨리 먹이면 패턴이 빨라진다)
-   철 덩어리 IronChunk (enemies 의 kind 'stlc'): 내가 STL.ckNear 안에 있어야만 피해가 들어간다 (멀면 튕겨 낸다) · 체력 = 마왕 최대 체력 × STL.ckHp
+   철 덩어리 IronChunk (enemies 의 kind 'stlc'): 내가 STL.ckNear 안에 있어야만 피해가 들어간다 (멀면 튕겨 낸다) · 체력 = 마왕 최대 체력 × STL.ckHp (v10.23: 2.2% → 1.54%)
    1페이즈 (100~70%) 철식의 마귀: [slam → rain → pillar → slam → rain] · 가까우면 claw
      A slam   : 융해된 대지 강타 — 앞쪽 지점 반경 STL.slR×크기 (예고 1.5초×크기) → 쇳물 장판(이속 -35% · 화상) 5초
      B pillar : 업신의 대장간 — 폐철골 기둥(kind 'stlp', 체력 = 최대 체력 × STL.piHp)을 뽑아 든다 → 3.2초마다 원형 휩쓸기(품 안 STL.swpIn은 안전 · 바깥 STL.swpR×크기)
@@ -16261,9 +16263,10 @@ const STL = { hp: 2.0, dm: 1.0, KB: 3, DL: 340, r: 92, spK: 0.6, spMax: 190, bum
   clR: 240, clHalf: 0.95, clWarn: 0.6, clDm: 24, clCd: 2.2,
   slCd: 10, slWarn: 1.5, slR: 280, slFront: 130, slDm: 34, plK: 0.55, plT: 5, plDot: 0.012,
   piCd: 24, piHp: 0.05, piT: 14, piPull: 1.0, swpR: 520, swpIn: 200, swpWarn: 1.2, swpDm: 30, swpGap: 3.2, piBoom: 0.05, piStun: 2.5,
-  rnCd: 18, rnWarn: 1.1, rnR: 115, rnDm: 26, rnSep: 420, ckHp: 0.022, ckNear: 230, absT: 12, ckLife: 16,
+  rnCd: 18, rnWarn: 1.1, rnR: 115, rnDm: 26, rnSep: 420, ckHp: 0.0154, ckNear: 230, absT: 12, ckLife: 16,
   fdCh: 3.0, fdMax: 2, fdSp: 260, shGap: 1.2, shR: 75, shWarn: 0.85, shDm: 16, expT: 4, expK: 1.35,
-  mgWarn: 2.2, mgR: 210, mgDm: 36,
+  mgWarn: 2.2, mgR: 210, mgDm: 36, slHole: 0.28, mgHole: 0.28,   // v10.23 큰 원 한가운데 안전 구멍(반지름 비율)
+ 
   biCd: 9, biWarn: 0.7, biLen: 420, biW: 120, biSp: 1100, biDm: 30,
   ph2: 0.7, ph3: 0.25, roar: 2.2, tf: 2.6, tempo2: 1.15, tempo3: 1.3,
   dsCd: 9, dsWarn: 0.95, dsWarn2: 0.75, dsLen: 1150, dsAmp: 150, dsW: 100, dsSp: 1250, dsDm: 32, trT: 3.0, trR: 24, trGap: 110, trDm: 14, trIcd: 0.5,
@@ -16338,8 +16341,9 @@ class IronChunk {
   blow() {
     const R = STL.mgR * stlSz(); this.hp = 0; STLW.fx.push({ k: 'mboom', x: this.x, y: this.y, r: R, t: 0, life: 0.5 }); shake = Math.max(shake, 12); sfx('boom');
     burst(this.x, this.y - 30, 34, ['#ff4a1a', '#ffd08a', '#3a3036'], 380, 0.7);
-    if (state === 'play' && shkIn(P.x, P.y, this.x, this.y, R, 8 + PR())) stlHit(STL.mgDm);
-    stlPet((x, y, p) => shkIn(x, y, this.x, this.y, R, p), STL.mgDm);
+    const H = R * STL.mgHole, inH = (qx, qy) => shkIn(qx, qy, this.x, this.y, H, 0);   // v10.23 가운데 안전 구멍
+    if (state === 'play' && shkIn(P.x, P.y, this.x, this.y, R, 8 + PR()) && !inH(P.x, P.y)) stlHit(STL.mgDm);
+    stlPet((x, y, p) => shkIn(x, y, this.x, this.y, R, p) && !inH(x, y), STL.mgDm);
   }
   draw() {}
 }
@@ -16407,12 +16411,13 @@ class SteelEaterAI {
     const e = this.e, a = Math.atan2(P.y - e.y, P.x - e.x), sz = stlSz(), R = STL.slR * sz, w = STL.slWarn * sz;
     let x = e.x + Math.cos(a) * STL.slFront, y = e.y + Math.sin(a) * STL.slFront; if (!inPoly(x, y)) { x = e.x; y = e.y; }
     this.go('slam', w + 0.4, 'pow'); e.face = Math.cos(a) >= 0 ? 1 : -1; floatNum(e.x, e.y - 330, '융해된 대지 강타!', '#ff8a3a'); sfx('skill');
-    e.tele.push({ k: 'circle', x, y, r: R, ry: R / 1.5, t: 0, dur: w, done: false, rgb: '255,110,30', fire: t => {
+    e.tele.push({ k: 'circle', x, y, r: R, ry: R / 1.5, hole: R * STL.slHole, t: 0, dur: w, done: false, rgb: '255,110,30', fire: t => {
       if (!stlOn()) return; this.e.an = 'atk'; this.e.anT = 0.15; STLW.fx.push({ k: 'quake', x: t.x, y: t.y, r: t.r, t: 0, life: 0.6 }); shake = Math.max(shake, 18); sfx('boom');
-      if (state === 'play' && shkIn(P.x, P.y, t.x, t.y, t.r, 8 + PR())) stlHit(STL.slDm); stlPet((qx, qy, p) => shkIn(qx, qy, t.x, t.y, t.r, p), STL.slDm);
+      const inH = (qx, qy) => shkIn(qx, qy, t.x, t.y, t.hole, 0);   // 가운데 안전 구멍
+      if (state === 'play' && shkIn(P.x, P.y, t.x, t.y, t.r, 8 + PR()) && !inH(P.x, P.y)) stlHit(STL.slDm); stlPet((qx, qy, p) => shkIn(qx, qy, t.x, t.y, t.r, p) && !inH(qx, qy), STL.slDm);
       STLW.pools.push({ x: t.x, y: t.y, r: t.r * STL.plK, t: 0, T: STL.plT });
     } });
-    if (!STLW.slTip) { STLW.slTip = true; banner = { txt: '강철이: 융해된 대지 강타! — 주황 원 밖으로 (철을 먹을수록 원이 커지고 예고도 길어진다)\n맞은 자리는 5초 동안 쇳물 장판(느려지고 화상)', t: 4.2, c: '#ffb070' }; }
+    if (!STLW.slTip) { STLW.slTip = true; banner = { txt: '강철이: 융해된 대지 강타! — 주황 원 밖으로, 또는 한가운데 하늘색 빈 원 안으로 (철을 먹을수록 원이 커지고 예고도 길어진다)\n맞은 자리는 5초 동안 쇳물 장판(느려지고 화상)', t: 4.2, c: '#ffb070' }; }
   }
   rainStart() {   // C 강철비 강하: 철 덩어리 낙하
     const e = this.e, n = e.ph === 1 ? 2 : e.stk >= 4 ? 4 : 3, I = IMAP, pts = [];
@@ -16674,7 +16679,8 @@ function drawStlFloor(wx, wy) {
       ctx.fillStyle = `rgba(255,120,40,${0.25 + 0.2 * pu})`; ctx.beginPath(); ctx.ellipse(x, y, STL.rnR * p, STL.rnR * p / 1.5, 0, 0, 6.283); ctx.fill(); ctx.restore(); continue; }
     if (c.abs >= 0) continue;
     if (c.mag >= 0) { const R = STL.mgR * stlSz(), p = clamp(c.mag / STL.mgWarn, 0, 1); ctx.save(); ctx.fillStyle = `rgba(255,50,30,${0.14 + 0.12 * pu})`; ctx.strokeStyle = 'rgba(255,80,60,0.95)'; ctx.lineWidth = 3;
-      ctx.beginPath(); ctx.ellipse(x, y, R, R / 1.5, 0, 0, 6.283); ctx.fill(); ctx.stroke(); ctx.fillStyle = `rgba(255,60,40,${0.3 + 0.2 * pu})`; ctx.beginPath(); ctx.ellipse(x, y, R * p, R * p / 1.5, 0, 0, 6.283); ctx.fill(); ctx.restore(); continue; }
+      const H = R * STL.mgHole; ctx.beginPath(); ctx.ellipse(x, y, R, R / 1.5, 0, 0, 6.283); ctx.ellipse(x, y, H, H / 1.5, 0, 0, 6.283); ctx.fill('evenodd'); ctx.stroke(); ctx.fillStyle = `rgba(255,60,40,${0.3 + 0.2 * pu})`; if (R * p > H) { ctx.beginPath(); ctx.ellipse(x, y, R * p, R * p / 1.5, 0, 0, 6.283); ctx.ellipse(x, y, H, H / 1.5, 0, 0, 6.283); ctx.fill('evenodd'); }
+      ctx.setLineDash([7, 6]); ctx.strokeStyle = 'rgba(150,235,255,0.95)'; ctx.lineWidth = 2.5; ctx.beginPath(); ctx.ellipse(x, y, H, H / 1.5, 0, 0, 6.283); ctx.stroke(); ctx.restore(); continue; }
     const near = stlNearC(c); ctx.save(); ctx.setLineDash([8, 8]); ctx.lineDashOffset = -wallT * 30; ctx.strokeStyle = near ? 'rgba(255,220,140,0.75)' : 'rgba(200,200,220,0.35)'; ctx.lineWidth = 2;
     ctx.beginPath(); ctx.ellipse(x, y, STL.ckNear, STL.ckNear / 1.5, 0, 0, 6.283); ctx.stroke(); ctx.restore();
   }
@@ -17590,6 +17596,7 @@ function openAch() {
 }
 /* v8.71 간략 패치노트 (최근 버전만, 새 버전마다 맨 위에 한 줄 추가) */
 const PATCH = [
+  ['v10.23','[철식 강철이] 융해된 대지 강타·자력 폭주의 큰 원 한가운데에 하늘색 빈 원(안전 구멍, 반지름의 28%)을 만듦 — 그 안에 서 있으면 피해가 없음(쇳물 장판은 그대로) · 철 덩어리 체력 대폭 너프(마왕 최대 체력의 2.2% → 1.54%)'],
   ['v10.22','[7지옥 완성] 지하 35층 최종 마왕 [철식 강철이] — 철을 삼킬수록 강해지는 업신. 18초마다·철을 삼킬 때마다 철식 중첩(공격력·공격 크기 +7%씩, 최대 8 · 삼킨 철만큼 패턴 쿨타임 -6%씩). 떨어진 철 덩어리는 가까이(230px) 있어야만 부서진다 — 부수러 가면 위험하고 두면 마왕이 먹는다. 1페이즈: 융해된 대지 강타 · 폐철골 기둥(부수면 폭발해 마왕 체력 -5% · 기절, 못 부수면 삼킴) · 강철비 / 2페이즈(70%) 탐욕의 포식자: 철을 걸어가 3초 흡수(흡수 중 부수면 약점 노출 +35%) · 남은 철은 자력 폭주 · 철식의 물어뜯기 / 3페이즈(25%) 불완전한 흑철룡: 머리·몸통·꼬리 다관절 · S자 용암 쇄도 2연속 · 흑철 브레스(사거리는 줄고 폭은 넓어짐) · 철 가시 분출. 지하 35층 열림 · 도감 · 업적 [철을 굶긴 자]·[도산지옥의 지배자] · 보스 러시 목록에도 추가'],
   ['v10.21','[7지옥] 새 마왕 [업경의 심판수 반업수] — 지하 33층 100% · 34층 70% · 지하 33·34층 열림. 등의 업경이 최근 4초의 내 움직임을 읽는다(화면 위 \'업경\' 비율): 많이 달리면 가는 길 앞을 막는 칼날 벽, 가만히 있으면 좁혀오는 응시 고리, 섞이면 둘 다 작게 · 업경의 시선(2초 넘게 머무는 부채꼴 빛, 등 뒤가 안전) · 죄상 노출(거울 파편이 하나씩 나를 겨눔) · 업경 재현(지나온 3초의 길에 칼날) · 체력 30%에 깨진 업경(모든 패턴 빨라짐 · 이중 시선 · 파편 6개). 도감 · 업적 [업경을 깨뜨린 자] · 보스 러시 마왕 목록에도 추가'],
   ['v10.20','[보스 러시] 4라운드 똥바람이 큰 패턴 중에도 쉬지 않고 계속 분다 (십자가는 그대로)'],
