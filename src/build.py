@@ -126,6 +126,7 @@ ASSETS = {
     '__RELKEY__': 'final/relkey.webp', '__RELPHOENIX__': 'final/relphoenix.webp', '__RELFANG__': 'final/relfang.webp',
     '__HFW__': 'heart/hfw.webp',
     '__DK__': 'dk/dk.webp',
+    '__STL__': 'stl/stl.webp',
     '__BYU__': 'bny/bny.webp',
     '__DOK__': 'dok/dok.webp',
     '__DOKFX__': 'dokfx/dokfx.webp',
