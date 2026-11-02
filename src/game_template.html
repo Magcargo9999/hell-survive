@@ -983,7 +983,7 @@ function mkCanvas(w, h) { const c = document.createElement('canvas'); c.width = 
  * ============================================================ */
 const SAVE_KEY = 'hellSurvivorSave1';
 let bnHide = false; try { bnHide = localStorage.getItem('hsBnHide') === '1'; } catch (_) {}   // v10.12 보스전 안내 글씨 끄기 (H키, 이 설정만 따로 저장)
-const GAME_VER = 'v10.40';
+const GAME_VER = 'v10.22';
 const SAVE_DEF = () => ({
   shards: 0,
   perks: { hp: 0, spd: 0, dmg: 0, exp: 0, magnet: 0, banish: 0, revive: 0, regen: 0, shard: 0, critd: 0, choice: 0 },
@@ -1002,7 +1002,7 @@ const SAVE_DEF = () => ({
   heart: { inv: [], eq: [], n: 0, got: {} },   // v8.01 보스 심장 (인벤토리 · 장착 슬롯 · 다음 id)
   ach: { done: {}, got: {} },   // v8.80 업적 (달성 · 보상 받음)
 });
-const OPEN_TIER = 34, TOP_TIER = 34;   // v10.40: 지하 35층(철식 강철이)까지 전부 열림 — 7지옥 완성 · v10.30: 지하 33·34층(업경의 심판수 반업수) 열림   // v9.86: 지하 31·32층(검 도깨비 마왕) 열림 — 33층부터 잠금(열 때는 OPEN_TIER를 올린다);   // v9.71: 7지옥 도산과 업경의 심판정(지하 31~35층, 내부 30~34) 필드는 만들어 두고 잠금 — 열 때는 OPEN_TIER를 34로
+const OPEN_TIER = 34, TOP_TIER = 34;   // v10.22: 지하 35층(철식 강철이)까지 전부 열림 — 7지옥 완성 · v10.21: 지하 33·34층(업경의 심판수 반업수) 열림   // v9.86: 지하 31·32층(검 도깨비 마왕) 열림 — 33층부터 잠금(열 때는 OPEN_TIER를 올린다);   // v9.71: 7지옥 도산과 업경의 심판정(지하 31~35층, 내부 30~34) 필드는 만들어 두고 잠금 — 열 때는 OPEN_TIER를 34로
    // v9.24: 6지옥 팔열지옥(지하 26~30층, 내부 25~29) · v9.63: 30층(화염 호랑이)까지 전부 열림 — 7지옥을 만들면 TOP_TIER·HELL_SET을 늘리고 OPEN_TIER를 올린다
    // v9.10: 지하 24층(내부 23)까지 개방 · v9.20: 지하 25층(내부 24) 개방 — 5지옥 완성   // v8.99 팔한지옥(5지옥): 층은 25층(0~24)까지 만들어 두고, 지금 열린 곳은 지하 22층(내부 21)까지 — 23~25층은 잠금 (MAX_TIER 19 = 예전 20층 기준: 보스 러시·업적)
 let SAVE = SAVE_DEF();
@@ -1993,7 +1993,7 @@ function spawnBoss() {
   if (P.bossK === 'snk') initSnBoss(boss);   // v9.46 불구렁이
   if (P.bossK === 'dok') initDokBoss(boss);   // v9.85 검 도깨비 마왕
   if (P.bossK === 'byu') initByuBoss(boss);
-  if (P.bossK === 'stl') initStlBoss(boss);   // v10.40 철식 강철이   // v10.30 업경의 심판수 반업수
+  if (P.bossK === 'stl') initStlBoss(boss);   // v10.22 철식 강철이   // v10.21 업경의 심판수 반업수
   if (P.bossK === 'whl') initWhBoss(boss);   // v9.80 심해의 시체고래
   if (P.bossK === 'tig') initTgBoss(boss);   // v9.63 지옥의 화염 호랑이
   if (P.bossK === 'eye') { boss.bk = 'eye'; boss.hp *= EYE.hp; boss.max *= EYE.hp; boss.r = 72; boss.n = 0; boss.k = ''; boss.emT = 0; boss.ang = 0; boss.side = 1; boss.sideT = 4; boss.glow = 0; }
@@ -8107,8 +8107,8 @@ function bossDefeated() {
   if (e.bk === 'snk') snDefeated(e);   // v9.46
   if (e.bk === 'tig') tgDefeated(e);
   if (e.bk === 'dok') dokDefeated(e);   // v9.85
-  if (e.bk === 'byu') byuDefeated(e);   // v10.30
-  if (e.bk === 'stl') stlDefeated(e);   // v10.40
+  if (e.bk === 'byu') byuDefeated(e);   // v10.21
+  if (e.bk === 'stl') stlDefeated(e);   // v10.22
   if (e.bk === 'whl') whDefeated(e);   // v9.80   // v9.63
   if (e.bk === 'grn') grnDefeated(e);   // v8.87
   if (e.bk === 'tox') { toxFl = []; toxFog = null; DEBUFF.clear('toxFog'); for (const q of enemies) if ((q.toxAdd || q.kind === 'toxm') && q.hp > 0) { q.hp = 0; burst(q.x, q.y - 20, 8, ['#ff2a8a', '#b6ff6a'], 160, 0.5); } enemies = enemies.filter(q => !q.toxAdd && q.kind !== 'toxm'); zones = zones.filter(z => z.type !== 'tpool' && z.type !== 'tswamp'); }   // v8.20
@@ -8899,9 +8899,9 @@ function hurtEnemy(e, dmg, kx, ky, kn, quiet) {
   const pctQ = quiet === 'pct'; if (pctQ) quiet = true;   // 장판 체력비례분: 장판 감쇠(보스 ×0.12 등)를 받지 않는다
   if (e.bk === 'angel' && anFront(e)) { anBlock(e); return; }
   if (e.kind === 'snb') { snNodeHit(e, dmg, quiet); return; }
-  if (e.kind === 'stlb') { stlNodeHit(e, dmg, quiet); return; }   // v10.40 흑철룡 몸통·꼬리 → 마왕에게 60%
-  if (e.kind === 'stlc' && !stlNearC(e)) { if (!quiet && rand() < 0.25) floatNum(e.x, e.y - 100, '멀다 — 가까이!', '#a0a4b8'); return; }   // v10.40 철 덩어리는 가까이에서만 부서진다
-  if (e.bk === 'stl' && e.expT > 0) dmg *= STL.expK;   // v10.40 약점 노출   // v9.46 불구렁이 몸통 마디 → 마왕에게 일부
+  if (e.kind === 'stlb') { stlNodeHit(e, dmg, quiet); return; }   // v10.22 흑철룡 몸통·꼬리 → 마왕에게 60%
+  if (e.kind === 'stlc' && !stlNearC(e)) { if (!quiet && rand() < 0.25) floatNum(e.x, e.y - 100, '멀다 — 가까이!', '#a0a4b8'); return; }   // v10.22 철 덩어리는 가까이에서만 부서진다
+  if (e.bk === 'stl' && e.expT > 0) dmg *= STL.expK;   // v10.22 약점 노출   // v9.46 불구렁이 몸통 마디 → 마왕에게 일부
   if (e.bk === 'dok' && dokGuardHit(e, quiet)) { dmg *= 0.1; kn = 0; kx = 0; ky = 0; }   // v9.85 귀신의 흘리기: 피해 -90% · 밀리지 않음 · 가드 원 안에서 맞은 횟수를 센다
   if (e.bk === 'tig' && tgGuardHit(e, quiet)) return;   // v9.63 화염 호랑이 가드: 피해 0 · 맞은 횟수만 센다
   if (e.bk === 'snk') snHitHook(e, quiet);   // v9.46 포위 중 노출된 머리 = 약점 타수
@@ -8938,7 +8938,7 @@ function hurtEnemy(e, dmg, kx, ky, kn, quiet) {
     if (e.kind === 'mimic') { mimicDefeated(e); return; }
     if (e.kind === 'uniq') { uniqDefeated(e); return; }
     if (e.kind === 'imp') { impDefeated(e); return; }
-    if (e.kind === 'stlc' || e.kind === 'stlp') { stlObjBreak(e); return; }   // v10.40 철 덩어리 · 폐철골 기둥
+    if (e.kind === 'stlc' || e.kind === 'stlp') { stlObjBreak(e); return; }   // v10.22 철 덩어리 · 폐철골 기둥
     if (e.kind === 'lmir') { lmirBreak(e); return; }   // v9.20 냉기의 거울이 깨졌다
     if (e.kind === 'mini') { miniDefeated(e); return; }
     orbs.push({ x: e.x, y: e.y, val: e.exp, t: rand() * 6 });
@@ -13246,7 +13246,7 @@ function drawHud() {
     if (boss.bk === 'bear') drawBearFrost(bw);   // v9.02 동상 게이지
     if (boss.bk === 'tig') drawTgHud(bw);   // v9.63 완벽 회피 표시
     if (boss.bk === 'byu') drawByuHud();
-    if (boss.bk === 'stl') drawStlHud();   // v10.40 철식 중첩   // v10.30 업경이 읽은 내 움직임
+    if (boss.bk === 'stl') drawStlHud();   // v10.22 철식 중첩   // v10.21 업경이 읽은 내 움직임
     if (rush) rush.drawHud();   // v10.10 똥바람
   }
   ctx.save();
@@ -15182,9 +15182,9 @@ function pickBossK(t) {
   if (t === 29) return 'tig';
   if (t === 30) return 'dok';   // v9.85 검 도깨비 마왕: 31층 100% · 32층 70% · 33층부터 균등
   if (t === 31) { const L = ICE_L.concat('rud', 'cvt', 'snk', 'tig'); return rand() < 0.7 ? 'dok' : L[(rand() * L.length) | 0]; }
-  if (t === 32) return 'byu';   // v10.30 업경의 심판수 반업수: 33층 100% · 34층 70% · 35층부터 균등
+  if (t === 32) return 'byu';   // v10.21 업경의 심판수 반업수: 33층 100% · 34층 70% · 35층부터 균등
   if (t === 33) { const L = ICE_L.concat('rud', 'cvt', 'snk', 'tig', 'dok'); return rand() < 0.7 ? 'byu' : L[(rand() * L.length) | 0]; }
-  if (t >= 34) return 'stl';   // v10.40 지하 35층 = 7지옥 최종 마왕 철식 강철이 전용   // v9.63 지하 30층 = 6지옥 최종 마왕 지옥의 화염 호랑이 전용
+  if (t >= 34) return 'stl';   // v10.22 지하 35층 = 7지옥 최종 마왕 철식 강철이 전용   // v9.63 지하 30층 = 6지옥 최종 마왕 지옥의 화염 호랑이 전용
   if (t === 19) return 'kng';   // v8.80: 지하 20층은 타락한 어인왕만 (최종 마왕)
   if (t >= 10 && t <= 13) { const L = VFT_L; return t >= 12 ? L[(rand() * L.length) | 0] : (rand() < 0.7 ? L[0] : L[1 + ((rand() * (L.length - 1)) | 0)]); }   // v8.70: 11층 파리지옥 100% · 12층 70% · 13·14층 7종 균등 (v8.64엔 이독버섯) (제독은 바다 보스라 16층부터)
   if (t === 17) return 'whl';   // v9.80 심해의 시체고래: 18층 100% · 19층 70%
@@ -15906,7 +15906,7 @@ function dokDexArt(g, w, h, l) {   // 도감 그림
   const f = DOKF.idle[1]; if (!IMG.dok) { g.fillStyle = l ? '#0c0508' : '#3a1018'; g.fillRect(w * 0.3, h * 0.2, w * 0.4, h * 0.7); return; }
   dexSprite(g, w, h, IMG.dok, f[0], f[1], f[2], f[3], false, l, false);
 }
-/* ---------- v10.30 업경의 심판수 반업수 (지하 33층 100% · 34층 70% · 7지옥 보스맵 IMAP_DOSAN) — 내 움직임 습관을 읽고 카운터치는 심판수 ----------
+/* ---------- v10.21 업경의 심판수 반업수 (지하 33층 100% · 34층 70% · 7지옥 보스맵 IMAP_DOSAN) — 내 움직임 습관을 읽고 카운터치는 심판수 ----------
    아틀라스: IMG.byu / BYUF (tools/atlas/bny_build.py ← 사용자 인게임 시트, 마젠타 배경: 대기6 · 이동8 · 기본 공격6 · 심판장6 · 피격4 · 사망6 + 파편(심판장 4번째 칸의 결정 기둥)), 시트는 왼쪽을 봄, ×BYU.K
    상태 머신(BanupAI.update): intro → chase ⇄ 순환 [judge → gaze → shard → judge → replay → gaze] · 가까우면 앞발 후려치기(swipe)가 먼저 · 30% broken(깨진 업경)
    행동 추적 hist: 0.1초마다 {이동 여부, 위치}를 4초 동안 기록 → 이동 비율(mvRatio)로 판결이 바뀐다 (화면 위 '업경: 달림 72%')
@@ -16235,7 +16235,7 @@ function byuDexArt(g, w, h, l) {   // 도감 그림
   const f = BYUF.idle[0]; if (!IMG.byu) { g.fillStyle = l ? '#0c0508' : '#3a2028'; g.fillRect(w * 0.15, h * 0.2, w * 0.7, h * 0.7); return; }
   dexSprite(g, w, h, IMG.byu, f[0], f[1], f[2], f[3], false, l, false);
 }
-/* ---------- v10.40 철식 강철이 (지하 35층 전용 · 7지옥 최종 마왕 · 7지옥 보스맵 IMAP_DOSAN) — 철을 삼킬수록 강해지는 업신(業神) ----------
+/* ---------- v10.22 철식 강철이 (지하 35층 전용 · 7지옥 최종 마왕 · 7지옥 보스맵 IMAP_DOSAN) — 철을 삼킬수록 강해지는 업신(業神) ----------
    아틀라스: IMG.stl / STLF (tools/atlas/stl_build.py ← 컨셉 시트 이족 칸 + 흑철룡 시트 + 철 덩어리 1장, 자르기·배경 제거만)
      이족(1·2페이즈) idle6 · move8 · atk6(철의 발톱) · bite6(철식의 물어뜯기) · pow5(강화) · hit4 · death6 — 오른쪽을 봄(대기는 정면), ×STL.KB nearest
      흑철룡(3페이즈) d_idle6 · d_move8 · d_atk6(브레스) · d_dash6 · d_roar4 · d_death6 — 왼쪽을 봄, 줄마다 몸길이 STL.DL로 맞춤 · 몸을 머리/몸통/꼬리 세 조각으로 잘라 마디마다 그린다
@@ -17546,13 +17546,13 @@ ACH.push({ id: 'lil_waltz', icon: '💃', name: '완벽한 왈츠', desc: '얼�
 ACH.push({ id: 'k_bear', icon: '❄', name: '팔한지옥의 사냥꾼', desc: '팔한지옥의 백곰 마왕 처치 (지하 21층)', kill: 'boss14', need: 1, reward: 8000 });   // v9.10
 ACH.push({ id: 'k_rud', icon: '📿', name: '참회의 끝', desc: '마하칼 루드라 처치 (지하 23층)', kill: 'boss15', need: 1, reward: 12000 });
 ACH.push({ id: 'k_snk', icon: '🐍', name: '용암 사냥꾼의 최후', desc: '불구렁이 처치 (지하 28층)', kill: 'boss18', need: 1, reward: 15000 });   // v9.46
-ACH.push({ id: 'k_stl', icon: '⛓', name: '철을 굶긴 자', desc: '철식 강철이 처치 (지하 35층)', kill: 'boss23', need: 1, reward: 15000 });   // v10.40
-ACH.push({ id: 'k_byu', icon: '🪞', name: '업경을 깨뜨린 자', desc: '업경의 심판수 반업수 처치 (지하 33층)', kill: 'boss22', need: 1, reward: 12000 });   // v10.30
+ACH.push({ id: 'k_stl', icon: '⛓', name: '철을 굶긴 자', desc: '철식 강철이 처치 (지하 35층)', kill: 'boss23', need: 1, reward: 15000 });   // v10.22
+ACH.push({ id: 'k_byu', icon: '🪞', name: '업경을 깨뜨린 자', desc: '업경의 심판수 반업수 처치 (지하 33층)', kill: 'boss22', need: 1, reward: 12000 });   // v10.21
 ACH.push({ id: 'k_dok', icon: '⚔', name: '쾌검을 꺾은 자', desc: '검 도깨비 마왕 처치 (지하 31층)', kill: 'boss21', need: 1, reward: 10000 });   // v9.85
 ACH.push({ id: 'k_whl', icon: '🐋', name: '가라앉은 고래의 장례', desc: '심해의 시체고래 처치 (지하 18층)', kill: 'boss20', need: 1, reward: 9000 });   // v9.80
 ACH.push({ id: 'k_tig', icon: '🐯', name: '염주를 끊은 자', desc: '지옥의 화염 호랑이 처치 (지하 30층)', kill: 'boss19', need: 1, reward: 20000 });   // v9.63
 ACH.splice(ACH.findIndex(a => a.id === 'h5') + 1, 0, { id: 'h6', icon: '🔥', name: '팔열지옥의 지배자', desc: '지하 30층 마왕(지옥의 화염 호랑이) 처치 — 6지옥 팔열지옥 정복', tier: 29, reward: 30000 });   // v9.63
-ACH.splice(ACH.findIndex(a => a.id === 'h6') + 1, 0, { id: 'h7', icon: '⛓', name: '도산지옥의 지배자', desc: '지하 35층 마왕(철식 강철이) 처치 — 7지옥 도산지옥 정복', tier: 34, reward: 40000 });   // v10.40
+ACH.splice(ACH.findIndex(a => a.id === 'h6') + 1, 0, { id: 'h7', icon: '⛓', name: '도산지옥의 지배자', desc: '지하 35층 마왕(철식 강철이) 처치 — 7지옥 도산지옥 정복', tier: 34, reward: 40000 });   // v10.22
 ACH.push({ id: 'k_cvt', icon: '⛓', name: '영벌의 끝', desc: '영벌의 화염죄수 처치 (지하 26층)', kill: 'boss17', need: 1, reward: 14000 });   // v9.40
 ACH.push({ id: 'rud_clean', icon: '🪷', name: '업보 없는 해탈', desc: '업보 폭발을 한 번도 일으키지 않고 마하칼 루드라 처치', manual: true, reward: 15000 });
 ACH.push({ id: 'luck', icon: '🍀', name: '진정한 불운의 아이콘', desc: `보스 심장 재설정을 연속 ${LUCK_N}번 했는데 단 한 번도 등급업이 나오지 않음 (등급업이 가능한 심장 기준)`, luck: true, reward: 5000 });   // v9.03
@@ -17590,8 +17590,8 @@ function openAch() {
 }
 /* v8.71 간략 패치노트 (최근 버전만, 새 버전마다 맨 위에 한 줄 추가) */
 const PATCH = [
-  ['v10.40','[7지옥 완성] 지하 35층 최종 마왕 [철식 강철이] — 철을 삼킬수록 강해지는 업신. 18초마다·철을 삼킬 때마다 철식 중첩(공격력·공격 크기 +7%씩, 최대 8 · 삼킨 철만큼 패턴 쿨타임 -6%씩). 떨어진 철 덩어리는 가까이(230px) 있어야만 부서진다 — 부수러 가면 위험하고 두면 마왕이 먹는다. 1페이즈: 융해된 대지 강타 · 폐철골 기둥(부수면 폭발해 마왕 체력 -5% · 기절, 못 부수면 삼킴) · 강철비 / 2페이즈(70%) 탐욕의 포식자: 철을 걸어가 3초 흡수(흡수 중 부수면 약점 노출 +35%) · 남은 철은 자력 폭주 · 철식의 물어뜯기 / 3페이즈(25%) 불완전한 흑철룡: 머리·몸통·꼬리 다관절 · S자 용암 쇄도 2연속 · 흑철 브레스(사거리는 줄고 폭은 넓어짐) · 철 가시 분출. 지하 35층 열림 · 도감 · 업적 [철을 굶긴 자]·[도산지옥의 지배자] · 보스 러시 목록에도 추가'],
-  ['v10.30','[7지옥] 새 마왕 [업경의 심판수 반업수] — 지하 33층 100% · 34층 70% · 지하 33·34층 열림. 등의 업경이 최근 4초의 내 움직임을 읽는다(화면 위 \'업경\' 비율): 많이 달리면 가는 길 앞을 막는 칼날 벽, 가만히 있으면 좁혀오는 응시 고리, 섞이면 둘 다 작게 · 업경의 시선(2초 넘게 머무는 부채꼴 빛, 등 뒤가 안전) · 죄상 노출(거울 파편이 하나씩 나를 겨눔) · 업경 재현(지나온 3초의 길에 칼날) · 체력 30%에 깨진 업경(모든 패턴 빨라짐 · 이중 시선 · 파편 6개). 도감 · 업적 [업경을 깨뜨린 자] · 보스 러시 마왕 목록에도 추가'],
+  ['v10.22','[7지옥 완성] 지하 35층 최종 마왕 [철식 강철이] — 철을 삼킬수록 강해지는 업신. 18초마다·철을 삼킬 때마다 철식 중첩(공격력·공격 크기 +7%씩, 최대 8 · 삼킨 철만큼 패턴 쿨타임 -6%씩). 떨어진 철 덩어리는 가까이(230px) 있어야만 부서진다 — 부수러 가면 위험하고 두면 마왕이 먹는다. 1페이즈: 융해된 대지 강타 · 폐철골 기둥(부수면 폭발해 마왕 체력 -5% · 기절, 못 부수면 삼킴) · 강철비 / 2페이즈(70%) 탐욕의 포식자: 철을 걸어가 3초 흡수(흡수 중 부수면 약점 노출 +35%) · 남은 철은 자력 폭주 · 철식의 물어뜯기 / 3페이즈(25%) 불완전한 흑철룡: 머리·몸통·꼬리 다관절 · S자 용암 쇄도 2연속 · 흑철 브레스(사거리는 줄고 폭은 넓어짐) · 철 가시 분출. 지하 35층 열림 · 도감 · 업적 [철을 굶긴 자]·[도산지옥의 지배자] · 보스 러시 목록에도 추가'],
+  ['v10.21','[7지옥] 새 마왕 [업경의 심판수 반업수] — 지하 33층 100% · 34층 70% · 지하 33·34층 열림. 등의 업경이 최근 4초의 내 움직임을 읽는다(화면 위 \'업경\' 비율): 많이 달리면 가는 길 앞을 막는 칼날 벽, 가만히 있으면 좁혀오는 응시 고리, 섞이면 둘 다 작게 · 업경의 시선(2초 넘게 머무는 부채꼴 빛, 등 뒤가 안전) · 죄상 노출(거울 파편이 하나씩 나를 겨눔) · 업경 재현(지나온 3초의 길에 칼날) · 체력 30%에 깨진 업경(모든 패턴 빨라짐 · 이중 시선 · 파편 6개). 도감 · 업적 [업경을 깨뜨린 자] · 보스 러시 마왕 목록에도 추가'],
   ['v10.20','[보스 러시] 4라운드 똥바람이 큰 패턴 중에도 쉬지 않고 계속 분다 (십자가는 그대로)'],
   ['v10.19','[검 도깨비] 보스 심장 도트 4등급 전용 이미지 적용 · [혈랑 진화형] 최종 공격력 +8% 및 받는 피해 -15%'],
   ['v10.18','[보스 러시] 해금 지하 30층 → 25층 마왕 처치 · [사슬 악마] 체력비례 피해 소폭 너프(0.9배, 사슬 휘두르기 일반 0.9%/보스급 0.18%) · 궁 체력 재생 3%→2.7% · [듀라한] 전체 스탯 대폭 버프 · 잃어버린 머리 피해 +17%(210%)·지속 10→13초·쿨타임은 머리가 돌아온 뒤부터 · [지옥 군주 늑대] 울부짖음 체력비례 0.5% · [마해룡] 오라 체력비례 0.6→0.78% · [리자드] 1진화부터 체력비례(×1.15) · [달팽이] 장판 체력비례 ×1.08 · [몽환 키메라] 최종 체력비례 ×1.15'],
