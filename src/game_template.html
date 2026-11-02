@@ -983,7 +983,7 @@ function mkCanvas(w, h) { const c = document.createElement('canvas'); c.width = 
  * ============================================================ */
 const SAVE_KEY = 'hellSurvivorSave1';
 let bnHide = false; try { bnHide = localStorage.getItem('hsBnHide') === '1'; } catch (_) {}   // v10.12 보스전 안내 글씨 끄기 (H키, 이 설정만 따로 저장)
-const GAME_VER = 'v10.23';
+const GAME_VER = 'v10.24';
 const SAVE_DEF = () => ({
   shards: 0,
   perks: { hp: 0, spd: 0, dmg: 0, exp: 0, magnet: 0, banish: 0, revive: 0, regen: 0, shard: 0, critd: 0, choice: 0 },
@@ -8164,6 +8164,8 @@ function drawBossTele(wx, wy) {
       if (hl) { ctx.save(); ctx.setLineDash([7, 6]); ctx.strokeStyle = 'rgba(150,235,255,0.95)'; ctx.lineWidth = 2.5; ctx.beginPath(); ctx.ellipse(x, y, hl, hy, 0, 0, 6.283); ctx.stroke(); ctx.restore(); }
       if ((t.nofire && t.follow && t.t >= t.follow) || (t.track && t.t >= t.track)) { ctx.strokeStyle = '#fff'; ctx.lineWidth = 2; ctx.beginPath(); ctx.ellipse(x, y, t.r - 6, ry - 6 * ry / t.r, 0, 0, 6.283); ctx.stroke(); }   // 고정됨
     } else if (t.k === 'donut') {
+      if (t.pk) { const px = wx(t.pk.x), py = wy(t.pk.y); ctx.save(); ctx.setLineDash([7, 6]); ctx.strokeStyle = 'rgba(150,235,255,0.95)'; ctx.lineWidth = 2.5; ctx.beginPath(); ctx.arc(px, py, t.pk.r, 0, 6.283); ctx.stroke(); ctx.restore();
+        ctx.beginPath(); ctx.rect(-50, -50, W + 100, H + 100); ctx.arc(px, py, t.pk.r, 0, 6.283); ctx.clip('evenodd'); }   // v10.23 도넛 안 안전 구멍
       ctx.beginPath(); ctx.arc(x, y, t.r2, 0, 6.283); ctx.arc(x, y, t.r, 0, 6.283, true); ctx.fill('evenodd'); ctx.stroke();
       ctx.beginPath(); ctx.arc(x, y, t.r, 0, 6.283); ctx.stroke();
       ctx.fillStyle = `rgba(${CP}, ${0.3 + 0.2 * pu})`; ctx.beginPath(); ctx.arc(x, y, t.r + (t.r2 - t.r) * p, 0, 6.283); ctx.arc(x, y, t.r, 0, 6.283, true); ctx.fill('evenodd');
@@ -16265,7 +16267,7 @@ const STL = { hp: 2.0, dm: 1.0, KB: 3, DL: 340, r: 92, spK: 0.6, spMax: 190, bum
   piCd: 24, piHp: 0.05, piT: 14, piPull: 1.0, swpR: 520, swpIn: 200, swpWarn: 1.2, swpDm: 30, swpGap: 3.2, piBoom: 0.05, piStun: 2.5,
   rnCd: 18, rnWarn: 1.1, rnR: 115, rnDm: 26, rnSep: 420, ckHp: 0.0154, ckNear: 230, absT: 12, ckLife: 16,
   fdCh: 3.0, fdMax: 2, fdSp: 260, shGap: 1.2, shR: 75, shWarn: 0.85, shDm: 16, expT: 4, expK: 1.35,
-  mgWarn: 2.2, mgR: 210, mgDm: 36, slHole: 0.28, mgHole: 0.28,   // v10.23 큰 원 한가운데 안전 구멍(반지름 비율)
+  mgWarn: 2.2, mgR: 210, mgDm: 36, slHole: 0.28, mgHole: 0.28, pkR: 95, pkNear: 215,   // v10.23 큰 원 한가운데 안전 구멍(반지름 비율)
  
   biCd: 9, biWarn: 0.7, biLen: 420, biW: 120, biSp: 1100, biDm: 30,
   ph2: 0.7, ph3: 0.25, roar: 2.2, tf: 2.6, tempo2: 1.15, tempo3: 1.3,
@@ -16449,14 +16451,21 @@ class SteelEaterAI {
   pillarStart() {   // B 업신의 대장간: 폐철골 기둥을 뽑아 든다
     const e = this.e, p = new ScrapPillar(e.max * STL.piHp); STLW.pillar = p; enemies.push(p); this.pillT = STL.piT; this.swT = STL.piPull + 0.6;
     this.go('pillar', STL.piPull, 'pow'); floatNum(e.x, e.y - 330, '업신의 대장간 — 폐철골 기둥!', '#ff8a3a'); sfx('skill'); shake = Math.max(shake, 8);
-    if (!STLW.piTip) { STLW.piTip = true; banner = { txt: `강철이: 폐철골 기둥! 들고 있는 동안 3초마다 화면 절반을 휩쓴다 — 품 안(${STL.swpIn}px)은 안전\n기둥을 부수면 폭발해 마왕에게 큰 피해 + 기절 · ${STL.piT}초 안에 못 부수면 기둥을 씹어 삼킨다(철식 +1)`, t: 5.5, c: '#ffb070' }; }
+    if (!STLW.piTip) { STLW.piTip = true; banner = { txt: `강철이: 폐철골 기둥! 들고 있는 동안 3초마다 화면 절반을 휩쓴다 — 품 안(${STL.swpIn}px)이나 하늘색 빈 원 안은 안전\n기둥을 부수면 폭발해 마왕에게 큰 피해 + 기절 · ${STL.piT}초 안에 못 부수면 기둥을 씹어 삼킨다(철식 +1)`, t: 5.5, c: '#ffb070' }; }
   }
   sweep() {   // 기둥 휩쓸기: 도넛 (품 안 안전)
     const e = this.e, sz = stlSz(), R = STL.swpR * sz, R0 = STL.swpIn * sz, w = STL.swpWarn * sz; this.go('sweep', w + 0.3, 'atk');
-    e.tele.push({ k: 'donut', x: e.x, y: e.y, r: R0, r2: R, t: 0, dur: w, done: false, rgb: '255,110,30', fire: t => {
+    // v10.23 큰 도넛 안에도 작은 안전 구멍(`pk`): 내가 도넛 안에 서 있으면 내 둘레 가까운 곳(약 STL.pkNear)에 만들어 줌 — 보스 품까지 안 가도 피할 수 있다
+    let pk = null; const dp = Math.hypot(P.x - e.x, P.y - e.y), PKR = STL.pkR;
+    if (dp > R0 + 20 && dp < R + 40) for (let k = 0; k < 24 && !pk; k++) {
+      const a = rand() * 6.283, rr = STL.pkNear * (0.7 + 0.3 * rand()), x = P.x + Math.cos(a) * rr, y = P.y + Math.sin(a) * rr * 0.75, dq = Math.hypot(x - e.x, y - e.y);
+      if (dq > R0 + PKR + 10 && dq < R - PKR - 10 && inPoly(x, y) && inPoly(x, y + PKR * 0.6) && inPoly(x, y - PKR * 0.6)) pk = { x, y, r: PKR };
+    }
+    e.tele.push({ k: 'donut', x: e.x, y: e.y, r: R0, r2: R, pk, t: 0, dur: w, done: false, rgb: '255,110,30', fire: t => {
       if (!stlOn()) return; STLW.fx.push({ k: 'sweep', x: t.x, y: t.y, r: t.r2, t: 0, life: 0.45 }); shake = Math.max(shake, 12); sfx('boom');
-      const d = Math.hypot(P.x - t.x, P.y - t.y); if (state === 'play' && d > t.r - 4 - PR() && d < t.r2 + 8 + PR()) stlHit(STL.swpDm);
-      stlPet((x, y) => { const q = Math.hypot(x - t.x, y - t.y); return q > t.r && q < t.r2; }, STL.swpDm);
+      const inP = (qx, qy) => !!t.pk && Math.hypot(qx - t.pk.x, qy - t.pk.y) < t.pk.r;
+      const d = Math.hypot(P.x - t.x, P.y - t.y); if (state === 'play' && d > t.r - 4 - PR() && d < t.r2 + 8 + PR() && !inP(P.x, P.y)) stlHit(STL.swpDm);
+      stlPet((x, y) => { const q = Math.hypot(x - t.x, y - t.y); return q > t.r && q < t.r2 && !inP(x, y); }, STL.swpDm);
     } });
   }
   biteStart() {   // 2페이즈 철식의 물어뜯기: 돌진
@@ -17596,6 +17605,7 @@ function openAch() {
 }
 /* v8.71 간략 패치노트 (최근 버전만, 새 버전마다 맨 위에 한 줄 추가) */
 const PATCH = [
+  ['v10.24','[철식 강철이] 폐철골 기둥 휩쓸기(화면 절반을 덮는 큰 도넛)에도 안전 구멍 추가 — 내가 도넛 안에 서 있으면 가까운 곳(약 150~215px)에 하늘색 빈 원이 생기고 그 안은 피해 없음(보스 품 안은 그대로 안전). 안내 문구도 수정'],
   ['v10.23','[철식 강철이] 융해된 대지 강타·자력 폭주의 큰 원 한가운데에 하늘색 빈 원(안전 구멍, 반지름의 28%)을 만듦 — 그 안에 서 있으면 피해가 없음(쇳물 장판은 그대로) · 철 덩어리 체력 대폭 너프(마왕 최대 체력의 2.2% → 1.54%)'],
   ['v10.22','[7지옥 완성] 지하 35층 최종 마왕 [철식 강철이] — 철을 삼킬수록 강해지는 업신. 18초마다·철을 삼킬 때마다 철식 중첩(공격력·공격 크기 +7%씩, 최대 8 · 삼킨 철만큼 패턴 쿨타임 -6%씩). 떨어진 철 덩어리는 가까이(230px) 있어야만 부서진다 — 부수러 가면 위험하고 두면 마왕이 먹는다. 1페이즈: 융해된 대지 강타 · 폐철골 기둥(부수면 폭발해 마왕 체력 -5% · 기절, 못 부수면 삼킴) · 강철비 / 2페이즈(70%) 탐욕의 포식자: 철을 걸어가 3초 흡수(흡수 중 부수면 약점 노출 +35%) · 남은 철은 자력 폭주 · 철식의 물어뜯기 / 3페이즈(25%) 불완전한 흑철룡: 머리·몸통·꼬리 다관절 · S자 용암 쇄도 2연속 · 흑철 브레스(사거리는 줄고 폭은 넓어짐) · 철 가시 분출. 지하 35층 열림 · 도감 · 업적 [철을 굶긴 자]·[도산지옥의 지배자] · 보스 러시 목록에도 추가'],
   ['v10.21','[7지옥] 새 마왕 [업경의 심판수 반업수] — 지하 33층 100% · 34층 70% · 지하 33·34층 열림. 등의 업경이 최근 4초의 내 움직임을 읽는다(화면 위 \'업경\' 비율): 많이 달리면 가는 길 앞을 막는 칼날 벽, 가만히 있으면 좁혀오는 응시 고리, 섞이면 둘 다 작게 · 업경의 시선(2초 넘게 머무는 부채꼴 빛, 등 뒤가 안전) · 죄상 노출(거울 파편이 하나씩 나를 겨눔) · 업경 재현(지나온 3초의 길에 칼날) · 체력 30%에 깨진 업경(모든 패턴 빨라짐 · 이중 시선 · 파편 6개). 도감 · 업적 [업경을 깨뜨린 자] · 보스 러시 마왕 목록에도 추가'],
