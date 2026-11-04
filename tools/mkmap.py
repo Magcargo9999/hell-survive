@@ -10,6 +10,8 @@ ANCHORS = [
  ('스킬 목록(이름·설명)', r'^const SKILLS = '), ('스킬 쿨타임·스킬 이름 함수', r'^const SKILL_CD|^const skillName'),
  ('공용 카드', r'^const UPGRADES = '), ('캐릭터 전용 카드', r'^const UNIQUE = '), ('조합 카드', r'^const SYNERGIES = '),
  ('마계 물고기 진화(v9.49: 미꾸라지 물방울·마해룡 절대 수압·포식자의 파도)', r'^const FISH_AURA|^const FWAVE|^function updateFish|^function fishOrb|^function startFishWave|^function stepFishWave|^function drawFishWave|^function drawFishAura'),
+ ('타르타로스의 티탄(v10.25: 사슬 채찍·중력의 틈·대지 강타 초중력·형틀의 사슬 봉인·대차륜)', r'^const TTN = |^class TitanAI|^class TitanRock|^function ttnRiftBlock|^function updateTtnFx|^function drawTtnBoss'),
+ ('8지옥 타르타로스 필드(v10.25: 바닥·봉인 함정 족쇄·낙석)', r'^const TF = |^function tarTile|^const TAR = |^function updateTarField|^function tarChainPush|^function drawTarFloor'),
  ('철식 강철이(v10.22: 철식 중첩·철 덩어리·폐철골 기둥·포식·자력 폭주·흑철룡)', r'^const STL = |^class SteelEaterAI|^class IronChunk|^class ScrapPillar|^function stlObjBreak|^function updateStlFx|^function drawStlBoss|^function stlDragon|^function drawStlHud'),
  ('업경의 심판수 반업수(v10.21: 행동 추적 판결·시선·파편·재현·깨진 업경)', r'^const BYU = |^class BanupAI|^function updateByuFx|^function drawByuBoss|^function drawByuFloor|^function drawByuHud|^function byuDefeated'),
  ('검 도깨비 마왕(v9.85: 쾌검 돌진·귀신의 흘리기·검총의 결계·무형검)', r'^const DOK = |^class DokkaebiAI|^function dokGuardHit|^function updateDokBoss|^function drawDokBoss|^function dokDefeated'),
