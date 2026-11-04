@@ -995,7 +995,7 @@ function mkCanvas(w, h) { const c = document.createElement('canvas'); c.width = 
 const BRO = false;   // v10.27 ⚔ 보스 러시 전용 빌드 — `python3 src/build.py --bossrush`가 true로 바꾼다 (모든 캐릭터 · 보스 골라 큐 · 보상 없음 · 세이브는 따로)
 const SAVE_KEY = BRO ? 'hellSurvivorBossRush1' : 'hellSurvivorSave1';   // 본 게임 세이브 키는 절대 바꾸지 않는다 — 보스 러시 전용 빌드만 다른 키(본 게임 진행을 건드리지 않게)
 let bnHide = false; try { bnHide = localStorage.getItem('hsBnHide') === '1'; } catch (_) {}   // v10.12 보스전 안내 글씨 끄기 (H키, 이 설정만 따로 저장)
-const GAME_VER = 'v10.27';
+const GAME_VER = 'v10.28';
 const SAVE_DEF = () => ({
   shards: 0,
   perks: { hp: 0, spd: 0, dmg: 0, exp: 0, magnet: 0, banish: 0, revive: 0, regen: 0, shard: 0, critd: 0, choice: 0 },
@@ -1677,7 +1677,8 @@ let fwaveQ = null;   // v9.49 포식자의 파도 (공허의 마해룡 스킬)
 let airs = [], diveQ = null, breathQ = null, rushQ = null, cfx = [], ebul = [], bombQ = null, holyQ = null, afx = [], bombT = [], holyPtr = null;   // 키메라: 에어슬래시 · 천공 강하 · 효과
 let eleQ = null, tentQ = null, octoFx = [];   // 문어 마법사: 코끼리 돌진 · 문어 다리 · 히든 몹 이펙트
 let slots = [], slotPlan = [], slotUI = null, uniqCd = 0, lasers = [], udeath = [], eyeF = null, tpBtn = { x: 0, y: 0, w: 0, h: 0 };   // 잭팟 머신 · 유니크 마물 · 성유물
-let rush = null, rushMode = false, rushBoot = false;   // v10.16 rushBoot = 보스 러시 시작 중(newPlayer에는 심장을 제외하고 마석만 적용)
+let rush = null, rushMode = false, rushBoot = false;
+const brR1 = () => !!(rush && rush.i === 0);   // v10.28 QA: 보스 러시 1라운드엔 마왕 고유 맵 기믹(호랑이 불의 십자가 · 어인왕 산소존)을 끈다   // v10.16 rushBoot = 보스 러시 시작 중(newPlayer에는 심장을 제외하고 마석만 적용)
 let castle = null, arena = null, trans = null, banner = null, boss = null, winT = 0, darkT = 0, smokes = [];
 /* ---------- 마왕성 (Lv.25에 솟아오름) / 성 내부 맵 ---------- */
 const CAS = { s: 0.62, gx: 0.472, gate: 24 };   // 크기 배율, 성문 위치(그림 너비 비율), 성문 통로 반폭
@@ -1783,13 +1784,13 @@ function enterArena() {
     if (boss && boss.bk === 'byu') tx += '\n업경의 심판수 반업수 (지하 33·34층 마왕): 화면 위 \'업경\' = 최근 4초의 내 움직임 — 판결이 그에 맞춰 바뀐다 (달리면 앞을 막는 칼날 벽 · 서 있으면 좁혀오는 응시 고리)\n붉은 부채꼴 = 오래 머무는 시선(등 뒤가 안전) · 거울 파편은 하나씩 나를 겨눈다 · 붉은 길 = 지나온 길에 칼날 · 체력 30%에 깨진 업경(빨라지고 시선 두 번)';
     if (boss && boss.bk === 'dok') tx += '\n검 도깨비 마왕 (지하 31·32층 마왕): 붉은 줄 = 쾌검 돌진 · 돌진이 끝나면 내 쪽으로 검기 3갈래(줄 사이로) · 가드 중에는 붉은 원 안에서 3번 때리면 반격 (원 밖으로 나가거나 공격을 멈추세요)\n★ 검총의 결계: 검날 벽 안에 10초 갇힌다 — 바닥의 붉은 길(회전 베기)만 비키기 · 체력 30% 무형검: 업경 장판 3번 뒤 연속 베기';
     if (boss && boss.bk === 'whl') tx += '\n심해의 시체고래 (지하 18층 마왕): 붉은 줄 = 유령 해류가 날아갈 길(줄 사이로) · 흰 테두리 원 = 곧 솟구칠 자리 · 소용돌이는 끌어당기지만 달리면 빠져나온다\n★ 죽음의 파도: 한 줄만 빈 밝은 줄로 들어가 피하기 (파란 줄은 파도가 훑고 간다) · 체력 35% 원혼 폭주';
-    if (boss && boss.bk === 'tig') tx += '\n지옥의 화염 호랑이 (지하 30층 최종 마왕): 가운데 불의 십자가가 멈추지 않고 돈다 — 팔은 광장 벽까지 뻗는다(팔 사이가 안전, 가운데 가까이에서 같이 돌면 따라갈 수 있다) · 연속 돌진 5번을 한 번도 안 맞고 다 피하면 기절한 뒤 가드\n가드 자세(2초)에 때릴수록 반격 폭발이 커진다 · 멸옥 수플렉스 = 안전지대로! (잡히면 현재 체력 80%) · 체력 40%부터 박자마다 나를 겨누는 점선 리듬 돌진';
+    if (boss && boss.bk === 'tig') tx += '\n지옥의 화염 호랑이 (지하 30층 최종 마왕): 가운데 불의 십자가가 멈추지 않고 돈다 — 팔은 광장 벽까지 뻗는다(팔 사이가 안전, 가운데 가까이에서 같이 돌면 따라갈 수 있다) · 연속 돌진 5번을 한 번도 안 맞고 다 피하면 기절한 뒤 가드\n가드 자세(2초)에 때릴수록 반격 폭발이 커진다 · 멸옥 수플렉스 = 안전지대로! (잡히면 현재 체력 80%) · 체력 40%부터 박자마다 나를 겨누는 점선 리듬 돌진' + (brR1() ? ' · ※ 보스 러시 1라운드에서는 이 맵 기믹이 없다' : '');
     if (boss && boss.bk === 'snk') tx += '\n불구렁이 (지하 28층 마왕): 몸통 마디에 닿아도 아프고, 마디를 때려도 마왕에게 들어간다 · 땅속으로 사라지면 내가 지나온 길을 따라 빠르게 헤엄치며 균열이 굳어 용암 참호(벽, 약 8초)가 되고 — 내 길이 끝나도 바닥을 가로질러 계속 긋는다 — 마지막에 내 자리로 솟구친다(붉은 원 밖으로)\n입을 벌리면 넓은 부채꼴로 세게 빨아들인다(끌려가며 옆으로 빠져나가기 — 참호가 길을 막는다) · 용암 벽에 갇히면 투사체가 되돌아온다 — 튀어나온 머리에 바짝 붙어 5번 때리기 · 체력 30%부터 보스방 전체를 감싸는 똬리 — 똬리 동안은 몸통에 피해가 안 들어가고 가장자리를 도는 머리만 때릴 수 있다';
     if (boss && boss.bk === 'cvt') tx += '\n영벌의 화염죄수 (지하 26층 마왕): 지나간 자리에 지옥불이 오래 남는다(밟으면 화상이 쌓인다) · 주황 예고선 = 쇠사슬(묶이면 5.5초 동안 붉은 원과 바깥 고리 사이에 머물기)\n용광로의 저주 = 구슬이 5초 불탐(식을 때까지 피하기) · 무릎 꿇고 붉은 오라 = 때리면 고통 반사(사거리 밖으로) · 체력 30%부터 예고선을 따라 광폭 돌진';
     if (boss && boss.bk === 'lil') tx += '\n팔한지옥의 대공작 릴세르카 (지하 25층 최종 마왕): 둘레의 결정화 영역에 머물면 동상(100%면 3초 이속·공속 -80%) — 치고 빠지기, 1.5초 벗어나면 초기화\n왈츠 = 내 스포트라이트를 따라가기(밖이면 얼어붙는 시선) · 거울 = 투사체가 3갈래로 반사(깨지면 0.2초 경직) · 체력 25%부터 얼음판 위 회전 안전지대';
     if (boss && boss.bk === 'rud') tx += '\n마하칼 루드라: 얼음 염주는 내 투사체를 끌어당겨 삼키고, 염주 둘레의 마왕에게 가는 피해도 삼킨다(업보 24 = 폭발) — 마왕을 염주에서 떼어 놓기\n푸른 진언 고리에 닿으면 침묵(3초 기본 공격 봉인 · 스킬은 반사) — 고리의 통로로 · 꺾인 얼음 줄 = 만트라 · 붉은 원 = 연꽃 폭발 · 체력 30%부터 8자로 질주하며 지뢰';
     if (boss && boss.bk === 'bear') tx += '\n팔한지옥의 백곰 마왕: 푸른 사각형 = 얼음 장벽(내 이동·투사체를 막는다) · 눈보라 = 바람에 밀리고 동상(100이면 1.5초 얼어붙음, 게이지는 장벽 근처에서만 내려감) — 장벽 뒤 바람 그늘로\n흰 균열 = 0.5초 뒤 솟는다(줄 사이로) · 체력 30%부터 당구공처럼 튕기는 빙산 돌진(하얀 점선이 앞으로 갈 길)';
-    if (boss && boss.bk === 'kng') tx += '\n타락한 어인왕 (지하 20층 최종 마왕): 보스방이 물에 잠겨 산소가 계속 준다(0이면 초당 최대 체력 10%) — 빛나는 산소 간헐천 기둥 안에 서서 채우기\n물거울에 맞은 투사체는 나에게 되돌아온다(거울 사이 틈을 노리기) · 물줄기 사슬 = 반경 밖으로 나가면 체력 절반 · 파도 고리 = 바깥부터 조여 오니 어인왕 발밑 밝은 원으로 · 체력 30%에 해일 서핑(미끄러운 바닥 + 맵 끝~끝 돌진)';
+    if (boss && boss.bk === 'kng') tx += '\n타락한 어인왕 (지하 20층 최종 마왕): 보스방이 물에 잠겨 산소가 계속 준다(0이면 초당 최대 체력 10%) — 빛나는 산소 간헐천 기둥 안에 서서 채우기\n물거울에 맞은 투사체는 나에게 되돌아온다(거울 사이 틈을 노리기) · 물줄기 사슬 = 반경 밖으로 나가면 체력 절반 · 파도 고리 = 바깥부터 조여 오니 어인왕 발밑 밝은 원으로 · 체력 30%에 해일 서핑(미끄러운 바닥 + 맵 끝~끝 돌진)' + (brR1() ? ' · ※ 보스 러시 1라운드에서는 이 맵 기믹이 없다' : '');
     if (boss && boss.bk === 'qn') tx += '\n타락한 원예의 여왕 (지하 15층 최종 마왕): 초록 포자 = 쏘는 순간의 내 자리로 곧게(옆으로 비키기 · 맞으면 잠깐 둔화) · 붉은 원 = 뿌리가 솟을 자리(묶이면 1.5초 이동 불가)\n초록 원 = 산성액이 떨어질 자리(독 웅덩이 + 포자 주머니: 5초 뒤 폭발 — 부수면 안 터진다) · 체력 30%에 매혹의 꽃가루(시야가 좁아지고 식인 버섯이 끝없이)';
     if (boss && boss.bk === 'adm') tx += '\n썩어버린 해군 제독: 가까이 붙으면 닻을 빠르게 후려친다(한 번 피하고 다시 붙기) · 파란 줄 = 닻(맞으면 기절 + 끌려감) · 파란 원 = 포탄이 떨어질 자리 · 유령 함포는 부술 수 있다 · 체력 60%에 어인 수병 · 30%에 발악(함포 6문 일제 사격)';
     if (boss && boss.bk === 'tox') tx += '\n이독버섯 마왕: 지나간 자리에 맹독 웅덩이가 오래 남는다 · 분홍 원 = 살점이 떨어질 자리(돌연변이 버섯이 튀어나와 자폭) · 혈관 폭발 = 독 안개(이속·재생 -50%) · 체력 70%·50%에 독 역류 · 25%에 본체가 녹아 독 늪 + 핵심 포자 돌진';
@@ -2211,7 +2212,7 @@ function bossLand(e) {
     e.stT = 1.55;
   }
 }
-function bossExPaused(e) { return !(!(e.bk === 'tox' && (toxFog || e.st === 'collapse')) && !(e.bk === 'adm' && (e.st === 'frenzy' || admPull || admNC() >= 5)) && !(e.bk === 'qn' && (e.ph2 || e.st === 'intro' || P.bindT > 0 || QNW.roots.some(r => r.pending))) && !(e.bk === 'kng' && (e.ph2 || e.st === 'intro' || e.st === 'tide' || KGW.tether || KGW.ring || e.st === 'charge' || e.st === 'dash')) && !(e.bk === 'bear' && pbExPause(e)) && !(e.bk === 'rud' && rdExPause(e)) && !(e.bk === 'lil' && lsExPause(e)) && !(e.bk === 'cvt' && cvExPause(e)) && !(e.bk === 'snk' && snExPause(e)) && !(e.bk === 'tig' && tgExPause(e)) && !(e.bk === 'whl' && whExPause(e)) && !(e.bk === 'dok' && dokExPause(e)) && !(e.bk === 'byu' && byuExPause(e)) && !(e.bk === 'stl' && stlExPause(e)) && !(e.bk === 'ttn' && ttnExPause(e)) && !(e.bk === 'vft' && (e.st === 'intro' || e.st === 'thirst' || VFW.wave || P.charmT > 0 || VFW.traps.some(t => t.combo)))); }   // v10.10 마왕의 큰 패턴 중 (난이도 추가 패턴 · 보스 러시 맵 기믹을 쉰다 — 규칙 9)
+function bossExPaused(e) { return !(!(e.bk === 'tox' && (toxFog || e.st === 'collapse')) && !(e.bk === 'adm' && (e.st === 'frenzy' || admPull || admNC() >= 5)) && !(e.bk === 'qn' && (e.ph2 || e.st === 'intro' || P.bindT > 0 || QNW.roots.some(r => r.pending))) && !(e.bk === 'kng' && (e.ph2 || e.st === 'intro' || e.st === 'tide' || KGW.tether || KGW.ring || e.st === 'charge' || e.st === 'dash')) && !(e.bk === 'bear' && pbExPause(e)) && !(e.bk === 'rud' && rdExPause(e)) && !(e.bk === 'lil' && lsExPause(e)) && !(e.bk === 'cvt' && cvExPause(e)) && !(e.bk === 'snk' && snExPause(e)) && !(e.bk === 'tig' && tgExPause(e)) && !(e.bk === 'whl' && whExPause(e)) && !(e.bk === 'dok' && dokExPause(e)) && !(e.bk === 'byu' && byuExPause(e)) && !(e.bk === 'stl' && stlExPause(e)) && !(e.bk === 'ttn' && ttnExPause(e)) && !(e.bk === 'eye' && eyeExPause(e)) && !(e.bk === 'vft' && (e.st === 'intro' || e.st === 'thirst' || VFW.wave || P.charmT > 0 || VFW.traps.some(t => t.combo)))); }   // v10.10 마왕의 큰 패턴 중 (난이도 추가 패턴 · 보스 러시 맵 기믹을 쉰다 — 규칙 9)
 function updateBoss(e, dt) {
   if (e.bk === 'ab') { updateAbBoss(e, dt); return; }
   if (e.bk === 'grn') { updateGrnBoss(e, dt); return; }
@@ -3221,12 +3222,35 @@ function updateShkFx(dt) {
   }
   shkSp = shkSp.filter(s => !s.done);
 }
+/* v10.28 QA: 거대 버섯마귀 시트 잘림 — 원본 시트에서 줄 제목 상자를 지울 때 각 줄 첫 칸의 버섯 머리 윗부분이 같이 지워졌다(걷기·공격·사망 첫 칸 · 시전 · 소환).
+   원본 시트가 없어 그림을 되살릴 수 없으므로 ① 머리가 잘린 칸은 건너뛰고(SHK_SKIP · 시전은 공격 마지막 칸 · 소환은 대기 줄로) ② 이펙트 칸이 칸 경계에서 네모로 잘린 가장자리는 서서히 투명하게(마스크) 그린다(shkCut). 도트 색은 그대로 */
+const SHK_SKIP = { walk: [0], atk: [0], death: [0] }, SHK_ALT = { cast: ['atk', 4], sum: ['idle', null] }, SHK_CUT = new Map();
+function shkCut(img, r) {   // 가장자리가 잘린 칸(알파가 그 줄에 25% 이상)은 그 변을 14px에 걸쳐 투명하게 — 처음 한 번 만들어 둔다
+  const key = r.join(','); if (SHK_CUT.has(key)) return SHK_CUT.get(key);
+  let c = null;
+  try {
+    const cv = document.createElement('canvas'); cv.width = r[2]; cv.height = r[3]; const g = cv.getContext('2d', { willReadFrequently: true }); g.drawImage(img, r[0], r[1], r[2], r[3], 0, 0, r[2], r[3]);
+    const d = g.getImageData(0, 0, r[2], r[3]).data, cov = (x0, y0, dx, dy, n) => { let k = 0; for (let i = 0; i < n; i++) if (d[((y0 + dy * i) * r[2] + x0 + dx * i) * 4 + 3] > 0) k++; return k / n; };
+    const E = { t: cov(0, 0, 1, 0, r[2]) > 0.25, b: false, l: cov(0, 0, 0, 1, r[3]) > 0.25, r: cov(r[2] - 1, 0, 0, 1, r[3]) > 0.25 };
+    if (E.t || E.l || E.r) {
+      g.globalCompositeOperation = 'destination-out'; const F = 14;
+      const fade = (x0, y0, x1, y1, w, h) => { const gr = g.createLinearGradient(x0, y0, x1, y1); gr.addColorStop(0, 'rgba(0,0,0,1)'); gr.addColorStop(1, 'rgba(0,0,0,0)'); g.fillStyle = gr; g.fillRect(Math.min(x0, x1), Math.min(y0, y1), w, h); };
+      if (E.t) fade(0, 0, 0, F, r[2], F); if (E.l) fade(0, 0, F, 0, F, r[3]); if (E.r) fade(r[2], 0, r[2] - F, 0, F, r[3]);
+      c = cv;
+    }
+  } catch (_) { c = null; }
+  SHK_CUT.set(key, c); return c;
+}
 function shkSpr(row, f, x, y, k, flip, alpha, img, center) {   // center: 그림 가운데 기준 (탄 · 이펙트)
-  const L = SHKF[row]; if (!L || !img) return; const r = L[((f % L.length) + L.length) % L.length];
+  if (SHK_ALT[row]) { const [r2, f2] = SHK_ALT[row]; row = r2; if (f2 !== null) f = f2; }
+  const L = SHKF[row]; if (!L || !img) return; let fi = ((f % L.length) + L.length) % L.length;
+  const sk = SHK_SKIP[row]; if (sk && sk.includes(fi)) fi = (fi + 1) % L.length;
+  const r = L[fi], cut = img === IMG.shk ? shkCut(img, r) : null;
   ctx.save(); ctx.imageSmoothingEnabled = false; if (alpha !== undefined) ctx.globalAlpha = Math.max(0, Math.min(1, alpha));
   ctx.translate(Math.round(x), Math.round(y)); if (flip) ctx.scale(-1, 1);
   const ox = center ? r[2] / 2 : r[4], oy = center ? r[3] / 2 : r[5];
-  ctx.drawImage(img, r[0], r[1], r[2], r[3], -ox * k, -oy * k, r[2] * k, r[3] * k); ctx.restore();
+  if (cut) ctx.drawImage(cut, 0, 0, r[2], r[3], -ox * k, -oy * k, r[2] * k, r[3] * k);
+  else ctx.drawImage(img, r[0], r[1], r[2], r[3], -ox * k, -oy * k, r[2] * k, r[3] * k); ctx.restore();
 }
 function drawShkBoss(e, x, y) {
   const K = SHK.s; let row = e.an, f = 0;
@@ -3255,7 +3279,7 @@ function drawShkFloor(wx, wy) {   // 떨어지는 포자의 그림자 (캐릭터
 }
 function drawShkTop(wx, wy) {   // 낙하 포자 · 폭발 · 고리 · 가시 · 소환 이펙트 (캐릭터 위)
   if (!IMG.shk) return;
-  for (const s of shkSp) { if (s.t < 0) continue; const p = clamp(s.t / s.fall, 0, 1), x = wx(s.x), y = wy(s.y) - (1 - p * p) * 620; shkSpr('spore', p < 0.5 ? 1 : 2, x, y, 0.9, false, Math.min(1, s.t * 4), IMG.shk, false); }
+  for (const s of shkSp) { if (s.t < 0) continue; const p = clamp(s.t / s.fall, 0, 1), x = wx(s.x), y = wy(s.y) - (1 - p * p) * 620; shkSpr('spore', 2, x, y, 0.9, false, Math.min(1, s.t * 4), IMG.shk, false); }   // v10.28 1번 칸은 윗부분이 잘려 있어 2번 칸만
   for (const q of shkFx) {
     if (q.t < 0) continue; const x = wx(q.x), y = wy(q.y), p = q.t / q.life, a = Math.min(1, (1 - p) * 2.5);
     if (q.k === 'land') shkSpr('spore', p < 0.45 ? 3 : 4, x, y + 10, 1.0, false, a, IMG.shk);
@@ -4216,10 +4240,11 @@ function updateKgFx(dt) {
   for (const g of KGW.geysers) g.update(dt); KGW.geysers = KGW.geysers.filter(g => !g.dead);
   if (run) {
     const inG = KGW.geysers.some(g => g.inT > 0);
-    if (!inG && e.st !== 'tide') P.o2 = Math.max(0, (P.o2 === undefined ? KG.o2Max : P.o2) - (e.ph2 ? KG.o2Drain2 : KG.o2Drain) * dt);
+    if (brR1()) P.o2 = KG.o2Max;   // v10.28 보스 러시 1라운드: 산소 기믹 없음
+    else if (!inG && e.st !== 'tide') P.o2 = Math.max(0, (P.o2 === undefined ? KG.o2Max : P.o2) - (e.ph2 ? KG.o2Drain2 : KG.o2Drain) * dt);
     if (P.o2 <= 0) { dotPlayer(P.max * KG.o2Dmg * dt); if ((KGW.o2Warn -= dt) <= 0) { KGW.o2Warn = 1; floatNum(P.x, P.y - 110, '산소 부족!', '#7ad8ff'); } if (rand() < dt * 10) burst(P.x, P.y - 50, 1, ['#bfefff'], 80, 0.6); }
     const want = e.ph2 ? KG.gyN2 : KG.gyN;
-    if (KGW.geysers.length < want && (KGW.gyT -= dt) <= 0) { KGW.gyT = KG.gyGap; const s = kgSpot(P.x, P.y, KG.gyMin, KG.gyMax) || kgSpot(P.x, P.y, 100, KG.gyMin); if (s) { KGW.geysers.push(new AirGeyser(s[0], s[1])); addRing(s[0], s[1], 6, 70, 0.5, '150,230,255', 6); } }
+    if (!brR1() && KGW.geysers.length < want && (KGW.gyT -= dt) <= 0) { KGW.gyT = KG.gyGap; const s = kgSpot(P.x, P.y, KG.gyMin, KG.gyMax) || kgSpot(P.x, P.y, 100, KG.gyMin); if (s) { KGW.geysers.push(new AirGeyser(s[0], s[1])); addRing(s[0], s[1], 6, 70, 0.5, '150,230,255', 6); } }
   }
   // ② 물거울: 공전 + 내 투사체 반사
   const n = e.ph2 ? KG.miN2 : KG.miN; while (KGW.mirrors.length < n) KGW.mirrors.push(new WaterMirror(KGW.mirrors.length));
@@ -4812,12 +4837,27 @@ function drawBearScreen(wx, wy) {   // 화면 마지막 층(비네트 뒤): 냉�
   ctx.save(); ctx.fillStyle = 'rgba(120,180,230,0.07)'; ctx.fillRect(0, 0, W, H);
   if (B && B.t > -0.6) {
     const a = Math.min(1, (B.t + 0.6) / 0.6) * (B.t > PB.bzDur - 0.8 ? Math.max(0, (PB.bzDur - B.t) / 0.8) : 1);
-    ctx.fillStyle = `rgba(230,245,255,${0.16 * a})`; ctx.fillRect(0, 0, W, H);
-    if (IMG.bearfx) {   // 눈보라 도트: 눈보라 줄 · 강풍 줄 · 눈 가루 · 회오리
-      const ang = Math.atan2(B.uy, B.ux), sp = 520; ctx.save(); ctx.globalAlpha = 0.55 * a;
-      for (let i = 0; i < 7; i++) { const px = (((i * 331) + B.ux * wallT * sp) % (W + 500) + W + 500) % (W + 500) - 250, py = (((i * 197) + B.uy * wallT * sp) % (H + 300) + H + 300) % (H + 300) - 150; bearSp('bzstrip', 0, px, py, 3, 0.5 * a, { rot: ang, mid: true }); }
-      for (let i = 0; i < 20; i++) { const spd = 420 + (i % 5) * 90, px = (((i * 151) + B.ux * wallT * spd) % W + W) % W, py = (((i * 211) + B.uy * wallT * spd + wallT * 30) % H + H) % H; bearSp('bzpart', i % 4, px, py, i % 4 === 2 ? 1 : 1.5, (i % 4 === 2 ? 0.4 : 0.7) * a, { rot: i % 4 === 0 || i % 4 === 3 ? ang : 0, mid: true }); }
-      ctx.restore();
+    ctx.fillStyle = `rgba(230,245,255,${0.08 * a})`; ctx.fillRect(0, 0, W, H);   // v10.28 하얀 막을 절반으로
+    {   // v10.28 QA: 눈보라 이펙트가 너무 정신없음 → 큰 눈보라 띠·빠른 회오리를 빼고, 바람 방향으로 흐르는 가는 바람결 + 작은 눈송이 + 화면 위 바람 화살표로 교체
+      const ang = Math.atan2(B.uy, B.ux), ux = B.ux, uy = B.uy, nx = -uy, ny = ux, M = W + H;
+      ctx.save(); ctx.lineCap = 'round';
+      for (let i = 0; i < 16; i++) {   // 바람결: 바람 방향으로 천천히 흐르는 가는 선 (조금씩 물결친다)
+        const sp = 230 + (i % 4) * 40, along = (((i * 397) + wallT * sp) % (M + 400)) - 200 - M / 2, side = ((i * 173) % M) - M / 2,
+          cx = W / 2 + ux * along + nx * side, cy = H / 2 + uy * along + ny * side, L = 70 + (i % 3) * 30, wob = Math.sin(wallT * 3 + i) * 6;
+        if (cx < -150 || cx > W + 150 || cy < -150 || cy > H + 150) continue;
+        ctx.strokeStyle = `rgba(235,248,255,${(0.28 + 0.12 * (i % 2)) * a})`; ctx.lineWidth = i % 3 ? 1.6 : 2.4;
+        ctx.beginPath(); ctx.moveTo(cx - ux * L, cy - uy * L); ctx.quadraticCurveTo(cx - ux * L * 0.5 + nx * wob, cy - uy * L * 0.5 + ny * wob, cx, cy); ctx.stroke();
+      }
+      ctx.fillStyle = `rgba(255,255,255,${0.7 * a})`;
+      for (let i = 0; i < 26; i++) {   // 작은 눈송이 (같은 방향 · 느리게)
+        const sp = 170 + (i % 5) * 30, px = ((((i * 151) + ux * wallT * sp) % W) + W) % W, py = ((((i * 211) + uy * wallT * sp + wallT * 20) % H) + H) % H;
+        ctx.beginPath(); ctx.arc(px, py, 1.5 + (i % 3) * 0.7, 0, 6.283); ctx.fill();
+      }
+      const ax = W / 2, ay = 222, pu = 0.5 + 0.5 * Math.sin(wallT * 6);   // 바람 방향 화살표 (보스 안내 글씨 아래)
+      ctx.translate(ax, ay); ctx.globalAlpha = a; ctx.fillStyle = 'rgba(4,16,34,0.7)'; ctx.beginPath(); ctx.arc(0, 0, 30, 0, 6.283); ctx.fill(); ctx.strokeStyle = '#bfe8ff'; ctx.lineWidth = 2; ctx.stroke();
+      ctx.rotate(ang); ctx.fillStyle = `rgb(${Math.round(200 + 55 * pu)},240,255)`; ctx.beginPath(); ctx.moveTo(20, 0); ctx.lineTo(-4, -12); ctx.lineTo(-4, -5); ctx.lineTo(-18, -5); ctx.lineTo(-18, 5); ctx.lineTo(-4, 5); ctx.lineTo(-4, 12); ctx.closePath(); ctx.fill();
+      ctx.restore(); ctx.save(); ctx.font = 'bold 14px ' + FONT; ctx.textAlign = 'center'; ctx.lineWidth = 3; ctx.strokeStyle = '#04101e'; ctx.fillStyle = '#e6f8ff'; ctx.globalAlpha = a;
+      ctx.strokeText('🌬 눈보라 — 바람 방향', ax, ay + 48); ctx.fillText('🌬 눈보라 — 바람 방향', ax, ay + 48); ctx.restore();
     }
     if (B.shade) { ctx.fillStyle = 'rgba(200,240,255,0.9)'; ctx.font = 'bold 16px ' + FONT; ctx.textAlign = 'center'; ctx.strokeStyle = '#04101e'; ctx.lineWidth = 3; ctx.strokeText('바람 그늘', wx(P.x), wy(P.y) - 130); ctx.fillText('바람 그늘', wx(P.x), wy(P.y) - 130); }
   }
@@ -6608,7 +6648,7 @@ class TigerAI {
     banner = { txt: '화염 호랑이: 염주가 깨졌다 — 포식자의 추적!  불의 십자가가 반대로 더 빠르게 돌고, 호랑이는 박자마다 나를 겨눠 돌진한다\n바닥의 점선 화살표 = 곧 그 줄로 쇄도한다 — 박자에 맞춰 줄에서 직각으로 비켜라', t: 5, c: '#ffb050' };
   }
 }
-function initTgBoss(b) { tgClear(); b.hp *= TG.hp; b.max *= TG.hp; b.x = IMAP.bx; b.y = IMAP.by; tg = new TigerAI(b); TGW.cr = { a: 0, p2: false, van: -0.8, len: [0, 0, 0, 0] }; markDex('boss19', 1); }
+function initTgBoss(b) { tgClear(); b.hp *= TG.hp; b.max *= TG.hp; b.x = IMAP.bx; b.y = IMAP.by; tg = new TigerAI(b); TGW.cr = brR1() ? null : { a: 0, p2: false, van: -0.8, len: [0, 0, 0, 0] }; markDex('boss19', 1); }
 function updateTgBoss(e, dt) { if (!tg || tg.e !== e) tg = new TigerAI(e); tg.update(dt); }
 function tgClear() { TGW.cr = null; TGW.safe = null; TGW.held = null; TGW.rw = null; TGW.dv = null; TGW.streak = 0; TGW.hitF = false; TGW.dHit = false; TGW.gHits = 0; TGW.cut = 0; tg = null; }
 function tgDefeated(e) { TGW.death = { x: e.x, y: e.y, t: 0, face: e.face }; if (P && TGW.held) { P.stunT = 0; } tgClear(); TGW.fx = []; tgFx('beads', e.x, e.y - 120, 2.4, 1.4, { mid: true }); }
@@ -6777,10 +6817,16 @@ function lilSpr(g, key, i, x, y, face, k, alpha, white) {   // v9.22 아틀라�
   if (white) { g.globalCompositeOperation = 'lighter'; g.globalAlpha = clamp(white, 0, 0.6); g.drawImage(...a); }
   g.restore(); return true;
 }
+let LFX_OUT = false; const LFX_NOOUT = ['bpat', 'beam', 'bfloor', 'bshaft', 'eye'];   // v10.28 검은 테두리를 뺄 큰 바닥·빛줄기
 function lfx(key, i, x, y, k, alpha, rot, add, ky) {   // v9.23 이펙트 한 칸 (기준점은 그룹마다 다름 · 글로우는 add=true 로 'lighter')
   const L = LFX[key], f = L && L[i % L.length]; if (!f || !IMG.lfx) return false;
   ctx.save(); ctx.imageSmoothingEnabled = true; if (alpha !== undefined) ctx.globalAlpha = clamp(alpha, 0, 1); if (add) ctx.globalCompositeOperation = 'lighter';
   ctx.translate(x, y); if (rot) ctx.rotate(rot); const kk = ky === undefined ? k : ky;
+  if (LFX_OUT && !LFX_NOOUT.includes(key)) {   // v10.28 QA: 릴세르카 패턴은 빙결 투기장 색과 겹쳐 안 보임 → 검은 테두리(실루엣을 4방향으로 2px 밀어 깐다)
+    const op = ctx.globalCompositeOperation; ctx.globalCompositeOperation = 'source-over'; ctx.filter = 'brightness(0)'; const a0 = ctx.globalAlpha; ctx.globalAlpha = Math.min(1, a0 * 1.2);
+    for (const [ox, oy] of [[2, 0], [-2, 0], [0, 2], [0, -2]]) ctx.drawImage(IMG.lfx, f[0], f[1], f[2], f[3], -f[4] * k + ox, -f[5] * kk + oy, f[2] * k, f[3] * kk);
+    ctx.filter = 'none'; ctx.globalAlpha = a0; ctx.globalCompositeOperation = op;
+  }
   ctx.drawImage(IMG.lfx, f[0], f[1], f[2], f[3], -f[4] * k, -f[5] * kk, f[2] * k, f[3] * kk); ctx.restore(); return true;
 }
 const lfxK = (key, w) => LFX[key] ? w / (LFX[key][0][2] - 4) : 1;
@@ -7052,12 +7098,15 @@ function updateLilFx(dt) {
 function lmirHit(m, s) { hurtEnemy(m, s.dmg || 14, 0, 0, 0); if (m.hp > 0) m.reflect(s); }   // 내 투사체 → 거울 (shards·airs 충돌 처리에서 부른다)
 const lsExPause = e => e.st === 'intro' || e.ph2 || !!LSW.spot || LSW.white > 0 || e.st === 'pirouette' || P.chillT > 0;   // 규칙 9
 function drawLilBoss(e, x, y) {
+  LFX_OUT = true; try { drawLilBoss0(e, x, y); } finally { LFX_OUT = false; }
+}
+function drawLilBoss0(e, x, y) {
   const bob = Math.sin(e.t * 2.2) * 8, hover = 26 + bob;
   ctx.fillStyle = 'rgba(0,10,30,0.35)'; ctx.beginPath(); ctx.ellipse(x, y - 2, 70, 16, 0, 0, 6.283); ctx.fill();
   if (!e.ph2 || e.st === 'ball') {   // 결정화 영역 (반경 200)
     const q = LSW.frost / 100, pu = 0.5 + 0.5 * Math.sin(wallT * 4);
     ctx.save(); ctx.fillStyle = `rgba(180,225,255,${0.07 + 0.05 * pu})`; ctx.beginPath(); ctx.ellipse(x, y, LS.zR + e.r * 0.4, (LS.zR + e.r * 0.4) * 0.8, 0, 0, 6.283); ctx.fill();
-    ctx.strokeStyle = `rgba(200,240,255,${0.35 + 0.3 * q})`; ctx.lineWidth = 2; ctx.setLineDash([6, 8]); ctx.lineDashOffset = -wallT * 30; ctx.stroke(); ctx.restore();
+    ctx.strokeStyle = 'rgba(0,0,0,0.85)'; ctx.lineWidth = 5; ctx.stroke(); ctx.strokeStyle = `rgba(200,240,255,${0.55 + 0.3 * q})`; ctx.lineWidth = 2; ctx.setLineDash([6, 8]); ctx.lineDashOffset = -wallT * 30; ctx.stroke(); ctx.restore();   // v10.28 검은 테두리
     const zr = LS.zR + e.r * 0.4, zk = lfxK('zone', zr * 2.15); lfx('zone', P.chillT > 0 ? 4 : Math.min(3, Math.floor(q * 4)), x, y - 4, zk, 0.9, 0, true, zk * 1.35);   // v9.23 결정화 영역 바닥 (동상이 찰수록 왕관처럼 솟음)
   }
   ctx.save(); ctx.globalCompositeOperation = 'lighter'; const g = ctx.createRadialGradient(x, y - 160, 10, x, y - 160, 200); g.addColorStop(0, `rgba(170,220,255,${e.ph2 ? 0.32 : 0.18})`); g.addColorStop(1, 'rgba(90,150,255,0)'); ctx.fillStyle = g; ctx.fillRect(x - 210, y - 370, 420, 400); ctx.restore();
@@ -7071,6 +7120,9 @@ function drawLilBoss(e, x, y) {
 }
 function drawLilFloor(wx, wy) {
   if (!lsOn()) return;
+  LFX_OUT = true; try { drawLilFloor0(wx, wy); } finally { LFX_OUT = false; }
+}
+function drawLilFloor0(wx, wy) {
   const S = LSW.spot;
   if (S) {   // 두 스포트라이트: 릴세르카 · 나
     const pu = 0.5 + 0.5 * Math.sin(wallT * 8), warn = S.t < 0;
@@ -7080,6 +7132,7 @@ function drawLilFloor(wx, wy) {
       const g = ctx.createRadialGradient(sx, sy, 10, sx, sy, r); g.addColorStop(0, `rgba(255,250,235,${me ? 0.32 : 0.18})`); g.addColorStop(1, `rgba(255,245,220,${me ? 0.12 : 0.05})`);
       ctx.fillStyle = g; ctx.beginPath(); ctx.ellipse(sx, sy, r, r * 0.83, 0, 0, 6.283); ctx.fill();
       if (IMG.lfx) { const fi = warn ? 0 : me ? 2 + Math.floor(wallT * 6) % 3 : 1, kf = lfxK('bfloor', r * 2.4); lfx('bfloor', fi, sx, sy, kf, me ? 0.95 : 0.55, 0, true, kf * 0.9); if (me) { const kb = lfxK('beam', r * 2.3); lfx('beam', fi, sx, sy + 17 * kb, kb, 0.8, 0, true); } }   // v9.23 스포트라이트 도트
+      if (me) { const sv = ctx.lineWidth; ctx.strokeStyle = 'rgba(0,0,0,0.9)'; ctx.lineWidth = 8; ctx.stroke(); ctx.lineWidth = sv; }
       if (me) { ctx.strokeStyle = warn ? `rgba(255,230,160,${0.6 + 0.4 * pu})` : S.hold > 0 ? 'rgba(255,120,140,0.9)' : 'rgba(255,248,220,0.95)'; ctx.lineWidth = 4; ctx.stroke(); }
     }
     if (!warn) {   // 앞으로 갈 길 (점선 호)
@@ -7096,7 +7149,7 @@ function drawLilFloor(wx, wy) {
     lfx('bpat', 3, cx, cy, lfxK('bpat', 1120), 0.22 + 0.1 * pu, wallT * 0.03, true);   // v9.23 무도회 바닥 마법진
     if (B.on) { ctx.beginPath(); ctx.rect(-10, -10, W + 20, H + 20); ctx.moveTo(cx, cy); ctx.arc(cx, cy, L, B.ang - LS.wedge, B.ang + LS.wedge); ctx.closePath(); ctx.fillStyle = `rgba(30,60,120,${0.34 + 0.06 * pu})`; ctx.fill("evenodd"); }   // 안전지대 밖: 눈보라 (어둡게)
     ctx.beginPath(); ctx.moveTo(cx, cy); ctx.arc(cx, cy, L, B.ang - LS.wedge, B.ang + LS.wedge); ctx.closePath();
-    ctx.fillStyle = `rgba(255,250,230,${B.on ? 0.16 + 0.06 * pu : 0.08})`; ctx.fill(); ctx.strokeStyle = B.warn > 0 ? `rgba(255,150,170,${0.6 + 0.4 * pu})` : 'rgba(255,248,220,0.85)'; ctx.lineWidth = 4; ctx.stroke();
+    ctx.fillStyle = `rgba(255,250,230,${B.on ? 0.16 + 0.06 * pu : 0.08})`; ctx.fill(); ctx.strokeStyle = 'rgba(0,0,0,0.9)'; ctx.lineWidth = 8; ctx.stroke(); ctx.strokeStyle = B.warn > 0 ? `rgba(255,150,170,${0.6 + 0.4 * pu})` : 'rgba(255,248,220,0.85)'; ctx.lineWidth = 4; ctx.stroke();
     const ra = B.ang + B.dir * (LS.wedge + 0.18);   // 도는 방향 화살표
     for (const r of [280, 420]) { const ax = cx + Math.cos(ra) * r, ay = cy + Math.sin(ra) * r; ctx.save(); ctx.translate(ax, ay); ctx.rotate(ra + B.dir * Math.PI / 2); ctx.fillStyle = 'rgba(255,248,220,0.8)'; ctx.beginPath(); ctx.moveTo(14, 0); ctx.lineTo(-8, -9); ctx.lineTo(-8, 9); ctx.closePath(); ctx.fill(); ctx.restore(); }
     ctx.strokeStyle = 'rgba(200,240,255,0.25)'; ctx.lineWidth = 2; ctx.setLineDash([10, 10]); ctx.beginPath(); ctx.ellipse(cx, cy, 470, 470, 0, 0, 6.283); ctx.stroke(); ctx.setLineDash([]);   // 따라가기 쉬운 띠 바깥 경계
@@ -7104,7 +7157,7 @@ function drawLilFloor(wx, wy) {
   }
   for (const c of LSW.chand) {   // 샹들리에 낙하 예고
     if (c.t < 0 || c.done) continue; const x = wx(c.x), y = wy(c.y), p = clamp(c.t / LS.cWarn, 0, 1), pu = 0.5 + 0.5 * Math.sin(wallT * 20);
-    ctx.save(); ctx.fillStyle = `rgba(150,210,255,${0.14 + 0.1 * pu})`; ctx.beginPath(); ctx.ellipse(x, y, LS.cR, LS.cR * 0.62, 0, 0, 6.283); ctx.fill(); ctx.strokeStyle = `rgba(220,245,255,${0.7 + 0.3 * pu})`; ctx.lineWidth = 3; ctx.stroke();
+    ctx.save(); ctx.fillStyle = `rgba(150,210,255,${0.14 + 0.1 * pu})`; ctx.beginPath(); ctx.ellipse(x, y, LS.cR, LS.cR * 0.62, 0, 0, 6.283); ctx.fill(); ctx.strokeStyle = 'rgba(0,0,0,0.9)'; ctx.lineWidth = 7; ctx.stroke(); ctx.strokeStyle = `rgba(220,245,255,${0.7 + 0.3 * pu})`; ctx.lineWidth = 3; ctx.stroke();
     ctx.fillStyle = `rgba(200,235,255,${0.3})`; ctx.beginPath(); ctx.ellipse(x, y, LS.cR * p, LS.cR * 0.62 * p, 0, 0, 6.283); ctx.fill(); ctx.restore();
   }
 }
@@ -7116,6 +7169,9 @@ function drawChandelier(x, y, a) {   // 얼음 샹들리에 (코드 그림)
   ctx.restore();
 }
 function drawLilTop(wx, wy) {
+  LFX_OUT = lsOn(); try { drawLilTop0(wx, wy); } finally { LFX_OUT = false; }
+}
+function drawLilTop0(wx, wy) {
   for (const m of LSW.mirfx) lilSpr(ctx, 'mirror', 1, wx(m.x), wy(m.y), 1, 1.1, 1 - m.t / 0.9);   // v9.22 거울 파편
   if (LSW.death) {   // 쓰러진 대공작: 얼음 조각으로 흩어진다
     const q = LSW.death, al = q.t > 2.5 ? Math.max(0, 1 - (q.t - 2.5) / 1.5) : 1;
@@ -7135,7 +7191,7 @@ function drawLilTop(wx, wy) {
   }
   for (const b of LSW.bolts) {   // 얼음 바늘 · 반사 냉기탄
     const x = wx(b.x), y = wy(b.y); if (x < -40 || x > W + 40 || y < -40 || y > H + 40) continue;
-    if (b.k !== 'refl') { ctx.save(); ctx.fillStyle = 'rgba(8,16,48,0.5)'; ctx.beginPath(); ctx.arc(x, y, 15, 0, 6.283); ctx.fill(); ctx.globalCompositeOperation = 'lighter'; ctx.fillStyle = 'rgba(255,80,50,0.55)'; ctx.beginPath(); ctx.arc(x, y, 9, 0, 6.283); ctx.fill(); ctx.restore(); }   // v9.64 맵과 같은 색이라 안 보이던 고드름: 어두운 테두리 + 붉은 위험 빛
+    if (b.k !== 'refl') { ctx.save(); ctx.fillStyle = 'rgba(8,16,48,0.5)'; ctx.beginPath(); ctx.arc(x, y, 15, 0, 6.283); ctx.fill(); ctx.strokeStyle = 'rgba(0,0,0,0.9)'; ctx.lineWidth = 2.5; ctx.stroke(); ctx.globalCompositeOperation = 'lighter'; ctx.fillStyle = 'rgba(255,80,50,0.55)'; ctx.beginPath(); ctx.arc(x, y, 9, 0, 6.283); ctx.fill(); ctx.restore(); }   // v9.64 맵과 같은 색이라 안 보이던 고드름: 어두운 테두리 + 붉은 위험 빛
     if (IMG.lfx && lfx(b.k === 'refl' ? 'refl' : 'needle', Math.floor(wallT * 14 + b.life * 3) % 4, x, y, 0.55, 1, Math.atan2(b.vy, b.vx) + 0.7)) continue;
     ctx.save(); ctx.translate(x, y); ctx.rotate(Math.atan2(b.vy, b.vx));
     if (b.k === 'refl') { ctx.globalCompositeOperation = 'lighter'; ctx.fillStyle = 'rgba(255,120,170,0.45)'; ctx.beginPath(); ctx.ellipse(0, 0, 18, 9, 0, 0, 6.283); ctx.fill(); ctx.globalCompositeOperation = 'source-over'; }
@@ -7186,7 +7242,8 @@ function lilDexArt(g, w, h, l) {
    그림: tools/atlas/vft_build.py → src/assets/vft/vft.webp + VFF (시트 그대로, 정수가 아닌 배율 2.1 nearest · 이동·공격 줄은 오른쪽을 봄) · 해골은 '해골 병사' 마물 도트를 그대로 쓴다 */
 const VF = { hp: 1.1, dm: 1.0, sp: 58, r: 70, K: 2.1, leech: 0.035,   // v8.70 밸런스: 첫 측정(11층)에서 봇이 깎은 체력 2% (이독버섯 6% · 버섯마귀 10%) → 흡혈·덫·물기·체력을 낮춤
   smell: 1.25,
-  spCd: 6, spN: 11, spHalf: 0.62, spSp: 360, spR: 13, spDm: 8, spLife: 2.4, bleed: 3, bleedDps: 5,
+  spCd: 7.5, spN: 7, spHalf: 0.7, spSp: 280, spGap: 0.7,   // v10.28 QA: 붉은 포자가 너무 빽빽하고 빨라 못 피함 → 7발(2페이즈 8) · 초당 280 · 다발 간격 0.7초 · 쿨 7.5
+  spR: 13, spDm: 8, spLife: 2.4, bleed: 3, bleedDps: 5,
   luCd: 9, luN: 5, hSp: 150, hR: 22, hLife: 3.6, hTurn: 1.3, charm: 1.2, charmImm: 3, charmSp: 0.45,
   trCd: 7.5, trN: 3, trWarn: 0.6, trR: 60, trPct: 0.22, trStun: 0.6,
   skCd: 13, skN: 4, skHp: 0.0009, skSp: 210, skFuse: 0.45, skR: 80, skDm: 14, skMax: 10, skLife: 9,
@@ -7339,8 +7396,8 @@ class VenusAI {
     else { this.go('skull', 0.7, 'hit'); this.cd.skull = VF.skCd * m; floatNum(e.x, e.y - 230, '해골 토해내기!', '#ffd0c0'); sfx('skill'); }
   }
   spray() {   // 넓은 부채꼴 다발 (줄마다 반 칸씩 엇갈려 틈이 생긴다)
-    const [x, y] = this.mouth(), base = Math.atan2(leadXY(0.4)[1] - 30 - y, leadXY(0.4)[0] - x), n = VF.spN + (this.e.ph2 ? 2 : 0), off = this.vol % 2 ? 0.5 : 0;
-    for (let i = 0; i < n; i++) { const a = base + VF.spHalf * ((i + off) / (n - 1) * 2 - 1); VFW.spores.push(new VfSpore(x, y, a, VF.spSp * (0.85 + rand() * 0.3))); }
+    const [x, y] = this.mouth(), base = Math.atan2(leadXY(0.4)[1] - 30 - y, leadXY(0.4)[0] - x), n = VF.spN + (this.e.ph2 ? 1 : 0), off = this.vol % 2 ? 0.5 : 0;
+    for (let i = 0; i < n; i++) { const a = base + VF.spHalf * ((i + off) / (n - 1) * 2 - 1); VFW.spores.push(new VfSpore(x, y, a, VF.spSp * (0.92 + rand() * 0.16))); }
     burst(x, y, 10, ['#ff2a3a', '#ff9aa8'], 200, 0.3); sfx('shoot');
   }
   hearts() {
@@ -7406,7 +7463,7 @@ class VenusAI {
         break; }
       case 'spray':   // A: 0.6초 숨 들이쉬기 → 다발 2번(2페이즈 3번)
         if (e.stT > 0) break;
-        if ((this.volT -= dt) <= 0 && this.vol < (e.ph2 ? 3 : 2)) { this.spray(); this.vol++; this.volT = 0.42; }
+        if ((this.volT -= dt) <= 0 && this.vol < (e.ph2 ? 3 : 2)) { this.spray(); this.vol++; this.volT = VF.spGap; }
         if (this.vol >= (e.ph2 ? 3 : 2) && this.volT <= -0.25) this.chase(0.9);
         break;
       case 'lure': if (!this.fired && e.stT <= 0) { this.fired = true; this.hearts(); e.stT = 0.4; } else if (this.fired && e.stT <= 0) this.chase(0.8); break;
@@ -8264,6 +8321,7 @@ function drawBossTele(wx, wy) {
   for (const q of enemies) if (q.kind === 'mini' && q.adds && q.hp > 0 && q.tele !== (mini && mini.tele)) for (const t of q.tele) if (!TL.includes(t)) TL.push(t);   // v8.22: 결계 단계 해골 전사 둘의 공격 예고
   for (const q of enemies) if (q.kind === 'uniq' && q.hp > 0) for (const t of q.tele) TL.push(t);
   const eye = boss && (boss.bk === 'eye' || boss.bk === 'ab' || boss.bk === 'grn'), fwb = boss && boss.bk === 'fw', skb = boss && boss.bk === 'skel', CF = eye ? '190,60,255' : fwb ? '255,190,60' : skb ? '255,50,150' : '255,40,40', CS = eye ? '215,120,255' : fwb ? '255,236,160' : skb ? '255,130,210' : '255,80,70', CP = eye ? '205,90,255' : fwb ? '255,150,40' : skb ? '255,60,170' : '255,60,50';   // 혈랑왕 제단은 바닥이 붉어서 경고를 금빛으로
+  const blk = !!(boss && boss.bk === 'lil'), bs = () => { if (blk) { const sv = ctx.strokeStyle, lw = ctx.lineWidth; ctx.strokeStyle = 'rgba(0,0,0,0.92)'; ctx.lineWidth = lw + 4; ctx.stroke(); ctx.strokeStyle = sv; ctx.lineWidth = lw; } ctx.stroke(); };   // v10.28 QA: 릴세르카 예고는 검은 테두리
   for (const t of TL) {
     if (t.t < 0) continue;
     const p = clamp(t.t / t.dur, 0, 1), x = wx(t.x), y = wy(t.y), pu = 0.5 + 0.5 * Math.sin(wallT * 18), fl = t.done ? 1 - (t.t - t.dur) / 0.15 : 0;
@@ -8277,25 +8335,25 @@ function drawBossTele(wx, wy) {
     }
     if (t.k === 'circle') {
       const hl = t.hole || 0, hy = hl ? hl * ry / t.r : 0, eo = hl ? 'evenodd' : 'nonzero';   // v10.23 가운데 안전 구멍
-      ctx.beginPath(); ctx.ellipse(x, y, t.r, ry, 0, 0, 6.283); if (hl) ctx.ellipse(x, y, hl, hy, 0, 0, 6.283); ctx.fill(eo); ctx.stroke();
+      ctx.beginPath(); ctx.ellipse(x, y, t.r, ry, 0, 0, 6.283); if (hl) ctx.ellipse(x, y, hl, hy, 0, 0, 6.283); ctx.fill(eo); bs();
       ctx.fillStyle = `rgba(${cp}, ${0.32 + 0.2 * pu})`; if (!hl || t.r * p > hl) { ctx.beginPath(); ctx.ellipse(x, y, hl ? Math.max(t.r * p, hl) : t.r * p, hl ? Math.max(ry * p, hy) : ry * p, 0, 0, 6.283); if (hl) ctx.ellipse(x, y, hl, hy, 0, 0, 6.283); ctx.fill(eo); }
       if (hl) { ctx.save(); ctx.setLineDash([7, 6]); ctx.strokeStyle = 'rgba(150,235,255,0.95)'; ctx.lineWidth = 2.5; ctx.beginPath(); ctx.ellipse(x, y, hl, hy, 0, 0, 6.283); ctx.stroke(); ctx.restore(); }
       if ((t.nofire && t.follow && t.t >= t.follow) || (t.track && t.t >= t.track)) { ctx.strokeStyle = '#fff'; ctx.lineWidth = 2; ctx.beginPath(); ctx.ellipse(x, y, t.r - 6, ry - 6 * ry / t.r, 0, 0, 6.283); ctx.stroke(); }   // 고정됨
     } else if (t.k === 'donut') {
       if (t.pk) { const px = wx(t.pk.x), py = wy(t.pk.y); ctx.save(); ctx.setLineDash([7, 6]); ctx.strokeStyle = 'rgba(150,235,255,0.95)'; ctx.lineWidth = 2.5; ctx.beginPath(); ctx.arc(px, py, t.pk.r, 0, 6.283); ctx.stroke(); ctx.restore();
         ctx.beginPath(); ctx.rect(-50, -50, W + 100, H + 100); ctx.arc(px, py, t.pk.r, 0, 6.283); ctx.clip('evenodd'); }   // v10.23 도넛 안 안전 구멍
-      ctx.beginPath(); ctx.arc(x, y, t.r2, 0, 6.283); ctx.arc(x, y, t.r, 0, 6.283, true); ctx.fill('evenodd'); ctx.stroke();
+      ctx.beginPath(); ctx.arc(x, y, t.r2, 0, 6.283); ctx.arc(x, y, t.r, 0, 6.283, true); ctx.fill('evenodd'); bs();
       ctx.beginPath(); ctx.arc(x, y, t.r, 0, 6.283); ctx.stroke();
       ctx.fillStyle = `rgba(${CP}, ${0.3 + 0.2 * pu})`; ctx.beginPath(); ctx.arc(x, y, t.r + (t.r2 - t.r) * p, 0, 6.283); ctx.arc(x, y, t.r, 0, 6.283, true); ctx.fill('evenodd');
     } else if (t.k === 'rect') {
       ctx.translate(x, y); ctx.rotate(t.ang);
-      ctx.fillRect(0, -t.w / 2, t.len, t.w); ctx.strokeRect(0, -t.w / 2, t.len, t.w);
+      ctx.fillRect(0, -t.w / 2, t.len, t.w); ctx.beginPath(); ctx.rect(0, -t.w / 2, t.len, t.w); bs();
       ctx.fillStyle = `rgba(${cp}, ${0.32 + 0.2 * pu})`; ctx.fillRect(0, -t.w / 2, t.len * p, t.w);
     } else if (t.k === 'fan') {   // 유니크 채찍: 부채꼴 경고 (앞 절반은 따라오다가 고정)
       const a0 = t.ang - t.half, a1 = t.ang + t.half;
       const fr = fwb && boss.tele.includes(t) ? CF : t.rgb;
       ctx.fillStyle = `rgba(${fr}, ${0.14 + 0.09 * pu})`; ctx.strokeStyle = `rgba(${fwb && fr === CF ? CS : fr}, 0.95)`;
-      ctx.beginPath(); ctx.moveTo(x, y); ctx.arc(x, y, t.len, a0, a1); ctx.closePath(); ctx.fill(); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(x, y); ctx.arc(x, y, t.len, a0, a1); ctx.closePath(); ctx.fill(); bs();
       ctx.fillStyle = `rgba(${fwb && fr === CF ? CP : '255,70,40'},${0.28 + 0.2 * pu})`; ctx.beginPath(); ctx.moveTo(x, y); ctx.arc(x, y, Math.max(1, t.len * p), a0, a1); ctx.closePath(); ctx.fill();
       if (t.t >= t.aim) { ctx.strokeStyle = '#ffffff'; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(x, y); ctx.arc(x, y, t.len - 6, a0, a1); ctx.closePath(); ctx.stroke(); }
     }
@@ -8498,8 +8556,13 @@ function drawEyeMiniDeath(m, x, y) {
 /* --- 보스 --- */
 function eyeRecover(e, t) { e.st = 'recover'; e.stT = t; e.invul = false; }
 function eyeChase(e) { e.st = 'chase'; e.stT = ((e.rage ? 0.35 : 0.8) + rand() * 0.4) / bossTempo(); e.invul = false; }
+const eyeLive = () => { let n = 0, h = 0; for (const b of ebul) { if (Math.hypot(b.x - P.x, b.y - P.y) < 760) { n++; if (b.k === 'home') h++; } } return [n, h]; };   // v10.28 QA: 내 둘레에 남은 마안탄 · 추적 구체
+const eyeExPause = e => ['fan', 'spiral', 'burst', 'orbs'].includes(e.st) || eyeLive()[0] >= 4;   // 탄막 중·탄이 남아 있으면 난이도 추가 패턴(바닥 장판)을 쉰다 (규칙 9)
 function eyePick(e, d) {
   const r = e.rage, w = { fan: 3, spiral: 2.3, rain: 2.6, orbs: 1.8, judge: 2.3, tent: d < 270 ? 3.4 : 0.6, burst: r ? 2.6 : 0 };
+  const [nb, nh] = eyeLive();   // v10.28 QA: 탄막이 아직 남아 있으면 바닥 장판 패턴(낙하·심판·촉수)을 고르지 않고, 탄이 많으면 탄막끼리도 겹치지 않게 잠깐 쉰다
+  if (nb >= 4 || nh > 0) { w.rain = 0; w.judge = 0; w.tent = 0; }
+  if (nb >= 12 || nh > 0) { e.stT = 0.35; return; }
   if (e.last) w[e.last] *= 0.2;
   let tot = 0; for (const k in w) tot += w[k];
   let q = rand() * tot, pick = 'fan'; for (const k in w) { q -= w[k]; if (q <= 0) { pick = k; break; } }
@@ -13083,7 +13146,7 @@ function render() {
       if (e.kind === 'grb') { drawGrnBud(e, x, y); continue; }
       if (e.kind === 'toxm') { drawToxMini(e, x, y); continue; }
       if (e.kind === 'adc') { drawAdmCannonE(e, x, y); continue; }
-      if (e.kind === 'qsack' || e.kind === 'qmush' || e.kind === 'vskull' || e.kind === 'imp' || e.kind === 'lmir' || e.kind === 'snb' || e.kind === 'stlc' || e.kind === 'stlp' || e.kind === 'stlb' || e.kind === 'ttr') { e.draw(x, y); continue; }
+      if (e.kind === 'qsack' || e.kind === 'qmush' || e.kind === 'vskull' || e.kind === 'imp' || e.kind === 'lmir' || e.kind === 'snb' || e.kind === 'stlc' || e.kind === 'stlp' || e.kind === 'stlb' || e.kind === 'ttr') { if (e.kind === 'lmir') { ctx.save(); ctx.filter = 'drop-shadow(2px 0 0 #000) drop-shadow(-2px 0 0 #000) drop-shadow(0 2px 0 #000) drop-shadow(0 -2px 0 #000)'; e.draw(x, y); ctx.restore(); continue; } e.draw(x, y); continue; }   // v10.28 냉기의 거울 검은 테두리
       if (x < -170 || x > W + 170 || y < -60 || y > H + 260) continue;   // v6.30: 화면 밖 몹은 그리지 않는다
       if (e.pk) { drawPlantMob(e, x, y); continue; }   // v8.53
       if (e.kind === 'bug') {
@@ -13373,7 +13436,7 @@ function drawHud() {
     if (boss.bk === 'skel') { ctx.fillStyle = 'rgba(255,255,255,0.45)'; for (const q of SK_PH) ctx.fillRect(bx + bw * q - 1, by - 2, 2, 16); }
     if (boss.bk === 'angel' && boss.ph === 1) { ctx.fillStyle = 'rgba(255,130,160,0.8)'; ctx.fillRect(bx + bw * AN.ph - 1, by - 2, 2, 16); }   // 흑화 지점
     ctx.fillStyle = 'rgba(255,255,255,0.6)'; ctx.fillRect(bx + bw / 2 - 1, by - 2, 2, 16);
-    if (boss.bk === 'kng' || rushO2On()) drawKgO2(bx, by, bw);   // v8.80 산소 게이지
+    if ((boss.bk === 'kng' && !brR1()) || rushO2On()) drawKgO2(bx, by, bw);   // v8.80 산소 게이지
     if (boss.bk === 'lil') drawLilFrost(bw);   // v9.20 동상 게이지 (결정화 영역)
     if (boss.bk === 'bear') drawBearFrost(bw);   // v9.02 동상 게이지
     if (boss.bk === 'tig') drawTgHud(bw);   // v9.63 완벽 회피 표시
@@ -13434,7 +13497,14 @@ function drawHud() {
     ctx.textAlign = 'center'; ctx.font = 'bold 16px ' + FONT;
     const t3 = ready ? `${skillName(P.skill)}  발동!  [SPACE / Q]` : `${skillName(P.skill)}  ${P.skT.toFixed(1)}초`;
     ctx.strokeText(t3, W / 2, b.y + 22); ctx.fillStyle = ready ? '#ffffff' : '#f3d9c6'; ctx.fillText(t3, W / 2, b.y + 22);
-    if (P.skillTipT > 0 && state === 'play') {   // 새 특수 스킬이 생겼다는 것을 확실히 알린다
+    if (rollQ && P.skill === 'roll') {   // v10.28 QA: 구르기 남은 횟수(빨간 점 3개) + 남은 시간 얇은 게이지 — 스킬 쿨 바로 위
+      const n = ROLL.n, gap = 18, gw = 84, tot = n * gap + 10 + gw, x0 = W / 2 - tot / 2, yy = b.y - 13, k = clamp(rollQ.t / ROLL.win, 0, 1);
+      ctx.save(); ctx.fillStyle = 'rgba(14,4,8,0.8)'; ctx.fillRect(x0 - 8, yy - 10, tot + 16, 20);
+      for (let i = 0; i < n; i++) { const on = i < rollQ.n; ctx.beginPath(); ctx.arc(x0 + i * gap + 7, yy, 6, 0, 6.283); ctx.fillStyle = on ? '#ff2a3a' : '#3a1a20'; ctx.fill(); ctx.lineWidth = 1.5; ctx.strokeStyle = on ? '#ffb0b8' : '#6a3a40'; ctx.stroke(); }
+      const gx = x0 + n * gap + 10; ctx.fillStyle = '#3a1a20'; ctx.fillRect(gx, yy - 2, gw, 4); ctx.fillStyle = k < 0.3 ? '#ff6a4a' : '#ffb0c0'; ctx.fillRect(gx, yy - 2, gw * k, 4);
+      ctx.restore(); ctx.textAlign = 'center';
+    }
+    if (P.skillTipT > 0 && state === 'play' && !rollQ) {   // 새 특수 스킬이 생겼다는 것을 확실히 알린다 (v10.28 구르기 중엔 남은 횟수 점이 가리지 않게 숨김)
       const pu = 0.5 + 0.5 * Math.sin(wallT * 6), tw2 = Math.min(W - 24, 540), tx = W / 2 - tw2 / 2, ty = b.y - 74;
       ctx.save(); ctx.globalAlpha = Math.min(1, P.skillTipT);
       ctx.fillStyle = 'rgba(10,4,16,0.88)'; ctx.fillRect(tx, ty, tw2, 56); ctx.strokeStyle = R.c2; ctx.lineWidth = 2 + 2 * pu; ctx.strokeRect(tx, ty, tw2, 56);
@@ -14586,7 +14656,8 @@ function drawFrwDeath(m, x, y) {
 const BR_ORDER = ['monkey', 'eye', 'skel', 'angel', 'shk', 'tox', 'vft', 'qn', 'adm', 'whl', 'kng', 'bear', 'rud', 'lil', 'cvt', 'snk', 'tig', 'dok', 'byu', 'stl', 'ttn'];   // 보스 러시에 나올 수 있는 마왕 (이 중 도감에 처치 기록이 있는 마왕만)
 let BR_N = 4;   // 라운드 수 (v10.27 보스 러시 전용 빌드는 큐 길이)
 const BR_NAME = { monkey: '원숭이 마왕', eye: '심연의 마안군주', skel: '스켈레톤 마왕', angel: '타락천사', shk: '거대 버섯마귀', tox: '이독버섯 마왕', adm: '썩어버린 해군 제독', qn: '타락한 원예의 여왕', vft: '파리지옥 마왕', kng: '타락한 어인왕', bear: '팔한지옥의 백곰 마왕', rud: '마하칼 루드라', lil: '팔한지옥의 대공작 릴세르카', whl: '심해의 시체고래', cvt: '영벌의 화염죄수', snk: '불구렁이', tig: '지옥의 화염 호랑이', dok: '검 도깨비 마왕', byu: '업경의 심판수 반업수', stl: '철식 강철이', ttn: '타르타로스의 티탄' };
-const BR = { lv: 20, per: 60, clear: 400, rest: 3.2, tier: [3, 5, 7, 9], spdMin: 250, spdMax: 290, cdK: 0.1 };   // v10.14 최저 이속 230→250(+8.7%) · lv = 시작 레벨 · per/clear = 영혼 조각 · tier = 라운드별 난이도(P.tier) · spdMin/spdMax = 이동 속도 보장/상한 · cdK = 전용 증강 [시간 왜곡] 1장당 스킬 쿨타임 감소
+const BR = { lv: 20, per: 60, clear: 400, rest: 3.2, tier: [3, 5, 7, 9], spdMin: 270, spdMax: 313, cdK: 0.1 };   // v10.28 QA: 이속 소폭 상향 +8% (250~290 → 270~313)
+   // v10.14 최저 이속 230→250(+8.7%) · lv = 시작 레벨 · per/clear = 영혼 조각 · tier = 라운드별 난이도(P.tier) · spdMin/spdMax = 이동 속도 보장/상한 · cdK = 전용 증강 [시간 왜곡] 1장당 스킬 쿨타임 감소
 const BR_MODS = [[], ['o2'], ['o2', 'cross'], ['o2', 'cross', 'wind']];   // 라운드별 맵 기믹 (누적)
 const BR_MOD_NAME = { o2: '🫧 산소존', cross: '🔥 회전하는 불의 십자가', wind: '🌪 변덕스러운 똥바람' };
 const BR_REWARD = [   // 고른 증강 합계 → 보상 (6 = 2·2·2 … 15 = 5·5·5)
@@ -18109,6 +18180,7 @@ function openAch() {
 }
 /* v8.71 간략 패치노트 (최근 버전만, 새 버전마다 맨 위에 한 줄 추가) */
 const PATCH = [
+  ['v10.28','[QA 수정] 파리지옥 붉은 포자 완화(7발·느리게·다발 간격 0.7초) · 마안군주 탄막 중엔 바닥 장판 패턴이 겹치지 않음 · 악마처형자 구르기 남은 횟수(빨간 점)·남은 시간 게이지 · 보스 러시 1라운드엔 호랑이 불의 십자가·어인왕 산소존 없음 · 보스 러시 이동 속도 +8%(270~313) · 릴세르카 패턴 검은 테두리 · 거대 버섯마귀 머리 잘린 칸 정리 · 백곰 눈보라 이펙트 교체(바람결 + 바람 방향 화살표)'],
   ['v10.27','[⚔ 보스 러시 전용 빌드] 보스 러시만 하는 HTML(bossrush.html) — 모든 캐릭터 · 마왕 21종을 골라 큐로 · 난이도·맵 기믹·시작 레벨·라운드 사이 증강 선택 · 마왕마다 걸린 시간 기록 · 세이브는 본 게임과 따로. 본 게임은 바뀐 것 없음'],
   ['v10.26','[8지옥 타르타로스] 새 도트 적용 — 잡몹 5종(속박 간수·형벌 해골병·심연 사냥개·타르타로스 원혼·낙뢰석 골렘, 도감 등록) · 티탄 이펙트 도트(중력의 틈 소용돌이·대지 강타 충격파와 바닥 균열·봉인 자물쇠와 사슬 머리·대차륜 바위와 부서짐·화면 위 봉인 아이콘). 기믹 수치는 그대로'],
   ['v10.25','[8지옥 타르타로스] 지하 36~39층 개방(40층은 준비 중) — 보라 감옥 필드 · 봉인 함정 지대(밟으면 족쇄 3초: 그 자리 170px 안에서만 이동) · 낙석(8~12초마다 3개, 1.3초 예고, 최대 체력 9%) · 8지옥 보스맵 · 새 마왕 [타르타로스의 티탄](36층 100% · 37층 70%): 사슬 채찍이 지나간 호에 5초 중력의 틈(내 투사체를 빨아들임) · 대지 강타 충격파(하늘색 통로나 무적이면 피함, 맞으면 3초 초중력: 이속 -90% · 이동기 봉인) · 형틀의 사슬(주무기 5초 봉인) · 체력 30% 대차륜(바위 4개 회전, 부수면 구멍 · 다 부수면 기절). 잡몹은 아직 7지옥 잡몹'],
@@ -18458,7 +18530,7 @@ stepDive = skWrap(stepDive, 'dive'); stepRush = skWrap(stepRush, 'rush'); rushSt
 updateAirs = (f => function (...a) { return withSrc('basic', () => f.apply(this, a)); })(updateAirs);   // v6.22: 에어슬래시는 평타 (v6.30: 바로 뒤 천안 난무·브레스 감싸기가 주석에 묻혀 딜미터기에서 빠지던 것 수정)
 { const _tb = thornBlast, _sb = smashBlow; thornBlast = function (...a) { return withSrc('scale', () => _tb.apply(this, a)); }; smashBlow = function (...a) { return withSrc('smash', () => _sb.apply(this, a)); }; }
 shellReflect = skWrap(shellReflect, 'shell'); updateBsig = skWrap(updateBsig, 'bsigil');
-window.__G = { BRO, BOSS_FLOOR, get broQ() { return broQ; }, set broQ(v) { broQ = v; }, BRO_OPT, brTierAt, brModsAt, broRender, TSPECIES, TTN, TTW, TitanAI, TitanRock, ttnClear, ttnExPause, ttnInGap, ttnHeavy, ttnSealApply, ttnSealAtk, get ttn() { return ttn; }, TAR, TARW, isTarSet, tarTile, TF, TPROP_RECTS, IMAP_TAR, updateTarField, STL, STLW, SteelEaterAI, IronChunk, stlClear, stlWipe, stlExPause, stlStack, get stlAI() { return stlAI; }, openDex, BYU, BYUW, BanupAI, byuClear, byuExPause, get byu() { return byu; }, pctMul, pctMelee, PCT_RATE, FISH, KN, castLostHead, get lhead() { return lhead; }, snMouth, snHall, tgArmsAt, tgC, tgCrossOm, tgDashDone, DOK, DOKW, DokkaebiAI, dokClear, dokZoneBox, dokSpinPath, get dok() { return dok; }, gunRoll1, gunHit, updateFish, openSlot, slotResult, slotSpin, WH, WHW, WhaleAI, whClear, whRoom, whLane, whLaneOk, whDexArt, get wh() { return wh; }, hq, hqLow, drawWolf, heatOn, heatArena, arenaRests, arenaRestNearest, openRoutePic, get banner() { return banner; }, isDosanSet, get DSPECIES() { return DSPECIES; }, buildDosanSpecies, BLADE, DF, DPROP_RECTS, dosanTile, imgReady, igniteX, procElem, startFw, spawnFw, spawnUniq, get cam() { return cam; }, TG, TGW, get tg() { return tg; }, tgClear, tgArms, tgCrossAt, tgInSafe, tgCxR, tgPatEnd, tgSafeSpot, tgCam, tgHold, TigerAI, HFUSE_HID, spawnFrw, frwAtk, FRW, spawnLad, lAtk, LAD, LADF, buildCards, rollHeartDrop, heartGain, disHeart, CHARS, inPoly, castSkill, get arena() { return arena; }, FISH, FWAVE, FISHA2, get fwaveQ() { return fwaveQ; }, SN, SNW, get sn() { return snAI; }, snClear, snHall, snEscapeR, pendingConds, rollCards, fishR, shardTotal, calcShards, heartBonus, CV, CVW, HellfirePatch, get cv() { return cvAI; }, cvClear, cvFurnace, pickBossK, get rushQ() { return rushQ; }, get FSPECIES() { return FSPECIES; }, heartMigrate, hRange, IMP, BLD, leadXY, leadDir, HEAT, FF, restNear, restNearest, restAt, updateHeat, isFireSet, fireTile, floorSet, clearGround: () => GROUND.clear(), get TOP_TIER() { return TOP_TIER; }, get OPEN_TIER() { return OPEN_TIER; }, lilArt, drawLilBody, LS, LSW, get ls() { return ls; }, FrostMirror, lsInWedge, lsIce, lsExPause, lsZone, lilDefeated, RD, RDW, RDF, rdOn, get rd() { return rd; }, KarmaBead, FrostMantra, IceLotus, rdAbsorb, rdInGap, rdExPause, rdSilence, rudDefeated, IMP, GoldImp, impOf, trySpawnImp, impDefeated, set impAt(v) { impAt = v; }, LUCK_N, PB, PBW, IMAP, IceWall, Fissure, IceSpear, segDist, FrostMgr, pbOn, pbClear, pbExPause, get pb() { return pb; }, gunMagN, ROLL, get lhead() { return lhead; }, KN, castLostHead, TW, isIceSlip, isIceSet, get ISPECIES() { return ISPECIES; }, ICE_SLIP, ICE_L, OPEN_TIER, TOP_TIER, renderHells, floorSet, pickFloor, iceTile, IF, get lhead() { return lhead; }, KN, isKnight, castLostHead, knightSlash, openGhostRoute, KNIGHT_FORMS, ghostForm, hTitle, relicIcon, heartMake, hOpt, heartBonus, calcShards, GRN, GRW, GRNF, spawnGrn, grnStart, grnPick, TRIAL, chAltarTick, chAltarPlace, chTrialStart, chTrialWin, chTime, chTime0, chDmgT, CH_HARD, CH_BOSS, cardDefs, cardView, ACH, achSync, achClear, openAch, KG, KGW, get kg() { return kg; }, AirGeyser, WaterMirror, MirrorBolt, kgIce, get shards() { return shards; }, set shards(v) { shards = v; }, VF, VFW, get vf() { return vf; }, VfTrap, VfSkull, VfHeart, vfLeech, fuseHearts, rerollHeart, heartBonus, renderFuse, setFu(v) { hFu = v; }, QN, QNW, get qn() { return qn; }, RootBind, SporeSack, QnMush, pickBossK, pctMelee, pctZone, updateDiff, skinG, bhKey, BH_ORDER, heartIcon, relicMaskOn, calcShards, isSlow, isLava, saveSave, svParse, spawnPlant, PL, get GSPECIES() { return GSPECIES; }, get plBalls() { return plBalls; }, synCard, freezeE, availSyn, SYNERGIES, dmName, FD, shkAdd, toxAdd, skSpawnPair, phoenixRevive, mirrorBlock, palPop, updateCutSaws, get shkSp() { return shkSp; }, get toxFl() { return toxFl; }, get zonesRef() { return zones; },
+window.__G = { shkSpr, get ctx() { return ctx; }, BRO, BOSS_FLOOR, get broQ() { return broQ; }, set broQ(v) { broQ = v; }, BRO_OPT, brTierAt, brModsAt, broRender, TSPECIES, TTN, TTW, TitanAI, TitanRock, ttnClear, ttnExPause, ttnInGap, ttnHeavy, ttnSealApply, ttnSealAtk, get ttn() { return ttn; }, TAR, TARW, isTarSet, tarTile, TF, TPROP_RECTS, IMAP_TAR, updateTarField, STL, STLW, SteelEaterAI, IronChunk, stlClear, stlWipe, stlExPause, stlStack, get stlAI() { return stlAI; }, openDex, BYU, BYUW, BanupAI, byuClear, byuExPause, get byu() { return byu; }, pctMul, pctMelee, PCT_RATE, FISH, KN, castLostHead, get lhead() { return lhead; }, snMouth, snHall, tgArmsAt, tgC, tgCrossOm, tgDashDone, DOK, DOKW, DokkaebiAI, dokClear, dokZoneBox, dokSpinPath, get dok() { return dok; }, gunRoll1, gunHit, updateFish, openSlot, slotResult, slotSpin, WH, WHW, WhaleAI, whClear, whRoom, whLane, whLaneOk, whDexArt, get wh() { return wh; }, hq, hqLow, drawWolf, heatOn, heatArena, arenaRests, arenaRestNearest, openRoutePic, get banner() { return banner; }, isDosanSet, get DSPECIES() { return DSPECIES; }, buildDosanSpecies, BLADE, DF, DPROP_RECTS, dosanTile, imgReady, igniteX, procElem, startFw, spawnFw, spawnUniq, get cam() { return cam; }, TG, TGW, get tg() { return tg; }, tgClear, tgArms, tgCrossAt, tgInSafe, tgCxR, tgPatEnd, tgSafeSpot, tgCam, tgHold, TigerAI, HFUSE_HID, spawnFrw, frwAtk, FRW, spawnLad, lAtk, LAD, LADF, buildCards, rollHeartDrop, heartGain, disHeart, CHARS, inPoly, castSkill, get arena() { return arena; }, FISH, FWAVE, FISHA2, get fwaveQ() { return fwaveQ; }, SN, SNW, get sn() { return snAI; }, snClear, snHall, snEscapeR, pendingConds, rollCards, fishR, shardTotal, calcShards, heartBonus, CV, CVW, HellfirePatch, get cv() { return cvAI; }, cvClear, cvFurnace, pickBossK, get rushQ() { return rushQ; }, get FSPECIES() { return FSPECIES; }, heartMigrate, hRange, IMP, BLD, leadXY, leadDir, HEAT, FF, restNear, restNearest, restAt, updateHeat, isFireSet, fireTile, floorSet, clearGround: () => GROUND.clear(), get TOP_TIER() { return TOP_TIER; }, get OPEN_TIER() { return OPEN_TIER; }, lilArt, drawLilBody, LS, LSW, get ls() { return ls; }, FrostMirror, lsInWedge, lsIce, lsExPause, lsZone, lilDefeated, RD, RDW, RDF, rdOn, get rd() { return rd; }, KarmaBead, FrostMantra, IceLotus, rdAbsorb, rdInGap, rdExPause, rdSilence, rudDefeated, IMP, GoldImp, impOf, trySpawnImp, impDefeated, set impAt(v) { impAt = v; }, LUCK_N, PB, PBW, IMAP, IceWall, Fissure, IceSpear, segDist, FrostMgr, pbOn, pbClear, pbExPause, get pb() { return pb; }, gunMagN, ROLL, get lhead() { return lhead; }, KN, castLostHead, TW, isIceSlip, isIceSet, get ISPECIES() { return ISPECIES; }, ICE_SLIP, ICE_L, OPEN_TIER, TOP_TIER, renderHells, floorSet, pickFloor, iceTile, IF, get lhead() { return lhead; }, KN, isKnight, castLostHead, knightSlash, openGhostRoute, KNIGHT_FORMS, ghostForm, hTitle, relicIcon, heartMake, hOpt, heartBonus, calcShards, GRN, GRW, GRNF, spawnGrn, grnStart, grnPick, TRIAL, chAltarTick, chAltarPlace, chTrialStart, chTrialWin, chTime, chTime0, chDmgT, CH_HARD, CH_BOSS, cardDefs, cardView, ACH, achSync, achClear, openAch, KG, KGW, get kg() { return kg; }, AirGeyser, WaterMirror, MirrorBolt, kgIce, get shards() { return shards; }, set shards(v) { shards = v; }, VF, VFW, get vf() { return vf; }, VfTrap, VfSkull, VfHeart, vfLeech, fuseHearts, rerollHeart, heartBonus, renderFuse, setFu(v) { hFu = v; }, QN, QNW, get qn() { return qn; }, RootBind, SporeSack, QnMush, pickBossK, pctMelee, pctZone, updateDiff, skinG, bhKey, BH_ORDER, heartIcon, relicMaskOn, calcShards, isSlow, isLava, saveSave, svParse, spawnPlant, PL, get GSPECIES() { return GSPECIES; }, get plBalls() { return plBalls; }, synCard, freezeE, availSyn, SYNERGIES, dmName, FD, shkAdd, toxAdd, skSpawnPair, phoenixRevive, mirrorBlock, palPop, updateCutSaws, get shkSp() { return shkSp; }, get toxFl() { return toxFl; }, get zonesRef() { return zones; },
   bossDefeated, get IMG() { return IMG; },
   get ready() { return !!IMG.floorD; }, get state() { return state; }, get P() { return P; }, get enemies() { return enemies; }, get orbs() { return orbs; },
   get zones() { return zones; }, get ebul() { return ebul; }, get EYE() { return EYE; }, get shards() { return shards; }, get bigQ() { return bigQ; }, get bombQ() { return bombQ; }, get holyQ() { return holyQ; }, get afx() { return afx; }, get dashQ() { return dashQ; }, get beam() { return beam; }, get evo() { return evo; }, get choices() { return choices; },

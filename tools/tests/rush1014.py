@@ -56,8 +56,8 @@ async def main():
                   and not result["initialMove"]
                   and "질주" in result["normalHint"]
                   and "질주" not in result["rushHint"]
-                  and result["min"] == 250
-                  and result["max"] == 290
+                  and result["min"] == 270
+                  and result["max"] == 313
                   and result["state"] == "play"
                   and result["level"] >= 20
                   and 249 <= result["effectiveLow"] <= 251

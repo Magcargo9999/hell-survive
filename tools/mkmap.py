@@ -10,6 +10,7 @@ ANCHORS = [
  ('스킬 목록(이름·설명)', r'^const SKILLS = '), ('스킬 쿨타임·스킬 이름 함수', r'^const SKILL_CD|^const skillName'),
  ('공용 카드', r'^const UPGRADES = '), ('캐릭터 전용 카드', r'^const UNIQUE = '), ('조합 카드', r'^const SYNERGIES = '),
  ('마계 물고기 진화(v9.49: 미꾸라지 물방울·마해룡 절대 수압·포식자의 파도)', r'^const FISH_AURA|^const FWAVE|^function updateFish|^function fishOrb|^function startFishWave|^function stepFishWave|^function drawFishWave|^function drawFishAura'),
+ ('QA v10.28 (마안 겹침·버섯마귀 잘림·러시 1라운드)', r'^const eyeExPause|^const SHK_SKIP|^function shkCut|^const brR1'),
  ('보스 러시 전용 빌드 BRO(v10.27)', r'^const BRO = |^function broRender|^function brTierAt|^function brModsAt|^const BOSS_FLOOR'),
  ('8지옥 잡몹 TSPECIES(v10.26)', r'^let TSPECIES|^const TAR_MOB|^function buildTarSpecies'),
  ('타르타로스의 티탄(v10.25: 사슬 채찍·중력의 틈·대지 강타 초중력·형틀의 사슬 봉인·대차륜)', r'^const TTN = |^class TitanAI|^class TitanRock|^function ttnRiftBlock|^function updateTtnFx|^function drawTtnBoss'),
