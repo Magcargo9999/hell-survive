@@ -281,6 +281,16 @@
   .setg { margin: 12px 0 2px; color: var(--gold); font-weight: 700; font-size: 13px; text-align: left; }
   .etclist { width: min(560px, 92vw); }
   .etcrow { display: flex; align-items: center; justify-content: space-between; gap: 20px; text-align: left; }
+  #broPanel { width: min(980px, 96vw); margin: 0 auto 8px; text-align: left; font-size: 13px; }
+  #broPanel .broT { color: var(--gold); font-weight: 700; margin: 8px 0 4px; } #broPanel .broT small { color: var(--muted); font-weight: 400; margin-left: 6px; }
+  #broPanel .broG { display: flex; flex-direction: column; gap: 4px; }
+  #broPanel .broH { display: flex; flex-wrap: wrap; align-items: center; gap: 4px; } #broPanel .broH > span { width: 132px; color: #c9a0ff; font-size: 12px; flex: none; }
+  #broPanel button.sm { padding: 4px 9px; font-size: 12px; margin: 0; } #broPanel .broB i { font-style: normal; color: var(--muted); font-size: 10px; margin-left: 5px; }
+  #broQ { display: flex; flex-wrap: wrap; gap: 4px; min-height: 26px; } #broPanel .broC { border-color: #ff9a3a; } #broPanel .broE { color: var(--muted); }
+  #broPanel .broR, #broPanel .broO { display: flex; flex-wrap: wrap; gap: 6px 14px; margin-top: 6px; align-items: center; }
+  #broPanel select { background: #1a0e1e; color: #f0e0ff; border: 1px solid #5a3a6a; border-radius: 6px; padding: 3px 6px; font: inherit; }
+  #broPanel .broN { color: var(--muted); font-size: 12px; margin-top: 6px; }
+  @media (max-width: 640px) { #broPanel .broH > span { width: 100%; } }
   .etcrow button { white-space: nowrap; } .etcrow b { color: var(--gold); } .etcrow small { color: var(--muted); font-size: 13px; }
 </style>
 </head>
@@ -298,6 +308,7 @@
   <div id="hellRow"><div class="hr" id="hellTabs"></div><div class="hr fl" id="hellFloors"></div></div>
   <p id="diffDesc" style="font-size:13px;margin-top:-8px"></p>
   <p id="chInfo" style="font-size:13px;margin-top:-6px;color:#c9a0ff;line-height:1.5"></p>
+  <div id="broPanel" style="display:none"></div>
   <div id="startBar">
     <button id="startBtn">시작하기</button>
     <div class="row" id="menuRow"><button id="chBtn" class="sm" style="border-color:#8a4aff">∞ 챌린지 모드</button><button id="rushBtn" class="sm" style="border-color:#ff9a3a">⚔ 보스 러시</button><button id="soulBtn" class="sm">💠 영혼 상점</button><button id="colBtn" class="sm">📚 수집</button><button id="etcBtn" class="sm">기타</button></div>
@@ -981,9 +992,10 @@ function mkCanvas(w, h) { const c = document.createElement('canvas'); c.width = 
 /* ============================================================
  * 0-1. 저장(영혼 조각 · 영구 강화 · 설정) / 캐릭터 목록 / 소리
  * ============================================================ */
-const SAVE_KEY = 'hellSurvivorSave1';
+const BRO = false;   // v10.27 ⚔ 보스 러시 전용 빌드 — `python3 src/build.py --bossrush`가 true로 바꾼다 (모든 캐릭터 · 보스 골라 큐 · 보상 없음 · 세이브는 따로)
+const SAVE_KEY = BRO ? 'hellSurvivorBossRush1' : 'hellSurvivorSave1';   // 본 게임 세이브 키는 절대 바꾸지 않는다 — 보스 러시 전용 빌드만 다른 키(본 게임 진행을 건드리지 않게)
 let bnHide = false; try { bnHide = localStorage.getItem('hsBnHide') === '1'; } catch (_) {}   // v10.12 보스전 안내 글씨 끄기 (H키, 이 설정만 따로 저장)
-const GAME_VER = 'v10.26';
+const GAME_VER = 'v10.27';
 const SAVE_DEF = () => ({
   shards: 0,
   perks: { hp: 0, spd: 0, dmg: 0, exp: 0, magnet: 0, banish: 0, revive: 0, regen: 0, shard: 0, critd: 0, choice: 0 },
@@ -12782,6 +12794,7 @@ function sprTop(img, sx, sy, w, h) {   // v5.11: 프레임에서 처음 보이�
   return (m[k] = t);
 }
 function drawWolf(x, y) {
+  if (!wolfImg()) return;   // v10.27 진화 형태 그림(나중에 받는 그림)이 아직이면 그 프레임은 건너뛴다 (보스 러시에서 Lv.20으로 바로 올라가면 생겼던 오류)
   const D = FD(), a = (P.anim === 'attack' && D.anim.frenzy && P.altAtk) ? D.anim.frenzy : D.anim[P.anim] || (P.anim === 'atkMove' ? D.anim.attack : D.anim.idle), img = wolfImg(), H = hqLow(img, D.ws), K = H.width / img.width;
   let f = Math.floor(P.animT * a.fps);
   f = P.anim === 'idle' || P.anim === 'walk' ? f % a.n : clamp(f, 0, a.n - 1);
@@ -14571,7 +14584,7 @@ function drawFrwDeath(m, x, y) {
  *            같은 기믹을 가진 마왕(어인왕 = 산소 · 화염 호랑이 = 십자가 · 백곰 = 눈보라 바람)은 그 라운드 기믹을 겹치지 않는다
  * ============================================================ */
 const BR_ORDER = ['monkey', 'eye', 'skel', 'angel', 'shk', 'tox', 'vft', 'qn', 'adm', 'whl', 'kng', 'bear', 'rud', 'lil', 'cvt', 'snk', 'tig', 'dok', 'byu', 'stl', 'ttn'];   // 보스 러시에 나올 수 있는 마왕 (이 중 도감에 처치 기록이 있는 마왕만)
-const BR_N = 4;   // 라운드 수
+let BR_N = 4;   // 라운드 수 (v10.27 보스 러시 전용 빌드는 큐 길이)
 const BR_NAME = { monkey: '원숭이 마왕', eye: '심연의 마안군주', skel: '스켈레톤 마왕', angel: '타락천사', shk: '거대 버섯마귀', tox: '이독버섯 마왕', adm: '썩어버린 해군 제독', qn: '타락한 원예의 여왕', vft: '파리지옥 마왕', kng: '타락한 어인왕', bear: '팔한지옥의 백곰 마왕', rud: '마하칼 루드라', lil: '팔한지옥의 대공작 릴세르카', whl: '심해의 시체고래', cvt: '영벌의 화염죄수', snk: '불구렁이', tig: '지옥의 화염 호랑이', dok: '검 도깨비 마왕', byu: '업경의 심판수 반업수', stl: '철식 강철이', ttn: '타르타로스의 티탄' };
 const BR = { lv: 20, per: 60, clear: 400, rest: 3.2, tier: [3, 5, 7, 9], spdMin: 250, spdMax: 290, cdK: 0.1 };   // v10.14 최저 이속 230→250(+8.7%) · lv = 시작 레벨 · per/clear = 영혼 조각 · tier = 라운드별 난이도(P.tier) · spdMin/spdMax = 이동 속도 보장/상한 · cdK = 전용 증강 [시간 왜곡] 1장당 스킬 쿨타임 감소
 const BR_MODS = [[], ['o2'], ['o2', 'cross'], ['o2', 'cross', 'wind']];   // 라운드별 맵 기믹 (누적)
@@ -14586,12 +14599,25 @@ const brRewardOf = n => BR_REWARD.find(r => n <= r.n) || BR_REWARD[BR_REWARD.len
 const BR_WIND = { sp: 85, k: 0.45, T: 10, warn: 1.5 };   // 바람: 초당 85px(내 실제 이속의 45%를 넘지 않음) · 10초마다 방향 전환 · 1.5초 전 예고
 const BR_O2 = { drain: 6, gyN: 2 };   // 산소: 초당 -6 (100 → 약 17초) · 간헐천 2개 (산소 수치·간헐천은 어인왕 KG 값을 그대로 쓴다)
 const BR_X = { crDm: 24, crIcd: 1.0 };   // 불의 십자가 피해 · 다시 맞는 간격
+const BOSS_FLOOR = { monkey: 0, eye: 1, skel: 2, angel: 3, shk: 5, tox: 7, vft: 10, qn: 14, adm: 15, whl: 17, kng: 19, bear: 20, rud: 22, lil: 24, cvt: 25, snk: 27, tig: 29, dok: 30, byu: 32, stl: 34, ttn: 35 };   // v10.27 마왕이 처음 나오는 층(P.tier)
+let BRO_OPT = { tier: 'rush', mods: 'rush', lv: 20, mid: 3 }, broQ = [];   // v10.27 보스 러시 전용 빌드: 난이도 · 맵 기믹 · 시작 레벨 · 라운드 사이 증강 수 / 마왕 큐
+if (BRO) try { const o = JSON.parse(localStorage.getItem('hsBroOpt') || 'null'); if (o) { Object.assign(BRO_OPT, o.opt || {}); broQ = (o.q || []).filter(k => BR_ORDER.includes(k)); } } catch (_) {}
+const broSave = () => { try { localStorage.setItem('hsBroOpt', JSON.stringify({ opt: BRO_OPT, q: broQ })); } catch (_) {} };
+function brTierAt(i, k) {   // 라운드 i의 난이도(P.tier)
+  if (!BRO || BRO_OPT.tier === 'rush') return BR.tier[Math.min(i, BR.tier.length - 1)];
+  if (BRO_OPT.tier === 'own') return BOSS_FLOOR[k] | 0;
+  return BRO_OPT.tier | 0;
+}
+function brModsAt(i) {   // 라운드 i의 맵 기믹
+  if (!BRO || BRO_OPT.mods === 'rush') return BR_MODS[Math.min(i, BR_MODS.length - 1)];
+  return BRO_OPT.mods === 'all' ? ['o2', 'cross', 'wind'] : [];
+}
 const BR_IMGS = { skel: ['skb'], angel: ['an', 'anfx', 'amap', 'an2'], shk: ['shk', 'mmap'], tox: ['tox', 'mmap'], vft: ['vft', 'gmap'], qn: ['qn', 'gmap'], adm: ['adm', 'smap'], kng: ['kng', 'smap'], whl: ['whl', 'whlfx', 'smap'], bear: ['bear', 'bearfx', 'imap'], rud: ['rud', 'rudfx', 'imap'], lil: ['lil', 'lfx', 'imap'], cvt: ['cvt', 'fmap'], snk: ['snk', 'fmap'], tig: ['tig', 'tigfx', 'fmap'], dok: ['dok', 'dokfx', 'dmap'], byu: ['byu', 'dmap'], stl: ['stl', 'dmap'], ttn: ['ttn', 'tmap'] };   // 입장 전에 받아 둘 그림
 const FSET_ARENA = { ice: 'ice', fire: 'fire', dosan: 'dosan', tar: 'tar' };   // v9.71 7지옥은 보스맵이 생길 때까지 용암 보스맵(잠긴 층)   // v9.30 팔한지옥 보스방 = 빙결 투기장 고정 · 팔열지옥은 보스맵이 생길 때까지 마왕성
 const BR_SET = { lil: 'ice', rud: 'ice', bear: 'ice', monkey: 'hell', eye: 'hell', skel: 'hell', angel: 'hell', shk: 'mush', tox: 'mush', vft: 'gard', qn: 'gard', adm: 'sea', kng: 'sea', whl: 'sea', cvt: 'fire', snk: 'fire', tig: 'fire', dok: 'dosan', byu: 'dosan', stl: 'dosan', ttn: 'tar' };   // 마왕이 나오는 지옥의 맵
 const rushFset = bk => { const q = BR_SET[bk]; return (q === 'ice' || q === 'fire' || q === 'dosan' || q === 'tar') ? q : q === 'gard' && IMG.gfloor && IMG.gprops && MSPECIES.length ? 'gard' : q === 'sea' && IMG.sfloor && IMG.sprops && SSPECIES.length ? 'sea' : q !== 'hell' && IMG.mfloor && IMG.mprops && MSPECIES.length ? 'mush' : 'hell'; };
 const rushOpen = () => !!(SAVE.rush.open || (SAVE.fw.snap && (SAVE.fw.snap.tier | 0) >= MAX_TIER));   // 예전 기준(지하 20층 클리어) — 마계 물고기 해금에만 쓴다
-const rushReady = () => (SAVE.diff.clr | 0) >= 24 || (SAVE.dex.kills.boss16 | 0) > 0 || (SAVE.dex.kills.boss19 | 0) > 0;   // v10.18 보스 러시 해금 = 지하 25층 마왕(릴세르카) 처치 (v10.10: 30층)
+const rushReady = () => BRO || (SAVE.diff.clr | 0) >= 24 || (SAVE.dex.kills.boss16 | 0) > 0 || (SAVE.dex.kills.boss19 | 0) > 0;   // v10.18 보스 러시 해금 = 지하 25층 마왕(릴세르카) 처치 (v10.10: 30층)
 const brPool = () => BR_ORDER.filter(k => (SAVE.dex.kills[dexBoss({ bk: k })] | 0) > 0);   // 도감에 처치 기록이 있는 마왕
 const rushLine = () => rushReady() ? `⚔ 보스 러시 — 처치해 본 마왕 ${brPool().length}종 중 4라운드 · Lv.${BR.lv} 시작(증강 직접 선택) · 라운드마다 증강 2개/5개 선택(적게 고를수록 보상↑) · 심장 드랍 O · 심장 옵션 미적용 · 장착 마석 적용  ·  완주 ${SAVE.rush.clears | 0}회 · 🎫 ${SAVE.rush.tix | 0} · 💉 ${SAVE.rush.syr | 0}<br>` : '';
 function rushLevels(n) {   // n번 레벨업할 경험치를 한꺼번에 채우고 카드 선택을 이어서 띄운다 (진화·루트 선택도 평소처럼 끼어든다)
@@ -14620,13 +14646,13 @@ class BossRushManager {
     if (state !== 'play' || trans || P.exp >= P.need) return;
     if (this.init) { this.init = false; P.hp = P.max; this.wait = 1.0; return; }
     if ((this.wait -= dt) > 0) return;
-    const need = ['arena'].concat(BR_IMGS[this.ord[this.i]] || [], BR_MODS[this.i].includes('cross') ? ['tigfx'] : []);
+    const need = ['arena'].concat(BR_IMGS[this.ord[this.i]] || [], brModsAt(this.i).includes('cross') ? ['tigfx'] : []);
     if (!imgReady(need)) { this.wait = 0.25; if ((this.ldT += 0.25) > 1 && !banner) banner = { txt: '보스방 불러오는 중…', t: 1, c: '#ffe28a' }; return; }
     this.enter();
   }
   enter() {
-    const k = this.ord[this.i]; P.bossK = k; this.ph = 'fight'; P.tier = BR.tier[this.i]; P.fset = rushFset(k); this.ldT = 0;
-    this.modifiers = BR_MODS[this.i].slice(); this.gey = []; this.gyT = 0; this.cr = null; this.wind = null; this.crHitT = 0; P.o2 = KG.o2Max;
+    const k = this.ord[this.i]; P.bossK = k; this.ph = 'fight'; P.tier = brTierAt(this.i, k); P.fset = rushFset(k); this.ldT = 0; this.t0 = gt;
+    this.modifiers = brModsAt(this.i).slice(); this.gey = []; this.gyT = 0; this.cr = null; this.wind = null; this.crHitT = 0; P.o2 = KG.o2Max;
     if (BR_SET[k] === 'sea') warmSea(); try { if (P.fset === 'mush' && IMG.mmap) mmapS(); } catch (_) {}
     skp = []; skSp = []; anOrbs = []; anFx = []; skDeath = null; anDeath = null; shkSp = []; shkFx = []; shkDeath = null; toxFl = []; toxFx = []; toxFog = null; DEBUFF.clearAll(); admFx = []; admBalls = []; admAnc = null; admPull = null; admDeath = null;
     enterArena();
@@ -14665,18 +14691,22 @@ class BossRushManager {
     if (inPoly(P.x + dx, P.y)) P.x += dx; if (inPoly(P.x, P.y + dy)) P.y += dy;
   }
   choose() {   // 2·3·4라운드 전: 증강 2개 / 5개
+    if (BRO) { if (BRO_OPT.mid > 0) this.pick(BRO_OPT.mid | 0); return; }   // v10.27 보스 러시 전용 빌드: 정해 둔 개수만큼 바로 고른다 (보상 없음)
     const so = this.totalCardsPicked, left = BR_N - this.i, lo = so + 2 * left, hi = so + 5 * left, r2 = brRewardOf(so + 2 + 2 * (left - 1)), r5 = brRewardOf(so + 5 + 5 * (left - 1));
     const tbl = BR_REWARD.map(r => `${r.n}개 ${r.name}: 🎫${r.tix} · ${HG[r.stone].name} 마석 · 💉${Math.round(r.syr * 100)}%`).join('<br>');
     const mk = n => ({ n, name: `증강 ${n}개 고르기`, eff: true, desc: n === 2 ? `이번 라운드 증강 2개 — 적게 고를수록 보상이 좋아요` : `이번 라운드 증강 5개 — 강해지지만 보상은 낮아져요`, sub: `지금까지 ${so}개 → ${so + n}개 · 남은 선택을 같게 하면 ${(n === 2 ? r2 : r5).name}`, tag: n === 2 ? ' · 보상 ↑' : ' · 안전', flip: '누르면 보상표 보기 ▶', back: `고른 증강 합계(완주 시) → 보상<br>${tbl}<br><br>가능한 합계: ${lo} ~ ${hi}` });
     openChoice(`⚔ 라운드 ${this.i + 1}/${BR_N} 준비 — 증강을 몇 개 고를까요?`, [mk(2), mk(5)], u => this.pick(u.n));
-    document.getElementById('levelHint').textContent = `다음 맵 기믹: ${BR_MODS[this.i].map(m => BR_MOD_NAME[m]).join(' + ') || '없음'}  ·  1 = 2개 · 2 = 5개`;
+    document.getElementById('levelHint').textContent = `다음 맵 기믹: ${brModsAt(this.i).map(m => BR_MOD_NAME[m]).join(' + ') || '없음'}  ·  1 = 2개 · 2 = 5개`;
   }
   pick(n) { this.totalCardsPicked += n; this.picks.push(n); state = 'play'; rushLevels(n); }
   win(e) {
-    const last = this.i >= BR_N - 1; this.kills = this.i + 1; this.shards += Math.round(BR.per * tierMul());
+    const last = this.i >= BR_N - 1; this.kills = this.i + 1; (this.times = this.times || []).push(gt - (this.t0 || gt)); this.shards += Math.round(BR.per * tierMul());
     SAVE.rush.best = Math.max(SAVE.rush.best | 0, this.kills);
     P.hp = P.max; P.healBank = P.max * 0.12; P.o2 = KG.o2Max; this.gey = []; this.cr = null; this.wind = null;
     const hTxt = this.hearts.length && this.hearts[this.hearts.length - 1].round === this.kills ? `\n💗 ${hTitle(this.hearts[this.hearts.length - 1].h)} 획득!` : '';
+    if (last && BRO) {   // v10.27 보스 러시 전용 빌드: 보상 없이 기록만
+      P.earned = 0; saveSave(); banner = { txt: `⚔ 보스 러시 완주! (${BR_N}라운드)\n${this.timeTxt()}` + hTxt, t: 7, c: '#ffe28a' }; state = 'win'; winT = 0; return;
+    }
     if (last) {
       this.shards += Math.round(BR.clear * tierMul()); SAVE.rush.clears = (SAVE.rush.clears | 0) + 1;
       P.earned = shardTotal(this.shards); this.settle(); SAVE.shards += P.earned; saveSave();   // v10.16 새 마석은 다음 판부터 조각 보너스 적용
@@ -14684,9 +14714,10 @@ class BossRushManager {
       banner = { txt: `⚔ 보스 러시 완주!  보상 등급 [${R.name}] (고른 증강 ${R.n}개)\n🎫 스킨 뽑기권 ×${R.tix} · 💎 ${HG[R.stone].name} 마석 · ${R.syr ? '💉 주사기 ×1' : '주사기 없음'}` + hTxt + (a ? `\n🏆 업적 달성: ${a.name}` : ''), t: 7, c: '#ffe28a' }; state = 'win'; winT = 0; return;
     }
     saveSave(); this.i++; this.ph = 'rest'; this.wait = BR.rest;
-    banner = { txt: `${BR_NAME[this.ord[this.i - 1]]} 처치!  (${this.kills}/${BR_N})  체력 회복` + hTxt + `\n다음: 라운드 ${this.i + 1} — ${BR_NAME[this.ord[this.i]]} · 맵 기믹 ${BR_MODS[this.i].map(m => BR_MOD_NAME[m]).join(' + ')}`, t: 5, c: '#ffe28a' };
+    banner = { txt: `${BR_NAME[this.ord[this.i - 1]]} 처치!  (${this.kills}/${BR_N})  ${fmtT(this.times[this.times.length - 1])}  체력 회복` + hTxt + `\n다음: 라운드 ${this.i + 1} — ${BR_NAME[this.ord[this.i]]} · 맵 기믹 ${brModsAt(this.i).map(m => BR_MOD_NAME[m]).join(' + ') || '없음'}`, t: 5, c: '#ffe28a' };
     this.choose();
   }
+  timeTxt() { return (this.times || []).map((t, i) => `${i + 1}. ${BR_NAME[this.ord[i]]} ${fmtT(t)}`).join(' · '); }   // v10.27 마왕마다 걸린 시간
   settle() {   // 완주 보상: 고른 증강 합계로 등급 → 스킨 뽑기권 · 마석 · 주사기(확률)
     const R = brRewardOf(this.totalCardsPicked), syr = Math.random() < R.syr;
     SAVE.rush.tix = (SAVE.rush.tix | 0) + R.tix; if (syr) SAVE.rush.syr = (SAVE.rush.syr | 0) + 1;
@@ -14713,23 +14744,26 @@ class BossRushManager {
     ctx.restore();
   }
 }
+const fmtT = t => { t = Math.max(0, t || 0); return `${Math.floor(t / 60)}:${String(Math.floor(t % 60)).padStart(2, '0')}`; };
 const rushO2On = () => !!(rush && rush.has('o2'));
 function startRush(char) {
   if (char) curChar = char;
   if (!SAVE.chars[curChar]) curChar = 'wolf';
   audioInit(); rushBoot = true; try { reset(curChar); } finally { rushBoot = false; } markDex(curChar + ':0');
-  let pool = brPool(); if (!pool.length) pool = ['monkey'];
-  const ord = pool.slice().sort(() => rand() - 0.5).slice(0, BR_N); while (ord.length < BR_N) ord.push(pool[(rand() * pool.length) | 0]);   // 처치해 본 마왕이 4종보다 적으면 겹쳐서 나온다
-  P.tier = BR.tier[0]; P.bossK = ord[0]; if (ord.some(k => BR_SET[k] === 'sea')) setTimeout(warmSea, 0);
+  let pool = brPool(), ord; if (!pool.length) pool = ['monkey'];
+  if (BRO) { ord = broQ.length ? broQ.slice() : BR_ORDER.slice().sort(() => rand() - 0.5).slice(0, 4); BR_N = ord.length; }   // v10.27 보스 러시 전용 빌드: 고른 큐 그대로 (비었으면 무작위 4)
+  else { BR_N = 4; ord = pool.slice().sort(() => rand() - 0.5).slice(0, BR_N); while (ord.length < BR_N) ord.push(pool[(rand() * pool.length) | 0]); }   // 처치해 본 마왕이 4종보다 적으면 겹쳐서 나온다
+  P.tier = brTierAt(0, ord[0]); P.bossK = ord[0]; if (ord.some(k => BR_SET[k] === 'sea')) setTimeout(warmSea, 0);
   try { buildGardSpecies(); } catch (_) {}
-  P.fset = rushFset(ord[0]);
+  { const f0 = rushFset(ord[0]); P.fset = !SET_IMGS[f0] || imgReady(SET_IMGS[f0]) ? f0 : 'hell'; }   // v10.27 그 지옥 바닥 그림(나중에 받는 그림)이 아직이면 시작 필드는 마왕성 바닥 (보스방은 입장 때 다시 정한다)
   P.fee = 0; P.miniDone = true; P.poisonSpawned = true; P.exitLeft = 0; P.goal = null; P.spd0 = P.spd; P.hp = P.max;
   rush = new BossRushManager(ord);
   for (const k of ord) imgReady(['arena'].concat(BR_IMGS[k] || []));   // 미리 받아 둔다
   setTimeout(() => { try { if (IMG.mmap) mmapS(); arenaS(); } catch (_) {} }, 400);
   show('startBox', false); show('overBox', false); show('levelBox', false); show('pauseBox', false);
   banner = { txt: `⚔ 보스 러시!  Lv.${BR.lv}까지 증강을 직접 고릅니다 (루트·진화도 직접)\n4라운드 — 처치해 본 마왕 중 무작위 · 진화 조건 없이 모든 루트 선택 가능 · 라운드마다 맵 기믹이 쌓이고, 2·3·4라운드 전에 증강 2개/5개를 고릅니다 (적게 고를수록 보상↑)\n보스 러시에서는 심장 옵션만 제외하고 장착 마석은 적용됩니다. 이동 속도는 ${BR.spdMin}~${BR.spdMax}로 맞춰집니다 (질주 카드 제외)`, t: 7, c: '#ffb05a' };
-  state = 'play'; rushLevels(BR.lv - 1);
+  if (BRO) banner = { txt: `⚔ 보스 러시 연습 — ${ord.length}라운드: ${ord.map(k => BR_NAME[k]).join(' → ')}\nLv.${BRO_OPT.lv}까지 증강·루트·진화를 직접 고릅니다 (모든 루트 선택 가능) · 라운드 사이 증강 ${BRO_OPT.mid}개 · 보상 없음\n난이도 ${broTierTxt()} · 맵 기믹 ${broModTxt()} · 이동 속도는 ${BR.spdMin}~${BR.spdMax}로 맞춰집니다`, t: 7, c: '#ffb05a' };
+  state = 'play'; rushLevels((BRO ? BRO_OPT.lv : BR.lv) - 1);
 }
 function rushEnter() { rush.enter(); }
 function rushTick(dt) { rush.tick(dt); }
@@ -15262,7 +15296,9 @@ function showOver(win) {
   const m = Math.floor(gt / 60), s = Math.floor(gt % 60);
   $('overStats').innerHTML = `생존 시간 ${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')} · 레벨 ${P.lvl} · 처치 ${P.kills}`;
   $('overShards').textContent = `영혼 조각 +${P.earned}  (보유 ${SAVE.shards})` + (P.goalDone ? `  ·  런 목표 ${P.goalDone}개 (+${P.goalShards})` : '') + (P.mimicShards ? `  ·  미믹 +${P.mimicShards}` : '') + (P.impShards ? `  ·  황금 임프 +${P.impShards.toLocaleString()}` : '') + (win && P.fee ? `  ·  참가비 ${P.fee} 반환 포함` : '');
-  if (rush) $('overStats').innerHTML += `<br><span style="color:#ffb05a">⚔ 보스 러시 — 라운드 ${rush.kills}/${BR_N} 클리어${rush.kills ? ' (' + rush.ord.slice(0, rush.kills).map(k => BR_NAME[k]).join(' · ') + ')' : ''}  ·  고른 증강 ${rush.totalCardsPicked}개${rush.picks.length ? ' (' + rush.picks.join(' + ') + ')' : ''}</span><br><span style="font-size:13px">러시 보상 +${rush.shards}${win ? '  (완주 보너스 포함)' : ''}  ·  완주 ${SAVE.rush.clears | 0}회</span>`
+  $('overShards').style.display = BRO ? 'none' : '';
+  if (rush && BRO && rush.times && rush.times.length) $('overStats').innerHTML += `<br><span style="color:#ffe28a">⏱ ${rush.timeTxt()}</span>`;
+  if (rush) $('overStats').innerHTML += `<br><span style="color:#ffb05a">⚔ 보스 러시 — 라운드 ${rush.kills}/${BR_N} 클리어${rush.kills ? ' (' + rush.ord.slice(0, rush.kills).map(k => BR_NAME[k]).join(' · ') + ')' : ''}  ·  고른 증강 ${rush.totalCardsPicked}개${rush.picks.length ? ' (' + rush.picks.join(' + ') + ')' : ''}</span>` + (BRO ? '' : `<br><span style="font-size:13px">러시 보상 +${rush.shards}${win ? '  (완주 보너스 포함)' : ''}  ·  완주 ${SAVE.rush.clears | 0}회</span>`)
     + (rush.reward ? `<br><span style="color:var(--gold)">🏅 보상 등급 [${rush.reward.name}] — 🎫 스킨 뽑기권 ×${rush.reward.tix} · 💎 ${HG[rush.reward.stone].name} 마석 (전 스탯 +${STONE[rush.reward.stone]}%) · ${rush.reward.syr ? '💉 주사기 ×1' : '주사기 없음'}</span>` : '')
     + (rush.hearts.length ? `<br><span style="color:#ff8aa8">💗 얻은 심장: ${rush.hearts.map(q => hTitle(q.h) + '(' + HG[q.h.g].name + ')').join(' · ')}</span>` : '');
   if (rush && rush.ach) $('overStats').innerHTML += `<br><span style="color:var(--gold)">🏆 업적 달성: ${rush.ach.name}  (시작 화면 🏆 업적에서 보상 받기)</span>`;
@@ -17291,6 +17327,7 @@ function drawPreviews() {
   g3.drawImage(H0, d0.pv[0] * K0, 0, d0.pv[1] * K0, d0.ch * K0, (130 - d0.pv[1] * f0) / 2, 104 - d0.ch * f0, d0.pv[1] * f0, d0.ch * f0);
 }
 function buildCards() {
+  if (BRO) for (const id in CHARS) SAVE.chars[id] = true;   // v10.27 보스 러시 전용 빌드: 모든 캐릭터
   if (!SAVE.chars.fish && rushOpen()) { SAVE.chars.fish = true; saveSave(); }   // v9.51: 예전에 지하 20층을 이미 깬 기록이 있으면 바로 열린다
   if (!SAVE.chars.gun && chOpen()) { SAVE.chars.gun = true; saveSave(); }   // v6.40: 예전에 지하 6층을 이미 깬 기록이 있으면 바로 열린다
   if (!SAVE.chars.twins && twinsReady()) { SAVE.chars.twins = true; saveSave(); }   // 예전에 이미 둘 다 잡았다면 바로 열린다
@@ -17311,9 +17348,43 @@ function buildCards() {
   updateDiff(); chMenu(); achSync();
 }
 function chMenu() {   // v6.20: 시작 화면의 챌린지 버튼 · 룬 · 보물
+  if (BRO) { broRender(); return; }
   { const ro = rushReady(); $('rushBtn').textContent = ro ? '⚔ 보스 러시' : '⚔ 보스 러시 🔒'; $('rushBtn').style.opacity = ro ? 1 : 0.6; }
   const o = chOpen(); $('chBtn').textContent = o ? '∞ 챌린지 모드' : '∞ 챌린지 🔒'; $('chBtn').style.opacity = o ? 1 : 0.6;
   $('chInfo').innerHTML = rushLine() + (o ? `∞ 챌린지 — 룬: ${runeLine()}  ·  룬 조각 ${SAVE.ch.frag | 0}/${RUNE_COST}` + (SAVE.ch.best ? `  ·  최고 ${Math.floor(SAVE.ch.best / 60)}분 ${SAVE.ch.best % 60}초` : '') + `<br>보물: ${treasureLine()}` : '');
+}
+/* v10.27 ⚔ 보스 러시 전용 빌드 — 시작 화면: 캐릭터(전부 열림) + 마왕 큐 + 난이도·맵 기믹·시작 레벨·라운드 사이 증강 */
+const broTierTxt = () => BRO_OPT.tier === 'rush' ? '러시 기본(지하 4·6·8·10층 순서로 올라감)' : BRO_OPT.tier === 'own' ? '마왕 본래 층' : floorName(BRO_OPT.tier | 0);
+const broModTxt = () => BRO_OPT.mods === 'rush' ? '러시 기본(라운드마다 쌓임)' : BRO_OPT.mods === 'all' ? '처음부터 전부' : '없음';
+function broRender() {
+  for (const id of ['diffRow', 'hellRow', 'diffDesc', 'menuRow', 'achBtn', 'chInfo']) { const el = $(id); if (el) el.style.display = 'none'; }
+  $('startBtn').textContent = broQ.length ? `⚔ 보스 러시 시작 (${broQ.length}라운드)` : '⚔ 보스 러시 시작 (무작위 4라운드)';
+  const h1 = document.querySelector('#startBox h1'); if (h1) h1.textContent = '⚔ 보스 러시';
+  const pr = document.querySelector('#startBox > p'); if (pr && !pr.dataset.bro) { pr.dataset.bro = 1; pr.innerHTML = '모든 캐릭터 · 모든 마왕 — 캐릭터를 고르고, 싸울 마왕을 순서대로 큐에 넣으세요. 보상은 없고 기록(마왕마다 걸린 시간)만 남아요.<span id="shardTxt" style="display:none"></span>'; }
+  const pn = $('broPanel'); pn.style.display = 'block'; if (pn.nextElementSibling !== $('charCards')) $('charCards').before(pn);   // 마왕 고르기를 캐릭터 카드 위로
+  const hells = {}; for (const k of BR_ORDER) { const h = hellOf(BOSS_FLOOR[k]); (hells[h] = hells[h] || []).push(k); }
+  const HN = ['1지옥 마왕성', '2지옥 버섯 동굴', '3지옥 악마 식물원', '4지옥 어인섬', '5지옥 팔한지옥', '6지옥 팔열지옥', '7지옥 업경의 심판정', '8지옥 타르타로스'];
+  let h = '<div class="broT">마왕 고르기 <small>누르면 큐 맨 뒤에 들어가요 · 같은 마왕을 여러 번 넣어도 돼요</small></div><div class="broG">';
+  for (const k in hells) h += `<div class="broH"><span>${HN[k] || (+k + 1) + '지옥'}</span>` + hells[k].map(b => `<button class="sm broB" data-b="${b}">${BR_NAME[b]}<i>${BOSS_FLOOR[b] + 1}층</i></button>`).join('') + '</div>';
+  h += '</div><div class="broT">큐 <small>' + (broQ.length ? `${broQ.length}라운드 — 칩을 누르면 빠져요` : '비어 있으면 무작위 4마리') + '</small></div><div id="broQ">'
+    + (broQ.length ? broQ.map((k, i) => `<button class="sm broC" data-i="${i}">${i + 1}. ${BR_NAME[k]} ✕</button>`).join('') : '<span class="broE">—</span>') + '</div>'
+    + '<div class="broR"><button class="sm" data-a="rnd">🎲 무작위 4</button><button class="sm" data-a="all">전부 (층 순서)</button><button class="sm" data-a="shuf">섞기</button><button class="sm" data-a="clr">비우기</button></div>';
+  const sel = (id, label, opts, v) => `<label>${label} <select id="${id}">` + opts.map(([a, b]) => `<option value="${a}"${String(a) === String(v) ? ' selected' : ''}>${b}</option>`).join('') + '</select></label>';
+  const fl = [0, 4, 9, 14, 19, 24, 29, 34, 39].map(t => [t, floorName(t) + ' 고정']);
+  h += '<div class="broO">' + sel('broTier', '난이도', [['rush', '러시 기본 (4·6·8·10층)'], ['own', '마왕 본래 층']].concat(fl), BRO_OPT.tier)
+    + sel('broMods', '맵 기믹', [['rush', '러시 기본 (라운드마다 쌓임)'], ['off', '없음'], ['all', '처음부터 전부']], BRO_OPT.mods)
+    + sel('broLv', '시작 레벨', [[10, 'Lv.10'], [20, 'Lv.20'], [25, 'Lv.25'], [30, 'Lv.30']], BRO_OPT.lv)
+    + sel('broMid', '라운드 사이 증강', [[0, '없음'], [2, '2개'], [3, '3개'], [5, '5개']], BRO_OPT.mid) + '</div>'
+    + `<div class="broN">맵 기믹: 2라운드 🫧 산소존 · 3라운드 +🔥 불의 십자가 · 4라운드부터 +🌪 똥바람 (러시 기본) · 심장 옵션·마석·상점 강화 없음 · 이동 속도 ${BR.spdMin}~${BR.spdMax}</div>`;
+  pn.innerHTML = h;
+  pn.querySelectorAll('.broB').forEach(b => b.onclick = () => { broQ.push(b.dataset.b); broSave(); broRender(); });
+  pn.querySelectorAll('.broC').forEach(b => b.onclick = () => { broQ.splice(+b.dataset.i, 1); broSave(); broRender(); });
+  pn.querySelectorAll('[data-a]').forEach(b => b.onclick = () => { const a = b.dataset.a;
+    if (a === 'rnd') broQ = BR_ORDER.slice().sort(() => Math.random() - 0.5).slice(0, 4); else if (a === 'all') broQ = BR_ORDER.slice().sort((x, y) => BOSS_FLOOR[x] - BOSS_FLOOR[y]);
+    else if (a === 'shuf') broQ = broQ.slice().sort(() => Math.random() - 0.5); else broQ = [];
+    broSave(); broRender(); });
+  const on = (id, f) => { $(id).onchange = e => { f(e.target.value); broSave(); broRender(); }; };
+  on('broTier', v => BRO_OPT.tier = v === 'rush' || v === 'own' ? v : +v); on('broMods', v => BRO_OPT.mods = v); on('broLv', v => BRO_OPT.lv = +v); on('broMid', v => BRO_OPT.mid = +v);
 }
 /* v8.61 지옥 고르기: 5층씩 묶어 1지옥(지하 1~5층) · 2지옥(6~10층) … — 지옥을 누르면 그 지옥에서 갈 수 있는 가장 깊은 층, 층 버튼으로 바로 고른다 */
 const HELL_N = 5, HELL_SET = { hell: '마왕성', mush: '버섯 동굴', sea: '어인섬', gard: '악마 식물원', ice: '팔한지옥', fire: '팔열지옥', dosan: '업경의 심판정', tar: '타르타로스' };
@@ -18038,6 +18109,7 @@ function openAch() {
 }
 /* v8.71 간략 패치노트 (최근 버전만, 새 버전마다 맨 위에 한 줄 추가) */
 const PATCH = [
+  ['v10.27','[⚔ 보스 러시 전용 빌드] 보스 러시만 하는 HTML(bossrush.html) — 모든 캐릭터 · 마왕 21종을 골라 큐로 · 난이도·맵 기믹·시작 레벨·라운드 사이 증강 선택 · 마왕마다 걸린 시간 기록 · 세이브는 본 게임과 따로. 본 게임은 바뀐 것 없음'],
   ['v10.26','[8지옥 타르타로스] 새 도트 적용 — 잡몹 5종(속박 간수·형벌 해골병·심연 사냥개·타르타로스 원혼·낙뢰석 골렘, 도감 등록) · 티탄 이펙트 도트(중력의 틈 소용돌이·대지 강타 충격파와 바닥 균열·봉인 자물쇠와 사슬 머리·대차륜 바위와 부서짐·화면 위 봉인 아이콘). 기믹 수치는 그대로'],
   ['v10.25','[8지옥 타르타로스] 지하 36~39층 개방(40층은 준비 중) — 보라 감옥 필드 · 봉인 함정 지대(밟으면 족쇄 3초: 그 자리 170px 안에서만 이동) · 낙석(8~12초마다 3개, 1.3초 예고, 최대 체력 9%) · 8지옥 보스맵 · 새 마왕 [타르타로스의 티탄](36층 100% · 37층 70%): 사슬 채찍이 지나간 호에 5초 중력의 틈(내 투사체를 빨아들임) · 대지 강타 충격파(하늘색 통로나 무적이면 피함, 맞으면 3초 초중력: 이속 -90% · 이동기 봉인) · 형틀의 사슬(주무기 5초 봉인) · 체력 30% 대차륜(바위 4개 회전, 부수면 구멍 · 다 부수면 기절). 잡몹은 아직 7지옥 잡몹'],
   ['v10.24','[철식 강철이] 폐철골 기둥 휩쓸기(화면 절반을 덮는 큰 도넛)에도 안전 구멍 추가 — 내가 도넛 안에 서 있으면 가까운 곳(약 150~215px)에 하늘색 빈 원이 생기고 그 안은 피해 없음(보스 품 안은 그대로 안전). 안내 문구도 수정'],
@@ -18280,7 +18352,7 @@ $('gClose').addEventListener('click', () => { show('gachaBox', false); buildCard
 $('gOne').addEventListener('click', () => gachaPull(1));
 $('gTen').addEventListener('click', () => gachaPull(10));
 $('gBanA').src = SRC.skA_wolfE; $('gBanB').src = SRC.skA_gunH; gachaBtnTxt();
-$('startBtn').addEventListener('click', () => { chMode = false; rushMode = false; startGame(selChar); });
+$('startBtn').addEventListener('click', () => { chMode = false; rushMode = BRO; startGame(selChar); });
 $('rushBtn').addEventListener('click', () => { if (!rushReady()) { $('hint').textContent = '🔒 보스 러시: 지하 25층 마왕(팔한지옥의 대공작 릴세르카)을 쓰러뜨리면 열립니다'; return; } chMode = false; rushMode = true; startGame(selChar); });
 $('chBtn').addEventListener('click', () => { if (!chOpen()) { $('hint').textContent = '🔒 ∞ 챌린지 모드: 지하 6층 마왕을 쓰러뜨리면 열립니다'; return; } chMode = true; startGame(selChar); });
 $('retryBtn').addEventListener('click', () => startGame(curChar));
@@ -18309,7 +18381,7 @@ window.addEventListener('keydown', e => {
   else if (e.code === 'Escape' && isOpen('routeBox')) show('routeBox', false);
   else if (e.code === 'Escape' && isOpen('etcBox')) show('etcBox', false);
   else if (isOpen('setBox') || isOpen('shopBox') || isOpen('dexBox') || isOpen('gachaBox') || isOpen('heartBox') || isOpen('achBox') || isOpen('routeBox') || isOpen('etcBox')) return;
-  else if (state === 'menu' && (e.code === 'Enter' || e.code === 'Space')) { chMode = false; rushMode = false; startGame(selChar); }
+  else if (state === 'menu' && (e.code === 'Enter' || e.code === 'Space')) { chMode = false; rushMode = BRO; startGame(selChar); }
   else if (state === 'menu' && e.code === 'Digit1') selectChar('wolf');
   else if (state === 'menu' && e.code === 'Digit2') selectChar('snail');
   else if (state === 'menu' && e.code === 'Digit3') selectChar('archer');
@@ -18386,7 +18458,7 @@ stepDive = skWrap(stepDive, 'dive'); stepRush = skWrap(stepRush, 'rush'); rushSt
 updateAirs = (f => function (...a) { return withSrc('basic', () => f.apply(this, a)); })(updateAirs);   // v6.22: 에어슬래시는 평타 (v6.30: 바로 뒤 천안 난무·브레스 감싸기가 주석에 묻혀 딜미터기에서 빠지던 것 수정)
 { const _tb = thornBlast, _sb = smashBlow; thornBlast = function (...a) { return withSrc('scale', () => _tb.apply(this, a)); }; smashBlow = function (...a) { return withSrc('smash', () => _sb.apply(this, a)); }; }
 shellReflect = skWrap(shellReflect, 'shell'); updateBsig = skWrap(updateBsig, 'bsigil');
-window.__G = { TSPECIES, TTN, TTW, TitanAI, TitanRock, ttnClear, ttnExPause, ttnInGap, ttnHeavy, ttnSealApply, ttnSealAtk, get ttn() { return ttn; }, TAR, TARW, isTarSet, tarTile, TF, TPROP_RECTS, IMAP_TAR, updateTarField, STL, STLW, SteelEaterAI, IronChunk, stlClear, stlWipe, stlExPause, stlStack, get stlAI() { return stlAI; }, openDex, BYU, BYUW, BanupAI, byuClear, byuExPause, get byu() { return byu; }, pctMul, pctMelee, PCT_RATE, FISH, KN, castLostHead, get lhead() { return lhead; }, snMouth, snHall, tgArmsAt, tgC, tgCrossOm, tgDashDone, DOK, DOKW, DokkaebiAI, dokClear, dokZoneBox, dokSpinPath, get dok() { return dok; }, gunRoll1, gunHit, updateFish, openSlot, slotResult, slotSpin, WH, WHW, WhaleAI, whClear, whRoom, whLane, whLaneOk, whDexArt, get wh() { return wh; }, hq, hqLow, drawWolf, heatOn, heatArena, arenaRests, arenaRestNearest, openRoutePic, get banner() { return banner; }, isDosanSet, get DSPECIES() { return DSPECIES; }, buildDosanSpecies, BLADE, DF, DPROP_RECTS, dosanTile, imgReady, igniteX, procElem, startFw, spawnFw, spawnUniq, get cam() { return cam; }, TG, TGW, get tg() { return tg; }, tgClear, tgArms, tgCrossAt, tgInSafe, tgCxR, tgPatEnd, tgSafeSpot, tgCam, tgHold, TigerAI, HFUSE_HID, spawnFrw, frwAtk, FRW, spawnLad, lAtk, LAD, LADF, buildCards, rollHeartDrop, heartGain, disHeart, CHARS, inPoly, castSkill, get arena() { return arena; }, FISH, FWAVE, FISHA2, get fwaveQ() { return fwaveQ; }, SN, SNW, get sn() { return snAI; }, snClear, snHall, snEscapeR, pendingConds, rollCards, fishR, shardTotal, calcShards, heartBonus, CV, CVW, HellfirePatch, get cv() { return cvAI; }, cvClear, cvFurnace, pickBossK, get rushQ() { return rushQ; }, get FSPECIES() { return FSPECIES; }, heartMigrate, hRange, IMP, BLD, leadXY, leadDir, HEAT, FF, restNear, restNearest, restAt, updateHeat, isFireSet, fireTile, floorSet, clearGround: () => GROUND.clear(), get TOP_TIER() { return TOP_TIER; }, get OPEN_TIER() { return OPEN_TIER; }, lilArt, drawLilBody, LS, LSW, get ls() { return ls; }, FrostMirror, lsInWedge, lsIce, lsExPause, lsZone, lilDefeated, RD, RDW, RDF, rdOn, get rd() { return rd; }, KarmaBead, FrostMantra, IceLotus, rdAbsorb, rdInGap, rdExPause, rdSilence, rudDefeated, IMP, GoldImp, impOf, trySpawnImp, impDefeated, set impAt(v) { impAt = v; }, LUCK_N, PB, PBW, IMAP, IceWall, Fissure, IceSpear, segDist, FrostMgr, pbOn, pbClear, pbExPause, get pb() { return pb; }, gunMagN, ROLL, get lhead() { return lhead; }, KN, castLostHead, TW, isIceSlip, isIceSet, get ISPECIES() { return ISPECIES; }, ICE_SLIP, ICE_L, OPEN_TIER, TOP_TIER, renderHells, floorSet, pickFloor, iceTile, IF, get lhead() { return lhead; }, KN, isKnight, castLostHead, knightSlash, openGhostRoute, KNIGHT_FORMS, ghostForm, hTitle, relicIcon, heartMake, hOpt, heartBonus, calcShards, GRN, GRW, GRNF, spawnGrn, grnStart, grnPick, TRIAL, chAltarTick, chAltarPlace, chTrialStart, chTrialWin, chTime, chTime0, chDmgT, CH_HARD, CH_BOSS, cardDefs, cardView, ACH, achSync, achClear, openAch, KG, KGW, get kg() { return kg; }, AirGeyser, WaterMirror, MirrorBolt, kgIce, get shards() { return shards; }, set shards(v) { shards = v; }, VF, VFW, get vf() { return vf; }, VfTrap, VfSkull, VfHeart, vfLeech, fuseHearts, rerollHeart, heartBonus, renderFuse, setFu(v) { hFu = v; }, QN, QNW, get qn() { return qn; }, RootBind, SporeSack, QnMush, pickBossK, pctMelee, pctZone, updateDiff, skinG, bhKey, BH_ORDER, heartIcon, relicMaskOn, calcShards, isSlow, isLava, saveSave, svParse, spawnPlant, PL, get GSPECIES() { return GSPECIES; }, get plBalls() { return plBalls; }, synCard, freezeE, availSyn, SYNERGIES, dmName, FD, shkAdd, toxAdd, skSpawnPair, phoenixRevive, mirrorBlock, palPop, updateCutSaws, get shkSp() { return shkSp; }, get toxFl() { return toxFl; }, get zonesRef() { return zones; },
+window.__G = { BRO, BOSS_FLOOR, get broQ() { return broQ; }, set broQ(v) { broQ = v; }, BRO_OPT, brTierAt, brModsAt, broRender, TSPECIES, TTN, TTW, TitanAI, TitanRock, ttnClear, ttnExPause, ttnInGap, ttnHeavy, ttnSealApply, ttnSealAtk, get ttn() { return ttn; }, TAR, TARW, isTarSet, tarTile, TF, TPROP_RECTS, IMAP_TAR, updateTarField, STL, STLW, SteelEaterAI, IronChunk, stlClear, stlWipe, stlExPause, stlStack, get stlAI() { return stlAI; }, openDex, BYU, BYUW, BanupAI, byuClear, byuExPause, get byu() { return byu; }, pctMul, pctMelee, PCT_RATE, FISH, KN, castLostHead, get lhead() { return lhead; }, snMouth, snHall, tgArmsAt, tgC, tgCrossOm, tgDashDone, DOK, DOKW, DokkaebiAI, dokClear, dokZoneBox, dokSpinPath, get dok() { return dok; }, gunRoll1, gunHit, updateFish, openSlot, slotResult, slotSpin, WH, WHW, WhaleAI, whClear, whRoom, whLane, whLaneOk, whDexArt, get wh() { return wh; }, hq, hqLow, drawWolf, heatOn, heatArena, arenaRests, arenaRestNearest, openRoutePic, get banner() { return banner; }, isDosanSet, get DSPECIES() { return DSPECIES; }, buildDosanSpecies, BLADE, DF, DPROP_RECTS, dosanTile, imgReady, igniteX, procElem, startFw, spawnFw, spawnUniq, get cam() { return cam; }, TG, TGW, get tg() { return tg; }, tgClear, tgArms, tgCrossAt, tgInSafe, tgCxR, tgPatEnd, tgSafeSpot, tgCam, tgHold, TigerAI, HFUSE_HID, spawnFrw, frwAtk, FRW, spawnLad, lAtk, LAD, LADF, buildCards, rollHeartDrop, heartGain, disHeart, CHARS, inPoly, castSkill, get arena() { return arena; }, FISH, FWAVE, FISHA2, get fwaveQ() { return fwaveQ; }, SN, SNW, get sn() { return snAI; }, snClear, snHall, snEscapeR, pendingConds, rollCards, fishR, shardTotal, calcShards, heartBonus, CV, CVW, HellfirePatch, get cv() { return cvAI; }, cvClear, cvFurnace, pickBossK, get rushQ() { return rushQ; }, get FSPECIES() { return FSPECIES; }, heartMigrate, hRange, IMP, BLD, leadXY, leadDir, HEAT, FF, restNear, restNearest, restAt, updateHeat, isFireSet, fireTile, floorSet, clearGround: () => GROUND.clear(), get TOP_TIER() { return TOP_TIER; }, get OPEN_TIER() { return OPEN_TIER; }, lilArt, drawLilBody, LS, LSW, get ls() { return ls; }, FrostMirror, lsInWedge, lsIce, lsExPause, lsZone, lilDefeated, RD, RDW, RDF, rdOn, get rd() { return rd; }, KarmaBead, FrostMantra, IceLotus, rdAbsorb, rdInGap, rdExPause, rdSilence, rudDefeated, IMP, GoldImp, impOf, trySpawnImp, impDefeated, set impAt(v) { impAt = v; }, LUCK_N, PB, PBW, IMAP, IceWall, Fissure, IceSpear, segDist, FrostMgr, pbOn, pbClear, pbExPause, get pb() { return pb; }, gunMagN, ROLL, get lhead() { return lhead; }, KN, castLostHead, TW, isIceSlip, isIceSet, get ISPECIES() { return ISPECIES; }, ICE_SLIP, ICE_L, OPEN_TIER, TOP_TIER, renderHells, floorSet, pickFloor, iceTile, IF, get lhead() { return lhead; }, KN, isKnight, castLostHead, knightSlash, openGhostRoute, KNIGHT_FORMS, ghostForm, hTitle, relicIcon, heartMake, hOpt, heartBonus, calcShards, GRN, GRW, GRNF, spawnGrn, grnStart, grnPick, TRIAL, chAltarTick, chAltarPlace, chTrialStart, chTrialWin, chTime, chTime0, chDmgT, CH_HARD, CH_BOSS, cardDefs, cardView, ACH, achSync, achClear, openAch, KG, KGW, get kg() { return kg; }, AirGeyser, WaterMirror, MirrorBolt, kgIce, get shards() { return shards; }, set shards(v) { shards = v; }, VF, VFW, get vf() { return vf; }, VfTrap, VfSkull, VfHeart, vfLeech, fuseHearts, rerollHeart, heartBonus, renderFuse, setFu(v) { hFu = v; }, QN, QNW, get qn() { return qn; }, RootBind, SporeSack, QnMush, pickBossK, pctMelee, pctZone, updateDiff, skinG, bhKey, BH_ORDER, heartIcon, relicMaskOn, calcShards, isSlow, isLava, saveSave, svParse, spawnPlant, PL, get GSPECIES() { return GSPECIES; }, get plBalls() { return plBalls; }, synCard, freezeE, availSyn, SYNERGIES, dmName, FD, shkAdd, toxAdd, skSpawnPair, phoenixRevive, mirrorBlock, palPop, updateCutSaws, get shkSp() { return shkSp; }, get toxFl() { return toxFl; }, get zonesRef() { return zones; },
   bossDefeated, get IMG() { return IMG; },
   get ready() { return !!IMG.floorD; }, get state() { return state; }, get P() { return P; }, get enemies() { return enemies; }, get orbs() { return orbs; },
   get zones() { return zones; }, get ebul() { return ebul; }, get EYE() { return EYE; }, get shards() { return shards; }, get bigQ() { return bigQ; }, get bombQ() { return bombQ; }, get holyQ() { return holyQ; }, get afx() { return afx; }, get dashQ() { return dashQ; }, get beam() { return beam; }, get evo() { return evo; }, get choices() { return choices; },
