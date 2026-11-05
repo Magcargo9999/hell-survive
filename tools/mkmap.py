@@ -10,6 +10,7 @@ ANCHORS = [
  ('스킬 목록(이름·설명)', r'^const SKILLS = '), ('스킬 쿨타임·스킬 이름 함수', r'^const SKILL_CD|^const skillName'),
  ('공용 카드', r'^const UPGRADES = '), ('캐릭터 전용 카드', r'^const UNIQUE = '), ('조합 카드', r'^const SYNERGIES = '),
  ('마계 물고기 진화(v9.49: 미꾸라지 물방울·마해룡 절대 수압·포식자의 파도)', r'^const FISH_AURA|^const FWAVE|^function updateFish|^function fishOrb|^function startFishWave|^function stepFishWave|^function drawFishWave|^function drawFishAura'),
+ ('챌린지 전용 맵(v10.31: 영겁의 균열 평원 바닥·소품·푸른 기운)', r'^const CHM = |^function chmTile'),
  ('∞ 챌린지 대개편(v10.30: 무한 맵·미니맵·레벨 이벤트·맵 기믹·한계 돌파·골든 러너·금제의 제단·콤보 피버·룰렛)', r'^function startChallenge|^function chUpdate|^function chEvent|^function chBossCall|^function chEnterBoss|^function chIMapAt|^function chHazards|^function chSquad|^function chSkStep|^const PACTS|^function chPactStart|^function chGoldStep|^function chJackpot|^function chKill|^function openRoul|^const ROUL|^function chReward|^function drawMinimap|^function chHud|^const cardMax|^function bossWorldClear'),
  ('QA v10.28 (마안 겹침·버섯마귀 잘림·러시 1라운드)', r'^const eyeExPause|^const SHK_SKIP|^function shkCut|^const brR1'),
  ('보스 러시 전용 빌드 BRO(v10.27)', r'^const BRO = |^function broRender|^function brTierAt|^function brModsAt|^const BOSS_FLOOR'),
