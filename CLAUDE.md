@@ -4,7 +4,7 @@
 **이 문서를 먼저 다 읽고 작업할 것.** 답변은 한국어로 짧고 간결하게.
 
 ## 꼭 지킬 규칙 (사용자 지시)
-1. **파일 이름:** 매 빌드 `hell survive v.N.NN.html`, 버전은 매번 올린다. 마지막 배포 = **v10.31** → 다음은 v10.32. (v10.01부터 10대, 사용자 지시) (v6.01부터 6대 · v7.01부터 7대: 지하 10층·버섯 맵 개편 · **v8.01부터 8대: 보스 심장 시스템 기준, 사용자 지시**)
+1. **파일 이름:** 매 빌드 `hell survive v.N.NN.html`, 버전은 매번 올린다. 마지막 배포 = **v10.32** → 다음은 v10.33. (v10.01부터 10대, 사용자 지시) (v6.01부터 6대 · v7.01부터 7대: 지하 10층·버섯 맵 개편 · **v8.01부터 8대: 보스 심장 시스템 기준, 사용자 지시**)
    - **v10.22부터(사용자 지시): 보스·캐릭터를 추가해도 버전 앞자리(10.X의 십의 자리)를 올리지 않는다. 항상 끝자리만 +1.** (v10.30·v10.40은 잘못 올린 것이라 v10.21·v10.22로 고침)
 2. **도트는 절대 수정·재색칠 금지.** 자르기·배경 제거·마스크·배율 조정만 허용.
 3. 기능은 **단순하게**. 서로 복사한 듯한 중복 스킬/카드 금지.
@@ -130,6 +130,7 @@ git add -A && git commit -m "v6.10: 변경점 한 줄" && git push origin main
   - **세이브 옮기기 (v8.55, 설정 화면 `bindSaveIO`):** [파일로 저장](.json) · [코드 복사](`HS1z:`+gzip base64, 못 쓰면 `HS1:`) · [파일/코드 불러오기] — `svParse`가 형식(`game:'hellSurvive'`)을 검사하고, `svApply`가 확인창 → 지금 세이브를 `hellSurvivorSave1_bak`에 백업 → 덮어쓰기(`saveLock`) → 새로고침. 서버·계정 없음. 테스트 `tools/tests/saveio855.py`
 - **∞ 챌린지 모드 (v10.30 대개편, 템플릿 'v10.30 ∞ 챌린지 모드 대개편' 블록 · 조절값 `CH`):** 해금 = 지하 6층 마왕(`chOpen`). `startChallenge`가 깬 지옥의 잡몹 그림(`CH_SET_IMG`)·`goldr`을 기다린 뒤 시작, `P.tier=2`(마왕 기믹 약화), 시작 (0,0).
   - **전용 맵 (v10.31 '영겁의 균열 평원', 템플릿 `CHM`·`chmOn`·`chmTile`·`chmTileC`·`chmTileFill`, 아틀라스 `tools/atlas/chmap_build.py <받은 맵 시트>` → `src/assets/chmap/chfloor.webp`(176px 24칸)·`chprops.webp`+`.json`(소품 12종, LAZY·`chImgsNeeded`에 포함)):** 챌린지(`chal`)면 `groundChunk`가 `cm`으로 갈라 128px 블록마다 타일 한 장(`chmTile`: 희귀 무늬 → 서리·이끼·재 군락 → 균열·뼛가루 → 일반 돌바닥 8장)을 고른다. **시트 타일은 이음새가 안 맞아서(가장자리 차이 ≈ 안쪽의 5배) 타일마다 가장자리 `F`=24px을 알파로 줄여 겹쳐 그린다** — 도트는 그대로. 푸른 기운 = 덮어 그리는 색 `CHM.tint` + 화면 안개·푸른 빛(`chScreen`), 불바닥(14)·가시 구멍(15)·솟음(16)은 `chmTileFill`이 타원 안에, 제단은 소품 6(촛불 제단)을 씀(소품 6은 흩뿌리지 않음). 테스트 `tools/tests/chmap1031.py`.
+  - **v10.32 챌린지 보강:** 산소 게이지는 `chHud`에서 `drawKgO2`(필드엔 이전에 안 그려짐). 마왕 게이트: Lv.20+는 `chUpdate`가 미니·`evCd`와 무관하게 `chBossCall`(살아 있는 미니는 정리, 금제 중이면 끝난 뒤, HUD에 안내) — Lv20~45 확인. 피버 `CH.comboFever` 120·`feverT` 12·`feverP` 0.4, 조각 1+⌊콤보/250⌋. 조각 이펙트 `chCoinFx`/`chShardFxStep`/`drawChShards`/`chDing`(`sfx('ding')`) · 피버 BGM `feverTick`(105ms, `bgmTick`은 피버 중 쉼). 업적 `CH_ACH` 33개(`ACH`에 push, `a.ch` 키 = `SAVE.ch` 통계, `chStatsLive`가 매초 갱신·토스트). 입장 창 `#chBox` `openChMenu`/`enterChallenge`(리듬게임풍 랭크·막대, Esc/Enter). 도트 `IMG.chdot`/`CHD`(`tools/atlas/chdot_build.py`: 0돌격병 1주술사 2자폭병 3제단 4룰렛 5바늘, `drawChSq`·`drawChAltar`·`drawRoul`, LAZY). **주사기 드랍 아이콘 도트는 없음(💉 이모지/코드 그림)**. 테스트 `tools/tests/ch1032.py`.
   - **무한 맵:** 예전 다각형 맵 `CHM`·`chm` 그림 삭제. `inCh`=항상 참, `chPull`/`chSpot`=빈 함수, 바닥은 필드(`drawGround`, `P.fset='hell'`, 용암 없음). 미니맵 `drawMinimap`(오른쪽 위). 잡몹 체력 `chTime`(10분까지 1+초/115, 이후 분당 ×1.07) · 공격 `chDmgT` · `CH_HARD` 1.15 그대로.
   - **스폰 풀:** `chClearedSets`(깬 가장 깊은 층 `diff.clr`까지의 지옥) → `chMobAvail`이 40초(`CH.setGap`)마다 한 지옥씩 합류시켜 지옥 하나를 고르고 그 지옥 잡몹 목록을 돌려준다(`spawnEnemy` 맨 앞).
   - **레벨 이벤트 `chEvent`(`chal.next` 5씩):** Lv.5/10/15 미니 보스 `chMiniSpawn`(`CH_MINI` 8종 — 판 미니는 `P.bossK`를 잠깐 바꿔 `spawnMini`) · Lv.5부터 특수 잡몹 부대 `chSquad`(55~70초, `e.csk` dash/cast/bomb, `chSkStep`·예고 `chal.tele`) · Lv.20부터 5레벨마다 마왕 `chBossCall`(`chBossPool` = `brPool()` + ab·grn (+fw), `chal.usedB`로 중복 없이) → 사이렌 3.2초(`sfx('siren')`, `chScreen` 붉은 점멸) → `chEnterBoss`. **결계 없음.** 금제 중·보상 대기 중엔 이벤트를 미룸.
