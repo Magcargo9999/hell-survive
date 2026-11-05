@@ -1,4 +1,4 @@
-"""v9.51 백곰 마왕 도트 — 대기·이동·강공격·포효·돌진·갑주·사망 스크린샷 + 콘솔 오류
+"""v9.51(v10.33 고해상도 시트) 백곰 마왕 도트 — 대기·이동·강공격·포효·돌진·갑주·사망 스크린샷 + 콘솔 오류
 사용: GAME_URL=http://localhost:8765/index.html PYTHONPATH=tools python3 tools/tests/bear951.py [폴더]"""
 import asyncio, sys
 from h301 import *
@@ -8,8 +8,11 @@ async def main():
     async with async_playwright() as p:
         b = await p.chromium.launch(); pg = await newpage(b, 1280, 720)
         await pg.wait_for_function('__G.IMG&&__G.IMG.bear', timeout=90000)
-        r = await pg.evaluate("""()=>{const G=__G;G.SAVE.diff.max=21;G.SAVE.diff.sel=20;G.SAVE.shards=1e7;G.startGame('archer');const P=G.P;__lv(28);G.raiseCastle();G.enterArena();
-          for(let i=0;i<60;i++)G.tick(1/30);const e=G.boss;return {bk:e&&e.bk,img:!!G.IMG.bear}}""")
+        r = await pg.evaluate("""()=>{const G=__G;G.SAVE.diff.max=21;G.SAVE.diff.sel=20;G.SAVE.shards=1e7;G.startGame('archer');const P=G.P;__lv(28);G.raiseCastle();G.enterArena();}""")
+        for _ in range(240):   # v10.33: enterArena는 LAZY 그림이 준비될 때까지 아무것도 안 한다 → 다시 부른다
+            if await pg.evaluate("()=>{const G=__G;if(G.boss&&G.boss.bk)return true;G.enterArena();for(let i=0;i<20;i++)G.tick(1/30);return false}"): break
+            await pg.wait_for_timeout(250)   # v10.33: enterArena가 LAZY 그림을 기다린 뒤 마왕을 만든다
+        r = await pg.evaluate("""()=>{const G=__G;for(let i=0;i<60;i++)G.tick(1/30);const e=G.boss;return {bk:e&&e.bk,img:!!G.IMG.bear}}""")
         print(r)
         async def shot(name, js):
             await pg.evaluate("()=>{const G=__G,P=G.P,e=G.boss;P.hp=P.max;P.inv=99;P.x=G.IMAP.cx;P.y=G.IMAP.cy-200;e.x=P.x+20;e.y=P.y+330;e.hp=e.max;e.st='chase';e.stT=99;for(const k in G.pb.cd)G.pb.cd[k]=99;"+js+"G.render()}")
