@@ -13576,7 +13576,7 @@ const CH = {
   fireLv: 10, fireR: [70, 110], fireLife: 9, fireWarn: 1.0, fireDm: 0.03,   // 불바닥 (0.5초마다 최대 체력 3%)
   spikeLv: 15, spikeR: 52, spikeWarn: 0.9, spikeDm: 0.08,                  // 가시 함정 (최대 체력 8%)
   o2Lv: 20, o2Drain: 4, o2Dmg: 0.06, o2GyN: 3,                            // 산소 (초당 -4 = 25초 · 0이면 초당 최대 체력 6%)
-  comboFever: 100, feverT: 10,   // 노히트 100콤보마다 피버 10초
+  comboFever: 150, feverT: 10,   // 노히트 150콤보마다 피버 10초
   syrFrom: 600, syrP: 1 / 3500, syrMini: 0.1, syrBoss: 0.25,   // 주사기: 10분부터 처치마다 1/3500 · 미니 10% · 마왕 25%
   jackP: 0.06,                 // 황금 도망자 잭팟 확률
   bossVR: CH_VR,
@@ -13848,11 +13848,12 @@ function drawChLoot(wx, wy) {
 /* ---------- 노히트 콤보 · 영혼 조각 피버 (룬 대체) ---------- */
 function chKill(e) {   // 처치할 때마다 (일반 마물 · 강적 모두)
   const c = chal; c.combo++; c.best = Math.max(c.best, c.combo);
-  if (c.combo % CH.comboFever === 0) { c.fever = CH.feverT; c.feverN++; banner = { txt: `🔥 ${c.combo} 콤보!  영혼 조각 피버 ${CH.feverT}초 — 처치마다 영혼 조각`, t: 2.5, c: '#ffd23a' }; sfx('evolve'); addRing(P.x, P.y - 30, 10, 260, 0.7, '255,210,60', 10); }
-  if (c.fever > 0 || (c.pact && c.pact.k === 'dark')) { const v = (c.fever > 0 ? 1 + Math.floor(c.combo / 200) : 0) + (c.pact && c.pact.k === 'dark' ? 2 : 0); c.sh += v; if (rand() < 0.35) chCoinFx(e.x, e.y); }
+  if (c.combo % CH.comboFever === 0) { c.fever = CH.feverT; c.feverN++; banner = { txt: `🔥 ${c.combo} 콤보!  영혼 조각 피버 ${CH.feverT}초 — 처치하면 영혼 조각이 튄다`, t: 2.5, c: '#ffd23a' }; sfx('evolve'); addRing(P.x, P.y - 30, 10, 260, 0.7, '255,210,60', 10); }
+  if (c.fever > 0 || (c.pact && c.pact.k === 'dark')) {   // 피버: 처치의 25%에서 조각 1(+300콤보마다 1) · 어둠의 장막: 처치의 30%에서 조각 +2
+    const v = (c.fever > 0 && rand() < 0.25 ? 1 + Math.floor(c.combo / 300) : 0) + (c.pact && c.pact.k === 'dark' && rand() < 0.3 ? 2 : 0); if (v) { c.sh += v; chCoinFx(e.x, e.y); } }
   if (gt >= CH.syrFrom && e.kind !== 'boss' && rand() < CH.syrP) chLoot('syr', e.x, e.y);
 }
-function chCoinFx(x, y) { if (fx.length < 260) for (let i = 0; i < 2; i++) fx.push({ x, y: y - 20, vx: (rand() - 0.5) * 160, vy: -180 - rand() * 120, life: 0.6, max: 0.6, c: '#ffd23a', s: 4 }); }
+function chCoinFx(x, y) { if (fx.length < 260) for (let i = 0; i < 2; i++) fx.push({ x, y: y - 20, vx: (rand() - 0.5) * 160, vy: -180 - rand() * 120, life: 0.6, max: 0.6, c: '#ffd23a', s: 4 }); if (rand() < 0.3) floatNum(x, y - 50, '+💠', '#9be7ff'); }
 function chHurt() {   // 실제로 피해를 입었다 (hurtPlayer) → 콤보 끊김
   if (!chal || !chal.combo) return;
   if (chal.combo >= 30) floatNum(P.x, P.y - 120, `콤보 ${chal.combo} 끊김`, '#ff8a7a');
@@ -13946,7 +13947,7 @@ const chO2On = () => !!(chal && chal.o2Seen && !arena && P.lvl >= CH.o2Lv);
 const PACTS = [
   { k: 'rain', name: '🩸 피의 비', dur: 35, risk: '피의 비가 쏟아진다 (붉은 원 — 한 방울 최대 체력 7%) · 내 자리도 노린다', gain: '그동안 얻는 경험치 ×3' },
   { k: 'glass', name: '🔮 유리대포', dur: 30, risk: '최대 체력이 10으로 고정 (스치면 위험)', gain: '그동안 공격력 ×3 · 버티면 이번 판 공격력 +50%' },
-  { k: 'dark', name: '🌑 어둠의 장막', dur: 35, risk: '시야가 내 주변으로 좁아진다', gain: '그동안 처치마다 영혼 조각 +2' },
+  { k: 'dark', name: '🌑 어둠의 장막', dur: 35, risk: '시야가 내 주변으로 좁아진다', gain: '그동안 처치마다 30% 확률로 영혼 조각 +2' },
   { k: 'horde', name: '👹 무리의 서약', dur: 40, risk: '마물이 2.5배로 쏟아지고 체력 +30%', gain: '버티면 카드 2장 + 보물 상자' },
   { k: 'pain', name: '🩹 고통의 서약', dur: 40, risk: '받는 피해 ×1.8', gain: '버티면 이번 판 최대 체력 +30%' },
 ];

@@ -19,7 +19,7 @@ async def main():
             r = await pg.evaluate("""async(SEC)=>{const G=__G,E={};let n=0,ang=0;const P=G.P;
               const add=e=>{const k=String(e&&e.stack||e).split('\\n').slice(0,2).join(' | ').slice(0,220);E[k]=(E[k]||0)+1};
               for(let f=0;f<SEC*30;f++){
-                try{ if(G.state==='levelup'){const c=G.choices||[];G.pick(Math.floor(Math.random()*Math.max(1,c.length)));continue}
+                try{ if(G.state==='levelup'){const c=G.choices||[];const t0=document.getElementById('levelTitle').textContent;G.pick(Math.floor(Math.random()*Math.max(1,c.length)));if(G.state==='levelup'&&document.getElementById('levelTitle').textContent===t0)await new Promise(r=>setTimeout(r,450));continue}
                   if(G.state==='roul'){if(G.roul&&G.roul.ph==='ask')G.roulSpin();else if(G.roul&&G.roul.ph==='done')document.getElementById('rouBtn').click();G.tick(1/30);continue}
                   if(G.state==='slot'){G.tick(1/30);document.getElementById('slotLeave').click();continue}
                   if(G.state==='evolve'){G.tick(1/30);continue}
