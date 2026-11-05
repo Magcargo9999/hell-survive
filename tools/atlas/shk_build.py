@@ -23,24 +23,53 @@ ROWS = {
  'erupt': (742, 850, 757, [(862, 1000), (1000, 1152), (1152, 1302), (1302, 1514)]),
  'fx':    (862, 998, 887, [(30, 135), (402, 582), (585, 748), (1078, 1510)]),
 }
+BOX = {r: v for r, v in {'idle': (484, 12, 628, 43), 'walk': (484, 137, 626, 169), 'atk': (485, 255, 627, 286), 'spit': (485, 255, 627, 286), 'hit': (485, 376, 626, 407), 'death': (484, 484, 628, 516),
+       'cast': (485, 599, 706, 630), 'spore': (485, 599, 706, 630), 'sum': (484, 737, 667, 768), 'erupt': (484, 737, 667, 768), 'fx': (18, 856, 188, 887)}.items()}   # 줄 제목 상자 (x0, y0, x1, y1)
 LBL_X = {'idle': 640, 'walk': 640, 'atk': 645, 'spit': 645, 'hit': 645, 'death': 640, 'cast': 735, 'spore': 735, 'sum': 700, 'erupt': 700, 'fx': 200}
+# v10.28: 빽빽한 줄(포자·소환·분출)은 칸 경계를 ±28px 안에서 그림이 가장 적은 세로줄로 옮긴다 (이펙트가 네모로 잘리지 않게)
+FG = RGB.max(axis=2) > 20
+def valley(y0, y1, cells):
+    xs = [c[0] for c in cells] + [cells[-1][1]]
+    for i in range(1, len(xs) - 1):
+        if cells[i - 1][1] != cells[i][0]: continue
+        lo, hi = xs[i] - 28, xs[i] + 28; col = FG[y0:y1, lo:hi].sum(axis=0); xs[i] = lo + int(np.argmin(col))
+    return [(xs[i], xs[i + 1]) for i in range(len(cells))]
+for r1, r2 in (('cast', 'spore'), ('sum', 'erupt')):
+    y0, y1, lb, _ = ROWS[r1]; allc = ROWS[r1][3] + ROWS[r2][3]; adj = valley(y0, y1, allc)
+    n1 = len(ROWS[r1][3]); ROWS[r1] = (y0, y1, lb, adj[:n1]); ROWS[r2] = (y0, y1, lb, adj[n1:])
 frames, tiles = {}, []
 for k, (y0, y1, lb, cells) in ROWS.items():
     frames[k] = []
     for (x0, x1) in cells:
         rgb = RGB[y0:y1, x0:x1]; m = rgb.max(axis=2) > 20
-        if lb and x0 < LBL_X.get(k, 0):   # 라벨 상자: 아래 테두리(붉은 가로선)까지 지운다
-            lx0 = 14 if k == 'fx' else 482; R = RGB[y0 - 4:y0 + 44, lx0:LBL_X[k]]
-            line = ((R[:, :, 0] > 120) & (R[:, :, 1] < 50) & (R[:, :, 2] > 35) & (R[:, :, 2] < 110)).sum(axis=1)
-            rows = [i for i, c in enumerate(line) if c >= 40]; bot = (y0 - 4 + max(rows)) if rows else lb
-            m[:max(0, bot - y0 + 2), :LBL_X[k] - x0] = False
+        bx = BOX.get(k)
+        if bx and x0 < bx[2] + 8 and bx[3] + 3 > y0:   # v10.28: 줄 제목 상자 — 상자 사각형 안의 테두리선·어두운 바탕·사각형 안에 갇힌 덩어리(글자)만 지운다 (예전엔 칸 왼쪽 윗부분을 통째로 지워 버섯 머리가 잘렸다)
+            rx0, ry0, rx1, ry1 = max(0, bx[0] - 2 - x0), max(0, bx[1] - 2 - y0), min(x1 - x0, bx[2] + 8 - x0), min(y1 - y0, bx[3] + 3 - y0)
+            if rx1 > rx0 and ry1 > ry0:
+                box = np.zeros_like(m); box[ry0:ry1, rx0:rx1] = True
+                sub = rgb.astype(int); crim = (sub[:, :, 0] > 140) & (sub[:, :, 1] < 90) & (sub[:, :, 0] > sub[:, :, 2] * 1.6)
+                line = nd.binary_opening(crim & box, structure=np.ones((1, 7))) | nd.binary_opening(crim & box, structure=np.ones((7, 1)))
+                dark = box & (sub.max(axis=2) < 48)
+                m &= ~(nd.binary_dilation(line, iterations=1) & box) & ~dark
+                lab0, n0 = nd.label(m)
+                for i0 in range(1, n0 + 1):
+                    comp = lab0 == i0
+                    if not (comp & ~box).any(): m[comp] = False
+                near = np.zeros_like(m); near[max(0, ry0 - 2):min(m.shape[0], ry1 + 8), max(0, rx0 - 2):min(m.shape[1], rx1 + 8)] = True
+                lab0, n0 = nd.label(m); szs = nd.sum(m, lab0, range(1, n0 + 1))
+                for i0 in range(1, n0 + 1):   # 상자 모서리(둥근 끝) 부스러기
+                    if szs[i0 - 1] < 60 and (lab0[near] == i0).any(): m[lab0 == i0] = False
         if k == 'fx': m[:max(0, lb - y0 + 2), :] = m[:max(0, lb - y0 + 2), :] if x0 > 200 else False
         m[:, :2] = m[:, -2:] = False; m[:2, :] = m[-2:, :] = False                       # 패널 테두리
         m[:3, :] = False                                                                  # 패널 윗 테두리
         lab, n = nd.label(m)
         for sl_i, sl in enumerate(nd.find_objects(lab)):                                  # 가늘고 긴 선(테두리 조각) 제거
             h_, w_ = sl[0].stop - sl[0].start, sl[1].stop - sl[1].start
-            if (h_ <= 4 and w_ >= 14) or (w_ <= 4 and h_ >= 14): m[lab == sl_i + 1] = False
+            if (h_ <= 4 and w_ >= 14) or (w_ <= 4 and h_ >= 14) or (w_ <= 3 and h_ >= 7 and sl[0].start < 24): m[lab == sl_i + 1] = False   # v10.28 띠 위쪽의 짧은 세로 눈금도
+        if k in ('idle', 'walk', 'atk', 'hit', 'death', 'cast'):   # v10.28b: 몸 동작 칸 가장자리에 걸린 옆 칸 조각(작은 덩어리) 제거
+            lab, n = nd.label(m); sz0 = nd.sum(m, lab, range(1, n + 1))
+            for i0, sl in enumerate(nd.find_objects(lab)):
+                if (sz0[i0] < 150 or sl[1].stop - sl[1].start <= 16) and sz0[i0] < 0.2 * sz0.max() and (sl[1].start <= 3 or sl[1].stop >= m.shape[1] - 3): m[lab == i0 + 1] = False
         lab, n = nd.label(m); sz = nd.sum(m, lab, range(1, n + 1))
         keep = np.isin(lab, [i + 1 for i, s in enumerate(sz) if s >= 5]); keep = nd.binary_fill_holes(keep)
         big = (lab == (int(np.argmax(sz)) + 1)) if n else keep
