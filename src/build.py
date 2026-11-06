@@ -127,7 +127,7 @@ ASSETS = {
     '__HFW__': 'heart/hfw.webp',
     '__DK__': 'dk/dk.webp',
     '__STL__': 'stl/stl.webp',
-    '__GOLDR__': 'gold/gold.webp', '__CHFLOOR__': 'chmap/chfloor.webp', '__CHDOT__': 'chmap/chdot.webp', '__CHSQ__': 'chmap/chsq.webp', '__CHPROPS__': 'chmap/chprops.webp', '__TMOB__': 'tar/tmob.webp', '__TTN__': 'tar/ttn.webp', '__TMAP__': 'tar/tmap.webp', '__TFLOOR__': 'tar/tfloor.webp', '__TPROPSI__': 'tar/tprops.webp',
+    '__GOLDR__': 'gold/gold.webp', '__CHFLOOR__': 'chmap/chfloor.webp', '__CHDOT__': 'chmap/chdot.webp', '__CHSQ__': 'chmap/chsq.webp', '__TRI__': 'tri/tri.webp', '__CHPROPS__': 'chmap/chprops.webp', '__TMOB__': 'tar/tmob.webp', '__TTN__': 'tar/ttn.webp', '__TMAP__': 'tar/tmap.webp', '__TFLOOR__': 'tar/tfloor.webp', '__TPROPSI__': 'tar/tprops.webp',
     '__BYU__': 'bny/bny.webp',
     '__DOK__': 'dok/dok.webp',
     '__DOKFX__': 'dokfx/dokfx.webp',
