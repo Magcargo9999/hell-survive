@@ -1031,7 +1031,7 @@ function mkCanvas(w, h) { const c = document.createElement('canvas'); c.width = 
 const BRO = false;   // v10.27 ⚔ 보스 러시 전용 빌드 — `python3 src/build.py --bossrush`가 true로 바꾼다 (모든 캐릭터 · 보스 골라 큐 · 보상 없음 · 세이브는 따로)
 const SAVE_KEY = BRO ? 'hellSurvivorBossRush1' : 'hellSurvivorSave1';   // 본 게임 세이브 키는 절대 바꾸지 않는다 — 보스 러시 전용 빌드만 다른 키(본 게임 진행을 건드리지 않게)
 let bnHide = false; try { bnHide = localStorage.getItem('hsBnHide') === '1'; } catch (_) {}   // v10.12 보스전 안내 글씨 끄기 (H키, 이 설정만 따로 저장)
-const GAME_VER = 'v10.36';
+const GAME_VER = 'v10.37';
 const SAVE_DEF = () => ({
   shards: 0,
   perks: { hp: 0, spd: 0, dmg: 0, exp: 0, magnet: 0, banish: 0, revive: 0, regen: 0, shard: 0, critd: 0, choice: 0 },
@@ -13546,7 +13546,7 @@ function drawHud() {
     if (boss.bk === 'skel') { ctx.fillStyle = 'rgba(255,255,255,0.45)'; for (const q of SK_PH) ctx.fillRect(bx + bw * q - 1, by - 2, 2, 16); }
     if (boss.bk === 'angel' && boss.ph === 1) { ctx.fillStyle = 'rgba(255,130,160,0.8)'; ctx.fillRect(bx + bw * AN.ph - 1, by - 2, 2, 16); }   // 흑화 지점
     ctx.fillStyle = 'rgba(255,255,255,0.6)'; ctx.fillRect(bx + bw / 2 - 1, by - 2, 2, 16);
-    if ((boss.bk === 'kng' && !brR1()) || rushO2On()) drawKgO2(bx, by, bw);   // v8.80 산소 게이지
+    if ((boss.bk === 'kng' && !brR1()) || rushO2On() || chO2On()) drawKgO2(bx, by, bw);   // v10.37 챌린지 마왕전에서도 산소 게이지 표시 (예전엔 마왕이 나오면 게이지만 사라지고 산소는 계속 줄었다)   // v8.80 산소 게이지
     if (boss.bk === 'lil') drawLilFrost(bw);   // v9.20 동상 게이지 (결정화 영역)
     if (boss.bk === 'bear') drawBearFrost(bw);   // v9.02 동상 게이지
     if (boss.bk === 'tig') drawTgHud(bw);   // v9.63 완벽 회피 표시
@@ -16205,7 +16205,7 @@ function chHud() {
     ctx.font = '26px ' + FONT; ctx.textAlign = 'left'; ctx.fillStyle = '#fff'; ctx.fillText(q.a.icon, x + 10, y + 32);
     ctx.font = 'bold 13px ' + FONT; ctx.fillStyle = '#ffe28a'; ctx.fillText('🏆 업적 달성!  ' + q.a.name, x + 50, y + 18); ctx.font = '12px ' + FONT; ctx.fillStyle = '#e8d8c0'; ctx.fillText(`${q.a.desc.slice(0, 26)}  ·  보상 💠${q.a.reward.toLocaleString()} (업적 창)`, x + 50, y + 35); ctx.restore();
   });
-  if (chO2On() && !boss) drawKgO2(0, 0, W);   // v10.32 챌린지 산소 게이지 (예전엔 보스 HUD에만 그려서 필드에서는 안 보였다)
+  if (chO2On() && !(boss && boss.hp > 0)) drawKgO2(0, 0, W);   // v10.32 챌린지 산소 게이지 (예전엔 보스 HUD에만 그려서 필드에서는 안 보였다)
   if (c.gold && c.gold.hp > 0 && !arena) edgeArrow(c.gold, '255,215,90', '✨', '#ffe28a');
   if (c.chaser && !arena) edgeArrow(c.chaser, '170,80,255', '☠', '#d6a8ff');
   if (c.altar && !arena) edgeArrow(c.altar, '255,80,90', '⛧', '#ffb0a0');
@@ -19123,6 +19123,7 @@ function openAch() {
 }
 /* v8.71 간략 패치노트 (최근 버전만, 새 버전마다 맨 위에 한 줄 추가) */
 const PATCH = [
+  ['v10.37','∞ 챌린지 산소 게이지 수정 — 마왕이 나오면 게이지만 사라지고 산소는 계속 줄던 것(마왕 체력바 HUD에 그리지 않았음) → 마왕전에서도 표시'],
   ['v10.36','보스 러시 산소 게이지 확인 — 마왕 18종·라운드 2~4·체력 20%까지 모두 그려짐(재현 안 됨) / 새 특수 스킬 안내 상자가 떠 있는 16초 동안 게이지를 덮던 것을 안내 위로 올려 가리지 않게 함'],
   ['v10.35','∞ 챌린지 전용 마왕 [무한의 삼위일체] 등장 규칙 변경 — Lv.30 고정 → 마왕이 소환될 때마다 30%(한 판에 한 번, 반드시 나오지는 않음)'],
   ['v10.34','∞ 챌린지 전용 마왕 [무한의 삼위일체] — 마왕 소환 때마다 30% 확률로 등장(반드시는 아님, 한 판에 한 번) · 돌격(일직선 돌진) → 주술(룬 원 가시) → 자폭 하수인 소환을 끝없이 순환, 한 바퀴마다 ∞ 순환 +1(예고가 빨라짐) · 하수인을 터지기 전에 모두 잡으면 순환이 끊겨 3초 무방비(피해 +30%) · 체력 50% 무한 루프(∞ 소용돌이) · 처치 시 금화 +30 · 스킬 카드 2장 · 업적 [무한을 끊다] · 도감 등록'],

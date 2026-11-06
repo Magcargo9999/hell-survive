@@ -384,3 +384,4 @@ CLAUDE.md에서 분리. 필요할 때만 `grep -n "키워드" docs/CHANGELOG.md`
 - 10.34 ∞ 챌린지 전용 마왕 무한의 삼위일체(`bk:'tri'`, `TRI`·`TRW`·`updateTri`·`triWorld`·`triFloor`·`triTop`, 아틀라스 `tri_build.py`) — Lv.30 확정(`TRI_LV`·`chal.triMet`), 돌격→주술→자폭 하수인(`trb`) 순환 · ∞ 순환 스택 · 하수인 전멸 시 순환 끊기(`triBreak`) · 50% 무한 루프 소용돌이 · 업적 `c_tri` · 도감 boss25·trb
 - 10.35 ∞ 챌린지 전용 마왕 무한의 삼위일체 등장 규칙: Lv.30 고정 → 마왕 소환 때마다 30%(한 판에 한 번, 일반 풀 제외)
 - 10.36 보스 러시 산소 게이지 점검(전 마왕·라운드 그려짐 확인, 재현 안 됨) · 새 특수 스킬 안내 상자가 떠 있는 동안 게이지를 위로 올림(tools/tests/o2draw1036.py·o2flow1036.py)
+- 10.37 ∞ 챌린지 산소 게이지: 마왕전에서 게이지만 사라지던 것 수정(boss HUD에 chO2On 추가, 테스트 o2ch1037.py)
