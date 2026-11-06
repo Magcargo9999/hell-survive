@@ -1031,7 +1031,7 @@ function mkCanvas(w, h) { const c = document.createElement('canvas'); c.width = 
 const BRO = false;   // v10.27 ⚔ 보스 러시 전용 빌드 — `python3 src/build.py --bossrush`가 true로 바꾼다 (모든 캐릭터 · 보스 골라 큐 · 보상 없음 · 세이브는 따로)
 const SAVE_KEY = BRO ? 'hellSurvivorBossRush1' : 'hellSurvivorSave1';   // 본 게임 세이브 키는 절대 바꾸지 않는다 — 보스 러시 전용 빌드만 다른 키(본 게임 진행을 건드리지 않게)
 let bnHide = false; try { bnHide = localStorage.getItem('hsBnHide') === '1'; } catch (_) {}   // v10.12 보스전 안내 글씨 끄기 (H키, 이 설정만 따로 저장)
-const GAME_VER = 'v10.34';
+const GAME_VER = 'v10.35';
 const SAVE_DEF = () => ({
   shards: 0,
   perks: { hp: 0, spd: 0, dmg: 0, exp: 0, magnet: 0, banish: 0, revive: 0, regen: 0, shard: 0, critd: 0, choice: 0 },
@@ -13731,7 +13731,7 @@ function startChallenge(char) {
   if (['snail', 'archer', 'ghost', 'octo', 'gun'].includes(P.char)) P.regen += 0.5;   // v6.62: 챌린지에서만 재생이 거의 없는 원거리 캐릭터에 초당 +0.5
   P.need = needFor(P.lvl);
   P.spd0 = P.spd; P.hp = P.max;
-  banner = { txt: `∞ 챌린지 모드!  끝없는 맵 · 깬 지옥 ${chal.sets.length}곳의 마물이 몰려온다\nLv.5·10·15 미니 보스 · Lv.20부터 5레벨마다 마왕(Lv.30은 ♾ 무한의 삼위일체) · 5분마다 한계 돌파(만렙 카드 상한 +1)\n맞지 않고 연속 처치 ${CH.comboFever}콤보 = 영혼 조각 피버!`, t: 7, c: '#d6a8ff' };
+  banner = { txt: `∞ 챌린지 모드!  끝없는 맵 · 깬 지옥 ${chal.sets.length}곳의 마물이 몰려온다\nLv.5·10·15 미니 보스 · Lv.20부터 5레벨마다 마왕(30%로 ♾ 무한의 삼위일체 — 한 판에 한 번) · 5분마다 한계 돌파(만렙 카드 상한 +1)\n맞지 않고 연속 처치 ${CH.comboFever}콤보 = 영혼 조각 피버!`, t: 7, c: '#d6a8ff' };
   show('startBox', false); show('overBox', false); show('levelBox', false); show('pauseBox', false);
   state = 'play';
 }
@@ -13761,10 +13761,10 @@ function chEvDone() {
   if (gt >= CH.syrFrom && rand() < CH.syrMini) chLoot('syr', e.x, e.y);
 }
 function chBossCall() {   // 사이렌 + 붉은 점멸 3초 → 필드에 마왕 등장 (가두는 결계 없음)
-  let pool = chBossPool().filter(k => !chal.usedB.includes(k));
-  if (!pool.length) { chal.usedB = []; pool = chBossPool(); }
+  let pool = chBossPool().filter(k => k !== 'tri' && !chal.usedB.includes(k));
+  if (!pool.length) { chal.usedB = []; pool = chBossPool().filter(k => k !== 'tri'); }
   let k = pool[(rand() * pool.length) | 0] || 'monkey';
-  if (P.lvl >= TRI_LV && !chal.triMet) k = 'tri';   // v10.34 Lv.30 마왕은 반드시 무한의 삼위일체 (그 뒤로는 다른 마왕과 섞여 나온다)
+  if (!chal.triMet && rand() < TRI_P) k = 'tri';   // v10.35 마왕 소환 때마다 30% — 무한의 삼위일체는 한 판에 한 번만
   if (k === 'tri') chal.triMet = true; chal.usedB.push(k);
   chal.bossOn = true; chal.bossK = k; chal.siren = 3.2; chal.sirenK = 0;
   if (BR_IMGS[k]) imgReady(BR_IMGS[k]);   // 그림을 지금 받기 시작
@@ -15517,7 +15517,7 @@ const TRI = { k: 1.35, r: 70, sp: 95, keep: 250, touch: 14, hpK: 1.25,
   bomb: { n: [3, 5], hp: 0.012, sp: 150, near: 72, fuse: 0.85, life: 7, r: 105, dm: 26, k: 1.35 },
   vort: { r: 300, core: 95, pull: 68, dm: 6, tick: 0.5, life: 8, warn: 1.0 },
   stag: 3.2, vulnK: 1.3, loopMax: 4, loopK: 0.06, ph2: 0.5 };
-const TRI_CYC = ['dash', 'rune', 'bomb'], TRI_LV = 30;
+const TRI_CYC = ['dash', 'rune', 'bomb'], TRI_LV = 30, TRI_P = 0.3;
 const TRW = { tele: [], fx: [], vort: null, wave: null, death: null };
 const triOn = () => !!(boss && boss.bk === 'tri' && boss.hp > 0);
 function triClear() { TRW.tele = []; TRW.fx = []; TRW.vort = null; TRW.wave = null; TRW.death = null; }
@@ -16182,7 +16182,7 @@ function chHud() {
   if (!chal || state === 'menu') return;
   const c = chal, mmB = arena ? 126 : drawMinimap();
   ctx.save(); ctx.textAlign = 'right'; ctx.font = 'bold 13px ' + FONT; ctx.lineWidth = 3; ctx.strokeStyle = '#120406';
-  const nx = c.siren ? '🚨 마왕 접근 중' : c.bossOn ? `마왕전: ${chBossName(c.bossK)}` : c.ev ? `미니 보스: ${CH_MINI_NAME[c.evK]}` : P.lvl >= c.next && c.pact ? `Lv.${c.next} 마왕 (금제가 끝나면 등장)` : `다음 Lv.${c.next} ${c.next >= TRI_LV && !c.triMet ? '♾ 무한의 삼위일체' : c.next >= 20 ? '마왕' : '미니 보스'}`;
+  const nx = c.siren ? '🚨 마왕 접근 중' : c.bossOn ? `마왕전: ${chBossName(c.bossK)}` : c.ev ? `미니 보스: ${CH_MINI_NAME[c.evK]}` : P.lvl >= c.next && c.pact ? `Lv.${c.next} 마왕 (금제가 끝나면 등장)` : `다음 Lv.${c.next} ${c.next >= 20 ? '마왕' : '미니 보스'}`;
   const capN = Math.ceil((CH.capGap - (gt % CH.capGap))), L = [
     [`∞ 챌린지 · ${nx}`, '#e0b0ff'],
     [`🔓 한계 돌파 ${c.cap}  (다음 ${Math.floor(capN / 60)}:${String(capN % 60).padStart(2, '0')})`, '#d8d0ff'],
@@ -18604,7 +18604,7 @@ function openDex() {
       add(gr, { on: d.kills.boss13, trophy: true, name: '영원의 온실주', sub: (d.kills.boss13 || 0) + '회 처치', hint: '<br>보스 (∞ 챌린지 전용)', draw: (g, w, h, l) => IMG.grn && dexSprite(g, w, h, IMG.grn, g0[0], g0[1], g0[2], g0[3], false, l, true) });
       add(gr, { on: d.kills.grb, name: '뿌리 꽃봉오리', sub: (d.kills.grb || 0) + '마리 처치', hint: '<br>영원의 온실주가 소환한다 · 붙으면 0.8초 뒤 자폭 (먼저 죽이면 터지지 않는다)', draw: (g, w, h, l) => { grnBudArt(g, w / 2, h - 6, Math.min(w / 56, h / 52), 0, 0); if (l) { g.save(); g.globalCompositeOperation = 'source-atop'; g.fillStyle = '#0c0508'; g.fillRect(0, 0, w, h); g.restore(); } } }); }
     { const t0 = TRIF.idle[0], b0 = TRIF.bomb[0];   // v10.34
-      add(gr, { on: d.kills.boss25, trophy: true, name: '무한의 삼위일체', sub: (d.kills.boss25 || 0) + '회 처치', hint: '<br>보스 (∞ 챌린지 전용 · Lv.30 마왕) — 돌격 · 주술 · 자폭 하수인을 끝없이 순환한다 · 하수인을 터지기 전에 모두 잡으면 순환이 끊겨 무방비', draw: (g, w, h, l) => IMG.tri && dexSprite(g, w, h, IMG.tri, t0[0], t0[1], t0[2], t0[3], false, l, true) });
+      add(gr, { on: d.kills.boss25, trophy: true, name: '무한의 삼위일체', sub: (d.kills.boss25 || 0) + '회 처치', hint: '<br>보스 (∞ 챌린지 전용 · 마왕 소환 때마다 30% · 한 판에 한 번) — 돌격 · 주술 · 자폭 하수인을 끝없이 순환한다 · 하수인을 터지기 전에 모두 잡으면 순환이 끊겨 무방비', draw: (g, w, h, l) => IMG.tri && dexSprite(g, w, h, IMG.tri, t0[0], t0[1], t0[2], t0[3], false, l, true) });
       add(gr, { on: d.kills.trb, name: '∞ 자폭 하수인', sub: (d.kills.trb || 0) + '마리 처치', hint: '<br>무한의 삼위일체가 소환한다 · 느리게 따라와 붙으면 터진다 (먼저 죽이면 안 터진다)', draw: (g, w, h, l) => IMG.tri && dexSprite(g, w, h, IMG.tri, b0[0], b0[1], b0[2], b0[3], false, l, true) }); }
     add(gr, { on: d.kills.boss5, trophy: true, name: '심연의 촉수마왕', sub: (d.kills.boss5 || 0) + '회 처치', hint: '<br>보스 (∞ 챌린지)', draw: (g, w, h, l) => dexSprite(g, w, h, IMG.ab, a0[0], a0[1], a0[2], a0[3], false, l, true) }); }
   add(gr, { on: d.kills.boss, trophy: true, name: '원숭이 마왕', sub: d.kills.boss + '회 처치', hint: '<br>보스 (지하 1층부터 등장)', draw: (g, w, h, l) => dexSprite(g, w, h, IMG.boss, 88, 138, 100, 94, false, l) });
@@ -19084,7 +19084,7 @@ const CH_ACH = [
   ['c_j5', '🪙', '운명의 단골', '잭팟 5번 (누적)', 'jackTot', 5, 10000],
   ['c_p5', '⛧', '금제의 계약자', '금제의 제단 5번 받아들이기 (누적)', 'pactTot', 5, 2000],
   ['c_p25', '🔮', '금제의 지배자', '금제의 제단 25번 (누적)', 'pactTot', 25, 8000],
-  ['c_tri', '♾', '무한을 끊다', '∞ 챌린지에서 무한의 삼위일체 처치 (Lv.30 마왕)', 'triTot', 1, 6000],
+  ['c_tri', '♾', '무한을 끊다', '∞ 챌린지에서 무한의 삼위일체 처치 (마왕 소환 때 30%로 등장)', 'triTot', 1, 6000],
   ['c_s1', '💉', '주사기를 주웠다', '챌린지에서 주사기 1개 얻기', 'syrTot', 1, 4000],
 ];
 for (const [id, icon, name, desc, ch, need, reward] of CH_ACH) ACH.push({ id, icon, name, desc, ch, need, reward });
@@ -19123,7 +19123,8 @@ function openAch() {
 }
 /* v8.71 간략 패치노트 (최근 버전만, 새 버전마다 맨 위에 한 줄 추가) */
 const PATCH = [
-  ['v10.34','∞ 챌린지 전용 마왕 [무한의 삼위일체] — Lv.30 마왕으로 반드시 등장(이후 다른 마왕과 섞임) · 돌격(일직선 돌진) → 주술(룬 원 가시) → 자폭 하수인 소환을 끝없이 순환, 한 바퀴마다 ∞ 순환 +1(예고가 빨라짐) · 하수인을 터지기 전에 모두 잡으면 순환이 끊겨 3초 무방비(피해 +30%) · 체력 50% 무한 루프(∞ 소용돌이) · 처치 시 금화 +30 · 스킬 카드 2장 · 업적 [무한을 끊다] · 도감 등록'],
+  ['v10.35','∞ 챌린지 전용 마왕 [무한의 삼위일체] 등장 규칙 변경 — Lv.30 고정 → 마왕이 소환될 때마다 30%(한 판에 한 번, 반드시 나오지는 않음)'],
+  ['v10.34','∞ 챌린지 전용 마왕 [무한의 삼위일체] — 마왕 소환 때마다 30% 확률로 등장(반드시는 아님, 한 판에 한 번) · 돌격(일직선 돌진) → 주술(룬 원 가시) → 자폭 하수인 소환을 끝없이 순환, 한 바퀴마다 ∞ 순환 +1(예고가 빨라짐) · 하수인을 터지기 전에 모두 잡으면 순환이 끊겨 3초 무방비(피해 +30%) · 체력 50% 무한 루프(∞ 소용돌이) · 처치 시 금화 +30 · 스킬 카드 2장 · 업적 [무한을 끊다] · 도감 등록'],
   ['v10.33','황금 도망자: 때릴 때마다 보물이 터지는 연출 · 금화 3~7개 + 경험치 구슬(연타할수록 최대 ×2.5) · 옆에 얻은 양 계속 표시 · 처치 보너스 확대(금화 34·구슬 10) · 특수 잡몹 3종 프레임 도트(걷기·시전·돌진·도화선·쓰러짐·자폭 폭발) · 주사기 드랍 도트 · 백곰 마왕 고해상도 도트'],
   ['v10.32','∞ 챌린지: 산소 게이지 표시 · Lv.20+ 마왕이 미니 보스에 막히지 않게 · 피버 상향(120콤보 · 12초 · 40%) + 피버 BGM · 영혼 수정 획득 이펙트·띠링 · 특수 잡몹/제단/룰렛 도트 · 챌린지 업적 33개 · 챌린지 버튼 → 기록 창(리듬 게임풍) → 입장'],
   ['v10.31','∞ 챌린지 전용 맵 \'영겁의 균열 평원\' — 받은 맵 시트로 바닥·소품·불바닥·가시 함정·제단 그림 교체, 푸른 기운(그림은 그대로, 덮어 그린 색 + 화면 안개)'],

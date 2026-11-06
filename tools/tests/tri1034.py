@@ -13,7 +13,7 @@ async def main():
             if await pg.evaluate("()=>__G.state==='play'&&!!__G.chal"): break
             await pg.wait_for_timeout(250)
         # Lv.30 마왕 = 삼위일체
-        r = await pg.evaluate("()=>{const G=__G,P=G.P;P.inv=999;P.need=1e12;for(const e of G.enemies)e.hp=0;P.lvl=30;G.chal.next=30;G.chBossCall();return {k:G.chal.bossK,met:G.chal.triMet}}"); print('call', r)
+        r = await pg.evaluate("()=>{const G=__G,P=G.P;P.inv=999;P.need=1e12;for(const e of G.enemies)e.hp=0;P.lvl=30;G.chal.next=30;let n=0;while(G.chal.bossK!=='tri'&&n<200){G.chal.triMet=false;G.chal.usedB=[];G.chBossCall();n++}const m=G.chal.triMet;let c=0;for(let i=0;i<300;i++){G.chal.bossOn=false;G.chBossCall();if(G.chal.bossK==='tri')c++}G.chal.bossK='tri';return {met:m,tries:n,againTri:c}}"); print('call', r)
         for _ in range(120):
             ok = await pg.evaluate("()=>{const G=__G;G.P.inv=999;G.P.hp=G.P.max;for(let i=0;i<10;i++)G.tick(1/30);return !!(G.boss&&G.boss.bk==='tri')}")
             if ok: break

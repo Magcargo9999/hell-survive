@@ -382,3 +382,4 @@ CLAUDE.md에서 분리. 필요할 때만 `grep -n "키워드" docs/CHANGELOG.md`
 - 10.32 챌린지: 산소 게이지 표시(`chHud`) · 마왕 Lv.20+ 5레벨마다 확실히 등장(미니·시간 게이트 해제, 금제 중엔 대기 안내) · 피버 120콤보/12초/조각 40%(+250콤보당 1) · 영혼 조각 획득 이펙트+띠링 `chDing` · 피버 BGM `feverTick` · 챌린지 업적 33개(`CH_ACH`, 최고 콤보별) · 입장 창 `openChMenu`(리듬게임풍) · 도트 `chdot`(특수 잡몹 3·제단·룰렛·바늘)
 - 10.33 황금 도망자 보상·연출 대폭 강화(`chGoldHit`: 금화 3~7 + 구슬, 연타 ×2.5까지 `chGoldMul`, 옆 표시 `drawGoldTally`, 폭발 프레임·처치 총계 `drawGoldBursts`, 처치 금화 34·구슬 10) · 특수 잡몹 프레임 도트 `chsq`(`chsq_build.py`, `chSqPick`/`drawChSqFx`) · 주사기 드랍 도트 · 백곰 마왕 고해상도 시트(`bear2_build.py`, `PB_K2` 2)
 - 10.34 ∞ 챌린지 전용 마왕 무한의 삼위일체(`bk:'tri'`, `TRI`·`TRW`·`updateTri`·`triWorld`·`triFloor`·`triTop`, 아틀라스 `tri_build.py`) — Lv.30 확정(`TRI_LV`·`chal.triMet`), 돌격→주술→자폭 하수인(`trb`) 순환 · ∞ 순환 스택 · 하수인 전멸 시 순환 끊기(`triBreak`) · 50% 무한 루프 소용돌이 · 업적 `c_tri` · 도감 boss25·trb
+- 10.35 ∞ 챌린지 전용 마왕 무한의 삼위일체 등장 규칙: Lv.30 고정 → 마왕 소환 때마다 30%(한 판에 한 번, 일반 풀 제외)
