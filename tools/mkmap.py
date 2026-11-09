@@ -17,6 +17,7 @@ ANCHORS = [
  ('보스 러시 전용 빌드 BRO(v10.27)', r'^const BRO = |^function broRender|^function brTierAt|^function brModsAt|^const BOSS_FLOOR'),
  ('8지옥 잡몹 TSPECIES(v10.26)', r'^let TSPECIES|^const TAR_MOB|^function buildTarSpecies'),
  ('타르타로스의 티탄(v10.25: 사슬 채찍·중력의 틈·대지 강타 초중력·형틀의 사슬 봉인·대차륜)', r'^const TTN = |^class TitanAI|^class TitanRock|^function ttnRiftBlock|^function updateTtnFx|^function drawTtnBoss'),
+ ('암전의 사냥꾼(v10.38: 어둠 레이어·등불·그림자 피해·매복 베기·사슬 낫·올가미 함정·소등 습격·암전)', r'^const HNT = |^class HunterAI|^function hntDarkLayer|^function drawHntScreen|^function updateHntFx'),
  ('8지옥 타르타로스 필드(v10.25: 바닥·봉인 함정 족쇄·낙석)', r'^const TF = |^function tarTile|^const TAR = |^function updateTarField|^function tarChainPush|^function drawTarFloor'),
  ('철식 강철이(v10.22: 철식 중첩·철 덩어리·폐철골 기둥·포식·자력 폭주·흑철룡)', r'^const STL = |^class SteelEaterAI|^class IronChunk|^class ScrapPillar|^function stlObjBreak|^function updateStlFx|^function drawStlBoss|^function stlDragon|^function drawStlHud'),
  ('업경의 심판수 반업수(v10.21: 행동 추적 판결·시선·파편·재현·깨진 업경)', r'^const BYU = |^class BanupAI|^function updateByuFx|^function drawByuBoss|^function drawByuFloor|^function drawByuHud|^function byuDefeated'),
