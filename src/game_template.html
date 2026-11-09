@@ -1031,7 +1031,7 @@ function mkCanvas(w, h) { const c = document.createElement('canvas'); c.width = 
 const BRO = false;   // v10.27 ⚔ 보스 러시 전용 빌드 — `python3 src/build.py --bossrush`가 true로 바꾼다 (모든 캐릭터 · 보스 골라 큐 · 보상 없음 · 세이브는 따로)
 const SAVE_KEY = BRO ? 'hellSurvivorBossRush1' : 'hellSurvivorSave1';   // 본 게임 세이브 키는 절대 바꾸지 않는다 — 보스 러시 전용 빌드만 다른 키(본 게임 진행을 건드리지 않게)
 let bnHide = false; try { bnHide = localStorage.getItem('hsBnHide') === '1'; } catch (_) {}   // v10.12 보스전 안내 글씨 끄기 (H키, 이 설정만 따로 저장)
-const GAME_VER = 'v10.39';
+const GAME_VER = 'v10.40';
 const SAVE_DEF = () => ({
   shards: 0,
   perks: { hp: 0, spd: 0, dmg: 0, exp: 0, magnet: 0, banish: 0, revive: 0, regen: 0, shard: 0, critd: 0, choice: 0 },
@@ -1466,6 +1466,75 @@ function panTile(tx, ty) {
   if (h < 0.012) return PF.glow[((h * 1000) | 0) % PF.glow.length];
   return grp[((h * 1000) | 0) % grp.length];
 }
+/* v10.40 10지옥 판데모니움 필드 기믹 (필드만 — 보스방·챌린지엔 없음)
+   ① 흑백 반전: PAN.cyc 30초마다 흰 페이즈(백야) ⇄ 검은 페이즈(흑야). 백야엔 흰 용암 균열(isLava 자리)이 타오르고 검은 불길 분출구(isPanVent)는 잠듦,
+      흑야엔 반대 — 피해는 기존 용암 피해 그대로(panHot). 바뀌기 PAN.warn 3초 전부터 곧 켜질 칸이 깜빡이고 화면 위에 초읽기.
+   ② 무너지는 바닥: 같은 칸(TILE)에 PAN.standT 1초 서 있으면 판석에 금(17번 칸) → PAN.crackT 1.5초 뒤 심연(18번 칸) PAN.pitT 5초.
+      무너질 때 그 칸에 있으면 최대 체력 PAN.pitDm 8% + 밖으로 밀려남 · 심연 칸은 들어갈 수 없음(panPitPush). 위험 지대 칸은 안 무너짐.
+   규칙 9: 반전 3초 예고 · 균열 1.5초 예고 · 안전한 판석이 맵 대부분 */
+const PAN = { cyc: 30, warn: 3, standT: 1.0, crackT: 1.5, pitT: 5, pitDm: 0.08, vent: 16, crack: 17, pit: 18, maxCells: 24 };
+const PANW = { ph: 'w', t: 0, cells: new Map(), sk: '', st: 0, tip: false, on: false };
+function isPanVent(tx, ty) {   // 검은 불길 분출구 자리 — 흰 균열과 겹치지 않고 밀도는 비슷하게
+  if (chal || tx * tx + ty * ty < 80 || isLava(tx, ty)) return false;
+  return vnoise(tx / 4 + 113, ty / 4 + 61) * 0.6 + vnoise(tx / 2 + 41, ty / 2 + 77) * 0.4 > 0.7 && vnoise(tx / 14 + 20, ty / 14 + 130) > 0.42;
+}
+const panField = () => isPanSet() && !arena && !chal;
+const panHot = (tx, ty) => PANW.ph === 'w' ? isLava(tx, ty) : isPanVent(tx, ty);
+const panLeft = () => PAN.cyc - PANW.t;
+function panClear() { PANW.ph = 'w'; PANW.t = 0; PANW.cells.clear(); PANW.sk = ''; PANW.st = 0; PANW.on = false; }
+function panPitPush() {   // 심연 칸에는 들어갈 수 없다 — 들어온 쪽 가장자리로 밀어낸다
+  for (let k = 0; k < 3; k++) {
+    const tx = Math.floor(P.x / TILE), ty = Math.floor(P.y / TILE), c = PANW.cells.get(tx + ',' + ty);
+    if (!c || c.s !== 'pit') return;
+    const dx = P.x - (tx * TILE + TILE / 2), dy = P.y - (ty * TILE + TILE / 2);
+    if (Math.abs(dx) > Math.abs(dy)) P.x = dx > 0 ? (tx + 1) * TILE + 1 : tx * TILE - 1; else P.y = dy > 0 ? (ty + 1) * TILE + 1 : ty * TILE - 1;
+  }
+}
+function updatePanField(dt) {
+  if (!panField() || state !== 'play') { if (PANW.on || PANW.cells.size) panClear(); return; }
+  if (!PANW.on) { PANW.on = true; if (!PANW.tip) { PANW.tip = true; banner = { txt: '판데모니움: 30초마다 흑백이 뒤바뀐다 — 백야엔 흰 균열이, 흑야엔 검은 불길 분출구가 타오른다\n한 칸에 오래 서 있으면 바닥이 갈라져 1.5초 뒤 심연으로 무너진다 — 계속 움직이세요', t: 7, c: '#e8e8f0' }; } }
+  PANW.t += dt; if (PANW.t >= PAN.cyc) { PANW.t = 0; PANW.ph = PANW.ph === 'w' ? 'b' : 'w'; sfx('boom'); shake = Math.max(shake, 5); floatNum(P.x, P.y - 110, PANW.ph === 'w' ? '백야 — 흰 균열이 타오른다' : '흑야 — 검은 불길이 솟는다', PANW.ph === 'w' ? '#ffffff' : '#b8a8c8'); }
+  const tx = Math.floor(P.x / TILE), ty = Math.floor(P.y / TILE), k = tx + ',' + ty;   // 무너지는 바닥: 한 칸에 오래 서 있으면
+  if (k === PANW.sk) PANW.st += dt; else { PANW.sk = k; PANW.st = 0; }
+  if (PANW.st >= PAN.standT && !PANW.cells.has(k) && !isLava(tx, ty) && !isPanVent(tx, ty) && PANW.cells.size < PAN.maxCells) { PANW.cells.set(k, { tx, ty, s: 'crack', t: 0 }); sfx('snap'); }
+  for (const [ck, c] of PANW.cells) {
+    c.t += dt;
+    if (c.s === 'crack' && c.t >= PAN.crackT) {
+      c.s = 'pit'; c.t = 0; burst(c.tx * TILE + TILE / 2, c.ty * TILE + TILE / 2, 14, ['#1a1a1e', '#e8e8f0', '#6a6a70'], 220, 0.5); sfx('boom');
+      if (Math.floor(P.x / TILE) === c.tx && Math.floor(P.y / TILE) === c.ty && P.inv <= 0 && P.shield <= 0) {
+        const dm = P.max * PAN.pitDm * P.taken; P.hp -= dm; shake = Math.max(shake, 8); floatNum(P.x, P.y - 70, Math.round(dm), '#e8e8f0');
+        if (P.hp <= 0) { P.hp = 0; die(); return; }
+      }
+    } else if (c.s === 'pit' && c.t >= PAN.pitT) PANW.cells.delete(ck);
+  }
+  panPitPush();
+}
+function drawPanFloor(wx, wy) {   // 분출구 · 잠든 균열 · 곧 켜질 칸 깜빡임 · 갈라진 바닥 · 심연
+  if (!panField() || !IMG.pfloor) return;
+  const t0x = Math.floor((P.x - W / 2) / TILE) - 1, t1x = Math.floor((P.x + W / 2) / TILE) + 1, t0y = Math.floor((P.y - H / 2) / TILE) - 1, t1y = Math.floor((P.y + H / 2) / TILE) + 2;
+  const warn = panLeft() <= PAN.warn, blink = warn && Math.floor(wallT * 6) % 2 === 0, W8 = PANW.ph === 'w';
+  ctx.save(); ctx.imageSmoothingEnabled = true;
+  for (let ty = t0y; ty <= t1y; ty++) for (let tx = t0x; tx <= t1x; tx++) {
+    const lv = isLava(tx, ty), vt = !lv && isPanVent(tx, ty); if (!lv && !vt) continue;
+    const sx = wx(tx * TILE), sy = wy(ty * TILE), hot = lv ? W8 : !W8;
+    if (vt) { ctx.drawImage(IMG.pfloor, PAN.vent * 42, 0, 42, 42, sx, sy, TILE + 1, TILE + 1); if (hot) { ctx.fillStyle = `rgba(150, 90, 200, ${0.12 + 0.1 * Math.sin(wallT * 7 + tx + ty)})`; ctx.fillRect(sx, sy, TILE, TILE); } }
+    if (!hot) { ctx.fillStyle = 'rgba(8, 8, 12, 0.62)'; ctx.fillRect(sx, sy, TILE, TILE); if (blink) { ctx.strokeStyle = 'rgba(255, 70, 90, 0.9)'; ctx.lineWidth = 3; ctx.strokeRect(sx + 3, sy + 3, TILE - 6, TILE - 6); } }   // 잠든 칸 (곧 켜지면 붉게 깜빡)
+  }
+  for (const c of PANW.cells.values()) {
+    const sx = wx(c.tx * TILE), sy = wy(c.ty * TILE);
+    if (c.s === 'crack') { const p = clamp(c.t / PAN.crackT, 0, 1); ctx.globalAlpha = 0.45 + 0.55 * p; ctx.drawImage(IMG.pfloor, PAN.crack * 42, 0, 42, 42, sx, sy, TILE + 1, TILE + 1); ctx.globalAlpha = 1;
+      ctx.strokeStyle = `rgba(255, 70, 90, ${0.5 + 0.5 * Math.sin(wallT * 18)})`; ctx.lineWidth = 2; ctx.strokeRect(sx + 2, sy + 2, TILE - 4, TILE - 4); }
+    else { const a = c.t > PAN.pitT - 0.6 ? (PAN.pitT - c.t) / 0.6 : 1; ctx.globalAlpha = clamp(a, 0, 1); ctx.drawImage(IMG.pfloor, PAN.pit * 42, 0, 42, 42, sx, sy, TILE + 1, TILE + 1); ctx.globalAlpha = 1; }
+  }
+  ctx.restore();
+}
+function drawPanHud() {   // 화면 위: 지금 페이즈 · 반전까지 남은 초
+  if (!panField()) return; const W8 = PANW.ph === 'w', l = panLeft(), warn = l <= PAN.warn;
+  const tx = (W8 ? '백야 · 흰 균열이 타오른다' : '흑야 · 검은 불길 분출구가 타오른다') + (warn ? `   —   ${Math.ceil(l)}초 뒤 반전!` : `   (반전까지 ${Math.ceil(l)}초)`);
+  ctx.save(); ctx.font = 'bold 14px ' + FONT; ctx.textAlign = 'center'; ctx.lineWidth = 3; ctx.strokeStyle = '#0a0a0e'; ctx.strokeText(tx, W / 2, 156);
+  ctx.fillStyle = warn && Math.floor(wallT * 6) % 2 ? '#ff7a8a' : W8 ? '#f4f4ff' : '#b8a8d0'; ctx.fillText(tx, W / 2, 156); ctx.restore();
+  if (!W8) { ctx.save(); ctx.fillStyle = 'rgba(0, 0, 0, 0.12)'; ctx.fillRect(0, 0, W, H); ctx.restore(); }   // 흑야엔 화면이 살짝 어둡다
+}
 /* v10.25 8지옥 '타르타로스' (지하 36~40층, `floorSet` t≥35 = 'tar') — 아틀라스 tools/atlas/tar_build.py (바닥·소품·보스맵·타이탄)
    바닥 `TF`(tfloor 26칸: 0~10 보라 돌바닥 · 11~22 뒤집은 변형 · 23 붉은 빛 바닥 · 24·25 봉인 함정 지대) · 소품 `TPROP_RECTS` 53종(0~36 작은 소품, 37~52 큰 구조물)
    기믹 ① 봉인 함정 = `isLava` 자리(피해 없음): 밟으면 족쇄 3초 — 밟은 자리에서 TAR.chainR 안으로만 움직일 수 있다 · 풀린 뒤 4초 면역
@@ -1880,7 +1949,7 @@ function bossWorldClear() {   // v10.30 마왕이 남긴 장판·오브젝트만
   admFx = []; admBalls = []; admAnc = null; admPull = null; admDeath = null;   // v8.40 썩어버린 해군 제독
   QNW.spores = []; QNW.roots = []; QNW.pools = []; QNW.fx = []; QNW.pollen = null; QNW.death = null; qn = null; if (P) P.bindT = 0;   // v8.63 여왕
   VFW.spores = []; VFW.hearts = []; VFW.traps = []; VFW.fx = []; VFW.wave = null; VFW.fog = null; VFW.death = null; vf = null; if (P) { P.charmT = 0; P.bleedT = 0; }   // v8.70 파리지옥 마왕
-  kgClear(); triClear(); KGW.fx = []; KGW.death = null; whClear(); WHW.fx = []; WHW.death = null; dokClear(); DOKW.fx = []; DOKW.death = null; byuClear(); BYUW.fx = []; BYUW.death = null; stlClear(); STLW.fx = []; STLW.death = null; ttnClear(); TTW.fx = []; TTW.death = null; hntClear(); HNW.fx = []; HNW.death = null; if (P) { P.hgT = 0; P.sealT = 0; P.chainT = 0; } grnClear(); pbClear(); PBW.fx = []; PBW.death = null; rdClear(); RDW.death = null; lsClear(); LSW.death = null; cvClear(); CVW.death = null; snClear(); SNW.death = null; tgClear(); TGW.death = null; TGW.fx = [];   // v9.40 영벌의 화염죄수 · v9.20 릴세르카 · v9.10 마하칼 루드라 · v8.80 타락한 어인왕 · v8.87 영원의 온실주 · v9.02 백곰 마왕
+  kgClear(); triClear(); KGW.fx = []; KGW.death = null; whClear(); WHW.fx = []; WHW.death = null; dokClear(); DOKW.fx = []; DOKW.death = null; byuClear(); BYUW.fx = []; BYUW.death = null; stlClear(); STLW.fx = []; STLW.death = null; ttnClear(); TTW.fx = []; TTW.death = null; hntClear(); HNW.fx = []; HNW.death = null; panClear(); if (P) { P.hgT = 0; P.sealT = 0; P.chainT = 0; } grnClear(); pbClear(); PBW.fx = []; PBW.death = null; rdClear(); RDW.death = null; lsClear(); LSW.death = null; cvClear(); CVW.death = null; snClear(); SNW.death = null; tgClear(); TGW.death = null; TGW.fx = [];   // v9.40 영벌의 화염죄수 · v9.20 릴세르카 · v9.10 마하칼 루드라 · v8.80 타락한 어인왕 · v8.87 영원의 온실주 · v9.02 백곰 마왕
 }
 function clearField() {   // 마왕전 입장처럼 맵을 옮길 때: 필드의 적 · 탄 · 장판 · 진행 중인 스킬 · 보스 이펙트를 모두 비운다
   bossWorldClear();
@@ -1933,7 +2002,7 @@ function exitArena() {
   P.exitLeft = 0;
   startTrans(() => {
     arena = null; boss = null; enemies = []; orbs = []; zones = []; shards = []; globs = []; ebul = []; skp = []; skSp = []; anOrbs = []; anFx = [];
-    shkSp = []; shkFx = []; shkDeath = null; toxFl = []; toxFx = []; toxFog = null; DEBUFF.clearAll(); mini = null; mdeath = null; admFx = []; admBalls = []; admAnc = null; admPull = null; admDeath = null; QNW.spores = []; QNW.roots = []; QNW.pools = []; QNW.fx = []; QNW.pollen = null; QNW.death = null; qn = null; P.bindT = 0; VFW.spores = []; VFW.hearts = []; VFW.traps = []; VFW.fx = []; VFW.wave = null; VFW.fog = null; VFW.death = null; vf = null; P.charmT = 0; P.bleedT = 0; kgClear(); triClear(); KGW.fx = []; KGW.death = null; whClear(); WHW.fx = []; WHW.death = null; dokClear(); DOKW.fx = []; DOKW.death = null; byuClear(); BYUW.fx = []; BYUW.death = null; stlClear(); STLW.fx = []; STLW.death = null; ttnClear(); TTW.fx = []; TTW.death = null; hntClear(); HNW.fx = []; HNW.death = null; if (P) { P.hgT = 0; P.sealT = 0; P.chainT = 0; } grnClear();   // v8.22: 성 밖으로 나오면 마왕 이펙트·디버프도 정리
+    shkSp = []; shkFx = []; shkDeath = null; toxFl = []; toxFx = []; toxFog = null; DEBUFF.clearAll(); mini = null; mdeath = null; admFx = []; admBalls = []; admAnc = null; admPull = null; admDeath = null; QNW.spores = []; QNW.roots = []; QNW.pools = []; QNW.fx = []; QNW.pollen = null; QNW.death = null; qn = null; P.bindT = 0; VFW.spores = []; VFW.hearts = []; VFW.traps = []; VFW.fx = []; VFW.wave = null; VFW.fog = null; VFW.death = null; vf = null; P.charmT = 0; P.bleedT = 0; kgClear(); triClear(); KGW.fx = []; KGW.death = null; whClear(); WHW.fx = []; WHW.death = null; dokClear(); DOKW.fx = []; DOKW.death = null; byuClear(); BYUW.fx = []; BYUW.death = null; stlClear(); STLW.fx = []; STLW.death = null; ttnClear(); TTW.fx = []; TTW.death = null; hntClear(); HNW.fx = []; HNW.death = null; panClear(); if (P) { P.hgT = 0; P.sealT = 0; P.chainT = 0; } grnClear();   // v8.22: 성 밖으로 나오면 마왕 이펙트·디버프도 정리
     P.x = castle.x; P.y = castle.base + 46; cam.x = P.x; cam.y = P.y - 20; placeAllies();
     castle.force = REGRACE; castle.re = true;
     banner = { txt: `성 밖으로 나왔다!  마왕은 체력을 모두 회복했다\n${REGRACE}초 뒤 강제로 다시 입장하며, 이번엔 출구가 봉인된다 (성문으로 가면 바로 입장)`, t: 9, c: '#ffe28a' };
@@ -8957,7 +9026,7 @@ function heartBonus() {   // v8.01: 장착한 보스 심장 합계 (%)
 function reset(char) {
   buildSpecies(); try { buildMushSpecies(); buildSeaSpecies(); } catch (_) {}
   chal = null; rush = null;   // v6.62: 경험치통 계산이 이전 판의 챌린지 상태를 보지 않게
-  try { kgClear(); triClear(); KGW.fx = []; KGW.death = null; whClear(); WHW.fx = []; WHW.death = null; dokClear(); DOKW.fx = []; DOKW.death = null; byuClear(); BYUW.fx = []; BYUW.death = null; stlClear(); STLW.fx = []; STLW.death = null; ttnClear(); TTW.fx = []; TTW.death = null; hntClear(); HNW.fx = []; HNW.death = null; if (P) { P.hgT = 0; P.sealT = 0; P.chainT = 0; } grnClear(); pbClear(); PBW.death = null; rdClear(); RDW.death = null; lsClear(); LSW.death = null; cvClear(); CVW.death = null; snClear(); SNW.death = null; tgClear(); TGW.death = null; TGW.fx = []; } catch (_) {}   // v8.85: 어인왕전 도중 죽고 새 판을 시작해도 산소 간헐천 등이 남지 않게
+  try { kgClear(); triClear(); KGW.fx = []; KGW.death = null; whClear(); WHW.fx = []; WHW.death = null; dokClear(); DOKW.fx = []; DOKW.death = null; byuClear(); BYUW.fx = []; BYUW.death = null; stlClear(); STLW.fx = []; STLW.death = null; ttnClear(); TTW.fx = []; TTW.death = null; hntClear(); HNW.fx = []; HNW.death = null; panClear(); if (P) { P.hgT = 0; P.sealT = 0; P.chainT = 0; } grnClear(); pbClear(); PBW.death = null; rdClear(); RDW.death = null; lsClear(); LSW.death = null; cvClear(); CVW.death = null; snClear(); SNW.death = null; tgClear(); TGW.death = null; TGW.fx = []; } catch (_) {}   // v8.85: 어인왕전 도중 죽고 새 판을 시작해도 산소 간헐천 등이 남지 않게
   P = newPlayer(char || curChar);
   DMETER = {}; DBOSS = {}; bfx = []; enemies = []; orbs = []; shards = []; fx = []; nums = []; arcs = []; zones = []; plBalls = []; rings = []; beam = null; meteorQ = null; cerbQ = null; rainQ = null; bigQ = null; darkQ = null; dashQ = null; fwaveQ = null; evo = null; airs = []; diveQ = null; breathQ = null; rushQ = null; bombQ = null; holyQ = null; afx = []; bombT = []; holyPtr = null; cfx = []; ebul = []; allies = []; items = []; globs = []; sprFx = []; whipQ = null; ambT = 1.5; itemT = 9; blades = []; lights = []; waveT = 80 + rand() * 20;
   eleQ = null; tentQ = null; octoFx = []; lhead = null;
@@ -12434,7 +12503,7 @@ function update(dt) {
   updateStatus(dt); updateSlots(dt); updateEye(dt); uniqCd = Math.max(0, uniqCd - dt);
 
   // --- 용암: 흩어진 작은 웅덩이. 밟고 있으면 짤짤이로 계속 아프다 (시간이 갈수록 더 아프다) ---
-  if (!arena && !isTarSet() && isLava(Math.floor(P.x / TILE), Math.floor(P.y / TILE))) {   // v10.25 타르타로스 봉인 함정은 피해 없이 족쇄 (updateTarField)
+  if (!arena && !isTarSet() && (isPanSet() ? panHot(Math.floor(P.x / TILE), Math.floor(P.y / TILE)) : isLava(Math.floor(P.x / TILE), Math.floor(P.y / TILE)))) {   // v10.40 판데모니움: 지금 페이즈에 타오르는 칸만   // v10.25 타르타로스 봉인 함정은 피해 없이 족쇄 (updateTarField)
     P.lavaT += dt; P.lavaTick -= dt;
     if (rand() < 0.5) burst(P.x, P.y - 4, 1, isIceSet() ? ['#ff3a4a', '#ff9aa6'] : isSea() ? ['#ff6a1c', '#ffc247'] : isMush() ? ['#9aff3a', '#d8ff6a'] : ['#ff6a1c', '#ffc247'], 90, 0.5);
     if (P.lavaTick <= 0) {
@@ -12447,6 +12516,7 @@ function update(dt) {
     }
   } else P.lavaTick = 0;
   if (state === 'play') { updateTarField(dt); if (state !== 'play') return; }   // v10.25 8지옥 족쇄 · 낙석
+  if (state === 'play') { updatePanField(dt); if (state !== 'play') return; }   // v10.40 10지옥 흑백 반전 · 무너지는 바닥
   if (state === 'play') { updateBlade(dt, !arena && isLava(Math.floor(P.x / TILE), Math.floor(P.y / TILE))); if (state !== 'play') return; }   // v9.71 칼날 지대 출혈
   if (state === 'play') { updateHeat(dt); if (state !== 'play') return; }   // v9.24 팔열지옥 열기
   if (!arena && state === 'play' && isSlow(Math.floor(P.x / TILE), Math.floor(P.y / TILE))) {   // v8.56 둔화 웅덩이
@@ -13202,7 +13272,7 @@ function render() {
   if (arena && arena.k !== 'blood') drawArenaExit(wx, wy);
   drawBsig(wx, wy);
   drawSkFloor(wx, wy);
-  if (!hntDark()) drawBossTele(wx, wy); drawAnFloor(wx, wy); drawShkFloor(wx, wy); drawToxFloor(wx, wy); drawAdmFloor(wx, wy); drawQnFloor(wx, wy); drawVfFloor(wx, wy); drawKgFloor(wx, wy); if (rush && !hntDark()) rush.drawFloor(wx, wy); drawBearFloor(wx, wy); drawRudFloor(wx, wy); drawLilFloor(wx, wy); drawCvFloor(wx, wy); drawSnFloor(wx, wy); drawTgFloor(wx, wy); drawWhFloor(wx, wy); drawDokFloor(wx, wy); drawByuFloor(wx, wy); drawStlFloor(wx, wy); drawTtnFloor(wx, wy); drawHntFloor(wx, wy); drawTarFloor(wx, wy);
+  if (!hntDark()) drawBossTele(wx, wy); drawAnFloor(wx, wy); drawShkFloor(wx, wy); drawToxFloor(wx, wy); drawAdmFloor(wx, wy); drawQnFloor(wx, wy); drawVfFloor(wx, wy); drawKgFloor(wx, wy); if (rush && !hntDark()) rush.drawFloor(wx, wy); drawBearFloor(wx, wy); drawRudFloor(wx, wy); drawLilFloor(wx, wy); drawCvFloor(wx, wy); drawSnFloor(wx, wy); drawTgFloor(wx, wy); drawWhFloor(wx, wy); drawDokFloor(wx, wy); drawByuFloor(wx, wy); drawStlFloor(wx, wy); drawTtnFloor(wx, wy); drawHntFloor(wx, wy); drawTarFloor(wx, wy); drawPanFloor(wx, wy);
   drawFwFx(wx, wy);
 
   for (const it of items) drawItem(it, wx(it.x), wy(it.y));
@@ -13623,7 +13693,7 @@ function drawHud() {
     ctx.fillStyle = 'rgba(10,4,16,0.74)'; ctx.fillRect(W / 2 - tw / 2, by0, tw, ls.length * lh + 10);
     ctx.fillStyle = banner.c || '#ffd36a'; ls.forEach((l, i) => ctx.fillText(l, W / 2, by0 + 23 * bs + i * lh)); ctx.restore();
   }
-  drawControlsTip(); drawPracticeHud(); drawHeatHud(); drawPoisonArrow(); drawCastleHud(); drawSlotArrows(); drawRelicHud(); drawUniqHud(); { const im = impOf(); if (im && !arena) edgeArrow(im, '255,210,60', '$', '#ffe28a'); } chHud();
+  drawControlsTip(); drawPracticeHud(); drawHeatHud(); drawPanHud(); drawPoisonArrow(); drawCastleHud(); drawSlotArrows(); drawRelicHud(); drawUniqHud(); { const im = impOf(); if (im && !arena) edgeArrow(im, '255,210,60', '$', '#ffe28a'); } chHud();
   if (darkT > 0) { const k = Math.min(1, darkT / 1.6), a = Math.pow(k, 1.4) * 0.92, dg = ctx.createRadialGradient(W / 2, H / 2, Math.min(W, H) * 0.08, W / 2, H / 2, Math.max(W, H) * 0.65); dg.addColorStop(0, `rgba(0,0,0,${a * 0.55})`); dg.addColorStop(1, `rgba(0,0,0,${a})`); ctx.fillStyle = dg; ctx.fillRect(0, 0, W, H); }
   if (trans) { const k = trans.t / trans.dur; ctx.fillStyle = `rgba(0,0,0,${clamp(1 - Math.abs(k * 2 - 1), 0, 1)})`; ctx.fillRect(0, 0, W, H); }
   const t2 = `처치 ${P.kills}` + (allies.length ? `  ·  동료 ${allies.length}/${MAX_ALLY}` : '');
@@ -19489,6 +19559,7 @@ function openAch() {
 }
 /* v8.71 간략 패치노트 (최근 버전만, 새 버전마다 맨 위에 한 줄 추가) */
 const PATCH = [
+  ['v10.40','[10지옥 판데모니움 필드 기믹] 흑백 반전 — 30초마다 백야(흰 균열이 타오름) ⇄ 흑야(검은 불길 분출구가 타오름), 바뀌기 3초 전 곧 켜질 칸이 붉게 깜빡임 · 무너지는 바닥 — 한 칸에 1초 서 있으면 금이 가고 1.5초 뒤 5초 동안 심연(그 자리면 최대 체력 8% · 못 들어감) · 10지옥은 9지옥이 열린 뒤 지하 46~50층에서 열립니다'],
   ['v10.39','[10지옥 판데모니움 맵 준비] 흑백 지옥도시 필드(바닥·소품·흰 용암 균열)와 보스맵(받은 조각을 이어 붙인 원형 마법진 광장·옥좌·화로 발코니·심연) — 9지옥이 열린 뒤 지하 46~50층에서 열립니다 · 8지옥 필드 소품이 버섯 그림으로 나오던 것 수정'],
   ['v10.38','[지하 40층 개방 · 8지옥 타르타로스 완성] 새 최종 마왕 [암전의 사냥꾼] — 보스방이 어둠에 잠긴다: 내 둘레(260)와 켜진 등불 빛(330) 안만 보이고, 어둠 속 사냥꾼은 피해를 40%만 받는다 · 등불 5개(곁에 1초 서 있으면 18초 동안 켜짐 · 동시에 2개) · 위험 표시·낫·가까운 함정은 어둠 위에 보인다 · 매복 베기(140에서 은신이 풀리고 0.7초 부채꼴) · 사슬 낫(줄+되돌아올 길 0.9초 예고, 40% 아래 3가닥) · 올가미 함정 5개(빛 안에서만 선명, 어둠에선 반짝임 · 1초 속박, 그동안 사냥꾼 공격은 안 맞음) · 소등 습격(켜진 등불로 돌진 → 등불이 꺼지고 1.2초 휘청) · 40% 암전(6초 · 시야 120 · 순간이동 베기 3번)'],
   ['v10.37','∞ 챌린지 산소 게이지 수정 — 마왕이 나오면 게이지만 사라지고 산소는 계속 줄던 것(마왕 체력바 HUD에 그리지 않았음) → 마왕전에서도 표시'],
@@ -19855,7 +19926,7 @@ stepDive = skWrap(stepDive, 'dive'); stepRush = skWrap(stepRush, 'rush'); rushSt
 updateAirs = (f => function (...a) { return withSrc('basic', () => f.apply(this, a)); })(updateAirs);   // v6.22: 에어슬래시는 평타 (v6.30: 바로 뒤 천안 난무·브레스 감싸기가 주석에 묻혀 딜미터기에서 빠지던 것 수정)
 { const _tb = thornBlast, _sb = smashBlow; thornBlast = function (...a) { return withSrc('scale', () => _tb.apply(this, a)); }; smashBlow = function (...a) { return withSrc('smash', () => _sb.apply(this, a)); }; }
 shellReflect = skWrap(shellReflect, 'shell'); updateBsig = skWrap(updateBsig, 'bsigil');
-window.__G = { IMAP, IMAP_PAN, useIMap, GROUND, PF, PPROP_RECTS, HNT, HNW, HNTF, hntHidden, hntLampOn, hntVis, hntGap, get hnt() { return hnt; }, BOSS_HP, bossExPaused, TRI, TRW, TRIF, spawnTri, triStart, triBreak, triSf, feverTick, chStatsLive, chShardFxStep, openChMenu, enterChallenge, closeRoul, chMiniSpawn, chmOn, chmTile, CHM, CHP_RECTS, shkSpr, get ctx() { return ctx; }, BRO, BOSS_FLOOR, get broQ() { return broQ; }, set broQ(v) { broQ = v; }, BRO_OPT, brTierAt, brModsAt, broRender, TSPECIES, TTN, TTW, TitanAI, TitanRock, ttnClear, ttnExPause, ttnInGap, ttnHeavy, ttnSealApply, ttnSealAtk, get ttn() { return ttn; }, TAR, TARW, isTarSet, tarTile, TF, TPROP_RECTS, IMAP_TAR, updateTarField, STL, STLW, SteelEaterAI, IronChunk, stlClear, stlWipe, stlExPause, stlStack, get stlAI() { return stlAI; }, openDex, BYU, BYUW, BanupAI, byuClear, byuExPause, get byu() { return byu; }, pctMul, pctMelee, PCT_RATE, FISH, KN, castLostHead, get lhead() { return lhead; }, snMouth, snHall, tgArmsAt, tgC, tgCrossOm, tgDashDone, DOK, DOKW, DokkaebiAI, dokClear, dokZoneBox, dokSpinPath, get dok() { return dok; }, gunRoll1, gunHit, updateFish, openSlot, slotResult, slotSpin, WH, WHW, WhaleAI, whClear, whRoom, whLane, whLaneOk, whDexArt, get wh() { return wh; }, hq, hqLow, drawWolf, heatOn, heatArena, arenaRests, arenaRestNearest, openRoutePic, get banner() { return banner; }, isDosanSet, get DSPECIES() { return DSPECIES; }, buildDosanSpecies, BLADE, DF, DPROP_RECTS, dosanTile, imgReady, igniteX, procElem, startFw, spawnFw, spawnUniq, get cam() { return cam; }, TG, TGW, get tg() { return tg; }, tgClear, tgArms, tgCrossAt, tgInSafe, tgCxR, tgPatEnd, tgSafeSpot, tgCam, tgHold, TigerAI, HFUSE_HID, spawnFrw, frwAtk, FRW, spawnLad, lAtk, LAD, LADF, buildCards, rollHeartDrop, heartGain, disHeart, CHARS, inPoly, castSkill, get arena() { return arena; }, FISH, FWAVE, FISHA2, get fwaveQ() { return fwaveQ; }, SN, SNW, get sn() { return snAI; }, snClear, snHall, snEscapeR, pendingConds, rollCards, fishR, shardTotal, calcShards, heartBonus, CV, CVW, HellfirePatch, get cv() { return cvAI; }, cvClear, cvFurnace, pickBossK, get rushQ() { return rushQ; }, get FSPECIES() { return FSPECIES; }, heartMigrate, hRange, IMP, BLD, leadXY, leadDir, HEAT, FF, restNear, restNearest, restAt, updateHeat, isFireSet, fireTile, floorSet, clearGround: () => GROUND.clear(), get TOP_TIER() { return TOP_TIER; }, get OPEN_TIER() { return OPEN_TIER; }, lilArt, drawLilBody, LS, LSW, get ls() { return ls; }, FrostMirror, lsInWedge, lsIce, lsExPause, lsZone, lilDefeated, RD, RDW, RDF, rdOn, get rd() { return rd; }, KarmaBead, FrostMantra, IceLotus, rdAbsorb, rdInGap, rdExPause, rdSilence, rudDefeated, IMP, GoldImp, impOf, trySpawnImp, impDefeated, set impAt(v) { impAt = v; }, LUCK_N, PB, PBW, IMAP, IceWall, Fissure, IceSpear, segDist, FrostMgr, pbOn, pbClear, pbExPause, get pb() { return pb; }, gunMagN, ROLL, get lhead() { return lhead; }, KN, castLostHead, TW, isIceSlip, isIceSet, get ISPECIES() { return ISPECIES; }, ICE_SLIP, ICE_L, OPEN_TIER, TOP_TIER, renderHells, floorSet, pickFloor, iceTile, IF, get lhead() { return lhead; }, KN, isKnight, castLostHead, knightSlash, openGhostRoute, KNIGHT_FORMS, ghostForm, hTitle, relicIcon, heartMake, hOpt, heartBonus, calcShards, GRN, GRW, GRNF, spawnGrn, grnStart, grnPick, chAltarTick, chAltarOpen, chPactStart, chPactEnd, PACTS, chTime, chTime0, chDmgT, CH_HARD, CH, chBossPool, chClearedSets, chMobAvail, chSquad, chJackpot, chGoldKill, openRoul, roulSpin, roulApply, ROUL, get roul() { return roul; }, chReward, chCardPick, cardMax, chLoot, chCoins, chIMapAt, CH_IMAP_K, chBossCall, chEnterBoss, chMiniSpawn, chKill, drawMinimap, get CH_FIELD_NO() { return CH_FIELD_NO; }, set CH_FIELD_NO(v) { CH_FIELD_NO = v; }, bossWorldClear, chBossClean, cardDefs, cardView, ACH, achSync, achClear, openAch, KG, KGW, get kg() { return kg; }, AirGeyser, WaterMirror, MirrorBolt, kgIce, get shards() { return shards; }, set shards(v) { shards = v; }, VF, VFW, get vf() { return vf; }, VfTrap, VfSkull, VfHeart, vfLeech, fuseHearts, rerollHeart, heartBonus, renderFuse, setFu(v) { hFu = v; }, QN, QNW, get qn() { return qn; }, RootBind, SporeSack, QnMush, pickBossK, pctMelee, pctZone, updateDiff, skinG, bhKey, BH_ORDER, heartIcon, relicMaskOn, calcShards, isSlow, isLava, saveSave, svParse, spawnPlant, PL, get GSPECIES() { return GSPECIES; }, get plBalls() { return plBalls; }, synCard, freezeE, availSyn, SYNERGIES, dmName, FD, shkAdd, toxAdd, skSpawnPair, phoenixRevive, mirrorBlock, palPop, updateCutSaws, get shkSp() { return shkSp; }, get toxFl() { return toxFl; }, get zonesRef() { return zones; },
+window.__G = { TILE, PAN, PANW, panHot, isPanVent, panClear, IMAP, IMAP_PAN, useIMap, GROUND, PF, PPROP_RECTS, HNT, HNW, HNTF, hntHidden, hntLampOn, hntVis, hntGap, get hnt() { return hnt; }, BOSS_HP, bossExPaused, TRI, TRW, TRIF, spawnTri, triStart, triBreak, triSf, feverTick, chStatsLive, chShardFxStep, openChMenu, enterChallenge, closeRoul, chMiniSpawn, chmOn, chmTile, CHM, CHP_RECTS, shkSpr, get ctx() { return ctx; }, BRO, BOSS_FLOOR, get broQ() { return broQ; }, set broQ(v) { broQ = v; }, BRO_OPT, brTierAt, brModsAt, broRender, TSPECIES, TTN, TTW, TitanAI, TitanRock, ttnClear, ttnExPause, ttnInGap, ttnHeavy, ttnSealApply, ttnSealAtk, get ttn() { return ttn; }, TAR, TARW, isTarSet, tarTile, TF, TPROP_RECTS, IMAP_TAR, updateTarField, STL, STLW, SteelEaterAI, IronChunk, stlClear, stlWipe, stlExPause, stlStack, get stlAI() { return stlAI; }, openDex, BYU, BYUW, BanupAI, byuClear, byuExPause, get byu() { return byu; }, pctMul, pctMelee, PCT_RATE, FISH, KN, castLostHead, get lhead() { return lhead; }, snMouth, snHall, tgArmsAt, tgC, tgCrossOm, tgDashDone, DOK, DOKW, DokkaebiAI, dokClear, dokZoneBox, dokSpinPath, get dok() { return dok; }, gunRoll1, gunHit, updateFish, openSlot, slotResult, slotSpin, WH, WHW, WhaleAI, whClear, whRoom, whLane, whLaneOk, whDexArt, get wh() { return wh; }, hq, hqLow, drawWolf, heatOn, heatArena, arenaRests, arenaRestNearest, openRoutePic, get banner() { return banner; }, isDosanSet, get DSPECIES() { return DSPECIES; }, buildDosanSpecies, BLADE, DF, DPROP_RECTS, dosanTile, imgReady, igniteX, procElem, startFw, spawnFw, spawnUniq, get cam() { return cam; }, TG, TGW, get tg() { return tg; }, tgClear, tgArms, tgCrossAt, tgInSafe, tgCxR, tgPatEnd, tgSafeSpot, tgCam, tgHold, TigerAI, HFUSE_HID, spawnFrw, frwAtk, FRW, spawnLad, lAtk, LAD, LADF, buildCards, rollHeartDrop, heartGain, disHeart, CHARS, inPoly, castSkill, get arena() { return arena; }, FISH, FWAVE, FISHA2, get fwaveQ() { return fwaveQ; }, SN, SNW, get sn() { return snAI; }, snClear, snHall, snEscapeR, pendingConds, rollCards, fishR, shardTotal, calcShards, heartBonus, CV, CVW, HellfirePatch, get cv() { return cvAI; }, cvClear, cvFurnace, pickBossK, get rushQ() { return rushQ; }, get FSPECIES() { return FSPECIES; }, heartMigrate, hRange, IMP, BLD, leadXY, leadDir, HEAT, FF, restNear, restNearest, restAt, updateHeat, isFireSet, fireTile, floorSet, clearGround: () => GROUND.clear(), get TOP_TIER() { return TOP_TIER; }, get OPEN_TIER() { return OPEN_TIER; }, lilArt, drawLilBody, LS, LSW, get ls() { return ls; }, FrostMirror, lsInWedge, lsIce, lsExPause, lsZone, lilDefeated, RD, RDW, RDF, rdOn, get rd() { return rd; }, KarmaBead, FrostMantra, IceLotus, rdAbsorb, rdInGap, rdExPause, rdSilence, rudDefeated, IMP, GoldImp, impOf, trySpawnImp, impDefeated, set impAt(v) { impAt = v; }, LUCK_N, PB, PBW, IMAP, IceWall, Fissure, IceSpear, segDist, FrostMgr, pbOn, pbClear, pbExPause, get pb() { return pb; }, gunMagN, ROLL, get lhead() { return lhead; }, KN, castLostHead, TW, isIceSlip, isIceSet, get ISPECIES() { return ISPECIES; }, ICE_SLIP, ICE_L, OPEN_TIER, TOP_TIER, renderHells, floorSet, pickFloor, iceTile, IF, get lhead() { return lhead; }, KN, isKnight, castLostHead, knightSlash, openGhostRoute, KNIGHT_FORMS, ghostForm, hTitle, relicIcon, heartMake, hOpt, heartBonus, calcShards, GRN, GRW, GRNF, spawnGrn, grnStart, grnPick, chAltarTick, chAltarOpen, chPactStart, chPactEnd, PACTS, chTime, chTime0, chDmgT, CH_HARD, CH, chBossPool, chClearedSets, chMobAvail, chSquad, chJackpot, chGoldKill, openRoul, roulSpin, roulApply, ROUL, get roul() { return roul; }, chReward, chCardPick, cardMax, chLoot, chCoins, chIMapAt, CH_IMAP_K, chBossCall, chEnterBoss, chMiniSpawn, chKill, drawMinimap, get CH_FIELD_NO() { return CH_FIELD_NO; }, set CH_FIELD_NO(v) { CH_FIELD_NO = v; }, bossWorldClear, chBossClean, cardDefs, cardView, ACH, achSync, achClear, openAch, KG, KGW, get kg() { return kg; }, AirGeyser, WaterMirror, MirrorBolt, kgIce, get shards() { return shards; }, set shards(v) { shards = v; }, VF, VFW, get vf() { return vf; }, VfTrap, VfSkull, VfHeart, vfLeech, fuseHearts, rerollHeart, heartBonus, renderFuse, setFu(v) { hFu = v; }, QN, QNW, get qn() { return qn; }, RootBind, SporeSack, QnMush, pickBossK, pctMelee, pctZone, updateDiff, skinG, bhKey, BH_ORDER, heartIcon, relicMaskOn, calcShards, isSlow, isLava, saveSave, svParse, spawnPlant, PL, get GSPECIES() { return GSPECIES; }, get plBalls() { return plBalls; }, synCard, freezeE, availSyn, SYNERGIES, dmName, FD, shkAdd, toxAdd, skSpawnPair, phoenixRevive, mirrorBlock, palPop, updateCutSaws, get shkSp() { return shkSp; }, get toxFl() { return toxFl; }, get zonesRef() { return zones; },
   bossDefeated, get IMG() { return IMG; },
   get ready() { return !!IMG.floorD; }, get state() { return state; }, get P() { return P; }, get enemies() { return enemies; }, get orbs() { return orbs; },
   get zones() { return zones; }, get ebul() { return ebul; }, get EYE() { return EYE; }, get shards() { return shards; }, get bigQ() { return bigQ; }, get bombQ() { return bombQ; }, get holyQ() { return holyQ; }, get afx() { return afx; }, get dashQ() { return dashQ; }, get beam() { return beam; }, get evo() { return evo; }, get choices() { return choices; },

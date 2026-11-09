@@ -3,7 +3,7 @@
 → src/assets/pan/pfloor.webp (42px 바닥 16칸) · pprops.webp (소품, 원래 크기) + 템플릿 PPROP_RECTS 한 줄 출력
 자르기 · 마젠타 배경 제거 · 축소 · 좌우 뒤집기(바닥 변형)만 — 색·도트 수정 없음.
 바닥 칸: 0 어두운 판석(붉은 금) · 1 밝은 판석 · 2 쇠창살 격자 · 3 밝은 마름모 판석 · 4 흰 균열 · 5 체크무늬 · 6 룬 원 · 7 별 문양 · 8 흰 균열(2) · 9 해골 판석
-        10~13 = 0~3 좌우 뒤집기 · 14·15 위험 지대 (5번 칸 '흰 용암 균열' 두 장, 번갈아 일렁임)"""
+        10~13 = 0~3 좌우 뒤집기 · 14·15 위험 지대 (5번 칸 '흰 용암 균열' 두 장, 번갈아 일렁임) · 16 검은 불길 분출구 · 17 무너지는 바닥 · 18 심연 (v10.40, 보스맵 조각 시트)"""
 import numpy as np, json, os
 from PIL import Image
 from scipy import ndimage as ndi
@@ -20,6 +20,9 @@ tiles = [cell(x0, x1, y0, y1) for (y0, y1) in FR for (x0, x1) in FC]
 tiles += [tiles[i].transpose(Image.FLIP_LEFT_RIGHT) for i in (0, 1, 2, 3)]
 haz = [cell(*HC[0], *HR[0]), cell(*HC[2], *HR[1])]   # 흰 용암 균열 · 흰 균열
 tiles += haz
+# v10.40 기믹 타일: 보스맵 조각 시트(build/pan/boss.png)의 5번 위험 지대 줄 — 16 검은 불길 분출구 · 17 무너지는 바닥 · 18 심연 구덩이
+BS = Image.open('build/pan/boss.png').convert('RGB'); BC = [(10, 63), (68, 119), (124, 175), (179, 230), (235, 286), (291, 340), (345, 392), (397, 444)]
+tiles += [BS.crop((BC[i][0] + 2, 945, BC[i][1] - 2, 991)).resize((T, T), Image.BOX) for i in (1, 5, 0)]
 st = Image.new('RGB', (T * len(tiles), T))
 for i, t in enumerate(tiles): st.paste(t, (i * T, 0))
 st.save(OUT + 'pfloor.webp', lossless=True, method=6)
