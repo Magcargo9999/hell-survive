@@ -17,6 +17,7 @@ ANCHORS = [
  ('보스 러시 전용 빌드 BRO(v10.27)', r'^const BRO = |^function broRender|^function brTierAt|^function brModsAt|^const BOSS_FLOOR'),
  ('8지옥 잡몹 TSPECIES(v10.26)', r'^let TSPECIES|^const TAR_MOB|^function buildTarSpecies'),
  ('타르타로스의 티탄(v10.25: 사슬 채찍·중력의 틈·대지 강타 초중력·형틀의 사슬 봉인·대차륜)', r'^const TTN = |^class TitanAI|^class TitanRock|^function ttnRiftBlock|^function updateTtnFx|^function drawTtnBoss'),
+ ('분열체 슬라임 왕(v10.42: 질량 공유·광역 감쇠·분열·합체·점액 도약·젤리 사출·총총 뛰기)', r'^const SLM = |^class SlimeKingAI|^class SlimeBody|^function slmHit|^function drawSlmBody'),
  ('암전의 사냥꾼(v10.38: 어둠 레이어·등불·그림자 피해·매복 베기·사슬 낫·올가미 함정·소등 습격·암전)', r'^const HNT = |^class HunterAI|^function hntDarkLayer|^function drawHntScreen|^function updateHntFx'),
  ('10지옥 판데모니움 맵(v10.39: 필드 PF·PPROP_RECTS·panTile · 보스맵 IMAP_PAN)', r'^const PF = |^function panTile|^const IMAP_PAN'),
  ('10지옥 기믹(v10.40: 흑백 반전·무너지는 바닥 PAN·PANW·updatePanField)', r'^const PAN = |^function updatePanField|^function drawPanFloor'),
