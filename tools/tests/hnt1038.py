@@ -14,7 +14,7 @@ async def main():
     async with async_playwright() as pw:
         b = await pw.chromium.launch(); pg = await h301.newpage(b, 1280, 720); errs = []
         pg.on('pageerror', lambda e: errs.append(str(e))); pg.on('console', lambda m: errs.append(m.text) if m.type == 'error' else None)
-        await pg.wait_for_function('__G.IMG&&__G.IMG.boss', timeout=90000); await pg.wait_for_function("__G.imgReady(['arena','tmap','hnt','tfloor','tprops','tmob'])", timeout=120000, polling=1000)
+        await pg.wait_for_function('__G.IMG&&__G.IMG.boss', timeout=90000); await pg.wait_for_function("__G.imgReady(['arena','tmap2','hnt','tfloor','tprops','tmob'])", timeout=120000, polling=1000)
         await pg.evaluate("""()=>{window.__cl=()=>{const P=__G.P;P.inv=0;P.shield=0;P.dodge=0;P.pals=[];P.up.guard=0;P.rel.mirror=0;P.armor=1;P.taken=1;P.stunT=0;P.slowT=0;P.max=1e7;P.hp=P.max;P.bindT=0;P.bindImm=0};
           window.__tk=()=>{const G=__G;G.tick(1/30);if(G.state!=='play'&&G.state!=='over'&&G.state!=='win')__s()}}""")
         R = {}
