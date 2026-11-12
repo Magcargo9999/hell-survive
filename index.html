@@ -328,6 +328,40 @@
   #broPanel .broN { color: var(--muted); font-size: 12px; margin-top: 6px; }
   @media (max-width: 640px) { #broPanel .broH > span { width: 100%; } }
   .etcrow button { white-space: nowrap; } .etcrow b { color: var(--gold); } .etcrow small { color: var(--muted); font-size: 13px; }
+  /* v10.43 메인 화면 도트 UI — 받은 UI 시트 조각(src/assets/ui, tools/atlas/ui_build.py)을 그대로 틀로 쓴다. 시작 화면(#startBox)에만 적용 */
+  #startBox { --uiCard: url('src/assets/ui/card.webp?v=8d6e72bb'); --uiCardS: url('src/assets/ui/cardsel.webp?v=91b39f93'); --uiCardL: url('src/assets/ui/cardlock.webp?v=55df4885'); --uiBar: url('src/assets/ui/bar.webp?v=4d678b0b'); --uiBarR: url('src/assets/ui/barred.webp?v=af7a2517'); --uiBarD: url('src/assets/ui/bardeep.webp?v=268c6a85');
+    --uiBtn: url('src/assets/ui/btn.webp?v=e2ef4624'); --uiBtnR: url('src/assets/ui/btnred.webp?v=ab02dbf4'); --uiArL: url('src/assets/ui/arl.webp?v=fbb81590'); --uiArR: url('src/assets/ui/arr.webp?v=7d9152d6'); }
+  #startBox button { border-radius: 0; }
+  #startBox .cards { gap: 10px; }
+  #startBox #charCards .card { display: flex; flex-direction: column; justify-content: flex-start; width: 196px; padding: 42px 22px 34px; background: none; border: 0; box-shadow: none; isolation: isolate; color: #f0e4d0; }
+  #startBox #charCards .card::before { content: ''; position: absolute; inset: 0; z-index: -1; pointer-events: none; border-style: solid; border-width: 166px 0 45px; border-image: var(--uiCard) 312 0 84 fill stretch; }
+  #startBox #charCards .card.sel::before { border-image-source: var(--uiCardS); }
+  #startBox #charCards .card.locked::before { border-image-source: var(--uiCardL); }
+  #startBox #charCards .card:hover::before { filter: brightness(1.18); }
+  #startBox #charCards .card.sel { background: none; box-shadow: none; }
+  #startBox #charCards .card.locked { opacity: 0.8; filter: none; padding-bottom: 50px; }
+  #startBox #charCards .card.locked .fr { opacity: 0.6; filter: grayscale(0.7); }
+  #startBox #charCards .card canvas { width: 122px; height: 98px; margin: 0 auto 30px; }
+  #startBox #charCards .card .fr > b { display: block; text-align: center; color: #ffe2a0; text-shadow: 2px 2px 0 #1a0a08; font-size: 16px; }
+  #startBox #charCards .card .crole, #startBox #charCards .card .cweak, #startBox #charCards .card .cget { border-radius: 0; border-left: 3px solid; }
+  #startBox #charCards .card .crole { border-color: #5aa8d8; } #startBox #charCards .card .cweak { border-color: #b8443a; } #startBox #charCards .card .cget { border-color: #c8a24a; }
+  /* 가로 3조각 막대(양끝 보석은 그대로 · 가운데만 늘어남) */
+  #startBox #hellRow button, #startBox #startBtn { position: relative; isolation: isolate; background: none; border: 0; box-shadow: none; color: #f0e4d0; }
+  #startBox #hellRow button::before, #startBox #startBtn::before { content: ''; position: absolute; inset: 0; z-index: -1; pointer-events: none; border-style: solid; border-width: 0 34px; border-image: var(--uiBar) 0 72 fill stretch; }
+  #startBox #hellRow button { height: 46px; padding: 0 30px; text-shadow: 1px 1px 0 #140808; }
+  #startBox #hellRow .fl button { height: 36px; padding: 0 24px; min-width: 96px; } #startBox #hellRow .fl button::before { border-width: 0 26px; }
+  #startBox #hellRow button.on { background: none; color: #ffe2a0; } #startBox #hellRow button.on::before { border-image-source: var(--uiBarR); }
+  #startBox #hellRow button:disabled { opacity: 0.5; } #startBox #hellRow button:disabled::before { border-image-source: var(--uiBarD); }
+  #startBox #hellRow button:hover:not(:disabled)::before, #startBox #startBtn:hover::before { filter: brightness(1.2); }
+  #startBox #startBtn { height: 76px; padding: 0 110px; color: #ffe9b8; text-shadow: 2px 2px 0 #2a0808; filter: drop-shadow(0 0 12px rgba(255, 120, 60, 0.4)); }
+  #startBox #startBtn::before { border-width: 0 56px; border-image-source: var(--uiBarR); }
+  /* 보석 달린 버튼(비율 고정) */
+  #startBox #menuRow button, #startBox #topBtns button { width: 158px; height: 62px; padding: 8px 0 0; min-width: 0; font-size: 15px; letter-spacing: 0; color: #f0e4d0; text-shadow: 1px 1px 0 #140808; background: var(--uiBtn) center / 100% 100% no-repeat; border: 0 !important; box-shadow: none; white-space: nowrap; }
+  #startBox #menuRow button:hover, #startBox #topBtns button:hover { background-image: var(--uiBtnR); }
+  #startBox #topBtns button { width: 122px; height: 48px; padding-top: 6px; font-size: 14px; color: #ffe2a0; }
+  #startBox #diffRow button { width: 50px; height: 40px; padding: 0; font-size: 0; background: var(--uiArL) center / 100% 100% no-repeat; border: 0; box-shadow: none; }
+  #startBox #diffRow #diffPlus { background-image: var(--uiArR); }
+  #startBox #diffRow button:hover { filter: brightness(1.25); } #startBox #diffRow button:disabled { opacity: 0.4; }
 </style>
 </head>
 <body>

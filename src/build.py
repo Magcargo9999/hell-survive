@@ -151,6 +151,16 @@ ASSETS = {
     '__SKAWOLFB__': 'skin/wolfB_art.webp',
     '__SH__': 'mush/sh.webp',
     '__MIMIC__': 'mimic/mimic.webp',
+    '__UICARD__': 'ui/card.webp',
+    '__UICARDS__': 'ui/cardsel.webp',
+    '__UICARDL__': 'ui/cardlock.webp',
+    '__UIBAR__': 'ui/bar.webp',
+    '__UIBARR__': 'ui/barred.webp',
+    '__UIBARD__': 'ui/bardeep.webp',
+    '__UIBTN__': 'ui/btn.webp',
+    '__UIBTNR__': 'ui/btnred.webp',
+    '__UIARL__': 'ui/arl.webp',
+    '__UIARR__': 'ui/arr.webp',
     '__SKTW__': 'sk/sktower.webp'
 }
 def b64(p): return 'data:image/' + ('webp' if p.endswith('.webp') else 'png') + ';base64,' + base64.b64encode(open(os.path.join(HERE, 'assets', p), 'rb').read()).decode()
