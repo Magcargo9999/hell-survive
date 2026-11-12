@@ -9445,7 +9445,9 @@ function hurtPlayer(dmg) {
   if (P.pals && P.pals.length) { palPop(); const cap = P.max * PAL_ABS; if (dmg <= cap) { P.inv = 0.3; return; } dmg -= cap; }   // 수호령이 대신 맞고 터진다 (아주 큰 공격은 일부만 막는다)
   if (P.up.guard && P.guardT <= 0) {   // 수호의 방어막: 한 번 막고 재충전
     P.guardT = GD(P.up.guard); P.inv = 0.5; floatNum(P.x, P.y - 70, '방어막!', '#9fe3ff');
-    addRing(P.x, P.y - 34, 20, 70, 0.35, '150,220,255', 6); burst(P.x, P.y - 40, 10, ['#9fe3ff', '#ffffff'], 180, 0.4); sfx('item'); return;
+    addRing(P.x, P.y - 34, 20, 70, 0.35, '150,220,255', 6); burst(P.x, P.y - 40, 10, ['#9fe3ff', '#ffffff'], 180, 0.4); sfx('item');
+    if (m5on('guard')) for (const e of enemies) { if (e.hp <= 0 || isBig(e)) continue; const dx = e.x - P.x, dy = e.y - P.y, d = Math.hypot(dx, dy) || 1; if (d < 160 + e.r) { e.x += dx / d * 90; e.y += dy / d * 90; } }   // v10.45 숙련: 막을 때 주변 적을 밀쳐낸다
+    return;
   }   // 저주받은 거울
   dmg *= P.armor * P.taken * (shellOn ? 0.3 : 1) * (holyQ ? 0.6 : 1) * (P.syn.vortex && P.tw && P.tw.spd > 420 ? 0.8 : 1);
   if (SAVE.ch.tr.mirror && !P.trMir) { P.trMir = true; dmg *= 0.5; floatNum(P.x, P.y - 96, '깨진 거울!  피해 -50%', '#bfe9ff'); }   // 보물: 판마다 첫 피격 절반   // 신성화살을 모으는 동안은 단단하다 · 회오리 방벽
@@ -9755,7 +9757,36 @@ const TH = n => ({ n: 2 + Math.ceil(n / 2), cd: +((2.9 - 0.3 * n) * 4).toFixed(1
 const BL = n => ({ n: 1 + (n >= 3 ? 1 : 0) + (n >= 5 ? 1 : 0), cd: +(2.6 - 0.2 * n).toFixed(1), dm: (0.8 + 0.12 * n) * 0.85 });   // 회전 칼날 (v8.10: 피해 중폭 -15%)
 const NV = n => ({ R: 130 + 28 * n, cd: +(5.4 - 0.6 * n).toFixed(1), dm: 1.3 + 0.18 * n });                // 충격파
 const GD = n => 16 - 2 * n;   // 방어막: 레벨별 재충전 시간(초) Lv1 14 → Lv5 6
-const AU = n => ({ R: 95 + 22 * n, dm: 0.45 + 0.13 * n });   // v4.13 대폭 상향 (반경 70→117 · 피해 ×2 이상)                                                 // 불길 오라
+const AU = n => ({ R: 95 + 22 * n, dm: 0.45 + 0.13 * n });
+/* v10.45 Lv.5 숙련: 5레벨 카드를 끝까지 찍으면 한 번 더 받는 보상 (★조합보다 조금 약하게 — 수치 카드는 마지막 한 장이 2배, 기믹 카드는 작은 추가 효과). 런타임 판정은 P.up[id] >= MAXLV */
+const M5 = () => MAXLV;
+const MASTER = {
+  claw:   { txt: '마지막 한 장은 공격력 +30% (두 배)', apply: p => { p.dmg *= 1.14; } },
+  speed:  { txt: '마지막 한 장은 공속 +24% (두 배)', apply: p => { p.aspd += 0.12; } },
+  move:   { txt: '마지막 한 장은 이속 +15% (두 배)', apply: p => { p.spd *= 1.075; } },
+  heart:  { txt: '마지막 한 장은 최대 체력 +32 (두 배) · 체력 전부 회복', apply: p => { p.max += 16; p.hp = p.max; } },
+  magnet: { txt: '마지막 한 장은 흡수 범위 · 끌어당기는 속도 +120% (두 배)', apply: p => { p.pickup *= 1.6; p.magPull = (p.magPull || 1) + 0.6; } },
+  range:  { txt: '마지막 한 장은 범위 +24% (두 배)', apply: p => { p.rng *= 1.12; } },
+  orb:    { txt: '불꽃 구슬 +1개 더 · 구슬 피해 +25%', apply: p => { p.orbsN = p.char === 'octo' ? Math.min(OCTO_ORB_MAX, p.orbsN + 1) : p.orbsN + 1; } },
+  shard:  { txt: '투사체가 적에게 2번 튕긴다', apply: () => {} },
+  knock:  { txt: '마지막 한 장은 넉백 +50%p (두 배)', apply: p => { p.knock += 0.25; } },
+  crit:   { txt: '마지막 한 장은 치명타 +15% (두 배)', apply: p => { p.crit += 0.075; } },
+  guard:  { txt: '방어막이 막을 때 주변 적을 밀쳐낸다', apply: () => {} },
+  armor:  { txt: '마지막 한 장은 받는 피해 -12% (두 배)', apply: p => { p.armor *= 0.94; } },
+  exp:    { txt: '마지막 한 장은 경험치 +20% (두 배)', apply: p => { p.expMul += 0.1; } },
+  thunder: { txt: '낙뢰 피해 +20%', apply: () => {} },
+  blade:  { txt: '칼날 크기 +25%', apply: () => {} },
+  nova:   { txt: '충격파 피해 +20% · 둔화 2초', apply: () => {} },
+  freeze: { txt: '빙결 확률 +6%p · 빙결 시간 +0.5초', apply: () => {} },
+  ignite: { txt: '점화 확률 +6%p · 점화 지속 +1초', apply: () => {} },
+  aura:   { txt: '오라 반경 +15% · 피해 +25%', apply: () => {} },
+  thirst: { txt: '마지막 한 장은 처치 시 체력 +0.4 (두 배)', apply: p => { p.killHeal += 0.2; } },
+};
+const m5on = id => (P.up[id] | 0) >= M5();
+function upMaster(u) {   // 카드 레벨이 딱 MAXLV가 되는 순간 한 번
+  const m = MASTER[u.id]; if (!m || (u.max || MAXLV) !== MAXLV || P.up[u.id] !== MAXLV) return;
+  m.apply(P); floatNum(P.x, P.y - 100, `✦ ${upName(u.id)} 숙련!`, '#ffd27a'); addRing(P.x, P.y - 24, 10, 90, 0.4, '255,210,120', 6);
+}   // v4.13 대폭 상향 (반경 70→117 · 피해 ×2 이상)                                                 // 불길 오라
 // txt(n): n레벨이 되었을 때의 효과 한 줄 / alt: 캐릭터별 [이름, 효과]
 const UPGRADES = [
   { id: 'brCool', name: '시간 왜곡', rushOnly: true, max: 3, txt: n => `[보스 러시 전용] 특수 스킬 쿨타임 -10% (합계 -${10 * n}%)`, apply: () => {} },   // v10.10 보스 러시 전용 증강
@@ -9781,8 +9812,8 @@ const UPGRADES = [
   { id: 'thunder', name: '지옥 낙뢰',    txt: n => `낙뢰 ${TH(n).n}발 · ${TH(n).cd}초마다`,   apply: () => {} },
   { id: 'blade',  name: '회전 칼날',     txt: n => `칼날 ${BL(n).n}개 · ${BL(n).cd}초마다`,   apply: () => {} },
   { id: 'nova',   name: '충격파',        txt: n => `반경 ${NV(n).R} · ${NV(n).cd}초마다`,     apply: () => {} },
-  { id: 'freeze', name: '빙결', txt: n => `적중 시 ${5 + 3 * (n - 1)}% 확률로 ${(1 + 0.1 * n).toFixed(1)}초 빙결 (정지 · 받는 피해 +10% · 보스는 정지 없음)`, apply: () => {} },
-  { id: 'ignite', name: '점화', txt: n => `적중 시 ${8 + 2 * (n - 1)}% 확률로 3초 점화 (0.5초마다 공격력 ${Math.round(20 * (1 + 0.12 * (n - 1)))}% + 최대 체력 ${(0.5 * (1 + 0.5 * (n - 1))).toFixed(2).replace(/\.?0+$/, '')}%)`, apply: () => {} },
+  { id: 'freeze', name: '빙결', txt: n => `적중 시 ${5 + 3 * (n - 1) + (n >= MAXLV ? 6 : 0)}% 확률로 ${(1 + 0.1 * n + (n >= MAXLV ? 0.5 : 0)).toFixed(1)}초 빙결 (정지 · 받는 피해 +10% · 보스는 정지 없음)`, apply: () => {} },
+  { id: 'ignite', name: '점화', txt: n => `적중 시 ${8 + 2 * (n - 1) + (n >= MAXLV ? 6 : 0)}% 확률로 ${3 + (n >= MAXLV ? 1 : 0)}초 점화 (0.5초마다 공격력 ${Math.round(20 * (1 + 0.12 * (n - 1)))}% + 최대 체력 ${(0.5 * (1 + 0.5 * (n - 1))).toFixed(2).replace(/\.?0+$/, '')}%)`, apply: () => {} },
   { id: 'aura',   name: '불길 오라',     txt: n => `오라 반경 ${AU(n).R} · 지속 피해`,        apply: () => {} },
 ];
 const UNIQUE = {
@@ -9893,7 +9924,10 @@ function cardView(u) {
   const a = altOf(u), cur = P.up[u.id] || 0, n = cur + 1, mx = cardMax(u), hint = '', brk = n > (u.max || MAXLV);
   const sl = (u.max || MAXLV) >= SYN_LV ? synAll(u.id).filter(sy => !rush || !sy.need.includes('move')) : [];   // v10.14 보스 러시에서 얻을 수 없는 이속 재료 조합은 안내하지 않음
   const syn = sl.length ? sl.map(sy => { const b = altOf(sy); return `★ ${b ? b[0] : sy.name}<br>　= ${upName(sy.need.find(x => x !== u.id))} (둘 다 Lv.${SYN_LV})`; }).join('<br>') : '';
-  return { id: u.id, def: u, name: a ? a[0] : u.name, desc: a ? a[1] : u.txt(n), eff: true, apply: u.apply, tag: '', isNew: !cur, syn, cls: (u.form >= 2 || u.fin || u.needSkill) ? 'finc' : '',
+  const m = MASTER[u.id] && (u.max || MAXLV) === MAXLV ? MASTER[u.id].txt : '';   // v10.45 Lv.5 숙련 — 5장째는 앞면에, 그 전엔 뒷면에 미리 보여 준다
+  const desc = (a ? a[1] : u.txt(n)) + (m && n === MAXLV ? `<br>✦ Lv.5 숙련: ${m}` : '');
+  const syn2 = syn + (m && n < MAXLV ? (syn ? '<br>' : '') + `✦ Lv.5 숙련 = ${m}` : '');
+  return { id: u.id, def: u, name: a ? a[0] : u.name, desc, eff: true, apply: u.apply, tag: '', isNew: !cur, syn: syn2, cls: (u.form >= 2 || u.fin || u.needSkill) ? 'finc' : '',
     sub: (cur ? `Lv.${cur} → ${n}` : `Lv.1`) + (n === mx ? ' (최대)' : '') + (brk ? ' 🔓 한계 돌파' : '') + hint };
 }
 const restCard = () => ({ id: '_rest', name: '잠깐의 휴식', desc: '체력 25% 회복', eff: true, noLv: true, sub: '', tag: '', apply: p => { p.hp = Math.min(p.max, p.hp + p.max * 0.25); } });
@@ -10002,7 +10036,7 @@ function levelUp() {
   openUpgrade();
 }
 function takeCard(u) {   // 카드 한 장을 적용한다 (고른 경우 · 보스 러시 시작 증강처럼 무작위로 정해진 경우 공통)
-  u.apply(P); if ((!u.cls || u.cls === 'finc') && !u.noLv) P.up[u.id] = (P.up[u.id] || 0) + 1;
+  u.apply(P); if ((!u.cls || u.cls === 'finc') && !u.noLv) { P.up[u.id] = (P.up[u.id] || 0) + 1; upMaster(u); }
   if (P.char === 'octo' && !u.cls && !u.noLv && u.def && P.orbsN < OCTO_ORB_MAX) { P.orbsN++; floatNum(P.x, P.y - 100, `마력 구체 ${P.orbsN}개`, '#e0b0ff'); }
 }
 function openUpgrade() {
@@ -10014,7 +10048,7 @@ function openUpgrade() {
   if (P.curseCard > 0) {   // 잭팟 머신의 저주: 카드를 고를 수 없고 무작위 1장이 억지로 적용된다
     P.curseCard--; const u = items[(rand() * items.length) | 0];
     openChoice(`☠ 저주받은 레벨업  Lv.${P.lvl}`, [Object.assign({}, u, { sub: '운명의 저주 : 카드를 고를 수 없다 · 무작위로 정해졌다', tag: ' · 선택 불가', cls: 'contract' })], () => {
-      u.apply(P); if ((!u.cls || u.cls === 'finc') && !u.noLv) P.up[u.id] = (P.up[u.id] || 0) + 1; state = 'play'; if (P.exp >= P.need) levelUp();
+      u.apply(P); if ((!u.cls || u.cls === 'finc') && !u.noLv) { P.up[u.id] = (P.up[u.id] || 0) + 1; upMaster(u); } state = 'play'; if (P.exp >= P.need) levelUp();
     });
     document.getElementById('levelHint').textContent = '☠ 잭팟 머신의 저주 — 이번 레벨업은 카드를 고를 수 없어요 (1 키 또는 클릭)'; return;
   }
@@ -12115,14 +12149,14 @@ function castThunder(c) {
     const t = pool.splice((rand() * pool.length) | 0, 1)[0], x = t.x, y = t.y, R = 84, pts = [];
     for (let k = 0; k < 6; k++) pts.push([(rand() - 0.5) * 56 * (1 - k / 6), -560 + k * 100]);
     lights.push({ x, y, t: 0, life: 0.4, pts });
-    for (const e of enemies) if (e.hp > 0 && Math.hypot(e.x - x, e.y - y) < R + e.r) hurtEnemy(e, P.dmg * c.dm * (P.syn.tstorm ? 0.92 : 1), 0, 0, 0);   // v6.46: 폭풍 낙뢰 피해 -8%
+    for (const e of enemies) if (e.hp > 0 && Math.hypot(e.x - x, e.y - y) < R + e.r) hurtEnemy(e, P.dmg * c.dm * (P.syn.tstorm ? 0.92 : 1) * (m5on('thunder') ? 1.2 : 1), 0, 0, 0);   // v6.46: 폭풍 낙뢰 피해 -8% · v10.45 숙련 +20%
     addRing(x, y, 6, R, 0.3, '255,240,140', 6); burst(x, y - 10, 8, ['#fff3a0', '#ffffff', '#9be7ff'], 260, 0.4); hit++;
   }
   if (hit) { shake = Math.max(shake, 3); sfx('zap'); }
 }
 function castBlades(c, t) {
   const base = t ? Math.atan2(t.y - P.y, t.x - P.x) : Math.atan2(P.lastY, P.lastX), n = c.n + (P.syn.bstorm ? 2 : 0);
-  for (let i = 0; i < n; i++) blades.push({ x: P.x, y: P.y - 20, a: base + (i - (n - 1) / 2) * 0.55, out: true, dist: 0, max: 330, r: 24 * (P.syn.bstorm ? 1.62 : 1), dm: c.dm, hit: new Map(), t: 0, rot: rand() * 6 });
+  for (let i = 0; i < n; i++) blades.push({ x: P.x, y: P.y - 20, a: base + (i - (n - 1) / 2) * 0.55, out: true, dist: 0, max: 330, r: 24 * (P.syn.bstorm ? 1.62 : 1) * (m5on('blade') ? 1.25 : 1), dm: c.dm, hit: new Map(), t: 0, rot: rand() * 6 });
   sfx('shoot');
 }
 function castNova(c) {
@@ -12130,7 +12164,7 @@ function castNova(c) {
   for (const e of enemies) {
     if (e.hp <= 0) continue;
     const dx = e.x - P.x, dy = e.y - P.y, d = Math.hypot(dx, dy) || 1;
-    if (d < c.R + e.r) { hurtEnemy(e, P.dmg * c.dm, dx / d, dy / d, P.syn.dnova ? 420 : 0); e.slowT = Math.max(e.slowT || 0, 1.0); if (P.syn.glacier) freezeE(e, true); }
+    if (d < c.R + e.r) { hurtEnemy(e, P.dmg * c.dm * (m5on('nova') ? 1.2 : 1), dx / d, dy / d, P.syn.dnova ? 420 : 0); e.slowT = Math.max(e.slowT || 0, m5on('nova') ? 2.0 : 1.0); if (P.syn.glacier) freezeE(e, true); }   // v10.45 숙련: 피해 +20% · 둔화 2초
   }
   addRing(P.x, P.y - 16, 16, c.R, 0.5, th.rgb, 10); addRing(P.x, P.y - 16, 8, c.R * 0.6, 0.4, '255,255,255', 6);
   shake = Math.max(shake, 5); sfx('boom');
@@ -12147,7 +12181,7 @@ function cardAttacks(dt) {
   if (up.aura) {
     T.au -= dt;
     if (T.au <= 0) {
-      T.au = 0.5; const c = AU(up.aura), R = c.R * (P.syn.inferno ? 1.4 : 1), dm = P.dmg * c.dm * (P.syn.inferno ? 1.7 : 1);
+      T.au = 0.5; const c = AU(up.aura), R = c.R * (P.syn.inferno ? 1.4 : 1) * (m5on('aura') ? 1.15 : 1), dm = P.dmg * c.dm * (P.syn.inferno ? 1.7 : 1) * (m5on('aura') ? 1.25 : 1);   // v10.45 숙련
       DSRC = 'aura'; let an = 0;
       for (const e of enemies) if (e.hp > 0 && Math.hypot(e.x - P.x, e.y - P.y) < R + e.r * 0.6) { hurtEnemy(e, dm, 0, 0, 0, true); if (an++ < 10) burst(e.x, e.y - e.r, 3, ['#ff6a1c', '#ffb030', '#ffe28a'], 110, 0.35); }   // v5.11: 오라에 맞는 적에게 불꽃
       DSRC = null; if (an) addRing(P.x, P.y - 4, R * 0.9, R, 0.25, '255,140,40', 4);
@@ -12239,7 +12273,7 @@ function drawFishAura(x, y) {
   ctx.restore();
 }
 function drawAura(x, y) {
-  const n = P.up.aura, R = AU(n).R * (P.syn.inferno ? 1.4 : 1), th = theme(), pu = 0.5 + 0.5 * Math.sin(wallT * 5);
+  const n = P.up.aura, R = AU(n).R * (P.syn.inferno ? 1.4 : 1) * (m5on('aura') ? 1.15 : 1), th = theme(), pu = 0.5 + 0.5 * Math.sin(wallT * 5);
   { const g = ctx.createRadialGradient(x, y - 4, R * 0.2, x, y - 4, R); g.addColorStop(0, `rgba(255,120,30,${0.06 + 0.04 * pu})`); g.addColorStop(0.75, `rgba(255,90,20,${0.16 + 0.08 * pu})`); g.addColorStop(1, `rgba(255,170,60,${0.28 + 0.1 * pu})`);
     ctx.save(); ctx.translate(x, y - 4); ctx.scale(1, 0.7); ctx.fillStyle = g; ctx.beginPath(); ctx.arc(0, 0, R, 0, 6.283); ctx.fill(); ctx.restore(); }
   ctx.save(); ctx.globalCompositeOperation = 'lighter';   // 테두리를 따라 도는 불씨
@@ -12499,7 +12533,7 @@ function update(dt) {
         const oh = e.orbH || (e.orbH = {}); if (oh[i] > gt) continue;   // v8.31: 구슬마다 따로 쿨타임 (겹쳐 지나가도 모두 맞고, 마왕 패턴 쿨타임 orbCd와 분리)
         if (Math.hypot(e.x - ox, e.y - e.r - oy) < 18 + e.r) {
           const dx = e.x - P.x, dy = e.y - P.y, d = Math.hypot(dx, dy) || 1;
-          DSRC = 'orb'; hurtEnemy(e, P.dmg * P.orbD, dx / d, dy / d, 180 * P.knock); DSRC = null; oh[i] = gt + 0.4;   // 지옥불 구슬: 공격력의 55% (영혼 폭풍 95%)
+          DSRC = 'orb'; hurtEnemy(e, P.dmg * P.orbD * (m5on('orb') ? 1.25 : 1), dx / d, dy / d, 180 * P.knock); DSRC = null; oh[i] = gt + 0.4;   // 지옥불 구슬: 공격력의 55% (영혼 폭풍 95%)
         }
       }
     }
@@ -12546,8 +12580,8 @@ function update(dt) {
           if (t2) { const dx = t2.x - e.x, dy = t2.y - t2.r - (e.y - e.r), dl = Math.hypot(dx, dy) || 1; shards.push({ src: 'ricochet', x: e.x, y: e.y - e.r, vx: dx / dl * 640, vy: dy / dl * 640, life: 0.7, pierce: 1, hit: new Set([e]), dmg: (s.dmg || 14) * 0.6, arrow: true, auto: true, ric: true, sz: 0.8 }); addRing(e.x, e.y - e.r, 4, 34, 0.25, '184,246,255', 4); }
         }
         if (s.arrow && !s.auto ? P.fireArrow > 0 : P.syn.fireBone) for (let q = 0; q < (s.arrow && !s.auto ? P.fireArrow : 1); q++) fireBoneBlast(e, s.arrow && !s.auto ? 'fireArrow' : 'fireBone');
-        if (s.src === 'shard' && !s.bn) {   // 뼈 투사체: 맞힌 뒤 가까운 다른 적에게 한 번 튕긴다
-          s.bn = 1; let t2 = null, bd = 340 * 340;
+        if (s.src === 'shard' && (s.bn | 0) < (m5on('shard') ? 2 : 1)) {   // 뼈 투사체: 맞힌 뒤 가까운 다른 적에게 한 번 튕긴다 (v10.45 숙련: 2번)
+          s.bn = (s.bn | 0) + 1; let t2 = null, bd = 340 * 340;
           for (const o of enemies) { if (o.hp <= 0 || s.hit.has(o)) continue; const dd = (o.x - s.x) ** 2 + (o.y - s.y) ** 2; if (dd < bd) { bd = dd; t2 = o; } }
           if (t2) { const dx = t2.x - s.x, dy = t2.y - t2.r - s.y, dl = Math.hypot(dx, dy) || 1, sp = Math.hypot(s.vx, s.vy); s.vx = dx / dl * sp; s.vy = dy / dl * sp; s.life = Math.max(s.life, 0.6); }
         }
@@ -12936,7 +12970,7 @@ function blazeBoom0(e) {   // 업화 연쇄: 화상 입은 적이 죽으며 터�
 const isBig = e => e.kind === 'boss' || e.kind === 'mini' || e.kind === 'uniq';
 function freezeE(e, force) {
   if (e.hp <= 0 || (!force && e.frzCd > gt)) return;
-  const n = Math.max(1, P.up.freeze | 0), dur = 1 + 0.1 * n;
+  const n = Math.max(1, P.up.freeze | 0), dur = 1 + 0.1 * n + (m5on('freeze') ? 0.5 : 0);   // v10.45 숙련 +0.5초
   e.frzT = gt + dur; e.frzCd = gt + 3.5;
   if (!isBig(e)) e.rootT = Math.max(e.rootT || 0, gt + dur);
   burst(e.x, e.y - e.r, 8, ['#9fe0ff', '#e6fbff', '#ffffff'], 150, 0.5); floatNum(e.x, e.y - e.r * 2 - 14, '❄ 빙결', '#9fe0ff');
@@ -12962,15 +12996,15 @@ const ZONE_ELEM_CD = 1.2;   // v8.83: 달팽이 장판(독 자국·용암 웅덩
 function zoneElem(e) { if ((P.up.freeze || P.up.ignite) && e.hp > 0 && !(e.zeT > gt)) { e.zeT = gt + ZONE_ELEM_CD; procElem(e); } }
 function igniteX(e, force) {
   if (e.hp <= 0) return;
-  e.ignT = 3 + (P.syn.forge ? 2 : 0); e.ignAcc = e.ignAcc || 0;
+  e.ignT = 3 + (P.syn.forge ? 2 : 0) + (m5on('ignite') ? 1 : 0); e.ignAcc = e.ignAcc || 0;   // v10.45 숙련 +1초
   if (force && !(e.ignFx > gt)) { e.ignFx = gt + 1; burst(e.x, e.y - e.r, 5, ['#ff8a2a', '#ffd27a'], 120, 0.4); }
   thermalCheck(e);   // v9.70 어떤 경로로 점화가 걸려도(대장장이 검 포함) 이미 얼어 있으면 열충격
 }
 function procElem(e) {   /* hurtEnemy에서 (지속 피해가 아닌) 일반 적중마다 */
   const f = P.up.freeze | 0, g = P.up.ignite | 0;
   const sy = P.syn.shock;
-  if (f && rand() < (0.05 + 0.03 * (f - 1)) * (sy && e.ignT > 0 ? 2 : 1)) freezeE(e);
-  if (g && !(e.ignT > 0) && rand() < (0.08 + 0.02 * (g - 1)) * (sy && e.frzT > gt ? 2 : 1)) { igniteX(e); thermalCheck(e); }
+  if (f && rand() < (0.05 + 0.03 * (f - 1) + (f >= M5() ? 0.06 : 0)) * (sy && e.ignT > 0 ? 2 : 1)) freezeE(e);   // v10.45 숙련 +6%p
+  if (g && !(e.ignT > 0) && rand() < (0.08 + 0.02 * (g - 1) + (g >= M5() ? 0.06 : 0)) * (sy && e.frzT > gt ? 2 : 1)) { igniteX(e); thermalCheck(e); }
 }
 function updateIgnite(dt) {
   const lv = Math.max(1, P.up.ignite | 0);
@@ -20377,7 +20411,7 @@ stepDive = skWrap(stepDive, 'dive'); stepRush = skWrap(stepRush, 'rush'); rushSt
 updateAirs = (f => function (...a) { return withSrc('basic', () => f.apply(this, a)); })(updateAirs);   // v6.22: 에어슬래시는 평타 (v6.30: 바로 뒤 천안 난무·브레스 감싸기가 주석에 묻혀 딜미터기에서 빠지던 것 수정)
 { const _tb = thornBlast, _sb = smashBlow; thornBlast = function (...a) { return withSrc('scale', () => _tb.apply(this, a)); }; smashBlow = function (...a) { return withSrc('smash', () => _sb.apply(this, a)); }; }
 shellReflect = skWrap(shellReflect, 'shell'); updateBsig = skWrap(updateBsig, 'bsigil');
-window.__G = { ROUTE_TREE, routesAllSeen, SLM, SLW, slmMass, slmExPause, slmHit, get slm() { return slm; }, TILE, PAN, PANW, panHot, isPanVent, panClear, IMAP, IMAP_PAN, useIMap, GROUND, PF, PPROP_RECTS, HNT, HNW, HNTF, hntHidden, hntLampOn, hntVis, hntGap, get hnt() { return hnt; }, BOSS_HP, bossExPaused, TRI, TRW, TRIF, spawnTri, triStart, triBreak, triSf, feverTick, chStatsLive, chShardFxStep, openChMenu, enterChallenge, closeRoul, chMiniSpawn, chmOn, chmTile, CHM, CHP_RECTS, shkSpr, get ctx() { return ctx; }, BRO, BOSS_FLOOR, get broQ() { return broQ; }, set broQ(v) { broQ = v; }, BRO_OPT, brTierAt, brModsAt, broRender, TSPECIES, TTN, TTW, TitanAI, TitanRock, ttnClear, ttnExPause, ttnInGap, ttnHeavy, ttnSealApply, ttnSealAtk, get ttn() { return ttn; }, TAR, TARW, isTarSet, tarTile, TF, TPROP_RECTS, IMAP_TAR, updateTarField, STL, STLW, SteelEaterAI, IronChunk, stlClear, stlWipe, stlExPause, stlStack, get stlAI() { return stlAI; }, openDex, BYU, BYUW, BanupAI, byuClear, byuExPause, get byu() { return byu; }, pctMul, pctMelee, PCT_RATE, FISH, KN, castLostHead, get lhead() { return lhead; }, snMouth, snHall, tgArmsAt, tgC, tgCrossOm, tgDashDone, DOK, DOKW, DokkaebiAI, dokClear, dokZoneBox, dokSpinPath, get dok() { return dok; }, gunRoll1, gunHit, updateFish, openSlot, slotResult, slotSpin, WH, WHW, WhaleAI, whClear, whRoom, whLane, whLaneOk, whDexArt, get wh() { return wh; }, hq, hqLow, drawWolf, heatOn, heatArena, arenaRests, arenaRestNearest, openRoutePic, get banner() { return banner; }, isDosanSet, get DSPECIES() { return DSPECIES; }, buildDosanSpecies, BLADE, DF, DPROP_RECTS, dosanTile, imgReady, igniteX, procElem, startFw, spawnFw, spawnUniq, get cam() { return cam; }, TG, TGW, get tg() { return tg; }, tgClear, tgArms, tgCrossAt, tgInSafe, tgCxR, tgPatEnd, tgSafeSpot, tgCam, tgHold, TigerAI, HFUSE_HID, spawnFrw, frwAtk, FRW, spawnLad, lAtk, LAD, LADF, buildCards, rollHeartDrop, heartGain, disHeart, CHARS, inPoly, castSkill, get arena() { return arena; }, FISH, FWAVE, FISHA2, get fwaveQ() { return fwaveQ; }, SN, SNW, get sn() { return snAI; }, snClear, snHall, snEscapeR, pendingConds, rollCards, fishR, shardTotal, calcShards, heartBonus, CV, CVW, HellfirePatch, get cv() { return cvAI; }, cvClear, cvFurnace, pickBossK, get rushQ() { return rushQ; }, get FSPECIES() { return FSPECIES; }, heartMigrate, hRange, IMP, BLD, leadXY, leadDir, HEAT, FF, restNear, restNearest, restAt, updateHeat, isFireSet, fireTile, floorSet, clearGround: () => GROUND.clear(), get TOP_TIER() { return TOP_TIER; }, get OPEN_TIER() { return OPEN_TIER; }, lilArt, drawLilBody, LS, LSW, get ls() { return ls; }, FrostMirror, lsInWedge, lsIce, lsExPause, lsZone, lilDefeated, RD, RDW, RDF, rdOn, get rd() { return rd; }, KarmaBead, FrostMantra, IceLotus, rdAbsorb, rdInGap, rdExPause, rdSilence, rudDefeated, IMP, GoldImp, impOf, trySpawnImp, impDefeated, set impAt(v) { impAt = v; }, LUCK_N, PB, PBW, IMAP, IceWall, Fissure, IceSpear, segDist, FrostMgr, pbOn, pbClear, pbExPause, get pb() { return pb; }, gunMagN, ROLL, get lhead() { return lhead; }, KN, castLostHead, TW, isIceSlip, isIceSet, get ISPECIES() { return ISPECIES; }, ICE_SLIP, ICE_L, OPEN_TIER, TOP_TIER, renderHells, floorSet, pickFloor, iceTile, IF, get lhead() { return lhead; }, KN, isKnight, castLostHead, knightSlash, openGhostRoute, KNIGHT_FORMS, ghostForm, hTitle, relicIcon, heartMake, hOpt, heartBonus, calcShards, GRN, GRW, GRNF, spawnGrn, grnStart, grnPick, chAltarTick, chAltarOpen, chPactStart, chPactEnd, PACTS, chTime, chTime0, chDmgT, CH_HARD, CH, chBossPool, chClearedSets, chMobAvail, chSquad, chJackpot, chGoldKill, openRoul, roulSpin, roulApply, ROUL, get roul() { return roul; }, chReward, chCardPick, cardMax, chLoot, chCoins, chIMapAt, CH_IMAP_K, chBossCall, chEnterBoss, chMiniSpawn, chKill, drawMinimap, get CH_FIELD_NO() { return CH_FIELD_NO; }, set CH_FIELD_NO(v) { CH_FIELD_NO = v; }, bossWorldClear, chBossClean, cardDefs, cardView, ACH, achSync, achClear, openAch, KG, KGW, get kg() { return kg; }, AirGeyser, WaterMirror, MirrorBolt, kgIce, get shards() { return shards; }, set shards(v) { shards = v; }, VF, VFW, get vf() { return vf; }, VfTrap, VfSkull, VfHeart, vfLeech, fuseHearts, rerollHeart, heartBonus, renderFuse, setFu(v) { hFu = v; }, QN, QNW, get qn() { return qn; }, RootBind, SporeSack, QnMush, pickBossK, pctMelee, pctZone, updateDiff, skinG, bhKey, BH_ORDER, heartIcon, relicMaskOn, calcShards, isSlow, isLava, saveSave, svParse, spawnPlant, PL, get GSPECIES() { return GSPECIES; }, get plBalls() { return plBalls; }, synCard, freezeE, availSyn, SYNERGIES, dmName, FD, shkAdd, toxAdd, skSpawnPair, phoenixRevive, mirrorBlock, palPop, updateCutSaws, get shkSp() { return shkSp; }, get toxFl() { return toxFl; }, get zonesRef() { return zones; },
+window.__G = { ROUTE_TREE, routesAllSeen, takeCard, MASTER, m5on, freezeE, igniteX, procElem, SLM, SLW, slmMass, slmExPause, slmHit, get slm() { return slm; }, TILE, PAN, PANW, panHot, isPanVent, panClear, IMAP, IMAP_PAN, useIMap, GROUND, PF, PPROP_RECTS, HNT, HNW, HNTF, hntHidden, hntLampOn, hntVis, hntGap, get hnt() { return hnt; }, BOSS_HP, bossExPaused, TRI, TRW, TRIF, spawnTri, triStart, triBreak, triSf, feverTick, chStatsLive, chShardFxStep, openChMenu, enterChallenge, closeRoul, chMiniSpawn, chmOn, chmTile, CHM, CHP_RECTS, shkSpr, get ctx() { return ctx; }, BRO, BOSS_FLOOR, get broQ() { return broQ; }, set broQ(v) { broQ = v; }, BRO_OPT, brTierAt, brModsAt, broRender, TSPECIES, TTN, TTW, TitanAI, TitanRock, ttnClear, ttnExPause, ttnInGap, ttnHeavy, ttnSealApply, ttnSealAtk, get ttn() { return ttn; }, TAR, TARW, isTarSet, tarTile, TF, TPROP_RECTS, IMAP_TAR, updateTarField, STL, STLW, SteelEaterAI, IronChunk, stlClear, stlWipe, stlExPause, stlStack, get stlAI() { return stlAI; }, openDex, BYU, BYUW, BanupAI, byuClear, byuExPause, get byu() { return byu; }, pctMul, pctMelee, PCT_RATE, FISH, KN, castLostHead, get lhead() { return lhead; }, snMouth, snHall, tgArmsAt, tgC, tgCrossOm, tgDashDone, DOK, DOKW, DokkaebiAI, dokClear, dokZoneBox, dokSpinPath, get dok() { return dok; }, gunRoll1, gunHit, updateFish, openSlot, slotResult, slotSpin, WH, WHW, WhaleAI, whClear, whRoom, whLane, whLaneOk, whDexArt, get wh() { return wh; }, hq, hqLow, drawWolf, heatOn, heatArena, arenaRests, arenaRestNearest, openRoutePic, get banner() { return banner; }, isDosanSet, get DSPECIES() { return DSPECIES; }, buildDosanSpecies, BLADE, DF, DPROP_RECTS, dosanTile, imgReady, igniteX, procElem, startFw, spawnFw, spawnUniq, get cam() { return cam; }, TG, TGW, get tg() { return tg; }, tgClear, tgArms, tgCrossAt, tgInSafe, tgCxR, tgPatEnd, tgSafeSpot, tgCam, tgHold, TigerAI, HFUSE_HID, spawnFrw, frwAtk, FRW, spawnLad, lAtk, LAD, LADF, buildCards, rollHeartDrop, heartGain, disHeart, CHARS, inPoly, castSkill, get arena() { return arena; }, FISH, FWAVE, FISHA2, get fwaveQ() { return fwaveQ; }, SN, SNW, get sn() { return snAI; }, snClear, snHall, snEscapeR, pendingConds, rollCards, fishR, shardTotal, calcShards, heartBonus, CV, CVW, HellfirePatch, get cv() { return cvAI; }, cvClear, cvFurnace, pickBossK, get rushQ() { return rushQ; }, get FSPECIES() { return FSPECIES; }, heartMigrate, hRange, IMP, BLD, leadXY, leadDir, HEAT, FF, restNear, restNearest, restAt, updateHeat, isFireSet, fireTile, floorSet, clearGround: () => GROUND.clear(), get TOP_TIER() { return TOP_TIER; }, get OPEN_TIER() { return OPEN_TIER; }, lilArt, drawLilBody, LS, LSW, get ls() { return ls; }, FrostMirror, lsInWedge, lsIce, lsExPause, lsZone, lilDefeated, RD, RDW, RDF, rdOn, get rd() { return rd; }, KarmaBead, FrostMantra, IceLotus, rdAbsorb, rdInGap, rdExPause, rdSilence, rudDefeated, IMP, GoldImp, impOf, trySpawnImp, impDefeated, set impAt(v) { impAt = v; }, LUCK_N, PB, PBW, IMAP, IceWall, Fissure, IceSpear, segDist, FrostMgr, pbOn, pbClear, pbExPause, get pb() { return pb; }, gunMagN, ROLL, get lhead() { return lhead; }, KN, castLostHead, TW, isIceSlip, isIceSet, get ISPECIES() { return ISPECIES; }, ICE_SLIP, ICE_L, OPEN_TIER, TOP_TIER, renderHells, floorSet, pickFloor, iceTile, IF, get lhead() { return lhead; }, KN, isKnight, castLostHead, knightSlash, openGhostRoute, KNIGHT_FORMS, ghostForm, hTitle, relicIcon, heartMake, hOpt, heartBonus, calcShards, GRN, GRW, GRNF, spawnGrn, grnStart, grnPick, chAltarTick, chAltarOpen, chPactStart, chPactEnd, PACTS, chTime, chTime0, chDmgT, CH_HARD, CH, chBossPool, chClearedSets, chMobAvail, chSquad, chJackpot, chGoldKill, openRoul, roulSpin, roulApply, ROUL, get roul() { return roul; }, chReward, chCardPick, cardMax, chLoot, chCoins, chIMapAt, CH_IMAP_K, chBossCall, chEnterBoss, chMiniSpawn, chKill, drawMinimap, get CH_FIELD_NO() { return CH_FIELD_NO; }, set CH_FIELD_NO(v) { CH_FIELD_NO = v; }, bossWorldClear, chBossClean, cardDefs, cardView, ACH, achSync, achClear, openAch, KG, KGW, get kg() { return kg; }, AirGeyser, WaterMirror, MirrorBolt, kgIce, get shards() { return shards; }, set shards(v) { shards = v; }, VF, VFW, get vf() { return vf; }, VfTrap, VfSkull, VfHeart, vfLeech, fuseHearts, rerollHeart, heartBonus, renderFuse, setFu(v) { hFu = v; }, QN, QNW, get qn() { return qn; }, RootBind, SporeSack, QnMush, pickBossK, pctMelee, pctZone, updateDiff, skinG, bhKey, BH_ORDER, heartIcon, relicMaskOn, calcShards, isSlow, isLava, saveSave, svParse, spawnPlant, PL, get GSPECIES() { return GSPECIES; }, get plBalls() { return plBalls; }, synCard, freezeE, availSyn, SYNERGIES, dmName, FD, shkAdd, toxAdd, skSpawnPair, phoenixRevive, mirrorBlock, palPop, updateCutSaws, get shkSp() { return shkSp; }, get toxFl() { return toxFl; }, get zonesRef() { return zones; },
   bossDefeated, get IMG() { return IMG; },
   get ready() { return !!IMG.floorD; }, get state() { return state; }, get P() { return P; }, get enemies() { return enemies; }, get orbs() { return orbs; },
   get zones() { return zones; }, get ebul() { return ebul; }, get EYE() { return EYE; }, get shards() { return shards; }, get bigQ() { return bigQ; }, get bombQ() { return bombQ; }, get holyQ() { return holyQ; }, get afx() { return afx; }, get dashQ() { return dashQ; }, get beam() { return beam; }, get evo() { return evo; }, get choices() { return choices; },
