@@ -161,6 +161,7 @@ ASSETS = {
     '__UIBTNR__': 'ui/btnred.webp',
     '__UIARL__': 'ui/arl.webp',
     '__UIARR__': 'ui/arr.webp',
+    '__AMK__': 'amk/amk.webp', '__AMKFX__': 'amk/amkfx.webp',
     '__SKTW__': 'sk/sktower.webp'
 }
 def b64(p): return 'data:image/' + ('webp' if p.endswith('.webp') else 'png') + ';base64,' + base64.b64encode(open(os.path.join(HERE, 'assets', p), 'rb').read()).decode()

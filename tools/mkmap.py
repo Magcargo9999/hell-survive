@@ -17,6 +17,7 @@ ANCHORS = [
  ('보스 러시 전용 빌드 BRO(v10.27)', r'^const BRO = |^function broRender|^function brTierAt|^function brModsAt|^const BOSS_FLOOR'),
  ('8지옥 잡몹 TSPECIES(v10.26)', r'^let TSPECIES|^const TAR_MOB|^function buildTarSpecies'),
  ('타르타로스의 티탄(v10.25: 사슬 채찍·중력의 틈·대지 강타 초중력·형틀의 사슬 봉인·대차륜)', r'^const TTN = |^class TitanAI|^class TitanRock|^function ttnRiftBlock|^function updateTtnFx|^function drawTtnBoss'),
+ ('각성한 원숭이 마왕(v10.46: 보스전 체험 · 이속 공정 배율 amkK · 대지 파열·휠윈드·마그마 융기·폭주·환영 쇄도)', r'^const AMK = |^class AwakenedMonkeyAI|^function startAmkTrial|^function initAmkBoss|^function drawAmkBoss'),
  ('Lv.5 숙련(v10.45: 5레벨 카드 보상 표 MASTER·upMaster·m5on)', r'^const MASTER = |^function upMaster'),
  ('분열체 슬라임 왕(v10.42: 질량 공유·광역 감쇠·분열·합체·점액 도약·젤리 사출·총총 뛰기)', r'^const SLM = |^class SlimeKingAI|^class SlimeBody|^function slmHit|^function drawSlmBody'),
  ('암전의 사냥꾼(v10.38: 어둠 레이어·등불·그림자 피해·매복 베기·사슬 낫·올가미 함정·소등 습격·암전)', r'^const HNT = |^class HunterAI|^function hntDarkLayer|^function drawHntScreen|^function updateHntFx'),
