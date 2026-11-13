@@ -1,4 +1,4 @@
-"""v9.49 마계 물고기 진화 확인 — 마계 미꾸라지(물방울) · 공허의 마해룡(절대 수압 3구역 · 포식자의 파도) · 도감 · 오류.
+"""v9.49 마계 물고기 진화 확인 — 마계 미꾸라지(물방울) · 공허의 마해룡(절대 수압 · 포식자의 파도) · 도감 · 오류.
 사용: GAME_URL=http://localhost:8765/index.html PYTHONPATH=tools python3 tools/tests/fish949.py [스크린샷 폴더]"""
 import asyncio, sys
 from h301 import *
