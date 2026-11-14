@@ -18468,12 +18468,16 @@ function ttnRockDexArt(g, w, h, l) { const f = TTNF.rockN[0]; if (!IMG.ttn) retu
      A 대지 파열 shatter: 3갈래(2페이즈 5) 예고 줄 → 충격파가 달리고 지나간 자리에 8초 '불타는 균열'(밟으면 화상)
      B 멸망의 휠윈드 whirl: 제 둘레 원 → 고리 → 더 큰 고리 (3번 팽창 · 팽창마다 0.5초×K) — 이미 터진 안쪽으로 파고들면 딜 타임 · 맨 바깥도 안전
      C 마그마 융기 pillar: 엇박자로 5번, 내 자리(홀수째는 달리는 방향 앞)에 0.8초×K 뒤 솟는 기둥 — 멈춰도, 곧게 달려도 맞는다
+     F 무한 난타 barrage (v10.51, 두 페이즈 모두): 한 대마다 내 쪽으로 한 걸음(내가 그 예고 시간에 달리는 거리 × 0.85) 다가와 부채꼴(230 · ±46°)로 친다.
+       예고 0.62초×K에서 한 대마다 짧아져 0.5초×K까지 · 내가 420 밖으로 벗어나면 끊기고, 아니면 10대(2페이즈 14대)까지 이어진 뒤 1.3초 헐떡임(딜 타임)
+       곧게 도망치면 한 대마다 조금씩 멀어진다(0.15배) · 옆으로 비켜도 피한다 — 거리·걸음이 모두 내 이속 기준이라 빠르든 느리든 같은 난이도
    2페이즈(50%) D 폭주 강림 rage: 살기 오라(반경 150 안 지속 피해 · 마왕은 240 거리에서 멈춰 서고 공격할 때만 들어온다)
      E 환영 쇄도 phantom: 분신 4기가 화면 네 모서리 → 내가 있던 자리로 X자 돌진 → 합체 폭발(반경 470) — 대각선을 피해 곧장 바깥으로
    규칙 9: 몸통 박치기 없음 · 모든 공격은 예고 뒤 판정 · tierEx 안 씀(amkExPause) · 폭발 원은 처음부터 보여 준다
    아틀라스: IMG.amk / AMKF (몸 — tools/atlas/amk_build.py ← 받은 시트 5장, 자르기·배경 제거·배율만) · IMG.amkfx / AMKX (이펙트 · 원래 크기) */
 const AMK = { hp: 1.8, dm: 1.0, K: 1.5, r: 64, ref: 280, tier: 9, lv: 25, kMin: 0.72, kMax: 2.2,
-  spK: 1.05, runK: 1.3, runD: 430, sp2K: 1.15, stand: 240,
+  spK: 1.2, runK: 1.35, runD: 430, sp2K: 1.3, stand: 240, walkK: 2.0, walkMin: 1.9, strafe: 0.6,   // v10.51 걷기: 이속 1.05→1.2 · 2페이즈 1.15→1.3 · 패턴 사이 걷는 시간 ×2 · 걷기 시작 뒤 walkMin초(×간격 배율)는 할퀴기도 안 함 · 가까이 붙으면 멈추지 않고 내 둘레를 돈다
+  baCd: 16, baWind: 0.9, baW0: 0.62, baDec: 0.03, baWmin: 0.5, baStep: 0.85, baMinD: 120, baR: 230, baHalf: 0.8, baDm: 18, baEsc: 420, baN: 10, baN2: 14, baRest: 1.3,   // v10.51 무한 난타
   clCd: 3.2, clR: 250, clHalf: 1.0, clW1: 0.95, clW2: 0.55, clGap: 0.2, clDm: 26, clStep: 55, clNear: 255,
   lpCd: 9, lpMin: 300, lpR: 150, lpW: 1.0, lpAir: 0.5, lpDm: 30,
   shCd: 10, shW: 0.85, shLen: 900, shWd: 110, shAng: 0.5, shSp: 2100, shDm: 30, crLife: 8, crW: 34, crMax: 10, burn: 0.06, burnL: 0.03, burnLinger: 1.2,
@@ -18497,12 +18501,12 @@ function amkTip(k, txt, t) { if (AMW.tip[k]) return; AMW.tip[k] = 1; banner = { 
 class AwakenedMonkeyAI {
   constructor(e) {
     this.e = e; this.ci = 0; this.k = 1; this.q = []; this.lp = null; this.cn = 0; this.phHit = false;
-    this.cd = { claw: 2, shatter: 2.5, pillar: 7, whirl: 11, leap: 5, phantom: 0 };
+    this.cd = { claw: 2, shatter: 2.5, pillar: 7, whirl: 11, leap: 5, phantom: 0, barrage: 9 }; this.sd = 1; this.sdT = 2;
     if (e.bk !== 'amk') Object.assign(e, { bk: 'amk', r: AMK.r, st: 'intro', stT: 2.2, an: 'roar', anT: 0, anD: 2.2, aw: 1, face: -1, moving: false, run: false, ph: 1, tele: [], jh: 0, hide: false, invul: true, noKB: true });
   }
-  order() { return this.e.ph === 2 ? ['phantom', 'shatter', 'whirl', 'pillar', 'leap'] : ['shatter', 'pillar', 'whirl', 'leap']; }
+  order() { return this.e.ph === 2 ? ['phantom', 'shatter', 'barrage', 'whirl', 'pillar', 'leap'] : ['shatter', 'pillar', 'barrage', 'whirl', 'leap']; }
   go(st, stT, an, anD, aw) { const e = this.e; e.st = st; e.stT = stT; e.an = an || 'idle'; e.anT = 0; e.anD = anD || stT; e.aw = aw || e.anD; }
-  chase(t) { this.go('chase', (t === undefined ? 1.0 : t) * amkM(), 'walk'); this.e.invul = false; this.e.hide = false; this.e.jh = 0; }
+  chase(t) { this.go('chase', (t === undefined ? 1.0 : t) * amkM() * AMK.walkK, 'walk'); this.e.chT = 0; this.e.invul = false; this.e.hide = false; this.e.jh = 0; }
   recover(t) { this.go('recover', t, 'idle'); this.e.invul = false; }
   later(t, f) { this.q.push({ t, f }); }
   tele(o) { this.e.tele.push(Object.assign({ t: 0, dur: 1, done: false, rgb: '255,60,40' }, o)); }
@@ -18572,8 +18576,28 @@ class AwakenedMonkeyAI {
       if (state === 'play' && Math.hypot(P.x - t.x, P.y - t.y) < t.r + amkPad()) amkHit(AMK.lpDm); petAoE(t.x, t.y, t.r, AMK.lpDm);
     } });
   }
+  barrageStart() {   // F 무한 난타 (v10.51)
+    const e = this.e; this.cd.barrage = AMK.baCd * amkM(); this.bn = 0; this.bMax = e.ph === 2 ? AMK.baN2 : AMK.baN; this.bs = null; e.face = P.x >= e.x ? 1 : -1;
+    const w = AMK.baWind * this.k; this.go('baWind', w, 'roar', w); floatNum(e.x, e.y - 240, '무한 난타!', '#ff5a5a'); sfx('skill'); shake = Math.max(shake, 8);
+    amkTip('ba', '각성한 원숭이 마왕: 무한 난타! 한 대마다 한 걸음씩 다가오며 붉은 부채꼴로 계속 친다 (점점 빨라짐)\n부채꼴마다 옆으로 비키거나, 계속 달려서 멀리(420 밖) 벗어나면 끊긴다 — 끝까지 버티면 마왕이 헐떡이는 딜 타임', 6);
+  }
+  baStrike() {
+    const e = this.e, K = this.k; this.bn++;
+    const wb = Math.max(AMK.baWmin, AMK.baW0 - AMK.baDec * (this.bn - 1)), w = wb * K, L = wb * AMK.ref;   // L = 이 예고 시간에 내가 달릴 수 있는 거리 (이속과 무관)
+    let a = Math.atan2(P.y - e.y, P.x - e.x); const d = Math.hypot(P.x - e.x, P.y - e.y), st = Math.max(0, Math.min(AMK.baStep * L, d - AMK.baMinD));
+    const nx = e.x + Math.cos(a) * st, ny = e.y + Math.sin(a) * st; this.bs = null;
+    if (st > 4 && inPoly(nx, ny)) { this.bs = { x0: e.x, y0: e.y, x1: nx, y1: ny }; a = Math.atan2(P.y - ny, P.x - nx); }
+    const ox = this.bs ? nx : e.x, oy = this.bs ? ny : e.y; e.face = Math.cos(a) >= 0 ? 1 : -1;
+    this.go('barrage', w + 0.08 * K, 'claw', w + 0.08 * K, w); this.bsD = 0.1 * K;   // 사이 간격·걸음도 K배 (이속 공정성)
+    this.tele({ k: 'fan', x: ox, y: oy, ang: a, half: AMK.baHalf, len: AMK.baR, r: AMK.baR, dur: w, rgb: '255,30,50', fire: t => {
+      if (!amkOn()) return; sfx('hit'); shake = Math.max(shake, 5 + Math.min(6, this.bn * 0.5)); amkFxAdd('slash', t.x, t.y, { ang: t.ang, half: t.half, R: t.len, life: 0.2 });
+      if (state === 'play' && admInFan(t, P.x, P.y, amkPad())) amkHit(AMK.baDm);
+    } });
+    if (this.bn % 3 === 0) floatNum(e.x, e.y - 230, this.bn + '연타!', '#ff8a8a');
+  }
+  baEnd(esc) { const e = this.e; this.bs = null; floatNum(e.x, e.y - 230, esc ? '난타가 끊겼다!' : '헉… 헉…', esc ? '#ffd27a' : '#9fe0ff'); this.cd.claw = Math.max(this.cd.claw, 1.5); this.recover(AMK.baRest); }
   rageStart() {   // D 폭주 강림 (50%)
-    const e = this.e; e.tele = []; this.q = []; this.lp = null; AMW.clones = []; e.jh = 0; e.hide = false; e.invul = true; e.ph = 2; this.ci = 0;
+    const e = this.e; e.tele = []; this.q = []; this.lp = null; this.bs = null; AMW.clones = []; e.jh = 0; e.hide = false; e.invul = true; e.ph = 2; this.ci = 0;
     this.go('rage', AMK.rage, 'rage', AMK.rage); for (const k in this.cd) this.cd[k] = Math.min(this.cd[k], 3); this.cd.phantom = AMK.phFirst;
     addRing(e.x, e.y - 60, 20, 900, 1.1, '255,50,40', 18); burst(e.x, e.y - 80, 60, ['#ff3a2a', '#ffb05a', '#3a0a0a'], 440, 1.0); shake = 24; sfx('evolve');
     banner = { txt: '각성한 원숭이 마왕: 폭주 강림! 몸 둘레에 붉은 살기 오라 — 반경 150 안에 머물면 체력이 타들어 간다\n마왕은 한 발 떨어져 서 있다가 공격할 때만 파고든다 · 대지 파열 5갈래 · 할퀴기 3연타 · 새 필살기 [환영 쇄도]', t: 6, c: '#ff8a7a' };
@@ -18614,13 +18638,22 @@ class AwakenedMonkeyAI {
       case 'intro': e.invul = true; if (e.stT <= 0) this.chase(0.8); break;
       case 'chase': {
         const stop = e.ph === 2 ? AMK.stand : e.r + 46, far = d > AMK.runD;   // 2페이즈: 살기 오라가 닿지 않는 거리에서 멈춘다 (오라는 내가 들어갈 때만 아프다)
-        if (d > stop) { walk(P.x, P.y, Math.min(S * (far ? AMK.runK : e.ph === 2 ? AMK.sp2K : AMK.spK) * (e.slowT > 0 ? 0.8 : 1), (d - stop) / dt)); e.run = far; }
-        else if (Math.abs(dx) > 6) e.face = dx > 0 ? 1 : -1;
-        if (d < AMK.clNear && this.cd.claw <= 0) { this.clawStart(); break; }
+        if (d > stop + 12) { walk(P.x, P.y, Math.min(S * (far ? AMK.runK : e.ph === 2 ? AMK.sp2K : AMK.spK) * (e.slowT > 0 ? 0.8 : 1), (d - stop) / dt)); e.run = far; }
+        else {   // v10.51 (경계에 걸려 0px씩 '걷던' 것 — 12px 여유) 붙어 있을 땐 멈추지 않고 내 둘레를 돈다 (가끔 방향을 바꿈)
+          if ((this.sdT -= dt) <= 0) { this.sd = -this.sd; this.sdT = 1.4 + rand() * 1.4; }
+          walk(e.x - dy / d * this.sd * 60, e.y + dx / d * this.sd * 60, S * AMK.strafe * (e.slowT > 0 ? 0.8 : 1)); if (!e.moving) { this.sd = -this.sd; this.sdT = 1.4; }
+          if (Math.abs(dx) > 6) e.face = dx > 0 ? 1 : -1;
+        }
+        e.chT = (e.chT || 0) + dt; if (d < AMK.clNear && this.cd.claw <= 0 && e.chT > AMK.walkMin * amkM()) { this.clawStart(); break; }
         if (e.stT <= 0) this.next();
         break; }
       case 'claw': if (e.stT <= 0) { this.cd.claw = AMK.clCd * amkM(); this.recover(0.55); } break;   // 쿨타임은 연타가 끝난 뒤부터 (연타만 되풀이하지 않게)
       case 'shatter': case 'whirl': case 'pillar': if (e.stT <= 0) this.chase(0.9); break;
+      case 'baWind': if (e.stT <= 0) this.baStrike(); break;
+      case 'barrage': {   // 걸음은 0.1초×K 동안 미끄러지듯
+        const B = this.bs; if (B) { const p = clamp(e.anT / (this.bsD || 0.1), 0, 1); e.x = B.x0 + (B.x1 - B.x0) * p; e.y = B.y0 + (B.y1 - B.y0) * p; e.moving = p < 1; }
+        if (e.stT <= 0) { if (B) { e.x = B.x1; e.y = B.y1; } if (d >= AMK.baEsc) this.baEnd(true); else if (this.bn >= this.bMax) this.baEnd(false); else this.baStrike(); }
+        break; }
       case 'leap': {
         const L = this.lp; if (L && !L.done) { const p = clamp((e.anT - (L.w - L.air)) / L.air, 0, 1); e.x = L.x0 + (L.x1 - L.x0) * p; e.y = L.y0 + (L.y1 - L.y0) * p; e.jh = Math.sin(p * Math.PI) * 240; }
         if (e.stT <= 0) { this.lp = null; this.chase(0.6); } break; }
@@ -19839,7 +19872,7 @@ function openDex() {
     add(gr, { on: d.kills.mini2, name: '마안 감시자', sub: d.kills.mini2 + '회 처치', hint: '<br>미니 보스 (Lv.15)', draw: (g, w, h, l) => dexSprite(g, w, h, IMG.chimfx, ro[0], ro[1], ro[2], ro[3], false, l, true) });
     add(gr, { on: d.kills.boss2, trophy: true, name: '심연의 마안군주', sub: d.kills.boss2 + '회 처치', hint: '<br>보스 (지하 2층부터 등장)', draw: (g, w, h, l) => dexSprite(g, w, h, IMG.chimfx, rb[0], rb[1], rb[2], rb[3], false, l, true) }); }
   add(gr, { on: d.kills.boss3, trophy: true, name: '타락한 혈랑왕', sub: (d.kills.boss3 || 0) + '회 처치', hint: '<br>숨은 보스 · 혈랑·성혈랑으로 각각 클리어하면 난이도 목록에 나타남', draw: (g, w, h, l) => dexSprite(g, w, h, IMG.fwb, 55, 92, 190, 86, false, l, true) });
-  add(gr, { on: d.kills.boss28, trophy: true, name: '각성한 원숭이 마왕', sub: (d.kills.boss28 || 0) + '회 처치', hint: '<br>층 미정 — 시작 화면 [기타]의 보스전 체험에서 만난다 · 대지 파열 · 멸망의 휠윈드 · 마그마 융기 · 체력 50%에 폭주(살기 오라 · 환영 쇄도)', draw: amkDexArt });   // v10.46
+  add(gr, { on: d.kills.boss28, trophy: true, name: '각성한 원숭이 마왕', sub: (d.kills.boss28 || 0) + '회 처치', hint: '<br>층 미정 — 시작 화면 [기타]의 보스전 체험에서 만난다 · 대지 파열 · 멸망의 휠윈드 · 마그마 융기 · 무한 난타 · 체력 50%에 폭주(살기 오라 · 환영 쇄도)', draw: amkDexArt });   // v10.46
   add(gr, { on: d.kills.boss27, trophy: true, name: '분열체 슬라임 왕', sub: (d.kills.boss27 || 0) + '회 처치', hint: '<br>보스 (지하 3층부터 등장) — 체력을 나눠 가진 슬라임들이 75%·50%·25%에 분열하고, 18~22초마다 모여 합체한다', draw: slmDexArt });   // v10.42
   { const a0 = SKW.sw_idle[0], b0 = SKB.idle[0];
     add(gr, { on: d.kills.mini3, name: '해골 전사', sub: (d.kills.mini3 || 0) + '회 처치', hint: '<br>미니 보스 (Lv.15 · 검사와 창병 둘이 함께)', draw: (g, w, h, l) => dexSprite(g, w, h, IMG.skw, a0[0], a0[1], a0[2], a0[3], false, l, true) });
@@ -20414,6 +20447,7 @@ function openAch() {
 const PATCH = [
   ['v10.49','[공허의 마해룡] 스킬 포식자의 파도 쿨타임 12→8초 · 보스·미니 보스·유니크에게 최대 체력 3%를 더 입힘 (추가분은 공격력의 최대 ×25) / [버서커 리자드] 진화 조건(체력 10 이하) — 죽어서 부활한 것도 인정'],
   ['v10.48','[공허의 마해룡] 절대 수압이 3구역 대신 본체에 가까울수록 점점 강해집니다 (가장자리 ×0.5 → 본체 ×1.8 · 바깥 30%는 그대로 밀어내기)'],
+  ['v10.51','[각성한 원숭이 마왕] 새 패턴 [무한 난타] — 한 걸음씩 다가오며 부채꼴로 계속 친다 (420 밖으로 벗어나면 끊김 · 10대/2페이즈 14대) · 걷는 속도 +15% · 패턴 사이 걷는 시간 ×1.6 · 가까이 붙으면 내 둘레를 돈다'],
   ['v10.46','[새 마왕 미리 보기] 각성한 원숭이 마왕 — 시작 화면 [기타] → 보스전 체험 (Lv.25까지 증강을 직접 고르고 곧바로 마왕방 · 보상 없음). 대지 파열(불타는 균열) · 멸망의 휠윈드(3번 팽창) · 마그마 융기(엇박자 5번) · 체력 50%에 폭주(살기 오라 · 환영 쇄도). 예고 시간이 내 이동 속도에 맞춰져 빠르든 느리든 같은 여유로 피한다. 층 배치는 미정'],
   ['v10.40','[10지옥 판데모니움 필드 기믹] 흑백 반전 — 30초마다 백야(흰 균열이 타오름) ⇄ 흑야(검은 불길 분출구가 타오름), 바뀌기 3초 전 곧 켜질 칸이 붉게 깜빡임 · 무너지는 바닥 — 한 칸에 1초 서 있으면 금이 가고 1.5초 뒤 5초 동안 심연(그 자리면 최대 체력 8% · 못 들어감) · 10지옥은 9지옥이 열린 뒤 지하 46~50층에서 열립니다'],
   ['v10.39','[10지옥 판데모니움 맵 준비] 흑백 지옥도시 필드(바닥·소품·흰 용암 균열)와 보스맵(받은 조각을 이어 붙인 원형 마법진 광장·옥좌·화로 발코니·심연) — 9지옥이 열린 뒤 지하 46~50층에서 열립니다 · 8지옥 필드 소품이 버섯 그림으로 나오던 것 수정'],
