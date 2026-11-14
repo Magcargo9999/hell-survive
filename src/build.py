@@ -2,6 +2,7 @@
 사용: python3 src/build.py            → build/hell_survive.html (그림 포함 단일 파일 · 공유용)
       python3 src/build.py --split    → index.html (그림은 src/assets/ 를 따로 불러옴 · GitHub Pages 배포용, v8.14)
       python3 src/build.py [출력경로] (단일 파일, 경로 지정)
+      --mobile 을 붙이면 📱 모바일 전용 빌드(v10.50): build/hell_survive_mobile.html (넓은 시야 · 터치 조작 · 모든 층·캐릭터 열림 · 영혼 조각 무한)
       --bossrush 를 붙이면 ⚔ 보스 러시 전용 빌드(v10.27): build/hell_survive_bossrush.html · --split 과 함께면 bossrush.html"""
 import base64, hashlib, os, sys
 HERE = os.path.dirname(os.path.abspath(__file__)); ROOT = os.path.dirname(HERE)
@@ -165,7 +166,7 @@ ASSETS = {
     '__SKTW__': 'sk/sktower.webp'
 }
 def b64(p): return 'data:image/' + ('webp' if p.endswith('.webp') else 'png') + ';base64,' + base64.b64encode(open(os.path.join(HERE, 'assets', p), 'rb').read()).decode()
-SPLIT = '--split' in sys.argv; BRO = '--bossrush' in sys.argv; args = [a for a in sys.argv[1:] if not a.startswith('--')]
+SPLIT = '--split' in sys.argv; BRO = '--bossrush' in sys.argv; MOBILE = '--mobile' in sys.argv; args = [a for a in sys.argv[1:] if not a.startswith('--')]
 def url(p):   # 분리 배포: 내용 해시를 붙여 그림이 바뀌면 브라우저 캐시도 자동으로 새로 받는다
     h = hashlib.md5(open(os.path.join(HERE, 'assets', p), 'rb').read()).hexdigest()[:8]
     return 'src/assets/' + p + '?v=' + h
@@ -176,7 +177,10 @@ for k, p in ASSETS.items():
 if BRO:   # 보스 러시 전용 빌드: 플래그와 제목만 바꾼다
     assert s.count('const BRO = false;') == 1 and s.count('<title>먹이에서 마왕으로</title>') == 1
     s = s.replace('const BRO = false;', 'const BRO = true;').replace('<title>먹이에서 마왕으로</title>', '<title>지옥의 생존자 — 보스 러시</title>')
-out = os.path.join(ROOT, 'bossrush.html' if BRO else 'index.html') if SPLIT else (args[0] if args else os.path.join(ROOT, 'build', 'hell_survive_bossrush.html' if BRO else 'hell_survive.html'))
+if MOBILE:   # v10.50 📱 모바일 전용 빌드: 플래그 · 제목 · 뷰포트(확대 막기)만 바꾼다
+    assert s.count('const MBL = false;') == 1 and s.count('<title>먹이에서 마왕으로</title>') == 1 and s.count('<meta name="viewport" content="width=device-width, initial-scale=1.0">') == 1
+    s = s.replace('const MBL = false;', 'const MBL = true;').replace('<title>먹이에서 마왕으로</title>', '<title>지옥의 생존자 — 모바일</title>').replace('<meta name="viewport" content="width=device-width, initial-scale=1.0">', '<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">')
+out = os.path.join(ROOT, 'mobile.html' if MOBILE else 'bossrush.html' if BRO else 'index.html') if SPLIT else (args[0] if args else os.path.join(ROOT, 'build', 'hell_survive_mobile.html' if MOBILE else 'hell_survive_bossrush.html' if BRO else 'hell_survive.html'))
 os.makedirs(os.path.dirname(out), exist_ok=True)
 open(out, 'w', encoding='utf8').write(s)
 print(out, len(s) // 1024, 'KB', '(분리)' if SPLIT else '(단일 파일)')
