@@ -1023,7 +1023,11 @@ const SNAIL_ROUTES = {
 //  높음 → 길게: 용암 대분출 18 · 천안 난무 15 · 광란 14 · 사슬 휘두르기 12 · 혈왕의 진 13
 //  중간      : 신성한 피의 비 12 · 피의 갈취 11 · 삼두 연쇄 물기 10 · 신성화살 12 · 물의 주술 16 (회복량을 줄이고 자주 쓰게)
 //  낮음 → 짧게: 폭발 화살 6 · 큰 화살/후방 도약 7 · 울부짖음 8 · 독 자국 폭파 8 · 천공 강하 8 · 화염 브레스 9
-const SKILL_CD = { vwave: 8, lhead: 28, roll: 11, megabomb: 11, shell: 16, ele: 12, otent: 15, gcharge: 9, gsummon: 24, lavaburst: 18, rush: 15, rage: 14, whip: 12, bsigil: 11, bloodrain: 12, drain: 11, cerb: 10, holyshot: 12, tide: 16, bombshot: 6, bigarrow: 7, darkarrow: 10, backdash: 7, howl: 8, blast: 8, dive: 8, breath: 9, laser: 10, zone: 10, meteor: 10 };
+const SKILL_CD = { vwave: 8, lhead: 15, roll: 10, megabomb: 11, shell: 4, ele: 12, otent: 14, gcharge: 9, gsummon: 12, lavaburst: 18, rush: 9, rage: 8, whip: 10, bsigil: 5, bloodrain: 9, drain: 7, cerb: 4, holyshot: 12, tide: 9, bombshot: 8, bigarrow: 7, darkarrow: 9, backdash: 8, howl: 7, blast: 7, dive: 6, breath: 7, laser: 10, zone: 10, meteor: 10 };
+// v10.55 지속형 스킬은 효과가 끝난 뒤부터 쿨타임이 돈다 (효과가 살아 있는 동안은 쿨이 멈춘다)
+const SK_AFTER = new Set(['lhead','shell','rage','bsigil','gsummon','otent','breath','rush','dive','whip','roll','bloodrain','darkarrow','cerb']);
+const cdTxt = k => SK_AFTER.has(k) ? `효과가 끝난 뒤 ${SKILL_CD[k] || 14}초` : `${SKILL_CD[k] || 14}초`;
+const skLive = () => { switch (P.skill) { case 'lhead': return !!lhead; case 'shell': return P.shellT > 0; case 'rage': return P.rage > 0; case 'bsigil': return !!bsig; case 'gsummon': return !!(P.pals && P.pals.length); case 'otent': return !!tentQ; case 'breath': return !!breathQ; case 'rush': return !!rushQ; case 'dive': return !!diveQ; case 'whip': return !!whipQ; case 'roll': return !!rollQ; case 'bloodrain': return !!rainQ; case 'darkarrow': return !!darkQ; case 'cerb': return !!cerbQ; case 'vwave': return !!fwaveQ; } return false; };
 const skillCd = () => ((window.__SKCD && window.__SKCD[P.skill]) || SKILL_CD[P.skill] || 14) * (1 - 0.1 * (P.up.brCool | 0));   // v10.10 보스 러시 전용 증강 [시간 왜곡]
 const SKILL_UNIQUE = { fish: 'vwave', wolf: 'howl', snail: 'blast', archer: 'bigarrow', chimera: 'dive', lizard: 'rage', twins: 'whip' };
 const uniqueSkill = () => (P.char === 'chimera' && P.route === 'dream') ? 'rush' : (P.char === 'chimera' && P.route === 'flame') ? 'breath' : (P.char === 'snail' && P.route === 'lava') ? 'lavaburst' : (P.char === 'snail' && P.route === 'bomb') ? 'megabomb' : (P.char === 'wolf' && P.route === 'twin') ? 'cerb' : (P.char === 'wolf' && P.route === 'crimson') ? (P.fin === 'holy' ? 'bloodrain' : P.fin === 'fallen' ? 'bsigil' : 'drain') : SKILL_UNIQUE[P.char];
@@ -10466,7 +10470,7 @@ function updateEvolve(dt) {
 }
 function openSkill() {
   const uqs = uniqueSkills();
-  const items = uqs.map(k => ({ key: k, name: skillName(k), desc: SKILL_BRIEF[k] || SKILLS[k].name, sub: `⏱ 쿨타임 ${SKILL_CD[k] || 14}초`, flip: '누르면 자세히 보기 ▶', back: `${SKILLS[k].desc}<br><br><b>${SKILLS[k].sub}</b><br>⏱ 쿨타임 ${SKILL_CD[k] || 14}초 · SPACE (또는 Q)`, cls: 'ultc' }));
+  const items = uqs.map(k => ({ key: k, name: skillName(k), desc: SKILL_BRIEF[k] || SKILLS[k].name, sub: `⏱ 쿨타임 ${cdTxt(k)}`, flip: '누르면 자세히 보기 ▶', back: `${SKILLS[k].desc}<br><br><b>${SKILLS[k].sub}</b><br>⏱ 쿨타임 ${cdTxt(k)} · SPACE (또는 Q)`, cls: 'ultc' }));
   openChoice(uqs.length > 1 ? '★ 특수 스킬을 고르세요 ★' : '★ 특수 스킬 해금! ★', items, u => {
     P.skill = u.key; P.skT = 0; P.inv = 1; P.skillTipT = 16;
     banner = { txt: `특수 스킬 [${skillName(u.key)}] 획득!  ${MBL ? '오른쪽 아래 버튼' : 'SPACE'} 로 발동 · 쓰고 나면 ${Math.round(skillCd())}초 뒤 다시 쓸 수 있어요`, t: 7 };
@@ -12345,7 +12349,7 @@ function updateSkills(dt) {
   if (P.shellT > 0) P.shellT -= dt;
   if (P.char === 'ghost') { stepPals(dt); stepLostHead(dt); }
   stepOcto(dt);
-  if (P.skill) { if (!(P.skill === 'lhead' && lhead)) P.skT = Math.max(0, P.skT - dt);   /* v10.18 잃어버린 머리가 나와 있는 동안은 쿨타임이 멈춘다 */ if (P.skT <= 0 && !P.skillReady1) { P.skillReady1 = true; P.skillTipT = Math.max(P.skillTipT, 7); sfx('item'); } }
+  if (P.skill) { if (!skLive()) P.skT = Math.max(0, P.skT - dt);   /* v10.18 잃어버린 머리가 나와 있는 동안은 쿨타임이 멈춘다 */ if (P.skT <= 0 && !P.skillReady1) { P.skillReady1 = true; P.skillTipT = Math.max(P.skillTipT, 7); sfx('item'); } }
   stepBigArrow(dt); stepDarkArrow(dt); updateAfx(dt);
   for (const b of bombT) { b.t -= dt; if (b.t <= 0) { b.done = true; boomAt(b.x, b.y, b.R, b.dm, false); } }
   bombT = bombT.filter(b => !b.done);
@@ -13864,7 +13868,7 @@ function drawHud() {
     ctx.strokeStyle = ready ? `rgba(255,255,255,${0.6 + 0.4 * pulse})` : R.c1; ctx.beginPath(); ctx.arc(cx, cy, D / 2 - 5, -1.5708, -1.5708 + 6.283 * cdk); ctx.stroke();
     ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.lineWidth = 3; ctx.strokeStyle = '#120406'; ctx.font = 'bold 15px ' + FONT;
     const nm = skillName(P.skill); ctx.strokeText(nm, cx, cy - 10); ctx.fillStyle = ready ? '#ffffff' : '#f3d9c6'; ctx.fillText(nm, cx, cy - 10);
-    const t4 = ready ? '발동!' : P.skT.toFixed(1) + '초'; ctx.font = 'bold 17px ' + FONT; ctx.strokeText(t4, cx, cy + 13); ctx.fillStyle = ready ? R.c2 : '#ffd9a0'; ctx.fillText(t4, cx, cy + 13);
+    const t4 = ready ? '발동!' : skLive() ? '지속' : P.skT.toFixed(1) + '초'; ctx.font = 'bold 17px ' + FONT; ctx.strokeText(t4, cx, cy + 13); ctx.fillStyle = ready ? R.c2 : '#ffd9a0'; ctx.fillText(t4, cx, cy + 13);
     ctx.restore(); ctx.textBaseline = 'alphabetic';
     if (rollQ && P.skill === 'roll') {   // 구르기 남은 횟수 점 + 남은 시간
       const n = ROLL.n, gap = 18, tot = n * gap, x0 = cx - tot / 2 + 7, yy = b.y - 12;
@@ -13888,7 +13892,7 @@ function drawHud() {
     ctx.fillStyle = 'rgba(255,255,255,0.25)'; ctx.fillRect(b.x + 4, b.y + 30, (b.w - 8) * cdk, 4);
     ctx.strokeStyle = ready ? `rgba(255,255,255,${0.5 + 0.5 * pulse})` : R.c1; ctx.lineWidth = ready ? 3 : 2; ctx.strokeRect(b.x, b.y, b.w, b.h);
     ctx.textAlign = 'center'; ctx.font = 'bold 16px ' + FONT;
-    const t3 = ready ? `${skillName(P.skill)}  발동!  [SPACE / Q]` : `${skillName(P.skill)}  ${P.skT.toFixed(1)}초`;
+    const t3 = ready ? `${skillName(P.skill)}  발동!  [SPACE / Q]` : skLive() ? `${skillName(P.skill)}  지속 중` : `${skillName(P.skill)}  ${P.skT.toFixed(1)}초`;
     ctx.strokeText(t3, W / 2, b.y + 22); ctx.fillStyle = ready ? '#ffffff' : '#f3d9c6'; ctx.fillText(t3, W / 2, b.y + 22);
     if (rollQ && P.skill === 'roll') {   // v10.28 QA: 구르기 남은 횟수(빨간 점 3개) + 남은 시간 얇은 게이지 — 스킬 쿨 바로 위
       const n = ROLL.n, gap = 18, gw = 84, tot = n * gap + 10 + gw, x0 = W / 2 - tot / 2, yy = b.y - 13, k = clamp(rollQ.t / ROLL.win, 0, 1);
@@ -19880,7 +19884,7 @@ let routeOwn = false;
 const dexSkName = (fk, k) => (k === 'blast' && fk === 'snail:V2') ? '맹독 대폭파' : (k === 'darkarrow' || k === 'bigarrow') && fk === 'archer:2:skel' ? SKILLS[k].name : SKILLS[k].name;
 function routeSkillShow(o, ks, fk) {   // 형태를 누르면 아래 칸에 스킬 설명
   const box = $('routeSkill'), nm = o && o.on ? o.name : '아직 보지 못한 형태';
-  box.innerHTML = ks && ks.length ? `<b>${nm}</b> — 얻는 특수 스킬 (SPACE)<br>` + ks.map(k => `<br><b>★ ${dexSkName(fk, k)}</b> · ⏱ 쿨타임 ${SKILL_CD[k] || 14}초<br>${SKILLS[k].desc}<br><span style="color:#c9a98a">${SKILLS[k].sub || ''}</span>`).join('<br>')
+  box.innerHTML = ks && ks.length ? `<b>${nm}</b> — 얻는 특수 스킬 (SPACE)<br>` + ks.map(k => `<br><b>★ ${dexSkName(fk, k)}</b> · ⏱ 쿨타임 ${cdTxt(k)}<br>${SKILLS[k].desc}<br><span style="color:#c9a98a">${SKILLS[k].sub || ''}</span>`).join('<br>')
     : `<b>${nm}</b><br>이 형태는 특수 스킬이 없습니다 (스킬은 최종 진화에서 얻습니다).`;
 }
 function routeNode(n, byKey) {
@@ -20503,6 +20507,7 @@ const PATCH = [
   ['v10.48','[공허의 마해룡] 절대 수압이 3구역 대신 본체에 가까울수록 점점 강해집니다 (가장자리 ×0.5 → 본체 ×1.8 · 바깥 30%는 그대로 밀어내기)'],
   ['v10.52','[각성한 원숭이 마왕] 2페이즈 새 패턴 [광폭 질주] — 포효 뒤 7초 동안 걷는 속도 ×1.45 (붉은 잔상)'],
   ['v10.53','메인 화면 타이틀을 새 도트 글씨 그림으로 교체'],
+  ['v10.55','[스킬 쿨타임 리밸런싱] 지속형 스킬(혈왕의 진·광란·갑주·수호령·브레스 등)은 효과가 끝난 뒤부터 쿨타임이 돈다 (화면에 [지속] 표시). 구르기 10초, 화염 브레스 7초, 근접 스킬은 대부분 단축 (삼두 물기 4·갑주 4·혈왕의 진 5·천공 강하 6 등), 원거리는 거의 그대로'],
   ['v10.54','[각성한 원숭이 마왕] 새 패턴 [잔류 회오리] — 휠윈드·환영 쇄도 뒤 무작위 자리에 회오리가 생겨 빙빙 돌며 끌어당긴다'],
   ['v10.51','[각성한 원숭이 마왕] 새 패턴 [무한 난타] — 한 걸음씩 다가오며 부채꼴로 계속 친다 (420 밖으로 벗어나면 끊김 · 10대/2페이즈 14대) · 걷는 속도 +15% · 패턴 사이 걷는 시간 ×1.6 · 가까이 붙으면 내 둘레를 돈다'],
   ['v10.46','[새 마왕 미리 보기] 각성한 원숭이 마왕 — 시작 화면 [기타] → 보스전 체험 (Lv.25까지 증강을 직접 고르고 곧바로 마왕방 · 보상 없음). 대지 파열(불타는 균열) · 멸망의 휠윈드(3번 팽창) · 마그마 융기(엇박자 5번) · 체력 50%에 폭주(살기 오라 · 환영 쇄도). 예고 시간이 내 이동 속도에 맞춰져 빠르든 느리든 같은 여유로 피한다. 층 배치는 미정'],
