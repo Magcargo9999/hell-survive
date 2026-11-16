@@ -163,7 +163,7 @@ ASSETS = {
     '__UIARL__': 'ui/arl.webp',
     '__UIARR__': 'ui/arr.webp',
     '__TITLE__': 'title/title.webp',
-    '__AMK__': 'amk/amk.webp', '__AMKFX__': 'amk/amkfx.webp',
+    '__AMK__': 'amk/amk.webp', '__AMKFX__': 'amk/amkfx.webp', '__AN3__': 'an3/an3.webp', '__AN3FX__': 'an3/an3fx.webp',
     '__SKTW__': 'sk/sktower.webp'
 }
 def b64(p): return 'data:image/' + ('webp' if p.endswith('.webp') else 'png') + ';base64,' + base64.b64encode(open(os.path.join(HERE, 'assets', p), 'rb').read()).decode()
