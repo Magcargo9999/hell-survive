@@ -5,7 +5,7 @@ from playwright.async_api import async_playwright
 from h301 import newpage
 from amk1046 import START
 BOT = r"""(arg)=>{const [pat,S,ox,oy,ph,lag]=arg;const G=__G,P=G.P,e=G.boss,A=G.amk,W=G.AMW,M=G.IMAP;const cx=(M.X0+M.X1)/2,cy=(M.Y0+M.Y1)/2;
- e.tele=[];A.q=[];W.cracks=[];W.waves=[];W.clones=[];W.fx=[];e.hide=false;e.jh=0;A.lp=null;e.ph=ph;e.hp=e.max*(ph===2?0.45:0.9);e.x=cx;e.y=cy;e.invul=false;
+ e.tele=[];A.q=[];W.tw=[];W.cracks=[];W.waves=[];W.clones=[];W.fx=[];e.hide=false;e.jh=0;A.lp=null;e.ph=ph;e.hp=e.max*(ph===2?0.45:0.9);e.x=cx;e.y=cy;e.invul=false;
  P.x=cx+ox;P.y=cy+oy;P.spd=S;P.slowT=0;P.max=1e6;P.hp=1e6;P.shield=0;P.dodge=0;P.up.guard=0;P.pals=null;P.pet=null;P.rel={};
  A.chase(99);for(const k in A.cd)A.cd[k]=99; A.k=G.amkK(); if(pat==='claw')A.clawStart();else A[pat+'Start']();
  const pad=8+18, K=A.k; let hits=0, minC=1e9, fr=0;
@@ -22,12 +22,13 @@ BOT = r"""(arg)=>{const [pat,S,ox,oy,ph,lag]=arg;const G=__G,P=G.P,e=G.boss,A=G.
    let best=null,bv=-1e9;
    for(let i=-1;i<24;i++){const a=i*6.283/24,ux=i<0?0:Math.cos(a),uy=i<0?0:Math.sin(a);let v=1e9,ok=true;
      for(const t of T){const tau=Math.max(0,t.dur-t.t),x=P.x+ux*S*tau,y=P.y+uy*S*tau;if(!G.inPoly(x,y)){ok=false;break}v=Math.min(v,clr(t,x,y));}
+     for(const o of W.tw){if(o.t<0.1)continue;const tau=0.35,na=o.a+0.55*G.amkS()/o.ro*o.dir*tau,tx=o.cx+Math.cos(na)*o.ro,ty=o.cy+Math.sin(na)*o.ro;v=Math.min(v,Math.hypot(P.x+ux*S*tau-tx,P.y+uy*S*tau-ty)-G.AMK.twR-40);}   // v10.54 잔류 회오리: 0.35초 뒤 회오리 자리에서 떨어지기
      if(!ok)continue; if(i<0&&v>=pad+6){best=[0,0];bv=v;break} if(v>bv+(best&&best[0]===0&&best[1]===0?0:0.01)){bv=v;best=[ux,uy];}}
    if(best&&(best[0]||best[1])){const nx=P.x+best[0]*S*dt,ny=P.y+best[1]*S*dt;if(G.inPoly(nx,ny)){P.x=nx;P.y=ny}P.vx=best[0]*S;P.vy=best[1]*S}else{P.vx=0;P.vy=0}
    for(const t of T)if(t.fire&&t.dur-t.t<=dt*1.01)minC=Math.min(minC,clr(t,P.x,P.y));
    P.inv=0;P.hitT=0;P.stunT=0;const vx=P.vx,vy=P.vy;G.tick(dt);P.vx=vx;P.vy=vy;if(P.inv>0.3)hits++;
    if(G.state!=='play')break;
-   if((e.st==='chase'||e.st==='recover')&&!e.tele.length&&!W.waves.length&&!W.clones.length&&!A.q.length)break;
+   if((e.st==='chase'||e.st==='recover')&&!e.tele.length&&!W.waves.length&&!W.clones.length&&!A.q.length&&!W.tw.length)break;
  }
  return {hits,minC:Math.round(minC),K:+K.toFixed(2),norm:+(minC/(S*K)).toFixed(3),sec:+(fr/60).toFixed(1)}}"""
 async def main():
