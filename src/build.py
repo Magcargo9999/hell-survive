@@ -162,6 +162,7 @@ ASSETS = {
     '__UIBTNR__': 'ui/btnred.webp',
     '__UIARL__': 'ui/arl.webp',
     '__UIARR__': 'ui/arr.webp',
+    '__TITLE__': 'title/title.webp',
     '__AMK__': 'amk/amk.webp', '__AMKFX__': 'amk/amkfx.webp',
     '__SKTW__': 'sk/sktower.webp'
 }
