@@ -1106,7 +1106,7 @@ function mkCanvas(w, h) { const c = document.createElement('canvas'); c.width = 
 const BRO = false;   // v10.27 ⚔ 보스 러시 전용 빌드 — `python3 src/build.py --bossrush`가 true로 바꾼다 (모든 캐릭터 · 보스 골라 큐 · 보상 없음 · 세이브는 따로)
 const SAVE_KEY = BRO ? 'hellSurvivorBossRush1' : MBL ? 'hellSurvivorMobile1' : 'hellSurvivorSave1';   // 본 게임 세이브 키는 절대 바꾸지 않는다 — 보스 러시 전용 빌드만 다른 키(본 게임 진행을 건드리지 않게)
 let bnHide = false; try { bnHide = localStorage.getItem('hsBnHide') === '1'; } catch (_) {}   // v10.12 보스전 안내 글씨 끄기 (H키, 이 설정만 따로 저장)
-const GAME_VER = 'v10.40';
+const GAME_VER = 'v10.63';
 const SAVE_DEF = () => ({
   shards: 0,
   perks: { hp: 0, spd: 0, dmg: 0, exp: 0, magnet: 0, banish: 0, revive: 0, regen: 0, shard: 0, critd: 0, choice: 0 },
@@ -1144,7 +1144,7 @@ function loadSave() {
       { const top = Math.max(SAVE.diff.clr | 0, (SAVE.fw && SAVE.fw.snap && SAVE.fw.snap.tier | 0) || 0); if (top >= 20 && (SAVE.diff.max | 0) < top + 1) SAVE.diff.max = top + 1; }   // v9.10: 층이 잠겨 다음 층이 안 열렸던 기록(지하 22층 클리어 등)도 인정
       SAVE.diff.max = Math.min(SAVE.diff.max | 0, OPEN_TIER); SAVE.diff.sel = Math.min(SAVE.diff.sel | 0, SAVE.diff.max);
     }
-  } catch (e) { /* 저장소를 못 쓰는 환경이면 기본값으로 진행 */ }
+  } catch (e) { try { const raw = localStorage.getItem(SAVE_KEY); if (raw && !localStorage.getItem(SAVE_KEY + '_bak')) localStorage.setItem(SAVE_KEY + '_bak', raw); } catch (e2) { /* 무시 */ } SAVE = SAVE_DEF(); }   // v10.63 세이브가 깨져 읽지 못하면 원본을 백업해 두고 시작 (자동저장이 덮어써도 복구 가능)
   mobCheat();
 }
 const MOB_SHARDS = 99999999;
@@ -1163,7 +1163,7 @@ function markDex(key, route) {
   if (route && /:(2|3|2t|L3|V2|B2)$/.test(key) && !d.final[key + ':' + route]) { d.final[key + ':' + route] = 1; ch = true; }
   if (ch) saveSave();
 }
-function dexKill(key) { SAVE.dex.kills[key] = (SAVE.dex.kills[key] || 0) + 1; }
+function dexKill(key) { if (rush && rush.trial) return; SAVE.dex.kills[key] = (SAVE.dex.kills[key] || 0) + 1; }
 window.addEventListener('pagehide', () => saveSave());
 
 const PERKS = [
@@ -8919,7 +8919,8 @@ function bossDefeated() {
   if (arena) arena.cleared = true;
   addRing(e.x, e.y - 40, 20, 600, 1.0, '255,200,90', 16); addRing(e.x, e.y - 40, 10, 360, 0.7, '255,80,50', 12);
   burst(e.x, e.y - 50, 80, ['#ff3a2a', '#ffb05a', '#ffffff', '#3a2a2a'], 520, 1.2); shake = 24; sfx('evolve');
-  const hbk = chal ? null : bhKey(e), hg = rollHeartDrop(hbk); if (hg) { if (rush) { const h = heartGain(hg, hbk); rush.hearts.push({ round: rush.i + 1, h }); floatNum(P.x, P.y - 130, '💗 ' + hTitle(h), HG[hg].col); } else items.push({ type: 'bheart', g: hg, b: hbk, x: e.x, y: e.y + 20, t: 0 }); if (hg === 'legend') playUpgradeEffect('legend', '✦ 레전더리 심장 출현! ✦'); }   // v8.01 보스 심장 20% (1% 레전더리)
+  const hbk = chal ? null : bhKey(e), hg = rush && rush.trial ? null : rollHeartDrop(hbk);   // v10.63 보스전 체험은 심장 보상 없음
+   if (hg) { if (rush) { const h = heartGain(hg, hbk); rush.hearts.push({ round: rush.i + 1, h }); floatNum(P.x, P.y - 130, '💗 ' + hTitle(h), HG[hg].col); } else items.push({ type: 'bheart', g: hg, b: hbk, x: e.x, y: e.y + 20, t: 0 }); if (hg === 'legend') playUpgradeEffect('legend', '✦ 레전더리 심장 출현! ✦'); }   // v8.01 보스 심장 20% (1% 레전더리)
   if (chal) { chBossWin(e); return; }   // v6.20: 챌린지는 계속된다
   if (rush) { rushWin(e); return; }   // v8.50 보스 러시: 다음 마왕으로
   banner = { txt: '마왕을 쓰러뜨렸다!', t: 6 };
@@ -21379,6 +21380,7 @@ const PATCH = [
   ['v10.48','[공허의 마해룡] 절대 수압이 3구역 대신 본체에 가까울수록 점점 강해집니다 (가장자리 ×0.5 → 본체 ×1.8 · 바깥 30%는 그대로 밀어내기)'],
   ['v10.52','[각성한 원숭이 마왕] 2페이즈 새 패턴 [광폭 질주] — 포효 뒤 7초 동안 걷는 속도 ×1.45 (붉은 잔상)'],
   ['v10.53','메인 화면 타이틀을 새 도트 글씨 그림으로 교체'],
+  ['v10.63','[점검] 보스전 체험에서 심장·처치 기록이 쌓이지 않음 · 세이브가 깨져 못 읽을 때 원본을 백업해 둠 · 화면 버전 표기 수정'],
   ['v10.62','[종말의 쌍두천사] 석상을 광장 안쪽으로 조금 내림 · 가위질 예고 조금 길게'],
   ['v10.61','[새 마왕 미리 보기] 종말의 쌍두천사 — 시작 화면 [기타] → 보스전 체험 (10지옥 지옥 성당 · Lv.25까지 증강을 고르고 곧바로 싸움 · 보상 없음). 움직이지 않는 거대 석상: 옆·뒤 피해 −60% · 미소와 탄식의 성가(같은 색 파동 흡수 → 정화의 빛줄기) · 여섯 팔의 단두대 · 피눈물의 성배 · 부서진 광륜의 궤도 · 체력 35%에 종말의 찬가(봉인석 6개 중 4개)'],
   ['v10.60','[10지옥 판데모니움 보스맵] 받은 지옥 성당 그림을 그대로 3배로 쓰고(그림 손대지 않음) 걷는 곳·시작·출구를 다시 잡음 — 월드 3201×4422'],

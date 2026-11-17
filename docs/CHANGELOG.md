@@ -423,3 +423,6 @@ CLAUDE.md에서 분리. 필요할 때만 `grep -n "키워드" docs/CHANGELOG.md`
 - 새 마왕 미리 보기 **종말의 쌍두천사**(`bk:'twa'`) — 시작 화면 [기타] → 보스전 체험(`#twaBtn` → `startBossTrial('twa')`, 보스방 = 10지옥 지옥 성당 `BR_SET.twa='pan'` · `rushFset`이 'pan'도 돌려줌). 부동형 거대 석상(받침대 뒤 막힘 `twaBlock`, 넉백 무시), 돌날개 옆·뒤 ×0.4(`twaDmgMul`), 상태 머신 `TwinAngelAI`(Idle·PolarityHymn·SixArmScissor·BloodTearResonance·HaloGuillotine·ApocalypseChant + PalmStrike·Stagger·Exposed), 봉인석 `TwBell`(kind 'twbell') · 노출된 팔 `TwArm`(kind 'twarm'), 카메라를 석상 쪽으로 올림 `twCamUp`. 아틀라스 `tools/atlas/twa_build.py`(받은 2배 시트 → 1배, ×2 nearest). 도감 boss29. 테스트 `tools/tests/twa1061.py`.
 ## 10.62
 - 종말의 쌍두천사 위치를 광장 안쪽으로 내림(`TWA.by` 2200→2420) · 가위질 예고 1.5→1.9초×K(옆 끝에서도 안전 구역까지 시간 안에 도달) · 파동 각도 `hyArc` 0.55→1.0(받침대 옆 위쪽까지).
+
+## 10.63
+- 점검 반영: 보스전 체험은 심장 드롭·`dexKill` 안 셈(업적 방지) · `loadSave` 파싱 실패 시 원본을 `SAVE_KEY_bak`에 백업 · `GAME_VER` 최신화. 나머지 점검 항목(폰트·1280x800·패드·세이브 파일)은 스팀 이식 때.
