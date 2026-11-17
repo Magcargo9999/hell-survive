@@ -419,3 +419,5 @@ CLAUDE.md에서 분리. 필요할 때만 `grep -n "키워드" docs/CHANGELOG.md`
 - 10지옥 판데모니움 보스맵 다시 조합(`tools/atlas/pmap2_build.py`): 예시 보스맵처럼 팔각 광장(벌린 룬 고리 네 조각 + 가시 마법진) + 8방향 길과 단상 7곳(옥좌·아래·옆 2·모서리 4), 2100×2900 ×2. `IMAP_PAN` 다각형 = 바닥 윤곽. 테스트 `pan1039.py`(맵 밖 판정 항목은 이제 좌우·위 길이라 true가 정상).
 ## 10.60
 - 10지옥 판데모니움 보스맵 3번째: 사용자가 준 다시 그린 '지옥 성당' 그림(1067×1474)을 픽셀 그대로 ×3(월드 3201×4422)으로 쓰고 걷는 곳·시작·보스·출구를 손으로 다시 잡음(`pmap3_build.py`, 시트 조합 맵 폐기)
+## 10.61
+- 새 마왕 미리 보기 **종말의 쌍두천사**(`bk:'twa'`) — 시작 화면 [기타] → 보스전 체험(`#twaBtn` → `startBossTrial('twa')`, 보스방 = 10지옥 지옥 성당 `BR_SET.twa='pan'` · `rushFset`이 'pan'도 돌려줌). 부동형 거대 석상(받침대 뒤 막힘 `twaBlock`, 넉백 무시), 돌날개 옆·뒤 ×0.4(`twaDmgMul`), 상태 머신 `TwinAngelAI`(Idle·PolarityHymn·SixArmScissor·BloodTearResonance·HaloGuillotine·ApocalypseChant + PalmStrike·Stagger·Exposed), 봉인석 `TwBell`(kind 'twbell') · 노출된 팔 `TwArm`(kind 'twarm'), 카메라를 석상 쪽으로 올림 `twCamUp`. 아틀라스 `tools/atlas/twa_build.py`(받은 2배 시트 → 1배, ×2 nearest). 도감 boss29. 테스트 `tools/tests/twa1061.py`.
