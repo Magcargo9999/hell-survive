@@ -1,6 +1,6 @@
-# hell survive
+# 먹이에서 마왕까지 (From Prey to Demon Lord)
 
-먹이에서 마왕으로 — 브라우저 서바이버 게임
+브라우저 서바이버 게임 · 저장소 이름 hell-survive
 
 플레이: https://magcargo9999.github.io/hell-survive/
 

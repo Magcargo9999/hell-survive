@@ -176,11 +176,11 @@ for k, p in ASSETS.items():
     assert s.count("'" + k + "'") == 1, k
     s = s.replace("'" + k + "'", "'" + (url(p) if SPLIT else b64(p)) + "'")
 if BRO:   # 보스 러시 전용 빌드: 플래그와 제목만 바꾼다
-    assert s.count('const BRO = false;') == 1 and s.count('<title>먹이에서 마왕으로</title>') == 1
-    s = s.replace('const BRO = false;', 'const BRO = true;').replace('<title>먹이에서 마왕으로</title>', '<title>지옥의 생존자 — 보스 러시</title>')
+    assert s.count('const BRO = false;') == 1 and s.count('<title>먹이에서 마왕까지</title>') == 1
+    s = s.replace('const BRO = false;', 'const BRO = true;').replace('<title>먹이에서 마왕까지</title>', '<title>먹이에서 마왕까지 — 보스 러시</title>')
 if MOBILE:   # v10.50 📱 모바일 전용 빌드: 플래그 · 제목 · 뷰포트(확대 막기)만 바꾼다
-    assert s.count('const MBL = false;') == 1 and s.count('<title>먹이에서 마왕으로</title>') == 1 and s.count('<meta name="viewport" content="width=device-width, initial-scale=1.0">') == 1
-    s = s.replace('const MBL = false;', 'const MBL = true;').replace('<title>먹이에서 마왕으로</title>', '<title>지옥의 생존자 — 모바일</title>').replace('<meta name="viewport" content="width=device-width, initial-scale=1.0">', '<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">')
+    assert s.count('const MBL = false;') == 1 and s.count('<title>먹이에서 마왕까지</title>') == 1 and s.count('<meta name="viewport" content="width=device-width, initial-scale=1.0">') == 1
+    s = s.replace('const MBL = false;', 'const MBL = true;').replace('<title>먹이에서 마왕까지</title>', '<title>먹이에서 마왕까지 — 모바일</title>').replace('<meta name="viewport" content="width=device-width, initial-scale=1.0">', '<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">')
 out = os.path.join(ROOT, 'mobile.html' if MOBILE else 'bossrush.html' if BRO else 'index.html') if SPLIT else (args[0] if args else os.path.join(ROOT, 'build', 'hell_survive_mobile.html' if MOBILE else 'hell_survive_bossrush.html' if BRO else 'hell_survive.html'))
 os.makedirs(os.path.dirname(out), exist_ok=True)
 open(out, 'w', encoding='utf8').write(s)

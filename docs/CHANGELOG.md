@@ -426,3 +426,6 @@ CLAUDE.md에서 분리. 필요할 때만 `grep -n "키워드" docs/CHANGELOG.md`
 
 ## 10.63
 - 점검 반영: 보스전 체험은 심장 드롭·`dexKill` 안 셈(업적 방지) · `loadSave` 파싱 실패 시 원본을 `SAVE_KEY_bak`에 백업 · `GAME_VER` 최신화. 나머지 점검 항목(폰트·1280x800·패드·세이브 파일)은 스팀 이식 때.
+
+## 10.64
+- 게임 이름 통일: 한글 "먹이에서 마왕까지" · 영문 "From Prey to Demon Lord" (탭 제목·og 태그·타이틀 alt·세이브 오류 문구·빌드 스크립트 제목·README). 내부 세이브 키·파일명 규칙(hell survive v.N.NN)은 그대로.
